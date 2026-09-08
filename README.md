@@ -151,6 +151,48 @@ exactly the self-judgement the rest of the app is trying to settle. The prompts
 are written to invite noticing rather than grading, and none of them are
 clinical screening questions.
 
+## Progressive web app
+
+Serenity installs to the home screen and works with no connection at all.
+
+| Piece | Where |
+| --- | --- |
+| Manifest | `public/manifest.webmanifest` |
+| Service worker | `public/sw.js` |
+| Precache list (generated) | `scripts/build-precache.mjs` -> `public/precache.json` |
+| Registration | `src/components/layout/service-worker.tsx` |
+| Install affordance | `src/components/layout/install-prompt.tsx` (Profile) |
+| Offline fallback | `src/app/offline/page.tsx` |
+
+**Everything is cached on install, not as you browse.** Caching route HTML alone
+is not enough: those documents reference content-hashed chunks the browser only
+fetches when it actually renders the page, so a route you had never opened would
+still fail offline. `build-precache.mjs` runs after `next build`, taking exact
+URLs from the prerendered HTML (route groups like `(app)` are already stripped,
+and every player path is expanded) and every chunk from Next's build manifest —
+70 entries across 22 routes. Assets are cached individually so one missing file
+cannot fail the whole install, and the cache is named for the build id so a new
+deploy drops the old one.
+
+After install the worker serves stale-while-revalidate: instant from cache,
+refreshed behind the scenes. A navigation with nothing cached and no connection
+gets `/offline` rather than the browser's error page.
+
+**Verified with the server stopped**, not with emulated offline — Chrome's
+network emulation does not apply to service worker fetches, so it will happily
+report success while the worker is still reaching a live origin. With the origin
+genuinely unreachable and only `/home` ever visited, Discover, Timer, Sleep and a
+player route all load and stay interactive.
+
+The install row on Profile replays Chrome's deferred `beforeinstallprompt`, shows
+an installed state once added, and on iOS Safari — which has no such event —
+points at Share -> Add to Home Screen instead. The iOS branch is checked first,
+rather than relying on the event being absent.
+
+Note the service worker is deliberately skipped in the Capacitor builds: those
+serve from `capacitor://` or a local origin where the files are already on the
+device.
+
 ## Handheld only
 
 Serenity is not offered on laptop or desktop screens. The gate lives in
@@ -274,6 +316,8 @@ src/
                           use-session-recorder, use-wake-lock
   lib/audio/              Web Audio synthesis engine and soundscapes
   lib/session-stats.ts    progress derived from recorded sittings
+scripts/
+  build-precache.mjs      generates the service worker's precache list
   providers/              app-provider (favorites, recents, settings), audio-provider
   lib/                    cn, formatters, SVG arc geometry
   types/                  shared domain types
