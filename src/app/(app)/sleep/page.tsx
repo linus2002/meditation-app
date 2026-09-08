@@ -8,8 +8,10 @@ import { SectionTitle } from '@/components/shared/section-title';
 import { SleepChart } from '@/components/sleep/sleep-chart';
 import { SleepMixer } from '@/components/sleep/sleep-mixer';
 import { SleepTimer } from '@/components/sleep/sleep-timer';
+import { StoryCard } from '@/components/stories/story-card';
 import { sleepSessions } from '@/data/meditations';
 import { sleepSummary, sleepWeek } from '@/data/sleep';
+import { sleepStories } from '@/data/stories';
 import { formatPercent } from '@/lib/format';
 import { useAudio } from '@/providers/audio-provider';
 
@@ -71,6 +73,17 @@ export default function SleepPage() {
         <div className="mt-3">
           <SleepTimer onComplete={handleTimerComplete} />
         </div>
+      </div>
+
+      <div className="mt-6 px-5">
+        <SectionTitle actionHref="/stories" actionLabel="All stories">
+          Sleep Stories
+        </SectionTitle>
+        <ul className="mt-3 space-y-2.5">
+          {sleepStories.map((story) => (
+            <StoryCard key={story.id} story={story} />
+          ))}
+        </ul>
       </div>
 
       <div className="mt-6 px-5">

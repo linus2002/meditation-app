@@ -4,7 +4,7 @@ import * as React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChevronRight, Search, Timer, X } from 'lucide-react';
+import { BookOpen, ChevronRight, Search, Timer, X } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { MeditationCard } from '@/components/shared/meditation-card';
@@ -111,6 +111,24 @@ export function DiscoverView() {
             </span>
             <span className="mt-0.5 block text-[11.5px] leading-tight text-ink-muted">
               Your own length, bells at the start and end
+            </span>
+          </span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-ink-faint" strokeWidth={1.8} />
+        </Link>
+
+        <Link
+          href="/stories"
+          className="group mb-4 flex items-center gap-3.5 rounded-tile bg-[#141733] p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+        >
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3FD9C9_0%,#7CA9E8_55%,#F07BC8_100%)]">
+            <BookOpen className="h-5 w-5 text-white" strokeWidth={1.8} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[14px] font-semibold leading-tight text-ink">
+              Read-Aloud Stories
+            </span>
+            <span className="mt-0.5 block text-[11.5px] leading-tight text-ink-muted">
+              Calm stories, read to you or read yourself
             </span>
           </span>
           <ChevronRight className="h-4 w-4 shrink-0 text-ink-faint" strokeWidth={1.8} />

@@ -16,6 +16,8 @@ interface PersistedState {
   reflections: Reflection[];
   /** Every recorded sitting, newest first. Drives all progress figures. */
   sessions: SessionRecord[];
+  /** Saved stories. Kept apart from session favourites so ids cannot collide. */
+  favoriteStories: string[];
 }
 
 interface AppContextValue extends PersistedState {
@@ -28,6 +30,8 @@ interface AppContextValue extends PersistedState {
   completeOnboarding: () => void;
   /** Appends a completed or part-finished sitting. */
   recordSession: (record: SessionRecord) => void;
+  toggleFavoriteStory: (id: string) => void;
+  isFavoriteStory: (id: string) => boolean;
   /** Writes or replaces the entry for that day. */
   saveReflection: (entry: Reflection) => void;
   removeReflection: (date: string) => void;
@@ -46,6 +50,7 @@ const initialState: PersistedState = {
   onboarded: false,
   reflections: [],
   sessions: [],
+  favoriteStories: ['lighthouse'],
 };
 
 const AppContext = React.createContext<AppContextValue | null>(null);
@@ -67,6 +72,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           onboarded: parsed.onboarded ?? current.onboarded,
           reflections: parsed.reflections ?? current.reflections,
           sessions: parsed.sessions ?? current.sessions,
+          favoriteStories: parsed.favoriteStories ?? current.favoriteStories,
         }));
       }
     } catch {
@@ -122,6 +128,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const toggleFavoriteStory = React.useCallback((id: string) => {
+    setState((current) => ({
+      ...current,
+      favoriteStories: current.favoriteStories.includes(id)
+        ? current.favoriteStories.filter((item) => item !== id)
+        : [id, ...current.favoriteStories],
+    }));
+  }, []);
+
   const saveReflection = React.useCallback((entry: Reflection) => {
     setState((current) => ({
       ...current,
@@ -143,12 +158,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       ...state,
       hydrated,
       isFavorite: (id) => state.favorites.includes(id),
+      isFavoriteStory: (id) => state.favoriteStories.includes(id),
       getReflection: (date) => state.reflections.find((entry) => entry.date === date),
       toggleFavorite,
       markPlayed,
       setSetting,
       completeOnboarding,
       recordSession,
+      toggleFavoriteStory,
       saveReflection,
       removeReflection,
     }),
@@ -160,6 +177,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setSetting,
       completeOnboarding,
       recordSession,
+      toggleFavoriteStory,
       saveReflection,
       removeReflection,
     ],

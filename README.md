@@ -94,6 +94,46 @@ honestly would mean Apple Health / Google Fit integration in the native build.
 
 A new install starts empty rather than seeded with a fabricated history.
 
+## Read-aloud stories
+
+Six original stories — written for this app, nothing licensed or scraped — at
+`/stories`, with a reader at `/stories/[id]`. Each carries a title, a one-line
+description, an estimated duration and a category (sleep, relaxation,
+mindfulness). Reachable from Discover, the sleep screen and Profile.
+
+Narration uses the **Web Speech API**, for the same reasons as the soundscapes:
+nothing unverifiable is shipped, there is no licence to honour, and it works
+offline on device voices.
+
+**Sentences, not one long utterance.** Speech synthesis exposes no timeline, so
+a naive implementation gives play and pause and nothing else. `segmentStory`
+splits the text into sentences and `useNarration` speaks them one at a time,
+chaining on `onend`. That single decision is what makes the rest work:
+
+- progress measured in characters read, weighted so the bar is honest
+- skip back and forward, by converting 15 seconds into a position in the text
+- scrubbing to any point in the story
+- the paragraph being spoken lifts out of the page as it is read
+
+It also sidesteps the long-standing Chrome bug where one long utterance stops
+after about fifteen seconds.
+
+Care is needed in two places. `speechSynthesis.cancel()` fires `onend` for the
+utterance in flight, so every stop sets a guard first or the chain advances
+through the whole story. And a voice the browser refuses to accept must not take
+narration down with it — assignment is wrapped, falling back to the default
+voice.
+
+**Honest limits, surfaced in the UI rather than hidden.** Durations are
+estimates: the real pace depends on the device voice. Volume and rate apply from
+the next sentence, because an utterance already being spoken cannot be changed.
+Where a browser has no speech synthesis at all, the screen says so and the story
+is still there to read.
+
+The sleep timer stops the reading and fades the ambient bed over twelve seconds.
+Saved stories live in their own list, apart from session favourites, so ids
+cannot collide.
+
 ## Unguided timer
 
 A plain sit at `/timer`, reached from the top of Discover and from Profile.
@@ -321,7 +361,7 @@ src/
     home/ activities/ player/ sleep/ discover/ shared/
   data/                   typed mock catalogue, stats, sleep, settings, photos, prompts
   assets/images/          bundled photography + CREDITS.md
-  hooks/                  use-player, use-breath, use-countdown,
+  hooks/                  use-player, use-breath, use-countdown, use-narration,
                           use-session-recorder, use-wake-lock
   lib/audio/              Web Audio synthesis engine and soundscapes
   lib/session-stats.ts    progress derived from recorded sittings

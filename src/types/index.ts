@@ -128,3 +128,21 @@ export interface Reflection {
   weight: number;
   updatedAt: number;
 }
+
+export type StoryCategory = 'sleep' | 'relaxation' | 'mindfulness';
+
+export interface Story {
+  id: string;
+  title: string;
+  /** One line, shown on the card. */
+  description: string;
+  category: StoryCategory;
+  /** Narrator persona shown in the reader. */
+  voice: string;
+  image: StaticImageData;
+  imageAlt: string;
+  /** Paragraphs of the story itself — read on screen and aloud. */
+  paragraphs: string[];
+  /** Ambient bed offered under the narration. */
+  soundscape: SoundscapeId;
+}
