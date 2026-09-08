@@ -1,43 +1,29 @@
 'use client';
 
-import Link from 'next/link';
+import * as React from 'react';
+import { useRouter } from 'next/navigation';
 
-import { DiagonalSlashes, WaveLines } from '@/components/shared/decor';
-import { GradientButton } from '@/components/shared/gradient-button';
 import { useApp } from '@/providers/app-provider';
 
 /**
- * Intro screen. Proportions follow the reference: the headline sits at roughly
- * 13% of the screen width, the body copy wraps to three lines, and the pill
- * clears the bottom edge by a little under 30px.
+ * The entry gate.
+ *
+ * A first-time visitor is sent through the three-step tour; everyone else goes
+ * straight to the home screen. `onboarded` is read from localStorage, so this
+ * waits for hydration before deciding rather than flashing the wrong screen.
+ *
+ * `router.replace` keeps the tour out of the back stack: finishing it and
+ * pressing back should not drop you into onboarding again.
  */
-export default function OnboardingPage() {
-  const { completeOnboarding } = useApp();
+export default function EntryPage() {
+  const router = useRouter();
+  const { onboarded, hydrated } = useApp();
 
-  return (
-    <div className="relative flex min-h-full flex-col">
-      <WaveLines className="left-0 top-0 h-[300px] w-full" />
-      <div className="relative mt-auto px-7 pb-[clamp(20px,3.3vh,28px)]">
-        <DiagonalSlashes className="relative mb-[clamp(26px,4.7vh,40px)] ml-[36%] w-[59%]" />
-        <h1 className="text-[clamp(34px,12.8vw,50px)] leading-[1.11] tracking-[-0.025em] text-ink">
-          <span className="block font-light">Keep track</span>
-          <span className="block font-light">
-            of <span className="font-bold">Your</span>
-          </span>
-          <span className="block font-bold">Health</span>
-        </h1>
+  React.useEffect(() => {
+    if (!hydrated) return;
+    router.replace(onboarded ? '/home' : '/welcome');
+  }, [hydrated, onboarded, router]);
 
-        <p className="mt-[clamp(12px,1.9vh,16px)] max-w-[272px] text-[clamp(11.5px,3.33vw,13px)] font-normal leading-[1.62] text-ink-muted">
-          Lorem ipsum dolor sit amet consectetur. Diam malesuada vestibulum adipiscing nisi amet
-          vitae.
-        </p>
-
-        <GradientButton asChild className="mt-[clamp(22px,4.3vh,36px)] h-[clamp(52px,7.35vh,62px)] w-full">
-          <Link href="/home" onClick={completeOnboarding}>
-            Get Started
-          </Link>
-        </GradientButton>
-      </div>
-    </div>
-  );
+  // Nothing to show while the stored flag is read — it takes one tick.
+  return <div className="min-h-full bg-canvas" aria-hidden="true" />;
 }

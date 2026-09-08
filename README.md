@@ -94,6 +94,33 @@ honestly would mean Apple Health / Google Fit integration in the native build.
 
 A new install starts empty rather than seeded with a fabricated history.
 
+## First-run tour
+
+Three steps at `/welcome`, shown once on a fresh install and never again.
+
+1. Full-bleed abstract sweep, wordmark and tagline low on the screen, a filled
+   primary and an outlined secondary.
+2. A tilted grid of session artwork running off every edge, with the promise
+   set over it.
+3. The original reference intro screen — headline weight mix, wave lines,
+   leaning bars, gradient pill — unchanged. It was always an intro with a Get
+   Started button, so this is where it belongs in the flow.
+
+`/` is the gate: it waits for `onboarded` to be read from `localStorage`, then
+sends first-timers to `/welcome` and everyone else to `/home`. Waiting for
+hydration avoids flashing the wrong screen, and `router.replace` keeps the tour
+out of the back stack — finishing it and pressing back must not re-enter it.
+Skipping marks it done too.
+
+The sweep on step one is layered CSS gradients rather than an image: it scales
+to any handset without a large asset. The bands are narrow and only lightly
+blurred on purpose — a wide, heavy blur flattens it into a wash and loses the
+folded look.
+
+The layout follows a reference the author supplied. The composition is shared;
+the branding, copy and artwork are Serenity's own, and no third-party marks or
+product imagery are reproduced.
+
 ## Read-aloud stories
 
 Six original stories — written for this app, nothing licensed or scraped — at
@@ -350,7 +377,8 @@ These are not depicted in the artwork, so they are designed in the same language
 ```
 src/
   app/
-    page.tsx              intro screen
+    page.tsx              entry gate -> tour or home
+    welcome/              three-step first-run tour
     activities/           reference screen 3 (no bottom nav)
     (app)/                routes that carry the bottom nav
       home/ discover/ sleep/ favorites/ profile/
