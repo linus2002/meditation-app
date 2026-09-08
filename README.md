@@ -54,9 +54,22 @@ Decisions that follow directly from the artwork:
   toggle is exposed. Light tokens exist in `globals.css` purely so the shadcn/ui
   primitives stay well-formed.
 - The deck cards keep the flat gradients as drawn — no photography behind them.
-- **Today's Reflection is added below the reference content**, so the screen still
-  opens exactly as drawn and the new section is found by scrolling past *Start
-  Your Goal*. Nothing in the reference composition moved.
+- **The home screen has since been reordered at the author's request.** The
+  greeting bar is now pinned to the top of the scrolling region, and the
+  Recommended rail sits directly beneath it, above the gradient deck. The deck,
+  the hairline and the prompt cards are otherwise unchanged, but they no longer
+  open at the top of the screen as the reference shows.
+- The pinned bar carries a solid canvas fill plus a short gradient fade below
+  its edge; without the fade the deck's gradients and shadows cut off against a
+  hard line as they pass underneath.
+
+The Recommended rail (`src/components/home/recommended-rail.tsx`) follows a
+second reference the author supplied: artwork with a pill label over its
+top-left, title and narrator beneath, a filled pill action, and a small centred
+control. Cards are 82vw so the next one peeks in, with scroll snapping — note
+`scroll-px-5` alongside `px-5`, or the snap point pulls the first card past the
+left inset and it stops aligning with the heading. Only the composition is
+borrowed; the sessions, photography and copy are the app's own.
 
 ## Session tracking
 
