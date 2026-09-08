@@ -29,21 +29,16 @@ interface GreetingHeaderProps {
  *
  * Pinned to the top of the scrolling region, so the greeting and the two
  * controls stay reachable as the page moves. It carries a solid canvas fill
- * plus a short fade beneath it, so content passing underneath disappears into
- * the background rather than cutting off against a hard edge.
+ * and no edge treatment beneath it, so it sits flat against the page.
  */
 export function GreetingHeader({ firstName }: GreetingHeaderProps) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <header
-      className="sticky top-0 z-30 flex items-center justify-between bg-canvas px-5 pb-3 pt-[clamp(20px,6.6vh,56px)]
-        after:pointer-events-none after:absolute after:inset-x-0 after:top-full after:h-4
-        after:bg-[linear-gradient(180deg,#0E1030_0%,rgba(14,16,48,0)_100%)]"
-    >
+    <header className="sticky top-0 z-30 flex items-center justify-between bg-canvas px-5 pb-3 pt-[clamp(20px,6.6vh,56px)]">
       <div className="pt-0.5">
         <p className="text-[clamp(13px,3.85vw,15px)] font-normal leading-[1.15] text-ink-soft">Hello,</p>
-        <p className="text-[clamp(18px,5.4vw,21px)] font-bold leading-[1.15] tracking-[-0.01em] text-ink">
+        <p className="text-[clamp(18px,5.4vw,21px)] font-medium leading-[1.15] tracking-[-0.01em] text-ink">
           {firstName}
         </p>
       </div>

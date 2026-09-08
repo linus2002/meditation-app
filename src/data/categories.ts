@@ -10,6 +10,7 @@ export const deckCards: DeckCard[] = [
     caption: 'Watch your progress',
     tone: 'activities',
     href: '/activities',
+    image: photos.morningField,
   },
   {
     id: 'happiness',
@@ -17,6 +18,7 @@ export const deckCards: DeckCard[] = [
     caption: 'Watch Complete sessions',
     tone: 'happiness',
     href: '/discover?category=happiness',
+    image: photos.openArms,
   },
   {
     id: 'relaxation',
@@ -24,6 +26,7 @@ export const deckCards: DeckCard[] = [
     caption: 'Watch Complete sessions',
     tone: 'relaxation',
     href: '/discover?category=relaxation',
+    image: photos.aerialSea,
   },
 ];
 

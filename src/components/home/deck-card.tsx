@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { MoreVertical } from 'lucide-react';
 
@@ -31,33 +32,67 @@ const toneBloom: Record<DeckTone, string> = {
 
 interface DeckCardProps {
   card: DeckCardModel;
-  /** Later cards overlap the ones above them, so they need a higher stack order. */
-  index: number;
+  /** Position in the stack: 0 is the back of the deck, the highest is the front. */
+  slot: number;
+  /** The front card is the fully revealed one at the bottom of the stack. */
+  isFront: boolean;
+  /** Promotes this card to the front slot. Only called for cards behind the front. */
+  onBringToFront: () => void;
 }
 
-export function DeckCard({ card, index }: DeckCardProps) {
+/**
+ * One gradient card in the home deck.
+ *
+ * Cards are absolutely stacked and offset with `translateY`, so a reorder is a
+ * transform change the browser can animate — the DOM order never moves.
+ *
+ * Tapping a card behind the front slides it forward; the front card is the only
+ * one that opens its destination, since that is the card you can actually read.
+ */
+export function DeckCard({ card, slot, isFront, onBringToFront }: DeckCardProps) {
+  const surfaceClassName =
+    'absolute inset-0 z-10 rounded-card transition-colors duration-200 hover:bg-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white';
+
   return (
     <article
       className={cn(
-        'relative h-[clamp(112px,36.4vw,142px)] shrink-0 overflow-hidden rounded-card shadow-deck',
+        'absolute inset-x-0 top-0 h-[var(--deck-h)] overflow-hidden rounded-card shadow-deck',
+        'transition-transform duration-[520ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
         toneBackground[card.tone],
-        index > 0 && '-mt-[clamp(33px,10.8vw,42px)]',
       )}
-      style={{ zIndex: index + 1 }}
+      style={{ transform: `translateY(calc(var(--deck-step) * ${slot}))`, zIndex: slot + 1 }}
     >
+      <Image
+        src={card.image}
+        alt=""
+        fill
+        sizes="(max-width: 430px) 100vw, 430px"
+        placeholder="blur"
+        className="pointer-events-none select-none object-cover opacity-[0.34] mix-blend-overlay"
+      />
+
       <div
         aria-hidden="true"
         className="absolute inset-0"
         style={{ backgroundImage: toneBloom[card.tone] }}
       />
 
+      {/* Keeps the headline readable where the photograph runs light. */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0.22)_0%,rgba(0,0,0,0)_58%)]"
+      />
+
       {/* Full-card target sits above the artwork but below the overflow menu. */}
-      <Link
-        href={card.href}
-        className="absolute inset-0 z-10 rounded-card transition-colors duration-200 hover:bg-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
-      >
-        <span className="sr-only">{`${card.title} — ${card.caption}`}</span>
-      </Link>
+      {isFront ? (
+        <Link href={card.href} className={surfaceClassName}>
+          <span className="sr-only">{`${card.title} — ${card.caption}`}</span>
+        </Link>
+      ) : (
+        <button type="button" onClick={onBringToFront} className={surfaceClassName}>
+          <span className="sr-only">{`Bring ${card.title} to the front of the deck`}</span>
+        </button>
+      )}
 
       <div className="pointer-events-none relative z-0 px-5 pt-3">
         <h2 className="text-[clamp(21px,6.9vw,27px)] font-normal leading-[1.16] tracking-[-0.015em] text-white drop-shadow-[0_1px_10px_rgba(0,0,0,0.18)]">

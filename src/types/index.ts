@@ -14,6 +14,8 @@ export interface DeckCard {
   caption: string;
   tone: DeckTone;
   href: string;
+  /** Photograph washed in behind the gradient at low opacity. */
+  image: StaticImageData;
 }
 
 export type CategorySlug =

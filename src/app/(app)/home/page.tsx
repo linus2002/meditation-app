@@ -1,8 +1,11 @@
 import { CategoryDeck } from '@/components/home/category-deck';
 import { DailyGoalCard } from '@/components/home/daily-goal-card';
 import { GreetingHeader } from '@/components/home/greeting-header';
+import { HomeSection } from '@/components/home/home-section';
+import { ProgramRail } from '@/components/home/program-rail';
 import { RecommendedRail } from '@/components/home/recommended-rail';
 import { StartGoalCard } from '@/components/home/start-goal-card';
+import { TodayRail } from '@/components/home/today-rail';
 import { ReflectionCard } from '@/components/reflections/reflection-card';
 import { SectionTitle } from '@/components/shared/section-title';
 import { deckCards } from '@/data/categories';
@@ -14,26 +17,24 @@ export default function HomePage() {
     <div className="pb-4">
       <GreetingHeader firstName={currentUser.firstName} />
 
-      <section className="pt-2">
-        <div className="px-5">
-          <h2 className="text-[clamp(21px,6.6vw,26px)] font-bold leading-tight tracking-[-0.02em] text-ink">
-            Recommended
-          </h2>
-          <p className="mt-1.5 text-[13.5px] leading-[1.45] text-ink-muted">
-            A few places to start, picked to suit the time of day.
-          </p>
-        </div>
+      <CategoryDeck cards={deckCards} />
 
-        <div className="mt-4">
-          <RecommendedRail />
-        </div>
-      </section>
+      <HomeSection
+        title="Recommended"
+        description="A few places to start, picked to suit the time of day."
+      >
+        <RecommendedRail />
+      </HomeSection>
 
-      <div className="pt-7">
-        <CategoryDeck cards={deckCards} />
-      </div>
+      <HomeSection title="Your meditations for today">
+        <TodayRail />
+      </HomeSection>
 
-      {/* Full-bleed hairline separating the deck from the day's prompts. */}
+      <HomeSection title="Free programs for you">
+        <ProgramRail />
+      </HomeSection>
+
+      {/* Full-bleed hairline separating the rails from the day's prompts. */}
       <div aria-hidden="true" className="hairline mt-5 h-px w-full" />
 
       <div className="px-5 pt-4">

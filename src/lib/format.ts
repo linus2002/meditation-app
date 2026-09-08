@@ -11,6 +11,11 @@ export function formatMinutesLabel(totalSeconds: number): string {
   return `${Math.round(totalSeconds / 60)} Min.`;
 }
 
+/** 300 -> "5m" — the compact form used on the home rails. */
+export function formatShortMinutes(totalSeconds: number): string {
+  return `${Math.round(totalSeconds / 60)}m`;
+}
+
 /** 0.72 -> "72%" */
 export function formatPercent(fraction: number): string {
   return `${Math.round(fraction * 100)}%`;
