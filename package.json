@@ -4,14 +4,15 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node scripts/build-precache.mjs",
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "build:mobile": "cross-env MOBILE_BUILD=1 next build",
     "sync:mobile": "npm run build:mobile && cap sync",
     "open:android": "npm run sync:mobile && cap open android",
-    "open:ios": "npm run sync:mobile && cap open ios"
+    "open:ios": "npm run sync:mobile && cap open ios",
+    "prebuild": "node scripts/build-routes.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
@@ -32,7 +33,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.475.0",
-    "next": "15.1.7",
+    "next": "^15.1.12",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^2.6.0",

@@ -1,46 +1,67 @@
 /*
  * Serenity's service worker.
  *
- * On install it precaches every route and every JS chunk the build emitted
- * (see scripts/build-precache.mjs), so the whole app works offline from the
- * first visit — not only the screens you happened to open. Afterwards it serves
- * stale-while-revalidate: instant from cache, refreshed in the background.
+ * On install it walks every route in `precache.json`, caches the HTML, and
+ * reads that HTML for the `/_next/static/...` files the page needs — caching
+ * those too. Discovering the chunks from the markup, rather than from a
+ * build-time manifest, means the list is always right for the deployment that
+ * served it and nothing has to be generated after the build.
  *
- * The cache is named for the build id, so a new deploy installs alongside the
- * old one and the previous cache is dropped only once the new worker is in
- * charge.
+ * After install it serves stale-while-revalidate: instant from cache, refreshed
+ * behind the scenes.
  */
-const PRECACHE_URL = '/precache.json';
+const MANIFEST = '/precache.json';
 const FALLBACK = '/offline';
+const VERSION_KEY = '/__serenity_version__';
 
-let cacheName = 'serenity-fallback';
+let cacheName = 'serenity-v1';
 
-async function openCache() {
-  return caches.open(cacheName);
+/** Pulls `/_next/static/...` references out of a served HTML document. */
+function assetsFrom(html) {
+  const found = new Set();
+  for (const match of html.matchAll(/["'(](\/_next\/static\/[^"')]+)["')]/g)) {
+    found.add(match[1].replace(/\u002F/g, '/'));
+  }
+  return [...found];
+}
+
+async function cacheIfOk(cache, url) {
+  try {
+    const response = await fetch(url, { cache: 'no-store' });
+    if (!response.ok) return null;
+    await cache.put(url, response.clone());
+    return response;
+  } catch {
+    return null;
+  }
 }
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     (async () => {
       try {
-        const response = await fetch(PRECACHE_URL, { cache: 'no-store' });
-        const { version, urls } = await response.json();
-        cacheName = `serenity-${version}`;
+        const manifest = await (await fetch(MANIFEST, { cache: 'no-store' })).json();
+        cacheName = `serenity-${manifest.version}`;
         const cache = await caches.open(cacheName);
 
-        // Individually, so one missing asset cannot fail the whole install.
+        // Remember the version so `activate` can find this cache again.
+        await cache.put(VERSION_KEY, new Response(cacheName));
+
+        const routes = manifest.routes || [];
+        const assets = new Set(manifest.assets || []);
+
         await Promise.all(
-          urls.map(async (url) => {
-            try {
-              const res = await fetch(url, { cache: 'no-store' });
-              if (res.ok) await cache.put(url, res);
-            } catch {
-              /* Skipped; the runtime handler will pick it up later. */
-            }
+          routes.map(async (route) => {
+            const response = await cacheIfOk(cache, route);
+            if (!response) return;
+            // The chunks this page needs, read straight from its markup.
+            for (const asset of assetsFrom(await response.text())) assets.add(asset);
           }),
         );
+
+        await Promise.all([...assets].map((asset) => cacheIfOk(cache, asset)));
       } catch {
-        // No manifest (dev, or a failed fetch) — fall back to runtime caching.
+        // No manifest reachable — fall back to runtime caching alone.
       }
       await self.skipWaiting();
     })(),
@@ -50,18 +71,14 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
-      // Re-read the version: `activate` may run in a fresh worker instance.
-      try {
-        const res = await caches.match(PRECACHE_URL);
-        const stored = res ? await res.json() : null;
-        if (stored?.version) cacheName = `serenity-${stored.version}`;
-      } catch {
-        /* Keeps whatever name install set. */
-      }
+      const stored = await caches.match(VERSION_KEY);
+      if (stored) cacheName = (await stored.text()).trim();
 
       const keys = await caches.keys();
       await Promise.all(
-        keys.filter((key) => key.startsWith('serenity-') && key !== cacheName).map((key) => caches.delete(key)),
+        keys
+          .filter((key) => key.startsWith('serenity-') && key !== cacheName)
+          .map((key) => caches.delete(key)),
       );
       await self.clients.claim();
     })(),
@@ -77,20 +94,18 @@ self.addEventListener('fetch', (event) => {
 
   event.respondWith(
     (async () => {
-      const cached = await caches.match(request, { ignoreSearch: false });
+      const cached = await caches.match(request);
 
       const network = fetch(request)
         .then(async (response) => {
           if (response && response.status === 200 && response.type === 'basic') {
-            const cache = await openCache();
-            cache.put(request, response.clone());
+            (await caches.open(cacheName)).put(request, response.clone());
           }
           return response;
         })
         .catch(() => null);
 
       if (cached) {
-        // Stale-while-revalidate: answer now, refresh behind the scenes.
         event.waitUntil(network);
         return cached;
       }
@@ -98,8 +113,7 @@ self.addEventListener('fetch', (event) => {
       const fresh = await network;
       if (fresh) return fresh;
 
-      // Nothing cached and no connection. Navigations get the offline page;
-      // anything else fails as it normally would.
+      // Nothing cached and no connection: navigations get the offline screen.
       if (request.mode === 'navigate') {
         const fallback = await caches.match(FALLBACK);
         if (fallback) return fallback;
