@@ -1,0 +1,107 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * The reference artwork is a single dark treatment. Light tokens exist only so
+ * shadcn/ui primitives stay well-formed; the app itself renders the dark
+ * surface shown in the design and never exposes a theme toggle.
+ */
+@layer base {
+  :root {
+    --background: 234 51% 12%;
+    --foreground: 0 0% 100%;
+    --card: 234 42% 15%;
+    --card-foreground: 0 0% 100%;
+    --popover: 234 42% 15%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 240 80% 68%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 234 30% 22%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 234 24% 24%;
+    --muted-foreground: 234 15% 68%;
+    --accent: 234 30% 22%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 234 26% 26%;
+    --input: 234 26% 26%;
+    --ring: 258 84% 72%;
+    --radius: 1rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-canvas text-ink font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* A single, consistent focus treatment for keyboard users across the app. */
+  :focus-visible {
+    outline: 2px solid #b3b6ff;
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: rgba(139, 140, 240, 0.45);
+  }
+}
+
+@layer components {
+  /* Thin, dark scrollbars so horizontal rails read as part of the surface. */
+  .rail {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .rail::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+  }
+
+  /* Faint hairline used between the deck and the "What Brings You Today ?" row. */
+  .hairline {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.16) 12%,
+      rgba(255, 255, 255, 0.16) 88%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
