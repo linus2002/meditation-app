@@ -1,6 +1,7 @@
 import { CategoryDeck } from '@/components/home/category-deck';
 import { DailyGoalCard } from '@/components/home/daily-goal-card';
 import { GreetingHeader } from '@/components/home/greeting-header';
+import { GroupBanner } from '@/components/home/group-banner';
 import { HomeSection } from '@/components/home/home-section';
 import { ProgramRail } from '@/components/home/program-rail';
 import { RecommendedRail } from '@/components/home/recommended-rail';
@@ -54,6 +55,10 @@ export default function HomePage() {
         <div className="mt-3">
           <ReflectionCard />
         </div>
+      </div>
+
+      <div className="mt-7 px-5">
+        <GroupBanner />
       </div>
     </div>
   );

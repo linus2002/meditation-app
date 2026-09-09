@@ -5,6 +5,7 @@ import ancientTree from '@/assets/images/ancient-tree.jpg';
 import duskRidge from '@/assets/images/dusk-ridge.jpg';
 import forestBridge from '@/assets/images/forest-bridge.jpg';
 import forestLight from '@/assets/images/forest-light.jpg';
+import groupBanner from '@/assets/images/groupbanner.png';
 import meditationSunrise from '@/assets/images/meditation-sunrise.jpg';
 import milkyWay from '@/assets/images/milky-way.jpg';
 import morningField from '@/assets/images/morning-field.jpg';
@@ -29,6 +30,7 @@ export const photos = {
   duskRidge,
   forestBridge,
   forestLight,
+  groupBanner,
   meditationSunrise,
   milkyWay,
   morningField,
