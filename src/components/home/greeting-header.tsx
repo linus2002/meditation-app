@@ -2,22 +2,10 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Bell, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 import { IconButton } from '@/components/shared/icon-button';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from '@/components/ui/sheet';
-
-const notifications = [
-  { id: 'streak', title: 'Twelve day streak', body: 'You have shown up every morning this month.' },
-  { id: 'goal', title: 'Daily goal ready', body: 'Meditation, 30 minutes, whenever you are.' },
-  { id: 'sleep', title: 'Sleep report is in', body: 'Last night averaged 7h 24m with deep rest at 25%.' },
-];
+import { NotificationBell } from '@/components/shared/notification-bell';
 
 interface GreetingHeaderProps {
   firstName: string;
@@ -35,8 +23,6 @@ interface GreetingHeaderProps {
  * close to the top edge.
  */
 export function GreetingHeader({ firstName }: GreetingHeaderProps) {
-  const [open, setOpen] = React.useState(false);
-
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between bg-canvas px-5 pb-3 pt-[calc(env(safe-area-inset-top,0px)+10px)]">
       <div className="pt-0.5">
@@ -47,32 +33,13 @@ export function GreetingHeader({ firstName }: GreetingHeaderProps) {
       </div>
 
       <div className="-mr-2 flex items-center gap-0.5">
-        <IconButton label="Notifications" onClick={() => setOpen(true)}>
-          <Bell className="h-[18px] w-[18px]" strokeWidth={1.6} />
-        </IconButton>
+        <NotificationBell />
         <IconButton label="Search sessions" asChild>
           <Link href="/discover">
             <Search className="h-[18px] w-[18px]" strokeWidth={1.6} />
           </Link>
         </IconButton>
       </div>
-
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="bottom" className="max-h-[70%] border-white/10">
-          <SheetHeader className="pb-2">
-            <SheetTitle>Notifications</SheetTitle>
-            <SheetDescription>Three updates from the last day.</SheetDescription>
-          </SheetHeader>
-          <ul className="space-y-2 px-6 pb-8">
-            {notifications.map((item) => (
-              <li key={item.id} className="rounded-tile bg-white/[0.05] px-4 py-3">
-                <p className="text-[13px] font-semibold text-ink">{item.title}</p>
-                <p className="mt-0.5 text-[12px] leading-relaxed text-ink-muted">{item.body}</p>
-              </li>
-            ))}
-          </ul>
-        </SheetContent>
-      </Sheet>
     </header>
   );
 }

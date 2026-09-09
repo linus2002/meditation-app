@@ -3,17 +3,19 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, Moon, User } from 'lucide-react';
+import { Flower2, Home, Moon, User } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 /**
- * Three destinations, each named for what the screen actually holds: the home
- * feed, the sleep analytics screen and the profile page. Icon over label, so
- * the glyph is never the only thing telling you where a tab goes.
+ * Four destinations, each named for what the screen actually holds: the home
+ * feed, the meditations library, the sleep analytics screen and the profile
+ * page. Icon over label, so the glyph is never the only thing telling you where
+ * a tab goes.
  */
 const NAV_ITEMS = [
   { href: '/home', label: 'Home', icon: Home },
+  { href: '/meditations', label: 'Meditations', icon: Flower2 },
   { href: '/sleep', label: 'Sleep', icon: Moon },
   { href: '/profile', label: 'Profile', icon: User },
 ] as const;
@@ -31,7 +33,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="safe-bottom relative z-20 shrink-0 bg-canvas px-6 pb-2 pt-2"
+      className="safe-bottom relative z-20 shrink-0 bg-canvas px-2 pb-2 pt-2"
     >
       {/* Shared gradient definition for whichever destination is active. */}
       <svg aria-hidden="true" width="0" height="0" className="absolute">
@@ -44,7 +46,7 @@ export function BottomNav() {
         </defs>
       </svg>
 
-      <ul className="grid grid-cols-3">
+      <ul className="grid grid-cols-4">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = activePath === href || activePath.startsWith(`${href}/`);
           return (
@@ -55,7 +57,7 @@ export function BottomNav() {
                 aria-current={pathname === href ? 'page' : undefined}
                 onClick={() => setTapped(href)}
                 className={cn(
-                  'flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-2 py-1.5',
+                  'flex w-full flex-col items-center gap-1 rounded-2xl px-0.5 py-1.5',
                   'transition-transform duration-100',
                   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
                   isActive ? 'scale-105' : 'scale-100 hover:scale-105',
@@ -70,7 +72,7 @@ export function BottomNav() {
                 {/* The active label picks up the same gradient as its icon. */}
                 <span
                   className={cn(
-                    'text-[11px] font-medium leading-none tracking-[0.01em]',
+                    'whitespace-nowrap text-[11px] font-medium leading-none tracking-[0.01em]',
                     isActive
                       ? 'bg-nav-active bg-clip-text text-transparent'
                       : 'text-[#8A8DA8]',

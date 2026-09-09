@@ -53,6 +53,8 @@ export interface Meditation {
   imageAlt: string;
   /** The synthesised bed that plays while this session runs. */
   soundscape: SoundscapeId;
+  /** Listener rating out of 5, shown on the library's top-rated grid. */
+  rating: number;
   /** Marks the "Daily Goals" entry surfaced on the home screen. */
   isDailyGoal?: boolean;
   /** Sleep-specific sessions surface on the sleep screen. */
