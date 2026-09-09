@@ -38,7 +38,7 @@ export function TodayRail() {
               />
               <span
                 aria-hidden="true"
-                className="absolute inset-0 rounded-[15px] ring-1 ring-inset ring-white/10 transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-white"
+                className="absolute inset-0 rounded-[15px] ring-1 ring-inset ring-focus/10 transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-focus"
               />
               {tryFree ? (
                 <span className="absolute left-2.5 top-2.5 rounded-full bg-canvas-deep/85 px-3 py-1.5 text-[10.5px] font-semibold leading-none text-white backdrop-blur-sm">

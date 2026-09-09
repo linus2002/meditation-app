@@ -3,12 +3,27 @@
 @tailwind utilities;
 
 /*
- * The reference artwork is a single dark treatment. Light tokens exist only so
- * shadcn/ui primitives stay well-formed; the app itself renders the dark
- * surface shown in the design and never exposes a theme toggle.
+ * The reference artwork is a dark treatment, and that stays the default. A
+ * light mode is offered as a preference and swaps the palette wholesale; see
+ * the two token blocks below.
  */
 @layer base {
-  :root {
+  /*
+   * Dark is the default and the design's native treatment; light is opt-in and
+   * lives entirely in `[data-theme='light']` below. Both blocks define the same
+   * names, so no component ever needs to know which one is active.
+   *
+   * The literal palette is stored as bare RGB channels rather than hex, which
+   * is what lets Tailwind compose alpha onto it — `bg-surface/60` and the like.
+   */
+  /*
+   * Dark is both the default and an explicit value, so a subtree can pin itself
+   * to it with `data-theme="dark"` even while the app is set to light — the
+   * onboarding tour does exactly that over its dark artwork.
+   */
+  :root,
+  [data-theme='dark'] {
+    /* shadcn/ui primitives */
     --background: 234 51% 12%;
     --foreground: 0 0% 100%;
     --card: 234 42% 15%;
@@ -29,6 +44,68 @@
     --input: 234 26% 26%;
     --ring: 258 84% 72%;
     --radius: 0.875rem;
+
+    /* The app's own palette, as RGB channels. */
+    --canvas: 14 16 48;
+    --canvas-deep: 10 12 36;
+    --canvas-raised: 22 25 57;
+    --canvas-slate: 42 42 46;
+    --surface: 20 23 51;
+
+    --ink: 255 255 255;
+    --ink-soft: 213 215 230;
+    --ink-muted: 142 146 174;
+    --ink-faint: 91 95 125;
+
+    /*
+     * The tint used for hairlines, dividers and raised fills. On a dark canvas
+     * a surface is lifted with white; on a light one it has to be darkened
+     * instead, so this flips and every `bg-overlay/[0.06]` keeps working.
+     */
+    --overlay: 255 255 255;
+    --focus: 255 255 255;
+    /* Bottom-nav glyphs at rest, painted through an SVG stroke. */
+    --nav-idle: 138 141 168;
+    /* Browser chrome, kept in step by the theme effect in AppProvider. */
+    --theme-color: #0e1030;
+  }
+
+  [data-theme='light'] {
+    --background: 240 33% 98%;
+    --foreground: 234 32% 14%;
+    --card: 0 0% 100%;
+    --card-foreground: 234 32% 14%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 234 32% 14%;
+    --primary: 240 70% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 20% 94%;
+    --secondary-foreground: 234 32% 14%;
+    --muted: 240 20% 94%;
+    --muted-foreground: 234 12% 46%;
+    --accent: 240 20% 94%;
+    --accent-foreground: 234 32% 14%;
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 18% 88%;
+    --input: 240 18% 88%;
+    --ring: 258 60% 58%;
+
+    --canvas: 247 247 251;
+    --canvas-deep: 236 237 245;
+    --canvas-raised: 255 255 255;
+    --canvas-slate: 238 238 242;
+    --surface: 255 255 255;
+
+    --ink: 24 26 46;
+    --ink-soft: 58 61 88;
+    --ink-muted: 104 108 136;
+    --ink-faint: 130 134 160;
+
+    --overlay: 24 26 46;
+    --focus: 76 79 150;
+    --nav-idle: 122 126 152;
+    --theme-color: #f7f7fb;
   }
 }
 
@@ -48,7 +125,7 @@
 
   /* A single, consistent focus treatment for keyboard users across the app. */
   :focus-visible {
-    outline: 2px solid #b3b6ff;
+    outline: 2px solid rgb(var(--focus));
     outline-offset: 2px;
     border-radius: 6px;
   }

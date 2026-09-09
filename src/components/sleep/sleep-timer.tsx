@@ -52,7 +52,7 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
   const elapsed = total - remaining;
 
   return (
-    <div className="rounded-tile bg-[#141733] p-4">
+    <div className="rounded-tile bg-surface p-4">
       <div className="flex items-center justify-between gap-4">
         <div>
           <p className="text-[11px] leading-none text-ink-muted">Wind down timer</p>
@@ -66,7 +66,7 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
             type="button"
             onClick={() => choosePreset(minutes)}
             aria-label="Reset timer"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             <RotateCcw className="h-[18px] w-[18px]" strokeWidth={1.7} />
           </button>
@@ -75,7 +75,7 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
             onClick={() => setRunning((current) => !current)}
             disabled={remaining === 0}
             aria-label={running ? 'Pause timer' : 'Start timer'}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-canvas-deep transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             {running ? (
               <Pause className="h-[18px] w-[18px] fill-canvas-deep" />
@@ -96,10 +96,10 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
             onClick={() => choosePreset(preset)}
             aria-pressed={minutes === preset}
             className={cn(
-              'rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+              'rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
               minutes === preset
                 ? 'bg-action-pill text-white'
-                : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+                : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
             )}
           >
             {preset} min

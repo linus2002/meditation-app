@@ -15,7 +15,7 @@ export function DeviceStage({ children }: { children: ReactNode }) {
   return (
     <>
       <div className="min-h-stage flex w-full justify-center bg-canvas-deep desktop:hidden">
-        <div className="rail h-stage relative flex w-full max-w-[430px] flex-col overflow-y-auto overflow-x-hidden overscroll-contain bg-canvas sm:border-x sm:border-white/[0.06]">
+        <div className="rail h-stage relative flex w-full max-w-[430px] flex-col overflow-y-auto overflow-x-hidden overscroll-contain bg-canvas sm:border-x sm:border-overlay/[0.06]">
           {children}
         </div>
       </div>
@@ -29,9 +29,9 @@ export function DeviceStage({ children }: { children: ReactNode }) {
 
 function UnsupportedScreen() {
   return (
-    <main className="w-full max-w-[430px] rounded-[2rem] border border-white/10 bg-canvas/85 px-8 py-10 text-center shadow-[0_45px_100px_-35px_rgba(0,0,0,0.8)] backdrop-blur-xl">
+    <main className="w-full max-w-[430px] rounded-[2rem] border border-overlay/10 bg-canvas/85 px-8 py-10 text-center shadow-[0_45px_100px_-35px_rgba(0,0,0,0.8)] backdrop-blur-xl">
       <div aria-hidden="true" className="flex items-center justify-center gap-3">
-        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.06]">
+        <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-overlay/[0.06]">
           <Smartphone className="h-5 w-5 text-ink-soft" strokeWidth={1.6} />
         </span>
         <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-action-pill">

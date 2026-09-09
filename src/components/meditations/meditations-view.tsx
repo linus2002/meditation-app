@@ -9,6 +9,7 @@ import { RatedTile } from '@/components/meditations/rated-tile';
 import { SoundscapeGrid } from '@/components/meditations/soundscape-grid';
 import { TargetCard } from '@/components/meditations/target-card';
 import { MeditationCard } from '@/components/shared/meditation-card';
+import { RatingStars } from '@/components/shared/rating-stars';
 import { SectionTitle } from '@/components/shared/section-title';
 import { StoryCard } from '@/components/stories/story-card';
 import { categories } from '@/data/categories';
@@ -27,8 +28,6 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'stories', label: 'Stories' },
 ];
 
-/** Highest rated first; ties keep the order they are authored in. */
-const topRated = [...meditations].sort((a, b) => b.rating - a.rating);
 
 /**
  * The library: everything the app holds, in one place, split by what kind of
@@ -40,7 +39,51 @@ export function MeditationsView() {
   const [category, setCategory] = React.useState<CategorySlug | 'all'>('all');
   const [storyFilter, setStoryFilter] = React.useState<StoryCategory | 'all'>('all');
 
-  const { favorites, favoriteStories, hydrated } = useApp();
+  const { favorites, favoriteStories, ratings, sessions, hydrated } = useApp();
+
+  /*
+   * There is no server, so there is no community average to rank by — and
+   * inventing one is what this shelf used to do. It now ranks by whatever the
+   * reader has actually given us, in order of how much that is worth: their own
+   * ratings first, then what they have played most, and only failing both a
+   * plain starting point that claims nothing.
+   */
+  const shelf = React.useMemo(() => {
+    if (!hydrated) return null;
+
+    const rated = meditations
+      .filter((item) => ratings[item.id])
+      .sort((a, b) => ratings[b.id] - ratings[a.id]);
+    if (rated.length > 0) {
+      return {
+        title: 'Your highest rated',
+        items: rated,
+        meta: (item: (typeof meditations)[number]) => (
+          <RatingStars value={ratings[item.id]} size="sm" />
+        ),
+      };
+    }
+
+    const plays = new Map<string, number>();
+    for (const record of sessions) {
+      plays.set(record.meditationId, (plays.get(record.meditationId) ?? 0) + 1);
+    }
+    const played = meditations
+      .filter((item) => plays.has(item.id))
+      .sort((a, b) => (plays.get(b.id) ?? 0) - (plays.get(a.id) ?? 0));
+    if (played.length > 0) {
+      return {
+        title: 'You come back to these',
+        items: played,
+        meta: (item: (typeof meditations)[number]) => {
+          const count = plays.get(item.id) ?? 0;
+          return `${count} ${count === 1 ? 'sit' : 'sits'}`;
+        },
+      };
+    }
+
+    return { title: 'Start here', items: meditations, meta: () => null };
+  }, [hydrated, ratings, sessions]);
 
   const savedMeditations = hydrated
     ? meditations.filter((item) => favorites.includes(item.id))
@@ -77,7 +120,7 @@ export function MeditationsView() {
               onClick={() => setTab(id)}
               className={cn(
                 'relative shrink-0 pb-2.5 pt-1 text-[15px] font-medium leading-none transition-colors',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 selected ? 'text-ink' : 'text-ink-faint hover:text-ink-muted',
               )}
             >
@@ -92,7 +135,7 @@ export function MeditationsView() {
           );
         })}
       </div>
-      <div aria-hidden="true" className="mx-5 h-px bg-white/[0.07]" />
+      <div aria-hidden="true" className="mx-5 h-px bg-overlay/[0.07]" />
 
       {tab === 'all' ? (
         <>
@@ -116,7 +159,7 @@ export function MeditationsView() {
               </ul>
             ) : (
               <div className="mt-4 flex items-center gap-4">
-                <span className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full border border-dashed border-white/20">
+                <span className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full border border-dashed border-overlay/20">
                   <Bookmark className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />
                 </span>
                 <p className="text-[14px] leading-snug text-ink-muted">
@@ -128,11 +171,15 @@ export function MeditationsView() {
 
           <section className="mt-8 px-5">
             <SectionTitle actionHref="/discover" actionLabel="See all">
-              Top rated
+              {shelf?.title ?? 'Start here'}
             </SectionTitle>
             <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-5">
-              {topRated.slice(0, 6).map((meditation) => (
-                <RatedTile key={meditation.id} meditation={meditation} />
+              {(shelf?.items ?? meditations).slice(0, 6).map((meditation) => (
+                <RatedTile
+                  key={meditation.id}
+                  meditation={meditation}
+                  meta={shelf?.meta(meditation)}
+                />
               ))}
             </ul>
           </section>
@@ -150,7 +197,7 @@ export function MeditationsView() {
                       setCategory(item.slug);
                       setTab('meditation');
                     }}
-                    className="group relative flex h-[88px] flex-col justify-end overflow-hidden rounded-tile p-3 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                    className="group relative flex h-[88px] flex-col justify-end overflow-hidden rounded-tile p-3 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                   >
                     <Image
                       src={item.image}
@@ -189,7 +236,7 @@ export function MeditationsView() {
             <button
               type="button"
               onClick={() => setTab('soundscape')}
-              className="mt-3 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="mt-3 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               All eight soundscapes
             </button>
@@ -205,7 +252,7 @@ export function MeditationsView() {
             <button
               type="button"
               onClick={() => setTab('stories')}
-              className="mt-3 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="mt-3 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               All {stories.length} stories
             </button>
@@ -232,10 +279,10 @@ export function MeditationsView() {
                   onClick={() => setCategory(item.slug)}
                   className={cn(
                     'shrink-0 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                     selected
                       ? 'bg-action-pill text-white'
-                      : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+                      : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
                   )}
                 >
                   {item.name}
@@ -290,10 +337,10 @@ export function MeditationsView() {
                   onClick={() => setStoryFilter(item.value)}
                   className={cn(
                     'shrink-0 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                     selected
                       ? 'bg-action-pill text-white'
-                      : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+                      : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
                   )}
                 >
                   {item.label}

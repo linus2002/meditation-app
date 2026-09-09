@@ -28,7 +28,7 @@ export function ScreenHeader({ eyebrow, title, action, className }: ScreenHeader
           type="button"
           onClick={() => router.back()}
           aria-label="Go back"
-          className="-mt-1.5 flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="-mt-1.5 flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <ChevronsLeft className="h-[22px] w-[22px]" strokeWidth={1.75} />
         </button>

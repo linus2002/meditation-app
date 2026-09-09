@@ -61,14 +61,14 @@ export function ReflectionCard() {
 
   // Placeholder of the same height, so the card does not jump on hydration.
   if (!hydrated || !today || !prompt) {
-    return <div className="h-[188px] animate-pulse rounded-tile bg-white/[0.05]" />;
+    return <div className="h-[188px] animate-pulse rounded-tile bg-overlay/[0.05]" />;
   }
 
   const canSave = answer.trim().length > 0 && weight !== null;
   const remaining = MAX_REFLECTION_LENGTH - answer.length;
 
   return (
-    <div className="rounded-tile bg-[#141733] p-4">
+    <div className="rounded-tile bg-surface p-4">
       <p className="text-[14px] font-medium leading-snug text-ink">{prompt.question}</p>
 
       {isOpen ? (
@@ -83,8 +83,8 @@ export function ReflectionCard() {
             rows={3}
             placeholder="A sentence is plenty."
             className={cn(
-              'mt-3 w-full resize-none rounded-xl bg-white/[0.05] px-3.5 py-3 text-[13px] leading-relaxed text-ink',
-              'placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
+              'mt-3 w-full resize-none rounded-xl bg-overlay/[0.05] px-3.5 py-3 text-[13px] leading-relaxed text-ink',
+              'placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/40',
             )}
           />
 
@@ -109,7 +109,7 @@ export function ReflectionCard() {
               <button
                 type="button"
                 onClick={() => setEditing(false)}
-                className="h-11 rounded-full px-4 text-[13px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="h-11 rounded-full px-4 text-[13px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
               >
                 Cancel
               </button>
@@ -128,7 +128,7 @@ export function ReflectionCard() {
           </p>
 
           <div className="mt-3.5 flex items-center justify-between gap-3">
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/[0.07] px-3 py-1.5 text-[11px] text-ink-soft">
+            <span className="inline-flex items-center gap-2 rounded-full bg-overlay/[0.07] px-3 py-1.5 text-[11px] text-ink-soft">
               <span aria-hidden="true" className="h-2 w-2 rounded-full bg-action-pill" />
               {weightLabel(existing?.weight ?? 3)}
             </span>
@@ -136,7 +136,7 @@ export function ReflectionCard() {
             <button
               type="button"
               onClick={() => setEditing(true)}
-              className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <PencilLine className="h-3.5 w-3.5" strokeWidth={1.8} />
               Edit

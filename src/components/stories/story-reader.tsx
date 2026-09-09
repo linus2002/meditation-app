@@ -95,7 +95,7 @@ export function StoryReader({ story }: { story: Story }) {
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,16,48,0.78)_0%,rgba(14,16,48,0.93)_38%,#0E1030_68%)]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgb(var(--canvas)/0.78)_0%,rgb(var(--canvas)/0.93)_38%,rgb(var(--canvas))_68%)]"
         />
       </div>
 
@@ -107,7 +107,7 @@ export function StoryReader({ story }: { story: Story }) {
           type="button"
           onClick={() => router.back()}
           aria-label="Go back"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
         </button>
@@ -139,7 +139,7 @@ export function StoryReader({ story }: { story: Story }) {
             />
           </>
         ) : (
-          <p className="rounded-tile bg-[#141733] px-4 py-3.5 text-[12px] leading-relaxed text-ink-muted">
+          <p className="rounded-tile bg-surface px-4 py-3.5 text-[12px] leading-relaxed text-ink-muted">
             This browser cannot read aloud, so the story is here to read yourself. Narration works
             in Safari, Chrome and Edge.
           </p>
@@ -149,12 +149,12 @@ export function StoryReader({ story }: { story: Story }) {
       {/* Ambience and wind-down */}
       {narration.supported ? (
         <div className="relative mt-6 px-6">
-          <div className="rounded-tile bg-[#141733] p-4">
+          <div className="rounded-tile bg-surface p-4">
             <button
               type="button"
               onClick={toggleAmbient}
               aria-pressed={ambient}
-              className="flex w-full items-center justify-between gap-3 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="flex w-full items-center justify-between gap-3 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <span className="min-w-0">
                 <span className="block text-[13px] font-medium leading-tight text-ink">
@@ -167,12 +167,12 @@ export function StoryReader({ story }: { story: Story }) {
               <span
                 className={cn(
                   'flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors',
-                  ambient ? 'bg-action-pill' : 'bg-white/12',
+                  ambient ? 'bg-action-pill' : 'bg-overlay/12',
                 )}
               >
                 <span
                   className={cn(
-                    'block h-5 w-5 rounded-full bg-white transition-transform',
+                    'block h-5 w-5 rounded-full bg-ink transition-transform',
                     ambient ? 'translate-x-5' : 'translate-x-0',
                   )}
                 />
@@ -207,10 +207,10 @@ export function StoryReader({ story }: { story: Story }) {
                       }}
                       className={cn(
                         'rounded-full px-3.5 py-2 text-[12.5px] font-medium transition-colors duration-150',
-                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                         selected
                           ? 'bg-action-pill text-white'
-                          : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+                          : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
                       )}
                     >
                       {option.label}

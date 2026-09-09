@@ -71,7 +71,7 @@ export default function ProfilePage() {
 
       <section className="mt-5 grid grid-cols-3 gap-2.5 px-5">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-tile bg-[#141733] px-2 py-3.5 text-center">
+          <div key={stat.label} className="rounded-tile bg-surface px-2 py-3.5 text-center">
             <p className="whitespace-nowrap text-[18px] font-semibold leading-none tracking-[-0.02em] text-ink">
               {stat.value}
             </p>
@@ -84,7 +84,7 @@ export default function ProfilePage() {
         <SectionTitle actionHref="/activities" actionLabel="Details">
           This Week
         </SectionTitle>
-        <div className="mt-3 rounded-tile bg-[#141733] p-4">
+        <div className="mt-3 rounded-tile bg-surface p-4">
           <div className="flex h-[96px] items-end justify-between gap-2">
             {week.map((day) => (
               <div key={day.key} className="flex h-full flex-1 items-end">
@@ -125,9 +125,9 @@ export default function ProfilePage() {
             return (
               <li
                 key={toggle.id}
-                className="flex items-center gap-3.5 rounded-tile bg-[#141733] px-4 py-3.5"
+                className="flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
                   <Icon className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.7} />
                 </span>
                 <div className="min-w-0 flex-1">
@@ -166,9 +166,9 @@ export default function ProfilePage() {
             <li key={href}>
               <Link
                 href={href}
-                className="flex items-center gap-3.5 rounded-tile bg-[#141733] px-4 py-3.5 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
                   <Icon className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.7} />
                 </span>
                 <span className="flex-1 text-[13.5px] font-medium text-ink">{label}</span>

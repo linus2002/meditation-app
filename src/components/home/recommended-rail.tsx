@@ -46,7 +46,7 @@ export function RecommendedRail() {
 
             <Link
               href={`/player/${meditation.id}`}
-              className="mt-4 flex h-[46px] w-full items-center justify-center gap-2.5 rounded-full bg-white text-[14px] font-semibold text-canvas-deep transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="mt-4 flex h-[46px] w-full items-center justify-center gap-2.5 rounded-full bg-ink text-[14px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <Play className="h-[15px] w-[15px] fill-canvas-deep" />
               Start session
@@ -55,7 +55,7 @@ export function RecommendedRail() {
             <Link
               href={`/discover?category=${meditation.category}`}
               aria-label={`More in ${collection}`}
-              className="mx-auto mt-3 flex h-8 w-8 items-center justify-center rounded-full text-white/55 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="mx-auto mt-3 flex h-8 w-8 items-center justify-center rounded-full text-white/55 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <ListMusic className="h-[18px] w-[18px]" strokeWidth={1.8} />
             </Link>

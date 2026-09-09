@@ -44,9 +44,23 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 };
 
+/*
+ * Applies the stored palette before the first paint.
+ *
+ * AppProvider also does this, but only after hydration — which is too late: a
+ * light-mode reader would watch the dark canvas paint and then flip. Reading
+ * the same localStorage key from a blocking inline script is the only way to
+ * have the right colours on the very first frame. It is deliberately tiny and
+ * swallows its own errors, since storage can be unavailable.
+ */
+const themeScript = `try{var s=JSON.parse(localStorage.getItem('serenity.state.v1')||'{}');var l=s&&s.settings&&s.settings.lightMode;document.documentElement.dataset.theme=l?'light':'dark';if(l){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#F7F7FB');}}catch(e){}`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={poppins.variable}>
+    <html lang="en" className={poppins.variable} data-theme="dark">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="bg-canvas font-sans text-ink antialiased">
         <AppProvider>
           <AudioProvider>

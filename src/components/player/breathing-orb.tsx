@@ -23,11 +23,11 @@ export function BreathingOrb({ breath, isPlaying, className }: BreathingOrbProps
       {/* Static guide rings so the orb has something to travel against. */}
       <span
         aria-hidden="true"
-        className="absolute h-full w-full rounded-full border border-white/[0.07]"
+        className="absolute h-full w-full rounded-full border border-overlay/[0.07]"
       />
       <span
         aria-hidden="true"
-        className="absolute h-[78%] w-[78%] rounded-full border border-white/[0.05]"
+        className="absolute h-[78%] w-[78%] rounded-full border border-overlay/[0.05]"
       />
 
       <span

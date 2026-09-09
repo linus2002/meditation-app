@@ -31,7 +31,6 @@ export const meditations: Meditation[] = [
     image: photos.meditationSunrise,
     imageAlt: 'A person sitting cross-legged on a jetty at sunrise',
     soundscape: 'bowl',
-    rating: 4.9,
     isDailyGoal: true,
     description:
       'A guided thirty minute sit that settles the breath, softens the jaw and returns attention to the body whenever it drifts.',
@@ -48,7 +47,6 @@ export const meditations: Meditation[] = [
     image: photos.ancientTree,
     imageAlt: 'Sunlight breaking through the canopy of a broad old tree',
     soundscape: 'pad',
-    rating: 4.7,
     description:
       'Ten minutes to clear the noise before your first session. Nothing to achieve, nothing to fix.',
     breathPattern: softBreath,
@@ -64,7 +62,6 @@ export const meditations: Meditation[] = [
     image: photos.morningField,
     imageAlt: 'Sun rising over an open field',
     soundscape: 'forest',
-    rating: 4.8,
     description:
       'Set an intention while the day is still quiet, then carry that steadiness into the hours ahead.',
     breathPattern: boxBreath,
@@ -80,7 +77,6 @@ export const meditations: Meditation[] = [
     image: photos.duskRidge,
     imageAlt: 'Layered mountain ridges at dusk',
     soundscape: 'rain',
-    rating: 4.9,
     description:
       'A grounding practice for the moments when everything feels loud at once.',
     breathPattern: calmBreath,
@@ -96,7 +92,6 @@ export const meditations: Meditation[] = [
     image: photos.openArms,
     imageAlt: 'A person standing with arms open against a low sun',
     soundscape: 'pad',
-    rating: 4.8,
     description:
       'Turn toward what is already going well and let appreciation do the rest of the work.',
     breathPattern: softBreath,
@@ -112,7 +107,6 @@ export const meditations: Meditation[] = [
     image: photos.forestBridge,
     imageAlt: 'A wooden footbridge through dense green forest',
     soundscape: 'drone',
-    rating: 4.6,
     description:
       'Move slowly through the body, unclenching each place that has been holding on all day.',
     breathPattern: calmBreath,
@@ -128,7 +122,6 @@ export const meditations: Meditation[] = [
     image: photos.oceanWave,
     imageAlt: 'A slow wave rolling over open water',
     soundscape: 'ocean',
-    rating: 4.9,
     description:
       'Match your breath to a long, unhurried tide until the rhythm carries itself.',
     breathPattern: softBreath,
@@ -144,7 +137,6 @@ export const meditations: Meditation[] = [
     image: photos.mountainValley,
     imageAlt: 'A wide mountain valley under clear sky',
     soundscape: 'forest',
-    rating: 4.7,
     description:
       'An even four-count square that steadies the nervous system in under ten minutes.',
     breathPattern: boxBreath,
@@ -160,7 +152,6 @@ export const meditations: Meditation[] = [
     image: photos.starfield,
     imageAlt: 'A dense field of stars in deep space',
     soundscape: 'night',
-    rating: 4.9,
     isSleep: true,
     description:
       'A slow, low-voiced story written to be half-heard as you fall asleep.',
@@ -177,7 +168,6 @@ export const meditations: Meditation[] = [
     image: photos.milkyWay,
     imageAlt: 'The Milky Way arcing above a mountain range',
     soundscape: 'drone',
-    rating: 4.8,
     isSleep: true,
     description:
       'Put the day down deliberately so it does not follow you into bed.',
@@ -194,7 +184,6 @@ export const meditations: Meditation[] = [
     image: photos.nightSky,
     imageAlt: 'A dark night sky above a faint horizon',
     soundscape: 'rain',
-    rating: 4.7,
     isSleep: true,
     description: 'An hour of steady rain against a window, with no narration at all.',
     breathPattern: softBreath,
@@ -210,7 +199,6 @@ export const meditations: Meditation[] = [
     image: photos.sunriseHills,
     imageAlt: 'Sun cresting a line of rolling hills',
     soundscape: 'chimes',
-    rating: 4.6,
     description: 'A short reset for the middle of a long day.',
     breathPattern: softBreath,
   },

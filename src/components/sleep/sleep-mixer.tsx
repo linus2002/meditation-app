@@ -26,7 +26,7 @@ export function SleepMixer() {
 
   if (!supported) {
     return (
-      <div className="rounded-tile bg-[#141733] p-4">
+      <div className="rounded-tile bg-surface p-4">
         <p className="text-[12px] leading-relaxed text-ink-muted">
           This browser does not support the Web Audio API, so ambient sound is unavailable.
         </p>
@@ -35,7 +35,7 @@ export function SleepMixer() {
   }
 
   return (
-    <div className="rounded-tile bg-[#141733] p-4">
+    <div className="rounded-tile bg-surface p-4">
       <div className="grid grid-cols-2 gap-2.5">
         {sleepSoundscapeIds.map((id) => {
           const meta = soundscapes[id];
@@ -49,8 +49,8 @@ export function SleepMixer() {
               onClick={() => (active ? stop(1.5) : void play(id))}
               aria-pressed={active}
               className={cn(
-                'flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
-                active ? 'bg-action-pill text-white' : 'bg-white/[0.06] text-ink hover:bg-white/[0.1]',
+                'flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+                active ? 'bg-action-pill text-white' : 'bg-overlay/[0.06] text-ink hover:bg-overlay/[0.1]',
               )}
             >
               <Icon

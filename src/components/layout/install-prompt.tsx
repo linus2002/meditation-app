@@ -63,7 +63,7 @@ export function InstallPrompt() {
 
   if (installed) {
     return (
-      <p className="flex items-center gap-2 rounded-tile bg-[#141733] px-4 py-3.5 text-[12.5px] text-ink-muted">
+      <p className="flex items-center gap-2 rounded-tile bg-surface px-4 py-3.5 text-[12.5px] text-ink-muted">
         <Check className="h-4 w-4 shrink-0 text-aurora-cyan" strokeWidth={2.2} />
         Installed on this device
       </p>
@@ -72,8 +72,8 @@ export function InstallPrompt() {
 
   if (iosHint) {
     return (
-      <div className="flex items-center gap-3.5 rounded-tile bg-[#141733] px-4 py-3.5">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/[0.06]">
+      <div className="flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
           <Share className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.8} />
         </span>
         <p className="min-w-0 flex-1 text-[11.5px] leading-snug text-ink-muted">
@@ -97,7 +97,7 @@ export function InstallPrompt() {
           if (outcome === 'accepted') setInstalled(true);
           setDeferred(null);
         }}
-        className="flex w-full items-center gap-3.5 rounded-tile bg-[#141733] px-4 py-3.5 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+        className="flex w-full items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-action-pill">
           <Download className="h-[17px] w-[17px] text-white" strokeWidth={1.8} />

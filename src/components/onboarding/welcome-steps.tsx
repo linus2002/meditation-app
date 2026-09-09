@@ -30,7 +30,7 @@ export function WelcomeIntro({ onNext, onSkip }: { onNext: () => void; onSkip: (
         <button
           type="button"
           onClick={onNext}
-          className="mt-[clamp(26px,5vh,44px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-white text-[15px] font-semibold text-canvas-deep transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
+          className="mt-[clamp(26px,5vh,44px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-ink text-[15px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
         >
           Get Started
         </button>
@@ -42,7 +42,7 @@ export function WelcomeIntro({ onNext, onSkip }: { onNext: () => void; onSkip: (
         <button
           type="button"
           onClick={onSkip}
-          className="mt-[clamp(10px,1.9vh,16px)] h-[clamp(50px,7vh,56px)] w-full rounded-full border border-white/30 text-[15px] font-semibold text-ink transition-colors duration-150 hover:border-white/55 hover:bg-white/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="mt-[clamp(10px,1.9vh,16px)] h-[clamp(50px,7vh,56px)] w-full rounded-full border border-overlay/30 text-[15px] font-semibold text-ink transition-colors duration-150 hover:border-overlay/55 hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           Skip the tour
         </button>
@@ -110,7 +110,7 @@ export function WelcomeLibrary({ onNext }: { onNext: () => void }) {
         <button
           type="button"
           onClick={onNext}
-          className="mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-white text-[15px] font-semibold text-canvas-deep transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
+          className="mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-ink text-[15px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
         >
           Next
         </button>

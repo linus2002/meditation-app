@@ -12,10 +12,16 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 
+/*
+ * Prompts, not reports. Nothing here quotes a figure back at the reader: the
+ * app has no scheduler behind these yet, and a "12 day streak" or a deep-sleep
+ * percentage that was written at build time is exactly the kind of invented
+ * number the activities and sleep screens were cleaned up to stop showing.
+ */
 const notifications = [
-  { id: 'streak', title: 'Twelve day streak', body: 'You have shown up every morning this month.' },
-  { id: 'goal', title: 'Daily goal ready', body: 'Meditation, 30 minutes, whenever you are.' },
-  { id: 'sleep', title: 'Sleep report is in', body: 'Last night averaged 7h 24m with deep rest at 25%.' },
+  { id: 'goal', title: 'Today is waiting', body: 'Thirty minutes, whenever you are ready.' },
+  { id: 'sleep', title: 'Log last night', body: 'Add bedtime and wake time to fill in your week.' },
+  { id: 'reflect', title: "Today's reflection", body: 'One question, one sentence, whenever it suits.' },
 ];
 
 /**
@@ -32,14 +38,14 @@ export function NotificationBell({ className }: { className?: string }) {
       </IconButton>
 
       <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent side="bottom" className="max-h-[70%] border-white/10">
+        <SheetContent side="bottom" className="max-h-[70%] border-overlay/10">
           <SheetHeader className="pb-2">
             <SheetTitle>Notifications</SheetTitle>
             <SheetDescription>Three updates from the last day.</SheetDescription>
           </SheetHeader>
           <ul className="space-y-2 px-6 pb-8">
             {notifications.map((item) => (
-              <li key={item.id} className="rounded-tile bg-white/[0.05] px-4 py-3">
+              <li key={item.id} className="rounded-tile bg-overlay/[0.05] px-4 py-3">
                 <p className="text-[13px] font-semibold text-ink">{item.title}</p>
                 <p className="mt-0.5 text-[12px] leading-relaxed text-ink-muted">{item.body}</p>
               </li>

@@ -41,7 +41,7 @@ export function DiscoverView() {
       <ScreenHeader eyebrow="Sessions" title="Discover" />
 
       <div className="mt-5 px-5">
-        <div className="flex h-12 items-center gap-3 rounded-full border border-white/[0.12] bg-white/[0.04] px-4 focus-within:border-white/30">
+        <div className="flex h-12 items-center gap-3 rounded-full border border-overlay/[0.12] bg-overlay/[0.04] px-4 focus-within:border-overlay/30">
           <Search className="h-4 w-4 shrink-0 text-ink-muted" strokeWidth={1.7} />
           <input
             type="search"
@@ -71,7 +71,7 @@ export function DiscoverView() {
           aria-pressed={!activeCategory}
           className={cn(
             'shrink-0 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
-            !activeCategory ? 'bg-action-pill text-white' : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+            !activeCategory ? 'bg-action-pill text-white' : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
           )}
         >
           All
@@ -86,7 +86,7 @@ export function DiscoverView() {
               aria-pressed={isActive}
               className={cn(
                 'shrink-0 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
-                isActive ? 'bg-action-pill text-white' : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+                isActive ? 'bg-action-pill text-white' : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
               )}
             >
               {category.name}
@@ -98,7 +98,7 @@ export function DiscoverView() {
       <div className="mt-6 px-5">
         <Link
           href="/timer"
-          className="group mb-4 flex items-center gap-3.5 rounded-tile bg-[#141733] p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="group mb-4 flex items-center gap-3.5 rounded-tile bg-surface p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-action-pill">
             <Timer className="h-5 w-5 text-white" strokeWidth={1.8} />
@@ -116,7 +116,7 @@ export function DiscoverView() {
 
         <Link
           href="/stories"
-          className="group mb-4 flex items-center gap-3.5 rounded-tile bg-[#141733] p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="group mb-4 flex items-center gap-3.5 rounded-tile bg-surface p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3FD9C9_0%,#7CA9E8_55%,#F07BC8_100%)]">
             <BookOpen className="h-5 w-5 text-white" strokeWidth={1.8} />
@@ -163,7 +163,7 @@ export function DiscoverView() {
                 key={category.slug}
                 type="button"
                 onClick={() => selectCategory(category.slug)}
-                className="group relative flex h-[88px] flex-col justify-end overflow-hidden rounded-tile p-3 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+                className="group relative flex h-[88px] flex-col justify-end overflow-hidden rounded-tile p-3 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
               >
                 <Image
                   src={category.image}

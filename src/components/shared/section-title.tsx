@@ -18,7 +18,7 @@ export function SectionTitle({ children, actionHref, actionLabel, className }: S
       {actionHref && actionLabel ? (
         <Link
           href={actionHref}
-          className="text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           {actionLabel}
         </Link>

@@ -59,14 +59,14 @@ export function BottomNav() {
                 className={cn(
                   'flex w-full flex-col items-center gap-1 rounded-2xl px-0.5 py-1.5',
                   'transition-transform duration-100',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                   isActive ? 'scale-105' : 'scale-100 hover:scale-105',
                 )}
               >
                 <Icon
                   className="h-[22px] w-[22px]"
                   strokeWidth={isActive ? 2 : 1.8}
-                  stroke={isActive ? 'url(#nav-active-gradient)' : '#8A8DA8'}
+                  stroke={isActive ? 'url(#nav-active-gradient)' : 'rgb(var(--nav-idle))'}
                   fill="none"
                 />
                 {/* The active label picks up the same gradient as its icon. */}
@@ -75,7 +75,7 @@ export function BottomNav() {
                     'whitespace-nowrap text-[11px] font-medium leading-none tracking-[0.01em]',
                     isActive
                       ? 'bg-nav-active bg-clip-text text-transparent'
-                      : 'text-[#8A8DA8]',
+                      : 'text-[rgb(var(--nav-idle))]',
                   )}
                 >
                   {label}

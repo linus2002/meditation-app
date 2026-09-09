@@ -25,7 +25,7 @@ export function VolumeControl({ className }: { className?: string }) {
         onClick={toggleMuted}
         aria-label={muted ? 'Unmute sound' : 'Mute sound'}
         aria-pressed={muted}
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         <Icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
       </button>

@@ -53,7 +53,7 @@ export function DateStrip({ days, selectedDate, onSelect }: DateStripProps) {
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
               'relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[15px] transition-colors duration-200',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
               isSelected ? 'font-medium text-ink' : 'font-normal text-ink-faint hover:text-ink-soft',
             )}
           >

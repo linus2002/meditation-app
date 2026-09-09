@@ -29,7 +29,7 @@ export default function FavoritesPage() {
         {!hydrated ? (
           <ul className="space-y-2.5" aria-hidden="true">
             {[0, 1, 2].map((index) => (
-              <li key={index} className="h-[80px] animate-pulse rounded-tile bg-white/[0.05]" />
+              <li key={index} className="h-[80px] animate-pulse rounded-tile bg-overlay/[0.05]" />
             ))}
           </ul>
         ) : saved.length > 0 ? (
@@ -40,7 +40,7 @@ export default function FavoritesPage() {
           </ul>
         ) : (
           <div className="flex flex-col items-center py-10 text-center">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/[0.06]">
+            <span className="flex h-14 w-14 items-center justify-center rounded-full bg-overlay/[0.06]">
               <HeartOff className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />
             </span>
             <p className="mt-4 text-[15px] font-medium text-ink">Nothing saved yet</p>

@@ -54,14 +54,14 @@ export function WeightScale({
               tabIndex={isSelected || (value === null && index === 0) ? 0 : -1}
               onClick={() => onChange(weight.value)}
               onKeyDown={(event) => handleKeyDown(event, index)}
-              className="group flex flex-1 flex-col items-center gap-1.5 rounded-xl py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="group flex flex-1 flex-col items-center gap-1.5 rounded-xl py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <span
                 className={cn(
                   'h-3.5 w-3.5 rounded-full transition-all duration-150',
                   isSelected
                     ? 'scale-110 bg-action-pill'
-                    : 'bg-white/15 group-hover:bg-white/30',
+                    : 'bg-overlay/15 group-hover:bg-overlay/30',
                 )}
               />
               <span

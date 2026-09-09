@@ -27,7 +27,7 @@ export default function ReflectionsPage() {
 
       {hydrated && reflections.length >= 3 ? (
         <section className="mt-6 px-5">
-          <div className="rounded-tile bg-[#141733] p-4">
+          <div className="rounded-tile bg-surface p-4">
             <p className="text-[11px] leading-none text-ink-muted">Recently, most days felt</p>
             <p className="mt-2 text-[22px] font-light leading-none tracking-[-0.02em] text-ink">
               {weightLabel(Math.round(average ?? 3))}
@@ -64,12 +64,12 @@ export default function ReflectionsPage() {
         {!hydrated ? (
           <ul className="mt-3 space-y-2.5">
             {[0, 1, 2].map((index) => (
-              <li key={index} className="h-[96px] animate-pulse rounded-tile bg-white/[0.05]" />
+              <li key={index} className="h-[96px] animate-pulse rounded-tile bg-overlay/[0.05]" />
             ))}
           </ul>
         ) : reflections.length === 0 ? (
-          <div className="mt-3 rounded-tile bg-[#141733] px-4 py-8 text-center">
-            <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06]">
+          <div className="mt-3 rounded-tile bg-surface px-4 py-8 text-center">
+            <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-overlay/[0.06]">
               <NotebookPen className="h-5 w-5 text-ink-soft" strokeWidth={1.6} />
             </span>
             <p className="mt-3.5 text-[13.5px] font-medium text-ink">Nothing written yet</p>
@@ -80,7 +80,7 @@ export default function ReflectionsPage() {
         ) : (
           <ul className="mt-3 space-y-2.5">
             {reflections.map((entry) => (
-              <li key={entry.date} className="rounded-tile bg-[#141733] p-4">
+              <li key={entry.date} className="rounded-tile bg-surface p-4">
                 <div className="flex items-baseline justify-between gap-3">
                   <p className="text-[12px] font-medium leading-none text-ink">
                     {formatEntryDate(entry.date)}
@@ -102,7 +102,7 @@ export default function ReflectionsPage() {
                     aria-label={`Delete the reflection from ${formatEntryDate(entry.date)}`}
                     className={cn(
                       'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[11.5px] text-ink-faint',
-                      'transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                      'transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                     )}
                   >
                     <Trash2 className="h-3.5 w-3.5" strokeWidth={1.8} />

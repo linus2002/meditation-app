@@ -7,6 +7,7 @@ import { ArrowRight, Check, Flame } from 'lucide-react';
 
 import { ReflectionCard } from '@/components/reflections/reflection-card';
 import { GradientButton } from '@/components/shared/gradient-button';
+import { RatingStars } from '@/components/shared/rating-stars';
 import { toDateKey } from '@/lib/date';
 import { DAILY_GOAL_MINUTES } from '@/data/stats';
 import { formatMinutesLabel } from '@/lib/format';
@@ -22,6 +23,8 @@ interface SessionCompleteProps {
   onAgain: () => void;
   /** Offered as the next thing to do, if there is one worth offering. */
   nextUp?: Meditation | null;
+  /** The session just finished, when there is one — the timer has none. */
+  rated?: Meditation | null;
   className?: string;
 }
 
@@ -38,9 +41,10 @@ export function SessionComplete({
   againLabel,
   onAgain,
   nextUp,
+  rated,
   className,
 }: SessionCompleteProps) {
-  const { sessions, reflections, hydrated } = useApp();
+  const { sessions, reflections, ratings, rateMeditation, hydrated } = useApp();
 
   // The local date is resolved on the client; these pages are prerendered.
   const [today, setToday] = React.useState<string | null>(null);
@@ -74,7 +78,7 @@ export function SessionComplete({
 
       {/* Where the day now stands. */}
       {hydrated && day ? (
-        <div className="mt-6 rounded-tile bg-[#141733] p-4">
+        <div className="mt-6 rounded-tile bg-surface p-4">
           <div className="flex items-baseline justify-between gap-3">
             <p className="text-[12px] leading-none text-ink-muted">Today</p>
             <p className="text-[12px] leading-none text-ink-soft">
@@ -82,7 +86,7 @@ export function SessionComplete({
             </p>
           </div>
 
-          <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+          <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-overlay/10">
             <div
               className="h-full rounded-full bg-action-pill transition-[width] duration-700 ease-out"
               style={{ width: `${percent}%` }}
@@ -103,6 +107,29 @@ export function SessionComplete({
         </div>
       ) : null}
 
+      {/*
+        * The only place a rating is asked for, and only for a guided session —
+        * the unguided timer has nothing to rate. Ratings are the reader's own
+        * and go nowhere; the library shelf is built from exactly these.
+        */}
+      {hydrated && rated ? (
+        <div className="mt-6 rounded-tile bg-surface p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[12.5px] font-medium leading-tight text-ink">How was that?</p>
+              <p className="mt-0.5 truncate text-[11.5px] leading-tight text-ink-faint">
+                {ratings[rated.id] ? 'Tap the same star to clear it.' : 'Only you ever see this.'}
+              </p>
+            </div>
+            <RatingStars
+              value={ratings[rated.id]}
+              onChange={(score) => rateMeditation(rated.id, score)}
+              label={`Rate ${rated.title}`}
+            />
+          </div>
+        </div>
+      ) : null}
+
       {/* The reflection, only while it is still unwritten. */}
       {hydrated && !reflectionWritten ? (
         <div className="mt-6">
@@ -116,7 +143,7 @@ export function SessionComplete({
           <p className="mb-3 text-[12px] leading-none text-ink-muted">If you want to keep going</p>
           <Link
             href={`/player/${nextUp.id}`}
-            className="flex items-center gap-3.5 rounded-tile bg-[#141733] p-3 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="flex items-center gap-3.5 rounded-tile bg-surface p-3 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             <span className="relative h-12 w-12 shrink-0 overflow-hidden rounded-xl">
               <Image
@@ -147,7 +174,7 @@ export function SessionComplete({
 
       <Link
         href="/activities"
-        className="mt-3 block w-full rounded-full py-2 text-center text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+        className="mt-3 block w-full rounded-full py-2 text-center text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         See your progress
       </Link>

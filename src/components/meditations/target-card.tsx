@@ -9,7 +9,7 @@ export function TargetCard() {
   return (
     <Link
       href="/activities"
-      className="flex items-center gap-3.5 rounded-tile bg-[#141733] p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+      className="flex items-center gap-3.5 rounded-tile bg-surface p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-aurora-lime/15">
         <Target className="h-6 w-6 text-aurora-lime" strokeWidth={1.9} />

@@ -22,7 +22,7 @@ export const GradientButton = React.forwardRef<HTMLButtonElement, GradientButton
         className={cn(
           'relative inline-flex items-center justify-center rounded-full text-[15px] font-medium text-white',
           'transition-[transform,filter] duration-200 ease-out hover:brightness-105 active:scale-[0.985]',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas',
           'disabled:pointer-events-none disabled:opacity-60',
           tone === 'action' ? 'bg-action-pill shadow-pill' : 'bg-analytics-pill',
           className,

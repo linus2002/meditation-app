@@ -60,10 +60,10 @@ export function OptionRow<T extends string | number | null>({
               onKeyDown={(event) => handleKeyDown(event, index)}
               className={cn(
                 'shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-medium transition-colors duration-150',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 isSelected
                   ? 'bg-action-pill text-white'
-                  : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+                  : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
               )}
             >
               {option.label}

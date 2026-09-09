@@ -11,7 +11,7 @@ import type { Meditation } from '@/types';
  */
 export function MeditationCard({ meditation }: { meditation: Meditation }) {
   return (
-    <li className="relative flex items-center gap-3.5 rounded-tile bg-[#141733] p-3 transition-transform duration-200 hover:-translate-y-0.5">
+    <li className="relative flex items-center gap-3.5 rounded-tile bg-surface p-3 transition-transform duration-200 hover:-translate-y-0.5">
       <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl">
         <Image
           src={meditation.image}
@@ -30,7 +30,7 @@ export function MeditationCard({ meditation }: { meditation: Meditation }) {
       <div className="min-w-0 flex-1">
         <Link
           href={`/player/${meditation.id}`}
-          className="static before:absolute before:inset-0 before:rounded-tile before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="static before:absolute before:inset-0 before:rounded-tile before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <p className="truncate text-[14px] font-semibold leading-tight text-ink">
             {meditation.title}

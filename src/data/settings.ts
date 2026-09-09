@@ -1,7 +1,18 @@
-import { Bell, Moon, Music, Vibrate, Volume2 } from 'lucide-react';
+import { Bell, Moon, Music, Sun, Vibrate, Volume2 } from 'lucide-react';
 import type { SettingToggle } from '@/types';
 
+/**
+ * `lightMode` is read by AppProvider, which puts the matching `data-theme` on
+ * the document — every other id here is a plain stored flag.
+ */
 export const settingToggles: SettingToggle[] = [
+  {
+    id: 'lightMode',
+    label: 'Light mode',
+    description: 'Swap the dark canvas for a white one across the app',
+    icon: Sun,
+    defaultOn: false,
+  },
   {
     id: 'reminders',
     label: 'Daily reminder',

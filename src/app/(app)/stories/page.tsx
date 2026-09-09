@@ -50,10 +50,10 @@ export default function StoriesPage() {
               onClick={() => setFilter(category.value)}
               className={cn(
                 'shrink-0 rounded-full px-4 py-2 text-[12.5px] font-medium transition-colors duration-150',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 selected
                   ? 'bg-action-pill text-white'
-                  : 'bg-white/[0.06] text-ink-muted hover:text-ink',
+                  : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
               )}
             >
               {category.label}

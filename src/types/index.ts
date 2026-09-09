@@ -53,8 +53,6 @@ export interface Meditation {
   imageAlt: string;
   /** The synthesised bed that plays while this session runs. */
   soundscape: SoundscapeId;
-  /** Listener rating out of 5, shown on the library's top-rated grid. */
-  rating: number;
   /** Marks the "Daily Goals" entry surfaced on the home screen. */
   isDailyGoal?: boolean;
   /** Sleep-specific sessions surface on the sleep screen. */
@@ -98,12 +96,33 @@ export interface DaySummary {
   totalTime: string;
 }
 
+/**
+ * One night the reader wrote down. Everything is self-reported — a phone in
+ * another room measures nothing — so there is no field here that the app would
+ * have to invent, and `deepSleepHours` is gone for exactly that reason.
+ */
+export interface SleepLog {
+  /** The morning you woke, `YYYY-MM-DD`. One entry per date. */
+  date: string;
+  /** Local clock, `HH:MM`. Usually the evening before `date`. */
+  bedtime: string;
+  wakeTime: string;
+  /** 1-5: how rested you felt, not a measurement. */
+  quality: number;
+  updatedAt: number;
+}
+
+/** One column of the sleep chart, derived from the logs. */
 export interface SleepNight {
-  /** Short weekday label, e.g. "Mon". */
+  /** `YYYY-MM-DD` of the morning. */
+  key: string;
+  /** Single-letter weekday. */
   label: string;
   hours: number;
+  /** 0-1, rescaled from the stored 1-5. */
   quality: number;
-  deepSleepHours: number;
+  /** False when the night has no entry, so the gap can be drawn as a gap. */
+  logged: boolean;
 }
 
 export interface UserProfile {

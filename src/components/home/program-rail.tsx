@@ -32,7 +32,7 @@ export function ProgramRail() {
               />
               <span
                 aria-hidden="true"
-                className="absolute inset-0 rounded-[16px] ring-1 ring-inset ring-white/10 group-focus-visible:ring-2 group-focus-visible:ring-white"
+                className="absolute inset-0 rounded-[16px] ring-1 ring-inset ring-focus/10 group-focus-visible:ring-2 group-focus-visible:ring-focus"
               />
 
               <span

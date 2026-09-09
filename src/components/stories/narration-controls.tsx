@@ -73,7 +73,7 @@ export function NarrationControls({
           type="button"
           onClick={() => skip(-SKIP_SECONDS)}
           aria-label={`Back ${SKIP_SECONDS} seconds`}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <RotateCcw className="h-[22px] w-[22px]" strokeWidth={1.6} />
         </button>
@@ -88,7 +88,7 @@ export function NarrationControls({
           }}
           disabled={!narration.supported}
           aria-label={playing ? 'Pause narration' : 'Play narration'}
-          className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-white text-canvas-deep shadow-[0_10px_30px_-8px_rgba(255,255,255,0.35)] transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-ink text-canvas shadow-[0_10px_30px_-8px_rgba(255,255,255,0.35)] transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           {playing ? (
             <Pause className="h-7 w-7 fill-canvas-deep" />
@@ -101,7 +101,7 @@ export function NarrationControls({
           type="button"
           onClick={() => skip(SKIP_SECONDS)}
           aria-label={`Forward ${SKIP_SECONDS} seconds`}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <RotateCw className="h-[22px] w-[22px]" strokeWidth={1.6} />
         </button>
@@ -112,7 +112,7 @@ export function NarrationControls({
           type="button"
           onClick={() => narration.setVolume(narration.volume === 0 ? 1 : 0)}
           aria-label={narration.volume === 0 ? 'Unmute narration' : 'Mute narration'}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <VolumeIcon className="h-[18px] w-[18px]" strokeWidth={1.7} />
         </button>

@@ -150,7 +150,7 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,16,48,0.74)_0%,rgba(14,16,48,0.9)_42%,rgba(14,16,48,0.97)_72%,#0E1030_100%)]"
+          className="absolute inset-0 bg-[linear-gradient(180deg,rgb(var(--canvas)/0.74)_0%,rgb(var(--canvas)/0.9)_42%,rgb(var(--canvas)/0.97)_72%,rgb(var(--canvas))_100%)]"
         />
       </div>
 
@@ -162,7 +162,7 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
           type="button"
           onClick={() => router.back()}
           aria-label="Go back"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+          className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
         </button>
@@ -186,6 +186,7 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
             againLabel="Sit again"
             onAgain={sitAgain}
             nextUp={nextUp}
+            rated={meditation}
           />
         </div>
       ) : (

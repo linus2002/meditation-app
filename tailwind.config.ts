@@ -53,19 +53,32 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
-        /* Literal palette sampled from the reference image */
+        /*
+         * Literal palette sampled from the reference image, resolved through
+         * the CSS variables in globals.css so light mode swaps all of it at
+         * once. `<alpha-value>` keeps `bg-canvas/80` and friends working.
+         */
         canvas: {
-          DEFAULT: '#0E1030',
-          deep: '#0A0C24',
-          raised: '#161939',
-          slate: '#2A2A2E',
+          DEFAULT: 'rgb(var(--canvas) / <alpha-value>)',
+          deep: 'rgb(var(--canvas-deep) / <alpha-value>)',
+          raised: 'rgb(var(--canvas-raised) / <alpha-value>)',
+          slate: 'rgb(var(--canvas-slate) / <alpha-value>)',
         },
         ink: {
-          DEFAULT: '#FFFFFF',
-          soft: '#D5D7E6',
-          muted: '#8E92AE',
-          faint: '#5B5F7D',
+          DEFAULT: 'rgb(var(--ink) / <alpha-value>)',
+          soft: 'rgb(var(--ink-soft) / <alpha-value>)',
+          muted: 'rgb(var(--ink-muted) / <alpha-value>)',
+          faint: 'rgb(var(--ink-faint) / <alpha-value>)',
         },
+        /* The raised card fill — was the literal #141733 throughout. */
+        surface: 'rgb(var(--surface) / <alpha-value>)',
+        /*
+         * Hairlines and raised fills are tinted with this rather than with
+         * white, so the same `/[0.06]` alpha lifts a dark surface and darkens
+         * a light one.
+         */
+        overlay: 'rgb(var(--overlay) / <alpha-value>)',
+        focus: 'rgb(var(--focus) / <alpha-value>)',
         aurora: {
           lime: '#E8F27A',
           mint: '#7DD69B',

@@ -51,7 +51,7 @@ interface DeckCardProps {
  */
 export function DeckCard({ card, slot, isFront, onBringToFront }: DeckCardProps) {
   const surfaceClassName =
-    'absolute inset-0 z-10 rounded-card transition-colors duration-200 hover:bg-white/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white';
+    'absolute inset-0 z-10 rounded-card transition-colors duration-200 hover:bg-overlay/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white';
 
   return (
     <article
@@ -104,7 +104,7 @@ export function DeckCard({ card, slot, isFront, onBringToFront }: DeckCardProps)
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`${card.title} options`}
-          className="absolute right-2.5 top-3 z-20 flex h-7 w-6 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-white/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="absolute right-2.5 top-3 z-20 flex h-7 w-6 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-overlay/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
         >
           <MoreVertical className="h-[18px] w-[18px]" strokeWidth={2} />
         </DropdownMenuTrigger>

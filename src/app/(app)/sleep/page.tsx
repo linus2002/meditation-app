@@ -6,27 +6,25 @@ import { ScreenHeader } from '@/components/layout/screen-header';
 import { MeditationCard } from '@/components/shared/meditation-card';
 import { SectionTitle } from '@/components/shared/section-title';
 import { SleepChart } from '@/components/sleep/sleep-chart';
+import { SleepLogCard } from '@/components/sleep/sleep-log-card';
 import { SleepMixer } from '@/components/sleep/sleep-mixer';
 import { SleepTimer } from '@/components/sleep/sleep-timer';
 import { StoryCard } from '@/components/stories/story-card';
 import { sleepSessions } from '@/data/meditations';
-import { sleepSummary, sleepWeek } from '@/data/sleep';
 import { sleepStories } from '@/data/stories';
 import { formatPercent } from '@/lib/format';
+import { recentNights, summariseSleep } from '@/lib/sleep-stats';
+import { useApp } from '@/providers/app-provider';
 import { useAudio } from '@/providers/audio-provider';
-
-const summaryTiles = [
-  { label: 'Avg. sleep', value: `${sleepSummary.averageHours.toFixed(1)}h` },
-  { label: 'Bedtime', value: sleepSummary.bedtime },
-  { label: 'Wake Time', value: sleepSummary.wakeTime },
-  { label: 'Deep sleep', value: formatPercent(sleepSummary.deepSleepShare) },
-];
 
 /** How long the ambience takes to fall away once the wind-down timer ends. */
 const WIND_DOWN_FADE_SECONDS = 20;
 
+const WINDOW_NIGHTS = 7;
+
 export default function SleepPage() {
   const { playing, fadeOut, stop } = useAudio();
+  const { sleepLogs, hydrated } = useApp();
 
   // The timer ends by fading the sound out rather than cutting it, and never
   // rings a bell — the point is to be asleep by then.
@@ -39,13 +37,58 @@ export default function SleepPage() {
   // Ambience should not follow you off the screen.
   React.useEffect(() => () => stop(1.5), [stop]);
 
+  // Resolved on the client: the window of nights depends on the local clock,
+  // and these pages are prerendered at build time.
+  const [today, setToday] = React.useState<Date | null>(null);
+  React.useEffect(() => setToday(new Date()), []);
+
+  const nights = React.useMemo(
+    () => (today ? recentNights(sleepLogs, today, WINDOW_NIGHTS) : []),
+    [sleepLogs, today],
+  );
+  const summary = React.useMemo(
+    () => (today ? summariseSleep(sleepLogs, today, WINDOW_NIGHTS) : null),
+    [sleepLogs, today],
+  );
+
+  const ready = hydrated && Boolean(today);
+
+  /*
+   * An em dash where there is no answer yet. The screen previously showed a
+   * fixed 7.1h and a 22:48 bedtime whatever the reader had done, which made
+   * every other figure in the app harder to believe.
+   */
+  const summaryTiles = [
+    {
+      label: 'Avg. sleep',
+      value: summary?.averageHours != null ? `${summary.averageHours.toFixed(1)}h` : '—',
+    },
+    { label: 'Bedtime', value: summary?.bedtime ?? '—' },
+    { label: 'Wake time', value: summary?.wakeTime ?? '—' },
+    {
+      label: 'How rested',
+      value: summary?.averageQuality != null ? formatPercent(summary.averageQuality) : '—',
+    },
+  ];
+
   return (
     <div className="pb-4">
-      <ScreenHeader eyebrow="Last 7 nights" title="Sleep Analytics" />
+      <ScreenHeader
+        eyebrow={
+          ready
+            ? `${summary?.nights ?? 0} of last ${WINDOW_NIGHTS} nights logged`
+            : `Last ${WINDOW_NIGHTS} nights`
+        }
+        title="Sleep Analytics"
+      />
 
-      <div className="mt-6 grid grid-cols-2 gap-2.5 px-5">
+      <div className="mt-6 px-5">
+        <SleepLogCard />
+      </div>
+
+      <div className="mt-5 grid grid-cols-2 gap-2.5 px-5">
         {summaryTiles.map((tile) => (
-          <div key={tile.label} className="rounded-tile bg-[#141733] px-4 py-3.5">
+          <div key={tile.label} className="rounded-tile bg-surface px-4 py-3.5">
             <p className="text-[11px] leading-none text-ink-muted">{tile.label}</p>
             <p className="mt-2 text-[24px] font-light leading-none tracking-[-0.02em] text-ink">
               {tile.value}
@@ -57,7 +100,11 @@ export default function SleepPage() {
       <div className="mt-5 px-5">
         <SectionTitle>Hours Per Night</SectionTitle>
         <div className="mt-3">
-          <SleepChart nights={sleepWeek} />
+          {ready ? (
+            <SleepChart nights={nights} />
+          ) : (
+            <div className="h-[196px] animate-pulse rounded-tile bg-overlay/[0.05]" aria-hidden="true" />
+          )}
         </div>
       </div>
 

@@ -14,7 +14,7 @@ export function DailyGoalCard({ meditation }: { meditation: Meditation }) {
   return (
     <Link
       href={`/player/${meditation.id}`}
-      className="group relative block overflow-hidden rounded-tile bg-[#141733] shadow-tile transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+      className="group relative block overflow-hidden rounded-tile bg-surface shadow-tile transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
     >
       <div
         aria-hidden="true"

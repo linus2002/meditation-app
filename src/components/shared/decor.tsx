@@ -53,7 +53,7 @@ export function DiagonalSlashes({ className }: { className?: string }) {
             y1={9}
             x2={x - 15}
             y2={63}
-            stroke="#7C819C"
+            stroke="rgb(var(--ink-faint))"
             strokeOpacity={0.46}
             strokeWidth={11}
             strokeLinecap="round"

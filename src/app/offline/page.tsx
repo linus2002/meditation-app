@@ -9,7 +9,7 @@ import { CloudOff } from 'lucide-react';
 export default function OfflinePage() {
   return (
     <div className="relative flex min-h-full flex-col items-center justify-center px-8 text-center">
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-white/[0.06]">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-overlay/[0.06]">
         <CloudOff className="h-6 w-6 text-ink-soft" strokeWidth={1.6} />
       </span>
 
@@ -23,7 +23,7 @@ export default function OfflinePage() {
 
       <Link
         href="/home"
-        className="mt-7 rounded-full bg-action-pill px-6 py-3 text-[13px] font-medium text-white transition-[filter] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+        className="mt-7 rounded-full bg-action-pill px-6 py-3 text-[13px] font-medium text-white transition-[filter] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         Back to Serenity
       </Link>

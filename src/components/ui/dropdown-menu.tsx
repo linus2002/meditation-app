@@ -20,7 +20,7 @@ const DropdownMenuContent = React.forwardRef<
       ref={ref}
       sideOffset={sideOffset}
       className={cn(
-        'z-50 min-w-[11rem] overflow-hidden rounded-xl border border-white/10 bg-canvas-raised/95 p-1.5 text-ink shadow-tile backdrop-blur-xl',
+        'z-50 min-w-[11rem] overflow-hidden rounded-xl border border-overlay/10 bg-canvas-raised/95 p-1.5 text-ink shadow-tile backdrop-blur-xl',
         'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
         className,
       )}
@@ -37,7 +37,7 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-pointer select-none items-center gap-2 rounded-xl px-3 py-2 text-[13px] outline-none transition-colors focus:bg-white/10 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:text-ink-muted',
+      'relative flex cursor-pointer select-none items-center gap-2 rounded-xl px-3 py-2 text-[13px] outline-none transition-colors focus:bg-overlay/10 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:size-4 [&_svg]:text-ink-muted',
       className,
     )}
     {...props}
@@ -53,7 +53,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     checked={checked}
     className={cn(
-      'relative flex cursor-pointer select-none items-center rounded-xl py-2 pl-8 pr-3 text-[13px] outline-none transition-colors focus:bg-white/10',
+      'relative flex cursor-pointer select-none items-center rounded-xl py-2 pl-8 pr-3 text-[13px] outline-none transition-colors focus:bg-overlay/10',
       className,
     )}
     {...props}
@@ -89,7 +89,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-white/10', className)}
+    className={cn('-mx-1 my-1 h-px bg-overlay/10', className)}
     {...props}
   />
 ));

@@ -23,7 +23,7 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         className={cn(
           'inline-flex h-11 w-11 items-center justify-center rounded-full text-ink',
           'transition-colors duration-200 hover:text-white',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
           className,
         )}
         {...props}

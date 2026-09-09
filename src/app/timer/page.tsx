@@ -133,7 +133,7 @@ export default function TimerPage() {
             type="button"
             onClick={endEarly}
             aria-label="End sit"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-white/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
           </button>
@@ -165,7 +165,7 @@ export default function TimerPage() {
               type="button"
               onClick={() => (countdown.running ? countdown.pause() : countdown.resume())}
               aria-label={countdown.running ? 'Pause sit' : 'Resume sit'}
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-white text-canvas-deep transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               {countdown.running ? (
                 <Pause className="h-6 w-6 fill-canvas-deep" />
@@ -178,7 +178,7 @@ export default function TimerPage() {
               type="button"
               onClick={endEarly}
               aria-label="End sit"
-              className="flex h-12 w-12 items-center justify-center rounded-full border border-white/15 text-ink-muted transition-colors hover:border-white/35 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+              className="flex h-12 w-12 items-center justify-center rounded-full border border-overlay/15 text-ink-muted transition-colors hover:border-overlay/35 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <Square className="h-4 w-4" strokeWidth={2} />
             </button>
@@ -249,7 +249,7 @@ export default function TimerPage() {
           <button
             type="button"
             onClick={() => router.push('/activities')}
-            className="mt-3 w-full rounded-full py-2 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70"
+            className="mt-3 w-full rounded-full py-2 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             See your progress
           </button>

@@ -31,7 +31,7 @@ export function FavoriteButton({
       onClick={() => toggleFavorite(meditationId)}
       className={cn(
         'flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 hover:scale-110 active:scale-95',
-        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
         size === 'sm' ? 'h-8 w-8' : 'h-10 w-10',
         className,
       )}
@@ -48,7 +48,7 @@ export function FavoriteButton({
       <Heart
         className={dimension}
         strokeWidth={1.8}
-        stroke={active ? 'url(#favorite-gradient)' : '#8A8DA8'}
+        stroke={active ? 'url(#favorite-gradient)' : 'rgb(var(--nav-idle))'}
         fill={active ? 'url(#favorite-gradient)' : 'none'}
       />
     </button>
