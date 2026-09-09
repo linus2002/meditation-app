@@ -19,7 +19,24 @@ const nextConfig = {
         // native WebView expects when resolving routes from the filesystem.
         trailingSlash: true,
       }
-    : {}),
+    : {
+        /*
+         * The worker and its manifest are how an installed PWA learns a new
+         * version exists, so neither may be answered from a cache. Everything
+         * else under /_next/static carries a content hash and is left alone.
+         *
+         * `headers()` is unavailable under `output: 'export'`, hence the split.
+         */
+        async headers() {
+          const noStore = [
+            { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+          ];
+          return [
+            { source: '/sw.js', headers: noStore },
+            { source: '/precache.json', headers: noStore },
+          ];
+        },
+      }),
 };
 
 export default nextConfig;

@@ -1,5 +1,11 @@
 /**
- * Writes the route list the service worker precaches, into `public/`.
+ * Writes the route list the service worker precaches, into `public/`, and
+ * stamps the same build id into `public/sw.js`.
+ *
+ * Stamping the worker is what makes a deploy actually reach an installed PWA: a
+ * browser compares the bytes of `/sw.js` against the copy it is already running
+ * and does nothing at all when they match, so a worker that is byte-identical
+ * every build can never hand out an update.
  *
  * This runs as `prebuild` — before `next build` — on purpose. Generating it
  * afterwards means writing into `public/` once the build has already consumed
@@ -43,9 +49,20 @@ const routes = [
   ...ids.map((id) => `/player/${id}`),
 ].sort();
 
+/*
+ * Prefer the commit SHA the host exposes, so two builds of the same commit
+ * produce the same worker and a redeploy does not churn every client's cache.
+ * Locally there is no SHA, so fall back to the clock.
+ */
+const version = (
+  process.env.VERCEL_GIT_COMMIT_SHA ||
+  process.env.GITHUB_SHA ||
+  Date.now().toString(36)
+).slice(0, 12);
+
 const payload = {
-  // Changes every build, so a deploy always supersedes the previous cache.
-  version: `${Date.now().toString(36)}`,
+  // Changes every deploy, so a deploy always supersedes the previous cache.
+  version,
   routes,
   assets: ['/manifest.webmanifest', '/icons/icon-192.png', '/icons/icon-512.png'],
 };
@@ -56,4 +73,16 @@ await writeFile(
   'utf8',
 );
 
-console.log(`[precache] ${routes.length} routes (${ids.length} sessions) @ ${payload.version}`);
+// Rewrite the worker's `BUILD` in place. Matching any current value keeps this
+// idempotent, so re-running over an already-stamped file is fine.
+const swPath = path.join(root, 'public/sw.js');
+const sw = await readFile(swPath, 'utf8');
+const stamped = sw.replace(/^const BUILD = '[^']*';$/m, `const BUILD = '${version}';`);
+
+if (stamped === sw && !sw.includes(`const BUILD = '${version}';`)) {
+  throw new Error('public/sw.js has no `const BUILD = \'...\';` line to stamp.');
+}
+
+await writeFile(swPath, stamped, 'utf8');
+
+console.log(`[precache] ${routes.length} routes (${ids.length} sessions) @ ${version}`);

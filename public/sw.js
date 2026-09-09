@@ -1,26 +1,27 @@
 /*
  * Serenity's service worker.
  *
+ * `BUILD` is rewritten by `scripts/build-routes.mjs` on every build. That
+ * matters more than it looks: a browser only installs a new worker when the
+ * bytes of this file differ from the one it already has, so a worker that never
+ * changes can never ship an update, however new the deployment behind it is.
+ *
  * On install it walks every route in `precache.json`, caches the HTML, and
  * reads that HTML for the `/_next/static/...` files the page needs — caching
  * those too. Discovering the chunks from the markup, rather than from a
  * build-time manifest, means the list is always right for the deployment that
- * served it and nothing has to be generated after the build.
- *
- * After install it serves stale-while-revalidate: instant from cache, refreshed
- * behind the scenes.
+ * served it.
  */
+const BUILD = 'mttg4u9b';
+const CACHE = `serenity-${BUILD}`;
 const MANIFEST = '/precache.json';
 const FALLBACK = '/offline';
-const VERSION_KEY = '/__serenity_version__';
-
-let cacheName = 'serenity-v1';
 
 /** Pulls `/_next/static/...` references out of a served HTML document. */
 function assetsFrom(html) {
   const found = new Set();
   for (const match of html.matchAll(/["'(](\/_next\/static\/[^"')]+)["')]/g)) {
-    found.add(match[1].replace(/\u002F/g, '/'));
+    found.add(match[1]);
   }
   return [...found];
 }
@@ -41,11 +42,7 @@ self.addEventListener('install', (event) => {
     (async () => {
       try {
         const manifest = await (await fetch(MANIFEST, { cache: 'no-store' })).json();
-        cacheName = `serenity-${manifest.version}`;
-        const cache = await caches.open(cacheName);
-
-        // Remember the version so `activate` can find this cache again.
-        await cache.put(VERSION_KEY, new Response(cacheName));
+        const cache = await caches.open(CACHE);
 
         const routes = manifest.routes || [];
         const assets = new Set(manifest.assets || []);
@@ -63,6 +60,8 @@ self.addEventListener('install', (event) => {
       } catch {
         // No manifest reachable — fall back to runtime caching alone.
       }
+      // Take over without waiting for every tab to close. The page reloads
+      // itself once we claim it, so there is no half-updated session.
       await self.skipWaiting();
     })(),
   );
@@ -71,19 +70,73 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     (async () => {
-      const stored = await caches.match(VERSION_KEY);
-      if (stored) cacheName = (await stored.text()).trim();
-
       const keys = await caches.keys();
       await Promise.all(
         keys
-          .filter((key) => key.startsWith('serenity-') && key !== cacheName)
+          .filter((key) => key.startsWith('serenity-') && key !== CACHE)
           .map((key) => caches.delete(key)),
       );
       await self.clients.claim();
     })(),
   );
 });
+
+/** Cache-first. Only for `/_next/static/...`, whose names carry a content hash. */
+async function immutable(request) {
+  const cached = await caches.match(request);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (response && response.ok) {
+    (await caches.open(CACHE)).put(request, response.clone());
+  }
+  return response;
+}
+
+/**
+ * Network-first, for anything whose URL stays the same while its contents
+ * change — every HTML document, and the manifest itself. Serving these from
+ * cache first is what used to pin an installed app to an old deployment.
+ */
+async function fresh(request, { fallbackToOffline = false, noStore = false } = {}) {
+  try {
+    // Only the manifest gets `no-store`: passing any init alongside a navigation
+    // Request downgrades its mode from "navigate", so those are fetched as-is.
+    // The server sends `must-revalidate` for them, which is enough.
+    const response = noStore ? await fetch(request, { cache: 'no-store' }) : await fetch(request);
+    if (response && response.ok && response.type === 'basic') {
+      (await caches.open(CACHE)).put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    if (fallbackToOffline) {
+      const offline = await caches.match(FALLBACK);
+      if (offline) return offline;
+    }
+    return Response.error();
+  }
+}
+
+/** Instant from cache, refreshed behind the scenes. Everything else. */
+async function revalidating(event, request) {
+  const cached = await caches.match(request);
+
+  const network = fetch(request)
+    .then(async (response) => {
+      if (response && response.status === 200 && response.type === 'basic') {
+        (await caches.open(CACHE)).put(request, response.clone());
+      }
+      return response;
+    })
+    .catch(() => null);
+
+  if (cached) {
+    event.waitUntil(network);
+    return cached;
+  }
+  return (await network) || Response.error();
+}
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -92,33 +145,21 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  event.respondWith(
-    (async () => {
-      const cached = await caches.match(request);
+  // Never serve our own update channel from a cache.
+  if (url.pathname === MANIFEST || url.pathname === '/sw.js') {
+    event.respondWith(fresh(request, { noStore: true }));
+    return;
+  }
 
-      const network = fetch(request)
-        .then(async (response) => {
-          if (response && response.status === 200 && response.type === 'basic') {
-            (await caches.open(cacheName)).put(request, response.clone());
-          }
-          return response;
-        })
-        .catch(() => null);
+  if (url.pathname.startsWith('/_next/static/')) {
+    event.respondWith(immutable(request));
+    return;
+  }
 
-      if (cached) {
-        event.waitUntil(network);
-        return cached;
-      }
+  if (request.mode === 'navigate') {
+    event.respondWith(fresh(request, { fallbackToOffline: true }));
+    return;
+  }
 
-      const fresh = await network;
-      if (fresh) return fresh;
-
-      // Nothing cached and no connection: navigations get the offline screen.
-      if (request.mode === 'navigate') {
-        const fallback = await caches.match(FALLBACK);
-        if (fallback) return fallback;
-      }
-      return Response.error();
-    })(),
-  );
+  event.respondWith(revalidating(event, request));
 });
