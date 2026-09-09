@@ -5,6 +5,7 @@ import { Check, Lock, PencilLine } from 'lucide-react';
 
 import { WeightScale } from '@/components/reflections/weight-scale';
 import { GradientButton } from '@/components/shared/gradient-button';
+import { Skeleton } from '@/components/shared/skeleton';
 import {
   MAX_REFLECTION_LENGTH,
   promptForDate,
@@ -61,7 +62,7 @@ export function ReflectionCard() {
 
   // Placeholder of the same height, so the card does not jump on hydration.
   if (!hydrated || !today || !prompt) {
-    return <div className="h-[188px] animate-pulse rounded-tile bg-overlay/[0.05]" />;
+    return <Skeleton className="h-[188px]" />;
   }
 
   const canSave = answer.trim().length > 0 && weight !== null;

@@ -4,7 +4,9 @@ import * as React from 'react';
 import { NotebookPen, Trash2 } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
+import { ReflectionCard } from '@/components/reflections/reflection-card';
 import { SectionTitle } from '@/components/shared/section-title';
+import { SkeletonList } from '@/components/shared/skeleton';
 import { formatEntryDate, reflectionWeights, weightLabel } from '@/data/reflections';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
@@ -24,6 +26,13 @@ export default function ReflectionsPage() {
         eyebrow={reflections.length === 1 ? '1 entry' : `${reflections.length} entries`}
         title="Reflections"
       />
+
+      <section className="mt-6 px-5">
+        <SectionTitle>Today</SectionTitle>
+        <div className="mt-3">
+          <ReflectionCard />
+        </div>
+      </section>
 
       {hydrated && reflections.length >= 3 ? (
         <section className="mt-6 px-5">
@@ -57,16 +66,10 @@ export default function ReflectionsPage() {
       ) : null}
 
       <section className="mt-6 px-5">
-        <SectionTitle actionHref="/home" actionLabel="Write today">
-          Past Entries
-        </SectionTitle>
+        <SectionTitle>Past Entries</SectionTitle>
 
         {!hydrated ? (
-          <ul className="mt-3 space-y-2.5">
-            {[0, 1, 2].map((index) => (
-              <li key={index} className="h-[96px] animate-pulse rounded-tile bg-overlay/[0.05]" />
-            ))}
-          </ul>
+          <SkeletonList count={3} itemClassName="h-[96px]" className="mt-3" />
         ) : reflections.length === 0 ? (
           <div className="mt-3 rounded-tile bg-surface px-4 py-8 text-center">
             <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-overlay/[0.06]">
@@ -74,7 +77,7 @@ export default function ReflectionsPage() {
             </span>
             <p className="mt-3.5 text-[13.5px] font-medium text-ink">Nothing written yet</p>
             <p className="mx-auto mt-1.5 max-w-[240px] text-[11.5px] leading-relaxed text-ink-muted">
-              There is a new prompt on the home screen each day. A sentence is plenty.
+A new prompt arrives each day, and what you write stays on this device.
             </p>
           </div>
         ) : (

@@ -9,28 +9,39 @@ import { BookOpen, ChevronRight, Search, Timer, X } from 'lucide-react';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { MeditationCard } from '@/components/shared/meditation-card';
 import { SectionTitle } from '@/components/shared/section-title';
+import { SoundscapeCard } from '@/components/shared/soundscape-card';
+import { StoryCard } from '@/components/stories/story-card';
 import { categories } from '@/data/categories';
 import { meditations } from '@/data/meditations';
+import { searchLibrary } from '@/lib/search';
 import { cn } from '@/lib/utils';
 
+/**
+ * Browse and search, in one screen.
+ *
+ * With the field empty this is the browse experience: category chips, the two
+ * shortcuts and every session. Type anything and it becomes a search across
+ * the whole library — sessions, stories and soundscapes — because searching
+ * only sessions left the other two thirds of the app unreachable by name.
+ */
 export function DiscoverView() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activeCategory = searchParams.get('category');
   const [query, setQuery] = React.useState('');
 
-  const results = React.useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    return meditations.filter((item) => {
-      const matchesCategory = !activeCategory || item.category === activeCategory;
-      const matchesQuery =
-        needle.length === 0 ||
-        item.title.toLowerCase().includes(needle) ||
-        item.subtitle.toLowerCase().includes(needle) ||
-        item.narrator.toLowerCase().includes(needle);
-      return matchesCategory && matchesQuery;
-    });
-  }, [query, activeCategory]);
+  const searching = query.trim().length > 0;
+  const results = React.useMemo(() => searchLibrary(query), [query]);
+
+  // Browse mode still filters by the category chip; search deliberately does
+  // not, so a term is never quietly narrowed by a chip left selected earlier.
+  const browseResults = React.useMemo(
+    () =>
+      activeCategory
+        ? meditations.filter((item) => item.category === activeCategory)
+        : meditations,
+    [activeCategory],
+  );
 
   const selectCategory = (slug: string | null) => {
     router.replace(slug ? `/discover?category=${slug}` : '/discover', { scroll: false });
@@ -47,8 +58,8 @@ export function DiscoverView() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search sessions or narrators"
-            aria-label="Search sessions"
+            placeholder="Search sessions, stories and sounds"
+            aria-label="Search the library"
             className="h-full w-full bg-transparent text-[13px] text-ink outline-none placeholder:text-ink-faint [&::-webkit-search-cancel-button]:hidden"
           />
           {query ? (
@@ -64,6 +75,7 @@ export function DiscoverView() {
         </div>
       </div>
 
+      {searching ? null : (
       <div className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
         <button
           type="button"
@@ -94,7 +106,58 @@ export function DiscoverView() {
           );
         })}
       </div>
+      )}
 
+      {searching ? (
+        <div className="mt-6 px-5">
+          {results.total === 0 ? (
+            <p className="mt-6 text-center text-[13px] leading-relaxed text-ink-muted">
+              Nothing matches “{query.trim()}”.
+              <br />
+              Try a different word, or clear the field to browse.
+            </p>
+          ) : (
+            <>
+              <p className="text-[11.5px] leading-none text-ink-faint">
+                {results.total} {results.total === 1 ? 'result' : 'results'} for “{query.trim()}”
+              </p>
+
+              {results.meditations.length > 0 ? (
+                <section className="mt-4">
+                  <SectionTitle>Sessions · {results.meditations.length}</SectionTitle>
+                  <ul className="mt-3 space-y-2.5">
+                    {results.meditations.map((meditation) => (
+                      <MeditationCard key={meditation.id} meditation={meditation} />
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+
+              {results.stories.length > 0 ? (
+                <section className="mt-6">
+                  <SectionTitle>Stories · {results.stories.length}</SectionTitle>
+                  <ul className="mt-3 space-y-2.5">
+                    {results.stories.map((story) => (
+                      <StoryCard key={story.id} story={story} />
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+
+              {results.soundscapes.length > 0 ? (
+                <section className="mt-6">
+                  <SectionTitle>Soundscapes · {results.soundscapes.length}</SectionTitle>
+                  <ul className="mt-3 space-y-2.5">
+                    {results.soundscapes.map((meta) => (
+                      <SoundscapeCard key={meta.id} meta={meta} />
+                    ))}
+                  </ul>
+                </section>
+              ) : null}
+            </>
+          )}
+        </div>
+      ) : (
       <div className="mt-6 px-5">
         <Link
           href="/timer"
@@ -138,21 +201,15 @@ export function DiscoverView() {
             : 'All Sessions'}
         </SectionTitle>
 
-        {results.length > 0 ? (
-          <ul className="mt-3 space-y-2.5">
-            {results.map((meditation) => (
-              <MeditationCard key={meditation.id} meditation={meditation} />
-            ))}
-          </ul>
-        ) : (
-          <p className="mt-8 text-center text-[13px] leading-relaxed text-ink-muted">
-            Nothing matches “{query}” yet.
-            <br />
-            Try a different word or clear the filter.
-          </p>
-        )}
+        <ul className="mt-3 space-y-2.5">
+          {browseResults.map((meditation) => (
+            <MeditationCard key={meditation.id} meditation={meditation} />
+          ))}
+        </ul>
       </div>
+      )}
 
+      {searching ? null : (
       <div className="mt-7 px-5">
         <SectionTitle>Browse by mood</SectionTitle>
         <div className="mt-3 grid grid-cols-2 gap-2.5">
@@ -193,6 +250,7 @@ export function DiscoverView() {
           })}
         </div>
       </div>
+      )}
     </div>
   );
 }

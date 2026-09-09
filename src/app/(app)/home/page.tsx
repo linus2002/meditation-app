@@ -5,9 +5,9 @@ import { GroupBanner } from '@/components/home/group-banner';
 import { HomeSection } from '@/components/home/home-section';
 import { ProgramRail } from '@/components/home/program-rail';
 import { RecommendedRail } from '@/components/home/recommended-rail';
+import { ReflectionPromptRow } from '@/components/home/reflection-prompt-row';
 import { StartGoalCard } from '@/components/home/start-goal-card';
 import { TodayRail } from '@/components/home/today-rail';
-import { ReflectionCard } from '@/components/reflections/reflection-card';
 import { SectionTitle } from '@/components/shared/section-title';
 import { deckCards } from '@/data/categories';
 import { dailyGoal, startGoal } from '@/data/meditations';
@@ -53,7 +53,7 @@ export default function HomePage() {
         </SectionTitle>
 
         <div className="mt-3">
-          <ReflectionCard />
+          <ReflectionPromptRow />
         </div>
       </div>
 

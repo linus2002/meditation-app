@@ -10,6 +10,7 @@ import { StatBlock } from '@/components/activities/stat-block';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { EdgeCurves, StitchArc } from '@/components/shared/decor';
 import { GradientButton } from '@/components/shared/gradient-button';
+import { Skeleton } from '@/components/shared/skeleton';
 import { ACTIVITY_DAY_COUNT, DAILY_GOAL_MINUTES } from '@/data/stats';
 import { monthLabel, toDateKey } from '@/lib/date';
 import { formatPercent } from '@/lib/format';
@@ -57,6 +58,8 @@ export default function ActivitiesPage() {
     [sessions, today],
   );
 
+  const ready = hydrated && today !== null && selectedDate !== '';
+
   const day = React.useMemo(
     () =>
       selectedDate && hydrated
@@ -76,32 +79,51 @@ export default function ActivitiesPage() {
         className="pt-[clamp(20px,6.6vh,56px)]"
       />
 
-      <DateStrip days={days} selectedDate={selectedDate} onSelect={setSelectedDate} />
+      {ready ? (
+        <DateStrip days={days} selectedDate={selectedDate} onSelect={setSelectedDate} />
+      ) : (
+        <Skeleton className="mx-5 mt-2 h-[66px]" />
+      )}
 
       <section
         aria-label="Day summary"
+        aria-busy={!ready}
         className="relative mt-[clamp(24px,6.6vh,64px)] flex h-[clamp(248px,38vh,320px)] items-center px-5"
       >
+        {!ready ? (
+          <Skeleton className="-ml-[7vw] aspect-square w-[56vw] max-w-[240px] shrink-0 rounded-full" />
+        ) : (
         <div className="relative -ml-[7vw] aspect-square w-[56vw] max-w-[240px] shrink-0">
           <ProgressArc value={day.completion} />
           <p className="absolute left-[13%] top-1/2 -translate-y-1/2 text-[clamp(22px,7.9vw,31px)] font-semibold leading-none tracking-[-0.02em] text-ink">
             {formatPercent(day.completion)}
           </p>
         </div>
+        )}
 
         <div className="flex h-full min-w-0 flex-1 flex-col justify-between pl-1">
-          <StatBlock
-            label="Mindful Min"
-            value={String(day.minutes)}
-            suffix={`/${day.goalMinutes}`}
-            size="hero"
-          />
-          <StatBlock label="First Sit" value={day.firstSitAt ?? '--:--'} />
-          <StatBlock label="Total Time" value={day.totalTime} />
+          {!ready ? (
+            <>
+              <Skeleton className="h-[46px] w-[70%] rounded-xl" />
+              <Skeleton className="h-[34px] w-[55%] rounded-xl" />
+              <Skeleton className="h-[34px] w-[55%] rounded-xl" />
+            </>
+          ) : (
+            <>
+              <StatBlock
+                label="Mindful Min"
+                value={String(day.minutes)}
+                suffix={`/${day.goalMinutes}`}
+                size="hero"
+              />
+              <StatBlock label="First Sit" value={day.firstSitAt ?? '--:--'} />
+              <StatBlock label="Total Time" value={day.totalTime} />
+            </>
+          )}
         </div>
       </section>
 
-      {hydrated && day.sessions === 0 ? (
+      {ready && day.sessions === 0 ? (
         <p className="relative -mt-2 px-5 text-[11.5px] leading-relaxed text-ink-faint">
           Nothing recorded for this day yet. Finish a session and it lands here.
         </p>

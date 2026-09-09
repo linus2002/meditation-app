@@ -12,7 +12,7 @@
  * build-time manifest, means the list is always right for the deployment that
  * served it.
  */
-const BUILD = 'mttn3ibb';
+const BUILD = 'mttr6uz9';
 const CACHE = `serenity-${BUILD}`;
 const MANIFEST = '/precache.json';
 const FALLBACK = '/offline';

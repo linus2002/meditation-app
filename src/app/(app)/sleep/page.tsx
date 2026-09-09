@@ -5,6 +5,7 @@ import * as React from 'react';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { MeditationCard } from '@/components/shared/meditation-card';
 import { SectionTitle } from '@/components/shared/section-title';
+import { Skeleton } from '@/components/shared/skeleton';
 import { SleepChart } from '@/components/sleep/sleep-chart';
 import { SleepLogCard } from '@/components/sleep/sleep-log-card';
 import { SleepMixer } from '@/components/sleep/sleep-mixer';
@@ -103,7 +104,7 @@ export default function SleepPage() {
           {ready ? (
             <SleepChart nights={nights} />
           ) : (
-            <div className="h-[196px] animate-pulse rounded-tile bg-overlay/[0.05]" aria-hidden="true" />
+            <Skeleton className="h-[196px]" />
           )}
         </div>
       </div>

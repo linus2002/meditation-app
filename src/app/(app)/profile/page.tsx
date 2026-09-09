@@ -7,6 +7,7 @@ import { BookOpen, ChevronRight, Flame, Heart, Timer, TimerReset } from 'lucide-
 import { InstallPrompt } from '@/components/layout/install-prompt';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { SectionTitle } from '@/components/shared/section-title';
+import { Skeleton } from '@/components/shared/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { settingToggles } from '@/data/settings';
@@ -84,6 +85,9 @@ export default function ProfilePage() {
         <SectionTitle actionHref="/activities" actionLabel="Details">
           This Week
         </SectionTitle>
+        {!ready ? (
+          <Skeleton className="mt-3 h-[150px]" />
+        ) : (
         <div className="mt-3 rounded-tile bg-surface p-4">
           <div className="flex h-[96px] items-end justify-between gap-2">
             {week.map((day) => (
@@ -108,12 +112,13 @@ export default function ProfilePage() {
               </span>
             ))}
           </div>
-          {ready && totals.sessions === 0 ? (
+          {totals.sessions === 0 ? (
             <p className="mt-3 text-[11px] leading-relaxed text-ink-faint">
               Nothing logged yet. Finish a session and it appears here.
             </p>
           ) : null}
         </div>
+        )}
       </section>
 
       <section className="mt-6 px-5">

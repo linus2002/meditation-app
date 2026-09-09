@@ -7,6 +7,7 @@ import { ScreenHeader } from '@/components/layout/screen-header';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { MeditationCard } from '@/components/shared/meditation-card';
 import { SectionTitle } from '@/components/shared/section-title';
+import { SkeletonList } from '@/components/shared/skeleton';
 import { getMeditation, meditations } from '@/data/meditations';
 import { useApp } from '@/providers/app-provider';
 
@@ -27,11 +28,7 @@ export default function FavoritesPage() {
 
       <div className="mt-6 px-5">
         {!hydrated ? (
-          <ul className="space-y-2.5" aria-hidden="true">
-            {[0, 1, 2].map((index) => (
-              <li key={index} className="h-[80px] animate-pulse rounded-tile bg-overlay/[0.05]" />
-            ))}
-          </ul>
+          <SkeletonList count={3} />
         ) : saved.length > 0 ? (
           <ul className="space-y-2.5">
             {saved.map((meditation) => (

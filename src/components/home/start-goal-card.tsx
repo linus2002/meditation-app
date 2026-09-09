@@ -11,7 +11,7 @@ export function StartGoalCard({ meditation }: { meditation: Meditation }) {
   return (
     <Link
       href={`/player/${meditation.id}`}
-      className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-tile bg-canvas-slate px-5 py-5 shadow-tile transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+      className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-tile bg-surface px-5 py-5 shadow-tile transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
     >
       <div>
         <p className="text-[11px] font-normal leading-none text-ink-muted">{meditation.subtitle}</p>

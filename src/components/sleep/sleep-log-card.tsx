@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Check, PencilLine } from 'lucide-react';
 
 import { GradientButton } from '@/components/shared/gradient-button';
+import { Skeleton } from '@/components/shared/skeleton';
 import { toDateKey } from '@/lib/date';
 import { minutesAsleep } from '@/lib/sleep-stats';
 import { cn } from '@/lib/utils';
@@ -62,7 +63,7 @@ export function SleepLogCard() {
   };
 
   if (!hydrated) {
-    return <div className="h-[132px] animate-pulse rounded-tile bg-overlay/[0.05]" aria-hidden="true" />;
+    return <Skeleton className="h-[132px]" />;
   }
 
   if (!isOpen && existing) {

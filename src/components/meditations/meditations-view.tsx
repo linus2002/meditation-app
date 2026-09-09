@@ -11,6 +11,7 @@ import { TargetCard } from '@/components/meditations/target-card';
 import { MeditationCard } from '@/components/shared/meditation-card';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { SectionTitle } from '@/components/shared/section-title';
+import { Skeleton, SkeletonList } from '@/components/shared/skeleton';
 import { StoryCard } from '@/components/stories/story-card';
 import { categories } from '@/data/categories';
 import { meditations } from '@/data/meditations';
@@ -148,7 +149,9 @@ export function MeditationsView() {
               Favorites
             </SectionTitle>
 
-            {savedCount > 0 ? (
+            {!hydrated ? (
+              <SkeletonList count={2} className="mt-3" />
+            ) : savedCount > 0 ? (
               <ul className="mt-3 space-y-2.5">
                 {savedMeditations.map((meditation) => (
                   <MeditationCard key={meditation.id} meditation={meditation} />
@@ -173,15 +176,25 @@ export function MeditationsView() {
             <SectionTitle actionHref="/discover" actionLabel="See all">
               {shelf?.title ?? 'Start here'}
             </SectionTitle>
-            <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-5">
-              {(shelf?.items ?? meditations).slice(0, 6).map((meditation) => (
-                <RatedTile
-                  key={meditation.id}
-                  meditation={meditation}
-                  meta={shelf?.meta(meditation)}
-                />
-              ))}
-            </ul>
+            {shelf ? (
+              <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-5">
+                {shelf.items.slice(0, 6).map((meditation) => (
+                  <RatedTile
+                    key={meditation.id}
+                    meditation={meditation}
+                    meta={shelf.meta(meditation)}
+                  />
+                ))}
+              </ul>
+            ) : (
+              /* Ranked by stored ratings and play counts, so it cannot be
+                 ordered correctly until those have been read. */
+              <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-5">
+                {Array.from({ length: 6 }, (_, index) => (
+                  <Skeleton key={index} className="h-[62px] rounded-xl" />
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="mt-8 px-5">
