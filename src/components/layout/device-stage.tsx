@@ -14,13 +14,13 @@ import { Smartphone, Tablet } from 'lucide-react';
 export function DeviceStage({ children }: { children: ReactNode }) {
   return (
     <>
-      <div className="flex min-h-dvh w-full justify-center bg-canvas-deep desktop:hidden">
-        <div className="relative flex h-dvh w-full max-w-[430px] flex-col overflow-y-auto overflow-x-hidden bg-canvas sm:border-x sm:border-white/[0.06]">
+      <div className="min-h-stage flex w-full justify-center bg-canvas-deep desktop:hidden">
+        <div className="rail h-stage relative flex w-full max-w-[430px] flex-col overflow-y-auto overflow-x-hidden overscroll-contain bg-canvas sm:border-x sm:border-white/[0.06]">
           {children}
         </div>
       </div>
 
-      <div className="hidden min-h-dvh w-full items-center justify-center bg-[radial-gradient(125%_95%_at_50%_-5%,#6FE6B4_0%,#2BB086_24%,#0C5B4A_50%,#052721_74%,#010B09_100%)] px-8 desktop:flex">
+      <div className="min-h-stage hidden w-full items-center justify-center bg-[radial-gradient(125%_95%_at_50%_-5%,#6FE6B4_0%,#2BB086_24%,#0C5B4A_50%,#052721_74%,#010B09_100%)] px-8 desktop:flex">
         <UnsupportedScreen />
       </div>
     </>

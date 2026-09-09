@@ -93,6 +93,22 @@
   .safe-bottom {
     padding-bottom: max(env(safe-area-inset-bottom), 0px);
   }
+
+  /*
+   * Viewport height for the device frame. `dvh` tracks a mobile browser's
+   * collapsing URL bar, but the `vh` line has to come first so a browser
+   * without `dvh` still gets a definite height rather than falling back to
+   * auto — an auto-height frame is what drops the bottom nav into the page.
+   */
+  .h-stage {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .min-h-stage {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

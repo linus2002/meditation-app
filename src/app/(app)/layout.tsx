@@ -1,13 +1,18 @@
 import { BottomNav } from '@/components/layout/bottom-nav';
 
 /**
- * Every destination reachable from the three-icon bar shares this shell: one
- * scrolling region with the nav pinned to the bottom of the device frame.
+ * Every destination reachable from the bottom bar shares this shell.
+ *
+ * There is one scrolling region for the whole app — the device frame in
+ * `DeviceStage` — and the page simply fills it. The nav is the last thing in
+ * that flow and sticks to the bottom edge of the frame, which is what keeps it
+ * on screen at every scroll position without needing a nested scroller whose
+ * height has to resolve correctly for the nav to stay put.
  */
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="relative flex h-full min-h-0 flex-col">
-      <div className="rail min-h-0 flex-1 overflow-y-auto overscroll-contain">{children}</div>
+    <div className="relative flex min-h-full flex-col">
+      <div className="flex-1">{children}</div>
       <BottomNav />
     </div>
   );

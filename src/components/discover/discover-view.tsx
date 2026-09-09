@@ -77,7 +77,6 @@ export function DiscoverView() {
           All
         </button>
         {categories.map((category) => {
-          const Icon = category.icon;
           const isActive = activeCategory === category.slug;
           return (
             <button
@@ -86,11 +85,10 @@ export function DiscoverView() {
               onClick={() => selectCategory(category.slug)}
               aria-pressed={isActive}
               className={cn(
-                'flex shrink-0 items-center gap-2 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
+                'shrink-0 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
                 isActive ? 'bg-action-pill text-white' : 'bg-white/[0.06] text-ink-muted hover:text-ink',
               )}
             >
-              <Icon className="h-3.5 w-3.5" strokeWidth={1.8} />
               {category.name}
             </button>
           );
