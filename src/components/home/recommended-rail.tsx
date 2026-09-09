@@ -19,7 +19,7 @@ export function RecommendedRail() {
       {recommended.map(({ meditation, collection, tint, image }) => (
         <article
           key={meditation.id}
-          className="w-[82vw] max-w-[330px] shrink-0 snap-start overflow-hidden rounded-[20px]"
+          className="w-[82vw] max-w-[330px] shrink-0 snap-start overflow-hidden rounded-[16px]"
           style={{ backgroundColor: tint }}
         >
           <div className="relative aspect-[16/9]">

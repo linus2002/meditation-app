@@ -83,7 +83,7 @@ export function ReflectionCard() {
             rows={3}
             placeholder="A sentence is plenty."
             className={cn(
-              'mt-3 w-full resize-none rounded-2xl bg-white/[0.05] px-3.5 py-3 text-[13px] leading-relaxed text-ink',
+              'mt-3 w-full resize-none rounded-xl bg-white/[0.05] px-3.5 py-3 text-[13px] leading-relaxed text-ink',
               'placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/40',
             )}
           />

@@ -85,8 +85,8 @@ const config: Config = {
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
-        card: '1.75rem',
-        tile: '1.25rem',
+        card: '1.5rem',
+        tile: '1rem',
       },
       fontFamily: {
         sans: ['var(--font-poppins)', 'ui-sans-serif', 'system-ui', 'sans-serif'],

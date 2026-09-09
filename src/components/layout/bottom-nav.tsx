@@ -3,18 +3,19 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { AlarmClock, Heart, Settings } from 'lucide-react';
+import { Home, Moon, User } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 /**
- * The reference nav carries exactly three icon-only destinations and no labels:
- * the gradient heart, a settings cog and an alarm clock.
+ * Three destinations, each named for what the screen actually holds: the home
+ * feed, the sleep analytics screen and the profile page. Icon over label, so
+ * the glyph is never the only thing telling you where a tab goes.
  */
 const NAV_ITEMS = [
-  { href: '/home', label: 'Home', icon: Heart, filled: true },
-  { href: '/profile', label: 'Settings', icon: Settings, filled: false },
-  { href: '/sleep', label: 'Sleep and timers', icon: AlarmClock, filled: false },
+  { href: '/home', label: 'Home', icon: Home },
+  { href: '/sleep', label: 'Sleep', icon: Moon },
+  { href: '/profile', label: 'Profile', icon: User },
 ] as const;
 
 export function BottomNav() {
@@ -30,7 +31,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="safe-bottom relative z-20 shrink-0 bg-canvas px-12 pb-3 pt-2"
+      className="safe-bottom relative z-20 shrink-0 bg-canvas px-6 pb-2 pt-2"
     >
       {/* Shared gradient definition for whichever destination is active. */}
       <svg aria-hidden="true" width="0" height="0" className="absolute">
@@ -44,28 +45,39 @@ export function BottomNav() {
       </svg>
 
       <ul className="grid grid-cols-3">
-        {NAV_ITEMS.map(({ href, label, icon: Icon, filled }) => {
+        {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
           const isActive = activePath === href || activePath.startsWith(`${href}/`);
           return (
             <li key={href} className="flex justify-center">
               <Link
                 href={href}
                 prefetch
-                aria-label={label}
                 aria-current={pathname === href ? 'page' : undefined}
                 onClick={() => setTapped(href)}
                 className={cn(
-                  'flex h-11 w-11 items-center justify-center rounded-full transition-transform duration-100',
-                  'hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
-                  isActive ? 'scale-105' : 'scale-100',
+                  'flex min-w-[64px] flex-col items-center gap-1 rounded-2xl px-2 py-1.5',
+                  'transition-transform duration-100',
+                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                  isActive ? 'scale-105' : 'scale-100 hover:scale-105',
                 )}
               >
                 <Icon
                   className="h-[22px] w-[22px]"
                   strokeWidth={isActive ? 2 : 1.8}
                   stroke={isActive ? 'url(#nav-active-gradient)' : '#8A8DA8'}
-                  fill={isActive && filled ? 'url(#nav-active-gradient)' : 'none'}
+                  fill="none"
                 />
+                {/* The active label picks up the same gradient as its icon. */}
+                <span
+                  className={cn(
+                    'text-[11px] font-medium leading-none tracking-[0.01em]',
+                    isActive
+                      ? 'bg-nav-active bg-clip-text text-transparent'
+                      : 'text-[#8A8DA8]',
+                  )}
+                >
+                  {label}
+                </span>
               </Link>
             </li>
           );

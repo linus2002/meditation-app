@@ -27,7 +27,7 @@ export function TodayRail() {
             href={`/player/${meditation.id}`}
             className="group mt-2 block focus-visible:outline-none"
           >
-            <span className="relative block aspect-square overflow-hidden rounded-[18px]">
+            <span className="relative block aspect-square overflow-hidden rounded-[15px]">
               <Image
                 src={meditation.image}
                 alt=""
@@ -38,7 +38,7 @@ export function TodayRail() {
               />
               <span
                 aria-hidden="true"
-                className="absolute inset-0 rounded-[18px] ring-1 ring-inset ring-white/10 transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-white"
+                className="absolute inset-0 rounded-[15px] ring-1 ring-inset ring-white/10 transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-white"
               />
               {tryFree ? (
                 <span className="absolute left-2.5 top-2.5 rounded-full bg-canvas-deep/85 px-3 py-1.5 text-[10.5px] font-semibold leading-none text-white backdrop-blur-sm">

@@ -16,7 +16,7 @@ export function ProgramRail() {
       {freePrograms.map((program) => (
         <li key={program.id} className="w-[82vw] max-w-[330px] shrink-0 snap-start">
           <Link href={program.href} className="group block focus-visible:outline-none">
-            <span className="relative block aspect-[16/10] overflow-hidden rounded-[20px]">
+            <span className="relative block aspect-[16/10] overflow-hidden rounded-[16px]">
               <Image
                 src={program.image}
                 alt=""
@@ -32,7 +32,7 @@ export function ProgramRail() {
               />
               <span
                 aria-hidden="true"
-                className="absolute inset-0 rounded-[20px] ring-1 ring-inset ring-white/10 group-focus-visible:ring-2 group-focus-visible:ring-white"
+                className="absolute inset-0 rounded-[16px] ring-1 ring-inset ring-white/10 group-focus-visible:ring-2 group-focus-visible:ring-white"
               />
 
               <span

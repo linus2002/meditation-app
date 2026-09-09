@@ -49,7 +49,7 @@ export function SleepMixer() {
               onClick={() => (active ? stop(1.5) : void play(id))}
               aria-pressed={active}
               className={cn(
-                'flex items-center gap-3 rounded-2xl px-3.5 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
+                'flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
                 active ? 'bg-action-pill text-white' : 'bg-white/[0.06] text-ink hover:bg-white/[0.1]',
               )}
             >

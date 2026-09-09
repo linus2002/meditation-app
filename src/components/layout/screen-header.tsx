@@ -39,7 +39,7 @@ export function ScreenHeader({ eyebrow, title, action, className }: ScreenHeader
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="text-[clamp(19px,6.15vw,24px)] font-bold leading-tight tracking-[-0.015em] text-ink">
+          <h1 className="text-[clamp(16px,4.8vw,19px)] font-medium leading-tight tracking-[-0.01em] text-ink">
             {title}
           </h1>
         </div>

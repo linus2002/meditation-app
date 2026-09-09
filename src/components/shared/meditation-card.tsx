@@ -12,7 +12,7 @@ import type { Meditation } from '@/types';
 export function MeditationCard({ meditation }: { meditation: Meditation }) {
   return (
     <li className="relative flex items-center gap-3.5 rounded-tile bg-[#141733] p-3 transition-transform duration-200 hover:-translate-y-0.5">
-      <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl">
+      <span className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl">
         <Image
           src={meditation.image}
           alt=""

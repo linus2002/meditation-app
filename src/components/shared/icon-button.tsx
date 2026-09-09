@@ -10,8 +10,8 @@ interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> 
 }
 
 /**
- * The hairline circular control used for the bell and search actions in the
- * home header: 44px, 1px white border at low opacity, transparent fill.
+ * The borderless icon control used for the bell and search actions in the home
+ * header: a bare glyph on a 44px tap target, no ring or fill around it.
  */
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   ({ className, asChild = false, label, children, ...props }, ref) => {
@@ -21,8 +21,8 @@ export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
         ref={ref}
         aria-label={label}
         className={cn(
-          'inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/25 text-ink',
-          'transition-colors duration-200 hover:border-white/45 hover:bg-white/[0.06]',
+          'inline-flex h-11 w-11 items-center justify-center rounded-full text-ink',
+          'transition-colors duration-200 hover:text-white',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70',
           className,
         )}
