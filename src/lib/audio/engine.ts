@@ -34,6 +34,17 @@ export class AudioEngine {
     const Ctor = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Ctor) return null;
 
+    // iOS treats Web Audio as "ambient" by default, which the ring/silent
+    // switch mutes outright. Declaring playback makes it behave like media.
+    const session = (navigator as unknown as { audioSession?: { type: string } }).audioSession;
+    if (session) {
+      try {
+        session.type = 'playback';
+      } catch {
+        // Older WebKit — nothing to do.
+      }
+    }
+
     const ctx = new Ctor();
 
     // Soft limiting, so a bell landing on a full scape stays clean.
@@ -69,7 +80,9 @@ export class AudioEngine {
   async resume(): Promise<boolean> {
     const ctx = this.ensure();
     if (!ctx) return false;
-    if (ctx.state === 'suspended') {
+    // `suspended` before the first gesture, and `interrupted` on iOS after a
+    // call, Siri or backgrounding the app — both need resuming.
+    if (ctx.state !== 'running') {
       try {
         await ctx.resume();
       } catch {

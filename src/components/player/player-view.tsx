@@ -55,7 +55,16 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
   });
   const breath = useBreath(meditation.breathPattern, player.elapsed);
 
-  const { isPlaying, toggle } = player;
+  const { isPlaying, toggle: toggleTransport } = player;
+  const { prime } = audio;
+
+  // Browsers — iOS and installed PWAs above all — only let audio start inside
+  // the tap itself. The bed is started later, from an effect, so the context
+  // has to be unlocked here, synchronously, while the gesture is still live.
+  const toggle = React.useCallback(() => {
+    if (!isPlaying) void prime();
+    toggleTransport();
+  }, [isPlaying, prime, toggleTransport]);
 
   // Space and K start or stop the session from anywhere on the screen.
   React.useEffect(() => {
@@ -130,6 +139,7 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
   // Starting over from the completion panel opens a fresh record and rewinds.
   // Defined during render so it always holds the current transport handlers.
   const sitAgain = () => {
+    void prime();
     recorder.restart();
     setCompleted(false);
     player.seek(0);
@@ -228,7 +238,7 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
 
         <PlaybackControls
           isPlaying={player.isPlaying}
-          onToggle={player.toggle}
+          onToggle={toggle}
           onSkip={player.skip}
           className="mt-[clamp(16px,2.8vh,24px)]"
         />
