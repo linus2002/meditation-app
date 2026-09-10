@@ -1,10 +1,17 @@
 import { Bell, Moon, Music, Sun, Vibrate, Volume2 } from 'lucide-react';
+
+import { getReminder } from '@/lib/reminders';
 import type { SettingToggle } from '@/types';
 
 /**
  * `lightMode` is read by AppProvider, which puts the matching `data-theme` on
- * the document — every other id here is a plain stored flag.
+ * the document. `reminders` and `bedtime` drive the notification schedule in
+ * `lib/notifications` — and take their times from the definitions there, so the
+ * hour promised in the description is always the hour that gets scheduled.
+ * Every other id here is a plain stored flag.
  */
+const reminderTime = getReminder('reminders')?.time ?? '07:00';
+const bedtimeTime = getReminder('bedtime')?.time ?? '22:30';
 export const settingToggles: SettingToggle[] = [
   {
     id: 'lightMode',
@@ -13,19 +20,22 @@ export const settingToggles: SettingToggle[] = [
     icon: Sun,
     defaultOn: false,
   },
+  // Both start off. They need notification permission to mean anything, and a
+  // toggle that reads "on" before anyone has been asked is a promise the app
+  // cannot keep.
   {
     id: 'reminders',
     label: 'Daily reminder',
-    description: 'A single nudge at 07:00 to start your session',
+    description: `A single nudge at ${reminderTime} to start your session`,
     icon: Bell,
-    defaultOn: true,
+    defaultOn: false,
   },
   {
     id: 'bedtime',
     label: 'Bedtime wind down',
-    description: 'Dim the app and suggest a sleep story at 22:30',
+    description: `A nudge at ${bedtimeTime} to put the day down and pick something for sleep`,
     icon: Moon,
-    defaultOn: true,
+    defaultOn: false,
   },
   {
     id: 'haptics',

@@ -11,6 +11,7 @@ import { SessionComplete } from '@/components/session/session-complete';
 import { SessionScrubber } from '@/components/player/session-scrubber';
 import { VolumeControl } from '@/components/player/volume-control';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
+import { DownloadButton } from '@/components/shared/download-button';
 import { FavoriteButton } from '@/components/shared/favorite-button';
 import { useBreath } from '@/hooks/use-breath';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
@@ -171,12 +172,15 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
           {formatMinutesLabel(meditation.durationSeconds)}
         </p>
 
-        <FavoriteButton
-          meditationId={meditation.id}
-          title={meditation.title}
-          size="md"
-          className="-mr-1"
-        />
+        <div className="flex items-center gap-0.5">
+          <DownloadButton meditationId={meditation.id} title={meditation.title} size="md" />
+          <FavoriteButton
+            meditationId={meditation.id}
+            title={meditation.title}
+            size="md"
+            className="-mr-1"
+          />
+        </div>
       </header>
 
       {completed ? (

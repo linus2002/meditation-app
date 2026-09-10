@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { BookOpen, ChevronRight, Flame, Heart, Timer, TimerReset } from 'lucide-react';
+import { ArrowDownToLine, BookOpen, ChevronRight, Flame, Heart, Timer, TimerReset } from 'lucide-react';
 
 import { InstallPrompt } from '@/components/layout/install-prompt';
 import { ScreenHeader } from '@/components/layout/screen-header';
@@ -12,20 +12,44 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { settingToggles } from '@/data/settings';
 import { currentUser } from '@/data/user';
+import { useReminders } from '@/hooks/use-reminders';
 import { formatDuration } from '@/lib/format';
+import { reminderDefinitions } from '@/lib/reminders';
 import { currentStreak, lifetimeTotals, weeklyMinutes } from '@/lib/session-stats';
 import { useApp } from '@/providers/app-provider';
+
+/** The toggles that need notification permission behind them. */
+const reminderIds = new Set(reminderDefinitions.map((entry) => entry.id));
 
 const shortcuts = [
   { href: '/timer', label: 'Unguided timer', icon: TimerReset },
   { href: '/stories', label: 'Read-aloud stories', icon: BookOpen },
   { href: '/favorites', label: 'Saved sessions', icon: Heart },
+  { href: '/downloads', label: 'Downloads', icon: ArrowDownToLine },
   { href: '/activities', label: 'Daily activities', icon: Flame },
   { href: '/sleep', label: 'Sleep and timers', icon: Timer },
 ];
 
 export default function ProfilePage() {
   const { settings, setSetting, sessions, hydrated } = useApp();
+  const { permission, mode: reminderMode, enable, disable } = useReminders();
+
+  /*
+   * One line under the list saying what the reminders can and cannot do here.
+   *
+   * The web case is the one that matters: with no push server behind the app,
+   * a browser reminder can only be delivered while Serenity is open. Saying so
+   * costs a sentence; letting someone rely on a 07:00 nudge that never arrives
+   * costs their morning.
+   */
+  const reminderNote =
+    reminderMode === 'unsupported'
+      ? 'This browser cannot show reminders, so the two nudges above are unavailable.'
+      : permission === 'denied'
+        ? 'Notifications are blocked for Serenity. Allow them in your browser or system settings to switch the reminders back on.'
+        : reminderMode === 'web'
+          ? 'In a browser tab, reminders arrive while Serenity is open. Install it to your home screen for nudges that reach you with the app closed.'
+          : null;
 
   // Resolved on the client: these pages are prerendered, so the build date
   // must not leak into "this week".
@@ -126,7 +150,15 @@ export default function ProfilePage() {
         <ul className="mt-3 space-y-2.5">
           {settingToggles.map((toggle) => {
             const Icon = toggle.icon;
-            const checked = settings[toggle.id] ?? toggle.defaultOn;
+            const stored = settings[toggle.id] ?? toggle.defaultOn;
+
+            // A reminder is only on if it can actually arrive. Permission can be
+            // withdrawn in system settings long after the toggle was set, and
+            // showing "on" for a notification that will never come is exactly
+            // the gap this screen is meant to close.
+            const isReminder = reminderIds.has(toggle.id);
+            const checked = isReminder ? stored && permission === 'granted' : stored;
+
             return (
               <li
                 key={toggle.id}
@@ -149,12 +181,24 @@ export default function ProfilePage() {
                 <Switch
                   id={`setting-${toggle.id}`}
                   checked={checked}
-                  onCheckedChange={(next) => setSetting(toggle.id, next)}
+                  disabled={isReminder && reminderMode === 'unsupported'}
+                  onCheckedChange={(next) => {
+                    if (!isReminder) {
+                      setSetting(toggle.id, next);
+                      return;
+                    }
+                    if (next) void enable(toggle.id);
+                    else disable(toggle.id);
+                  }}
                 />
               </li>
             );
           })}
         </ul>
+
+        {reminderNote ? (
+          <p className="mt-3 px-1 text-[11.5px] leading-relaxed text-ink-faint">{reminderNote}</p>
+        ) : null}
       </section>
 
       <section className="mt-6 px-5">

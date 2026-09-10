@@ -13,10 +13,15 @@ import {
 } from '@/components/ui/sheet';
 
 /*
- * Prompts, not reports. Nothing here quotes a figure back at the reader: the
- * app has no scheduler behind these yet, and a "12 day streak" or a deep-sleep
- * percentage that was written at build time is exactly the kind of invented
- * number the activities and sleep screens were cleaned up to stop showing.
+ * Prompts, not reports. Nothing here quotes a figure back at the reader: a
+ * "12 day streak" or a deep-sleep percentage written at build time is exactly
+ * the kind of invented number the activities and sleep screens were cleaned up
+ * to stop showing.
+ *
+ * This list is a standing set of prompts, not a feed of what was delivered.
+ * The scheduled nudges are a separate thing entirely — they are real system
+ * notifications, scheduled in `lib/notifications` from the reminder toggles on
+ * the profile screen, and they arrive whether or not this sheet is ever opened.
  */
 const notifications = [
   { id: 'goal', title: 'Today is waiting', body: 'Thirty minutes, whenever you are ready.' },

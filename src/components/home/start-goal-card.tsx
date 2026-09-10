@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { Play } from 'lucide-react';
 
 import type { Meditation } from '@/types';
 
@@ -15,7 +14,7 @@ export function StartGoalCard({ meditation }: { meditation: Meditation }) {
     >
       <div>
         <p className="text-[11px] font-normal leading-none text-ink-muted">{meditation.subtitle}</p>
-        <p className="mt-2 text-[16px] font-bold leading-none tracking-[-0.01em] text-ink">
+        <p className="mt-2 text-[16px] font-semibold leading-none tracking-[-0.01em] text-ink">
           {meditation.title}
         </p>
         <p className="mt-2 text-[10px] font-normal leading-none text-ink-muted">
@@ -23,12 +22,28 @@ export function StartGoalCard({ meditation }: { meditation: Meditation }) {
         </p>
       </div>
 
-      <span
+      {/* The bare glyph, carrying the mark's gradient — no disc behind it. */}
+      <svg
+        viewBox="0 0 24 24"
         aria-hidden="true"
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-ink transition-transform duration-200 group-hover:scale-105"
+        className="h-12 w-12 shrink-0 transition-transform duration-200 group-hover:scale-105"
       >
-        <Play className="h-4 w-4 translate-x-[1px] fill-canvas text-canvas" />
-      </span>
+        <defs>
+          <linearGradient id="start-goal-play" x1="18%" y1="8%" x2="82%" y2="92%">
+            <stop offset="0%" stopColor="#F48FC8" />
+            <stop offset="38%" stopColor="#B98CEE" />
+            <stop offset="66%" stopColor="#7C7BF0" />
+            <stop offset="100%" stopColor="#2FE0CB" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M8 5.2 19 12 8 18.8Z"
+          fill="url(#start-goal-play)"
+          stroke="url(#start-goal-play)"
+          strokeWidth="2.4"
+          strokeLinejoin="round"
+        />
+      </svg>
     </Link>
   );
 }

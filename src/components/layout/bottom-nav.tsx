@@ -33,7 +33,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Primary"
-      className="safe-bottom sticky bottom-0 z-20 shrink-0 bg-canvas px-2 pb-2 pt-2"
+      className="safe-bottom sticky bottom-0 z-20 shrink-0 bg-canvas px-2 pb-3.5 pt-2"
     >
       {/* Shared gradient definition for whichever destination is active. */}
       <svg aria-hidden="true" width="0" height="0" className="absolute">

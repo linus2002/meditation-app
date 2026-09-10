@@ -102,7 +102,7 @@ export function WelcomeLibrary({ onNext }: { onNext: () => void }) {
       />
 
       <div className="relative mt-auto px-7 pb-[clamp(24px,4.4vh,40px)]">
-        <h2 className="text-[clamp(26px,8.2vw,33px)] font-bold leading-[1.24] tracking-[-0.02em] text-ink">
+        <h2 className="text-[clamp(26px,8.2vw,33px)] font-semibold leading-[1.24] tracking-[-0.02em] text-ink">
           Sessions, sleep sounds, breathing and stories
           <span className="text-aurora-blush"> — all in one quiet place.</span>
         </h2>

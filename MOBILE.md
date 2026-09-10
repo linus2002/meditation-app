@@ -110,6 +110,35 @@ Then in Android Studio:
 If a step complains about a missing tool, run `npx cap doctor` — it names exactly
 what is missing.
 
+### Reminders that arrive with the app closed
+
+The daily reminder (07:00) and bedtime wind‑down (22:30) on the profile screen
+work in two different ways, and it is worth knowing which you are getting.
+
+In a **browser or installed PWA** they are delivered by the app itself, so they
+only arrive while Serenity is open. That is a limit of the web platform, not a
+bug: waking a closed web app needs a push server, and this app has none. The
+profile screen says as much under the toggles.
+
+In a **native build** the OS holds the schedule and the nudge arrives whether or
+not the app has been opened for a week. That needs one plugin, installed once
+per platform you have added:
+
+```bash
+npm install @capacitor/local-notifications
+npx cap sync
+```
+
+Nothing else changes. The app reaches the plugin through the Capacitor bridge at
+runtime ([`src/lib/notifications.ts`](src/lib/notifications.ts)), so the web
+build never imports it, and a native build without it simply falls back to the
+in‑app behaviour instead of erroring.
+
+On Android 13+ the OS asks for notification permission the first time a toggle is
+switched on. On iOS, permission is requested the same way; a reader who declines
+sees the toggle stay off with an explanation, rather than an on switch that does
+nothing.
+
 ### iOS — this needs a Mac
 
 There is no way around this: building an iOS app requires **macOS with Xcode**.

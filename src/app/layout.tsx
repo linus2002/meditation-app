@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 
 import { DeviceStage } from '@/components/layout/device-stage';
+import { ReminderScheduler } from '@/components/layout/reminder-scheduler';
 import { ServiceWorkerRegistrar } from '@/components/layout/service-worker';
 import { AppProvider } from '@/providers/app-provider';
 import { AudioProvider } from '@/providers/audio-provider';
@@ -66,6 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AudioProvider>
             <DeviceStage>{children}</DeviceStage>
             <ServiceWorkerRegistrar />
+            <ReminderScheduler />
           </AudioProvider>
         </AppProvider>
       </body>
