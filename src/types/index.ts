@@ -78,6 +78,8 @@ export interface SessionRecord {
   /** Whether it ran to the end, or was left part-way. */
   completed: boolean;
   startedAt: number;
+  /** Set when the sitting was a circle's live session. */
+  circleId?: string;
 }
 
 /** Everything the activities screen shows for one day, all derived. */

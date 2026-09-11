@@ -198,12 +198,6 @@ Options, cheapest first:
    (`play` / `stop` / `fadeOut` / `setVolume`) was written so the engine
    underneath can be swapped without touching any screen.
 
-### The daily reminder toggle does nothing yet
-
-`Preferences → Daily reminder` is currently just a stored boolean. To make it
-real, add [`@capacitor/local-notifications`](https://capacitorjs.com/docs/apis/local-notifications)
-and schedule from the toggle. Same for *Bedtime wind down*.
-
 ### Apple's "minimum functionality" rule
 
 Apple rejects apps that are thin wrappers around a website (App Store Review
@@ -223,8 +217,14 @@ proper iPad app, raise or remove the `desktop` breakpoint in
 ### Data lives on the device
 
 Favourites, preferences and volume are in `localStorage`, which persists inside
-the WebView. There is no account and no server, so nothing syncs between
-devices. Adding that means adding a backend.
+the WebView, and nothing of that syncs between devices.
+
+The one exception is **Circles**, which uses Supabase for memberships, sits and
+live presence. The Supabase keys are baked in at build time, so set
+`.env.local` before `npm run build:mobile` (see the Circles section of the
+README). A Circles account is anonymous and lives on the device unless the
+member adds an email under the circle's settings; deleting it is available
+in-app, which both stores require.
 
 ---
 

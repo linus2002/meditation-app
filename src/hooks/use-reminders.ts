@@ -35,11 +35,23 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
   React.useEffect(() => {
     setMode(deliveryMode());
     let cancelled = false;
-    void checkPermission().then((state) => {
-      if (!cancelled) setPermission(state);
-    });
+    const refresh = () => {
+      void checkPermission().then((state) => {
+        if (!cancelled) setPermission(state);
+      });
+    };
+
+    // Permission is changed in browser or system settings, away from the app,
+    // so it is re-read whenever the reader comes back rather than only once.
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+
+    refresh();
+    document.addEventListener('visibilitychange', onVisible);
     return () => {
       cancelled = true;
+      document.removeEventListener('visibilitychange', onVisible);
     };
   }, []);
 
@@ -76,5 +88,12 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
 
   const disable = React.useCallback((id: string) => setSetting(id, false), [setSetting]);
 
-  return { permission, mode, enable, disable };
+  /** Asks for permission on its own, without switching any reminder on. */
+  const allow = React.useCallback(async () => {
+    const state = await requestPermission();
+    setPermission(state);
+    return state;
+  }, []);
+
+  return { permission, mode, enable, disable, allow };
 }

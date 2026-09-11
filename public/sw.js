@@ -164,7 +164,11 @@ async function fresh(request, { fallbackToOffline = false, noStore = false } = {
     }
     return response;
   } catch {
-    const cached = await caches.match(request);
+    // A page reached by query string — `/circles/view?id=…` — is the same
+    // document for every id, so offline it can be served from any cached copy.
+    const cached =
+      (await caches.match(request)) ||
+      (request.mode === 'navigate' ? await caches.match(request, { ignoreSearch: true }) : undefined);
     if (cached) return cached;
     if (fallbackToOffline) {
       const offline = await caches.match(FALLBACK);

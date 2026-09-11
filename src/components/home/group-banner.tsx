@@ -14,7 +14,7 @@ import { photos } from '@/data/images';
  * it sits on the sitter's pale lavender sleeve in both themes, so a themed fill
  * would read well in one and vanish in the other.
  */
-export function GroupBanner({ href = '/meditations' }: { href?: string }) {
+export function GroupBanner({ href = '/circles' }: { href?: string }) {
   return (
     <div className="relative overflow-hidden rounded-tile">
       <Image

@@ -1,11 +1,13 @@
 import type { Metadata, Viewport } from 'next';
 import { Poppins } from 'next/font/google';
 
+import { CircleSync } from '@/components/layout/circle-sync';
 import { DeviceStage } from '@/components/layout/device-stage';
 import { ReminderScheduler } from '@/components/layout/reminder-scheduler';
 import { ServiceWorkerRegistrar } from '@/components/layout/service-worker';
 import { AppProvider } from '@/providers/app-provider';
 import { AudioProvider } from '@/providers/audio-provider';
+import { CirclesProvider } from '@/providers/circles-provider';
 
 import './globals.css';
 
@@ -64,11 +66,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-canvas font-sans text-ink antialiased">
         <AppProvider>
-          <AudioProvider>
-            <DeviceStage>{children}</DeviceStage>
-            <ServiceWorkerRegistrar />
-            <ReminderScheduler />
-          </AudioProvider>
+          <CirclesProvider>
+            <AudioProvider>
+              <DeviceStage>{children}</DeviceStage>
+              <ServiceWorkerRegistrar />
+              <ReminderScheduler />
+              <CircleSync />
+            </AudioProvider>
+          </CirclesProvider>
         </AppProvider>
       </body>
     </html>

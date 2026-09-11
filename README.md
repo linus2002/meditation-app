@@ -27,7 +27,7 @@ service worker, static-export build mode and `capacitor.config.ts`.
 
 Note the two caveats covered there: **iOS suspends WebView audio when the screen
 locks**, so sleep sounds need a native audio plugin for background playback, and
-the *Daily reminder* toggle does not schedule anything yet.
+reminders only arrive with the app closed in a native build.
 
 ## Fidelity to the reference
 
@@ -384,6 +384,67 @@ These are not depicted in the artwork, so they are designed in the same language
 - `/sleep` — sleep summary tiles, per-night chart, wind-down timer, sleep sessions
 - `/favorites` — saved and recently played
 - `/profile` — account, weekly mindful minutes, preference toggles, shortcuts
+
+## Circles
+
+Small groups — never more than twenty — that sit at the same time each day. It
+is the one feature that talks to a server: **Supabase** (Postgres, Auth and
+Realtime), called straight from the browser so it works in the static export
+and in the Capacitor apps alike. Everything else stays on the device.
+
+| Piece | Where |
+| --- | --- |
+| Schema, security rules, server functions, launch circles | `supabase/migrations/` |
+| Security tests (pgTAP) | `supabase/tests/circles_rls.test.sql` |
+| Pure logic — time zones, schedule, matching, streak, feed | `src/lib/circles/` (unit-tested) |
+| The only module that calls Supabase | `src/lib/circles/api.ts` |
+| Membership cache, local choices | `src/providers/circles-provider.tsx` |
+| Posting sits, circle reminders | `src/components/layout/circle-sync.tsx` |
+| Screens | `/circles`, `/circles/join`, `/circles/view?id=`, `/circles/live?id=` |
+
+**How it behaves**
+
+- **Joining.** Three questions (goal, time of day, experience) suggest two or
+  three circles; the reader picks. The answers never leave the phone. Joining
+  creates an anonymous account — no email — and nothing is created for anyone
+  who never opens Circles.
+- **Live sessions.** "Synced" means a shared clock, not a shared stream: the
+  session starts at its scheduled instant for everyone, and a late arrival
+  starts where the others are. The room opens five minutes early and closes to
+  newcomers halfway through; after that the circle page offers a solo sit,
+  which still counts. Presence shows who is actually connected, nothing more.
+- **The feed** says who joined, who sat (never for how long) and each day's
+  one-line prompt answer. Answers can be hidden per person or reported; two
+  reports hide one.
+- **The streak belongs to the circle.** A day counts once three members — or
+  everyone, in a circle of fewer than three — have sat. Counted days are
+  latched on the server, so leaving never rewrites the past. No leaderboards,
+  no individual numbers, no "streak lost" messages.
+- **Reminders** arrive ten minutes before each session, when switched on.
+  Never after the start, never about anyone else's activity.
+- **Nothing is invented.** Circles launch empty and say "Be one of the first".
+
+**Setting it up**
+
+1. Create a project at [supabase.com](https://supabase.com) (the Free plan is
+   enough to build and test; move to Pro before launch — Free projects pause
+   after a week of inactivity and have no backups).
+2. Copy `.env.example` to `.env.local` and fill in the project URL and the
+   **publishable** key (`sb_publishable_…`) from the **Connect** button at the
+   top of the dashboard, or *Settings → API Keys*. A legacy anon key also works.
+3. Apply the migrations — either `npx supabase link --project-ref <ref>` then
+   `npx supabase db push`, or paste the four files into the SQL editor in order.
+4. In the dashboard: *Authentication → Sign In / Providers* → enable
+   **Anonymous sign-ins**, and *Realtime → Settings* → turn **off** "Allow
+   public access" so the private-channel rules apply. Leave CAPTCHA **off** for
+   now: the app does not send a CAPTCHA token yet, so switching it on would
+   make every join fail. Adding Turnstile is a pre-launch task.
+5. Optional: `npx supabase start` and `npx supabase test db` (needs Docker) to
+   run the security tests locally.
+
+Without the two keys the app still builds and runs; Circles shows as not
+available. Launch circles are seeded for `Asia/Manila` and `Europe/London` —
+change them in the seed migration for the markets you actually launch in.
 
 ## Structure
 

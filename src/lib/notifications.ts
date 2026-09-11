@@ -1,5 +1,11 @@
 'use client';
 
+import {
+  CIRCLE_REMINDER_LEAD_MS,
+  circleReminderDue,
+  reminderKey,
+} from '@/lib/circles/schedule';
+import type { Occurrence } from '@/lib/circles/types';
 import { dayKey, isDue, reminderDefinitions, type ReminderDefinition } from '@/lib/reminders';
 
 /**
@@ -138,20 +144,117 @@ function markDelivered(id: string, key: string): void {
   }
 }
 
-/** Shows one notification now, through the service worker registration. */
-async function showWebNotification(reminder: ReminderDefinition): Promise<void> {
-  if (Notification.permission !== 'granted') return;
+/** The last local date each reminder was delivered, keyed by reminder id. */
+export function deliveredLog(): Record<string, string> {
+  if (typeof window === 'undefined') return {};
+  return readDelivered();
+}
+
+/**
+ * Shows one notification now. Resolves true only if it was actually handed to
+ * the browser.
+ *
+ * The service worker is the preferred route: its notifications survive the tab
+ * closing and a tap is handled in `sw.js`. But the worker is only registered in
+ * production, so without one this falls back to a page-level `Notification` -
+ * otherwise development would mark reminders delivered that never appeared.
+ * Chrome on Android refuses the constructor outright, hence the catch.
+ */
+async function displayWebNotification(
+  title: string,
+  options: { body: string; tag: string; url: string },
+): Promise<boolean> {
+  if (Notification.permission !== 'granted') return false;
 
   const registration = await navigator.serviceWorker.getRegistration();
-  if (!registration) return;
+  if (registration) {
+    await registration.showNotification(title, {
+      body: options.body,
+      tag: options.tag,
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      data: { url: options.url },
+    });
+    return true;
+  }
 
-  await registration.showNotification(reminder.title, {
+  try {
+    const notification = new Notification(title, {
+      body: options.body,
+      tag: options.tag,
+      icon: '/icons/icon-192.png',
+    });
+    notification.onclick = () => {
+      window.focus();
+      window.location.assign(options.url);
+      notification.close();
+    };
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function showWebNotification(reminder: ReminderDefinition): Promise<boolean> {
+  return displayWebNotification(reminder.title, {
     body: reminder.body,
     tag: `serenity-${reminder.id}`,
-    icon: '/icons/icon-192.png',
-    badge: '/icons/icon-192.png',
-    data: { url: reminder.url },
+    url: reminder.url,
   });
+}
+
+/**
+ * Native id for the one-off test notification. Kept well clear of the
+ * reminders' `nativeId`s so a test can never cancel or replace a real one.
+ */
+const TEST_NATIVE_ID = 99;
+
+export type TestResult = 'sent' | 'blocked' | 'unsupported' | 'failed';
+
+/**
+ * Sends a notification right now, so a reader can see what a reminder looks
+ * like and confirm this device will actually show one.
+ */
+export async function sendTestNotification(): Promise<TestResult> {
+  const title = 'Serenity is set up';
+  const body = 'This is what a reminder will look like.';
+
+  const native = nativePlugin();
+  if (native) {
+    try {
+      const { display } = await native.checkPermissions();
+      if (display !== 'granted') return 'blocked';
+      await native.schedule({
+        notifications: [
+          {
+            id: TEST_NATIVE_ID,
+            title,
+            body,
+            // A moment ahead rather than "now", which some OS versions drop.
+            schedule: { at: new Date(Date.now() + 1000), allowWhileIdle: true },
+            extra: { url: '/notifications' },
+          },
+        ],
+      });
+      return 'sent';
+    } catch {
+      return 'failed';
+    }
+  }
+
+  if (!webNotificationsAvailable()) return 'unsupported';
+  if (Notification.permission !== 'granted') return 'blocked';
+
+  try {
+    const shown = await displayWebNotification(title, {
+      body,
+      tag: 'serenity-test',
+      url: '/notifications',
+    });
+    return shown ? 'sent' : 'failed';
+  } catch {
+    return 'failed';
+  }
 }
 
 /**
@@ -229,6 +332,157 @@ export function startReminders(enabledIds: string[]): () => void {
       if (!isDue(reminder, now, delivered[reminder.id])) continue;
       markDelivered(reminder.id, dayKey(now));
       void showWebNotification(reminder);
+    }
+  };
+
+  const onVisible = () => {
+    if (document.visibilityState === 'visible') tick();
+  };
+
+  tick();
+  const timer = window.setInterval(tick, TICK_MS);
+  document.addEventListener('visibilitychange', onVisible);
+
+  return () => {
+    stopped = true;
+    window.clearInterval(timer);
+    document.removeEventListener('visibilitychange', onVisible);
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * Circle reminders
+ *
+ * One nudge, ten minutes before each session of a circle the reader belongs
+ * to. Never after it has started, never about anyone else's activity, and
+ * never about a streak.
+ * ------------------------------------------------------------------ */
+
+/**
+ * Native ids reserved for circle reminders. The whole range is cancelled on
+ * every sync, so slots can be reassigned freely without ever touching the
+ * daily and bedtime reminders (ids 1 and 2) or the test (99).
+ */
+const CIRCLE_NATIVE_FIRST_ID = 1000;
+const CIRCLE_NATIVE_SLOTS = 100;
+
+const CIRCLE_REMINDED_KEY = 'serenity.circles.reminded.v1';
+
+export interface CircleReminderSlot {
+  circleId: string;
+  circleName: string;
+  occurrence: Occurrence;
+}
+
+function circleReminderCopy(slot: CircleReminderSlot) {
+  const time = new Date(slot.occurrence.startsAt).toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+  return {
+    title: `${slot.circleName} sits at ${time}`,
+    body: 'The room opens in five minutes. Come as you are.',
+    url: `/circles/view?id=${slot.circleId}`,
+  };
+}
+
+function readReminded(): Record<string, number> {
+  try {
+    const raw = window.localStorage.getItem(CIRCLE_REMINDED_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, number>) : {};
+  } catch {
+    return {};
+  }
+}
+
+function markReminded(key: string, now: number): void {
+  // Stamps older than two days can never match a future session; drop them.
+  const kept = Object.fromEntries(
+    Object.entries(readReminded()).filter(([, at]) => now - at < 2 * 86_400_000),
+  );
+  try {
+    window.localStorage.setItem(CIRCLE_REMINDED_KEY, JSON.stringify({ ...kept, [key]: now }));
+  } catch {
+    // At worst a repeated nudge.
+  }
+}
+
+/**
+ * Rewrites the OS schedule: every circle slot cancelled, then one explicit
+ * notification per upcoming session. Explicit dates rather than a repeating
+ * rule, because the circle's zone may change its clocks on a different day
+ * from the reader's.
+ */
+async function syncCircleNative(slots: CircleReminderSlot[]): Promise<void> {
+  const native = nativePlugin();
+  if (!native) return;
+
+  try {
+    await native.cancel({
+      notifications: Array.from({ length: CIRCLE_NATIVE_SLOTS }, (_, index) => ({
+        id: CIRCLE_NATIVE_FIRST_ID + index,
+      })),
+    });
+
+    const now = Date.now();
+    const notifications = slots
+      .filter((slot) => slot.occurrence.startsAt - CIRCLE_REMINDER_LEAD_MS > now)
+      .slice(0, CIRCLE_NATIVE_SLOTS)
+      .map((slot, index) => {
+        const copy = circleReminderCopy(slot);
+        return {
+          id: CIRCLE_NATIVE_FIRST_ID + index,
+          title: copy.title,
+          body: copy.body,
+          schedule: {
+            at: new Date(slot.occurrence.startsAt - CIRCLE_REMINDER_LEAD_MS),
+            allowWhileIdle: true,
+          },
+          extra: { url: copy.url },
+        };
+      });
+
+    if (notifications.length > 0) await native.schedule({ notifications });
+  } catch {
+    // Without the plugin there are simply no circle reminders.
+  }
+}
+
+/**
+ * Starts circle reminders and returns the teardown. `getSlots` is called fresh
+ * on every check, so it always reflects the reader's current circles.
+ *
+ * Pass a function returning nothing to clear them.
+ */
+export function startCircleReminders(getSlots: () => CircleReminderSlot[]): () => void {
+  if (typeof window === 'undefined') return () => {};
+
+  if (nativePlugin()) {
+    void syncCircleNative(getSlots());
+    return () => {};
+  }
+
+  if (!webNotificationsAvailable()) return () => {};
+
+  let stopped = false;
+
+  const tick = () => {
+    if (stopped || Notification.permission !== 'granted') return;
+
+    const now = Date.now();
+    const reminded = readReminded();
+
+    for (const slot of getSlots()) {
+      const key = reminderKey(slot.circleId, slot.occurrence);
+      if (!circleReminderDue(slot.occurrence, now, key in reminded)) continue;
+
+      markReminded(key, now);
+      const copy = circleReminderCopy(slot);
+      void displayWebNotification(copy.title, {
+        body: copy.body,
+        tag: `serenity-circle-${slot.circleId}`,
+        url: copy.url,
+      });
     }
   };
 

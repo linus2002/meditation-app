@@ -2,7 +2,16 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ArrowDownToLine, BookOpen, ChevronRight, Flame, Heart, Timer, TimerReset } from 'lucide-react';
+import {
+  ArrowDownToLine,
+  Bell,
+  BookOpen,
+  ChevronRight,
+  Flame,
+  Heart,
+  Timer,
+  TimerReset,
+} from 'lucide-react';
 
 import { InstallPrompt } from '@/components/layout/install-prompt';
 import { ScreenHeader } from '@/components/layout/screen-header';
@@ -26,6 +35,7 @@ const shortcuts = [
   { href: '/stories', label: 'Read-aloud stories', icon: BookOpen },
   { href: '/favorites', label: 'Saved sessions', icon: Heart },
   { href: '/downloads', label: 'Downloads', icon: ArrowDownToLine },
+  { href: '/notifications', label: 'Notifications', icon: Bell },
   { href: '/activities', label: 'Daily activities', icon: Flame },
   { href: '/sleep', label: 'Sleep and timers', icon: Timer },
 ];
