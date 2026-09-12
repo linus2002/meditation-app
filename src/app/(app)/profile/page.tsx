@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Flame,
   Heart,
+  HeartHandshake,
   Timer,
   TimerReset,
 } from 'lucide-react';
@@ -25,6 +26,7 @@ import { useReminders } from '@/hooks/use-reminders';
 import { formatDuration } from '@/lib/format';
 import { reminderDefinitions } from '@/lib/reminders';
 import { currentStreak, lifetimeTotals, weeklyMinutes } from '@/lib/session-stats';
+import { supportTrackEnabled } from '@/lib/support-track';
 import { useApp } from '@/providers/app-provider';
 
 /** The toggles that need notification permission behind them. */
@@ -38,6 +40,10 @@ const shortcuts = [
   { href: '/notifications', label: 'Notifications', icon: Bell },
   { href: '/activities', label: 'Daily activities', icon: Flame },
   { href: '/sleep', label: 'Sleep and timers', icon: Timer },
+  // Only once the track has passed clinical review and been switched on.
+  ...(supportTrackEnabled
+    ? [{ href: '/support', label: 'Support during cancer', icon: HeartHandshake }]
+    : []),
 ];
 
 export default function ProfilePage() {
@@ -54,7 +60,7 @@ export default function ProfilePage() {
    */
   const reminderNote =
     reminderMode === 'unsupported'
-      ? 'This browser cannot show reminders, so the two nudges above are unavailable.'
+      ? 'This browser cannot show reminders, so the notifications above are unavailable.'
       : permission === 'denied'
         ? 'Notifications are blocked for Serenity. Allow them in your browser or system settings to switch the reminders back on.'
         : reminderMode === 'web'

@@ -6,7 +6,9 @@ import {
   msUntilNext,
   nextOccurrence,
   parseTime,
+  reminderBody,
   reminderDefinitions,
+  upcomingDaily,
   type ReminderDefinition,
 } from '@/lib/reminders';
 
@@ -113,5 +115,50 @@ describe('reminderDefinitions', () => {
     for (const entry of reminderDefinitions) {
       expect(parseTime(entry.time)).not.toBeNull();
     }
+  });
+});
+
+describe('daily inspiration', () => {
+  const inspiration = reminderDefinitions.find((entry) => entry.id === 'inspiration');
+
+  it('exists as a scheduled reminder', () => {
+    expect(inspiration).toBeDefined();
+  });
+
+  it('says something different each day', () => {
+    if (!inspiration) return;
+    expect(reminderBody(inspiration, '2026-09-12')).not.toBe(reminderBody(inspiration, '2026-09-13'));
+  });
+
+  it('may still arrive later in the day, but not at night', () => {
+    if (!inspiration) return;
+    expect(isDue(inspiration, new Date(2026, 8, 12, 13, 0), undefined)).toBe(true);
+    expect(isDue(inspiration, new Date(2026, 8, 12, 23, 0), undefined)).toBe(false);
+  });
+
+  it('leaves fixed reminders with their fixed words', () => {
+    expect(reminderBody(daily, '2026-09-12')).toBe(daily.body);
+  });
+});
+
+describe('upcomingDaily', () => {
+  it('starts today while the time is still ahead', () => {
+    expect(upcomingDaily('08:00', new Date(2026, 8, 12, 7, 0), 2)).toEqual([
+      new Date(2026, 8, 12, 8, 0),
+      new Date(2026, 8, 13, 8, 0),
+    ]);
+  });
+
+  it('starts tomorrow once today has passed, then runs day by day', () => {
+    expect(upcomingDaily('08:00', new Date(2026, 8, 12, 9, 0), 3)).toEqual([
+      new Date(2026, 8, 13, 8, 0),
+      new Date(2026, 8, 14, 8, 0),
+      new Date(2026, 8, 15, 8, 0),
+    ]);
+  });
+
+  it('crosses a month end', () => {
+    const dates = upcomingDaily('08:00', new Date(2026, 8, 30, 9, 0), 2);
+    expect(dates[1]).toEqual(new Date(2026, 9, 2, 8, 0));
   });
 });

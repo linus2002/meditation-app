@@ -2,15 +2,17 @@
 
 import * as React from 'react';
 
+import { useInspiration } from '@/hooks/use-inspiration';
 import {
   checkPermission,
   deliveryMode,
   requestPermission,
   startReminders,
+  type BodyResolver,
   type DeliveryMode,
   type PermissionState,
 } from '@/lib/notifications';
-import { reminderDefinitions } from '@/lib/reminders';
+import { reminderBody, reminderDefinitions } from '@/lib/reminders';
 import { useApp } from '@/providers/app-provider';
 
 /**
@@ -62,10 +64,19 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
     .map((entry) => entry.id)
     .join(',');
 
+  // The daily inspiration is picked for this reader; every other reminder
+  // says its own fixed words.
+  const { resolve } = useInspiration();
+  const resolveBody = React.useCallback<BodyResolver>(
+    (reminder, dateKey) =>
+      reminder.id === 'inspiration' ? resolve(dateKey).inspiration.text : reminderBody(reminder, dateKey),
+    [resolve],
+  );
+
   React.useEffect(() => {
     if (!schedule || !hydrated || permission !== 'granted') return;
-    return startReminders(enabledKey ? enabledKey.split(',') : []);
-  }, [schedule, hydrated, permission, enabledKey]);
+    return startReminders(enabledKey ? enabledKey.split(',') : [], resolveBody);
+  }, [schedule, hydrated, permission, enabledKey, resolveBody]);
 
   /**
    * Turns a reminder on, asking for permission first.

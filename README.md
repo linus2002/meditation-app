@@ -235,6 +235,114 @@ exactly the self-judgement the rest of the app is trying to settle. The prompts
 are written to invite noticing rather than grading, and none of them are
 clinical screening questions.
 
+## Daily inspiration
+
+One short, uplifting line a day — *"You don't have to be strong every moment.
+Just take the next breath."* — chosen for each reader from 55 messages written
+for Serenity (`src/data/inspirations.ts`), each tagged with keywords: calm,
+sleep, focus, self-kindness, hard-day, new-start, momentum.
+
+**How the message is chosen** (`src/lib/inspiration.ts`, all on the phone):
+
+| What the app notices | Leans towards |
+| --- | --- |
+| A reflection rated Heavy or Uneasy, today or yesterday | hard-day, self-kindness |
+| Last night logged as poor, or under six hours | sleep |
+| Four or more days since the last sit | new-start — a welcome back, never guilt |
+| A streak of three days or more | momentum |
+| Themes the reader picked (Calm, Sleep, Focus, Self-kindness) | those themes |
+| The goal from the Circles questions | that goal |
+
+The best matches rotate by date, so the message is stable all day and changes
+the next. Passing moods only shape today's and tomorrow's message. With nothing
+to go on, everyone gets the same everyday rotation. A day's message is settled
+the first time it is sent or shown (`src/lib/inspiration-plan.ts`), so the
+notification and the app always agree. Nothing about mood or sleep leaves the
+device.
+
+- **In the app:** today's message tops the Notifications screen, with the
+  previous three days beneath it. The bell shows a small dot until today's has
+  been read — only for readers who switched the inspiration on.
+- **On the phone:** *Profile → Preferences → Daily inspiration* (or the
+  Notifications screen) sends it at 08:00 as "Daily Inspiration". In a native
+  build the next fortnight is scheduled day by day, each with its own words,
+  and refreshed on every launch. In a browser it arrives while Serenity is open,
+  any time until 10 PM.
+
+## Support during cancer
+
+A separate track for people in and after cancer treatment, and for the people
+caring for them. It is organised by the **moment someone is living through**,
+not by meditation technique: waiting for scan results, the chemo chair, a
+no-energy day, a sleepless steroid night, the time after treatment ends, and
+looking after someone.
+
+**Scope:** comfort and coping alongside medical care — never a substitute for
+it. Nothing in the track may claim or imply any effect on cancer, treatment,
+results or survival.
+
+| Piece | Where |
+| --- | --- |
+| Sessions, moments, disclaimer (all DRAFT wording) | `src/data/support-track.ts` |
+| Guard-rail tests (no claim words, short tired-day sessions, no breath holds…) | `src/data/support-track.test.ts` |
+| The track's front door — "Where are you right now?" | `/support` |
+| One page per session, so each is precached for offline | `src/app/support/<id>/page.tsx` |
+| Player — one Start button, no streaks, scores or ratings | `src/components/support/support-player.tsx` |
+| Private listening history and larger text, kept apart from app stats | `src/lib/support-history.ts` |
+| On/off switch | `NEXT_PUBLIC_SUPPORT_TRACK` (`src/lib/support-track.ts`) |
+
+How it behaves:
+
+- **Low effort on a hard day.** One question, large targets, then a single
+  Start button. While playing, one large pause button. An "Aa" switch makes
+  the text larger across the track. No breath holds, no cue tones, no
+  vibration.
+- **No streaks anywhere in the track.** Listening goes into a private list
+  ("Just for you"), never into the app's streak, activity screen, daily goal
+  or a Circle.
+- **Built for the moment.** The two tired-day sessions are 2 and 5 minutes; the
+  chemo-chair session is 30 minutes and offers to keep going; the steroid-night
+  session fades away with no bell and does not keep the screen on.
+- **Offline.** Every session page is precached by the service worker, and the
+  sound is generated on the device, so the track works in hospitals with no
+  signal once Serenity is installed.
+- **My appointments.** A reader can add the date of a scan, scan results or
+  chemo (`src/lib/support-appointments.ts`). On the day and the day before, a
+  card at the top of the track offers the session made for it — Scan Day
+  Companion for scans and results, Chemo Chair for chemo — e.g. *"Your scan is
+  tomorrow"*. Only the kind and date are saved, on the phone; past dates clear
+  themselves. It is in-app only: no notifications. The card wording is draft
+  and goes through the same clinical review.
+
+### Before launch — required, in this order
+
+1. **Clinical review before the wording is final.** An oncology social worker,
+   psycho-oncologist or certified mindfulness-in-oncology instructor reviews
+   the moment list, every session's wording, the breath pacing and the
+   disclaimer. Their changes go into `support-track.ts`, and each session is
+   set to `review: 'approved'` (the in-app "Draft wording" notice disappears
+   once all are approved).
+2. **Legal check** that no copy can be read as a medical or treatment claim.
+   The test's word list is a safety net, not a substitute.
+3. **Soft launch** through a partner cancer-support organisation: turn the
+   track on (`NEXT_PUBLIC_SUPPORT_TRACK=1` in Vercel, then redeploy) and share
+   the `/support` link with a small group, collecting feedback before a wide
+   release. A Profile shortcut appears automatically once it is on.
+4. **Home-screen shortcut** (long-press on the app icon) — add to
+   `public/manifest.webmanifest` at launch, not before, since every installed
+   copy would see it:
+   ```json
+   "shortcuts": [
+     { "name": "Support during cancer", "url": "/support",
+       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] },
+     { "name": "Five minutes", "url": "/support/five-minutes",
+       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }] }
+   ]
+   ```
+
+Later: human-narrated audio for each session (recorded after review), and
+private cancer-support and caregiver Circles once invite-only circles exist.
+
 ## Progressive web app
 
 Serenity installs to the home screen and works with no connection at all.

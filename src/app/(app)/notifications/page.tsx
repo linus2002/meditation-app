@@ -1,24 +1,48 @@
 'use client';
 
 import * as React from 'react';
-import { BellOff, BellRing, Loader2, Moon, Send, Sun, Users } from 'lucide-react';
+import { BellOff, BellRing, Loader2, Moon, Send, Sparkles, Sun, Users } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { SectionTitle } from '@/components/shared/section-title';
 import { Skeleton } from '@/components/shared/skeleton';
 import { Switch } from '@/components/ui/switch';
+import { formatEntryDate } from '@/data/reflections';
+import { useInspiration, type ResolvedInspiration } from '@/hooks/use-inspiration';
 import { useReminders } from '@/hooks/use-reminders';
+import { inspirationThemes, type InspirationReason } from '@/lib/inspiration';
+import { cn } from '@/lib/utils';
+import { addDays, toDateKey } from '@/lib/date';
+import { markInspirationSeen } from '@/lib/inspiration-seen';
 import { deliveredLog, sendTestNotification, type TestResult } from '@/lib/notifications';
 import { dayKey, nextOccurrence, reminderDefinitions } from '@/lib/reminders';
 import { useApp } from '@/providers/app-provider';
 import { useCircles } from '@/providers/circles-provider';
 
-const reminderIcons: Record<string, typeof Sun> = { reminders: Sun, bedtime: Moon };
+const reminderIcons: Record<string, typeof Sun> = {
+  reminders: Sun,
+  bedtime: Moon,
+  inspiration: Sparkles,
+};
 
 const reminderLabels: Record<string, string> = {
   reminders: 'Daily reminder',
   bedtime: 'Bedtime wind down',
+  inspiration: 'Daily inspiration',
+};
+
+/** Past days of inspiration listed under today's. */
+const EARLIER_DAYS = 3;
+
+/** One quiet line saying why today's message was chosen. */
+const reasonCopy: Record<InspirationReason, string> = {
+  'heavy-day': 'A gentler one, after a heavy day.',
+  'rough-night': 'Chosen with last night’s sleep in mind.',
+  'welcome-back': 'For coming back after a few days away.',
+  momentum: 'For the run of days you’re on.',
+  theme: 'From the themes you chose.',
+  goal: 'Picked for what you’re working on.',
 };
 
 const testMessages: Record<TestResult, string> = {
@@ -63,6 +87,27 @@ export default function NotificationsPage() {
     const timer = window.setInterval(refresh, 60 * 1000);
     return () => window.clearInterval(timer);
   }, []);
+
+  // Today's inspiration, chosen for this reader and settled for the day, so it
+  // matches the notification. It counts as read once this screen shows it.
+  const { resolve, history, themes, toggleTheme } = useInspiration();
+  const todayKey = now ? toDateKey(now) : null;
+  const [todays, setTodays] = React.useState<ResolvedInspiration | null>(null);
+  const [earlier, setEarlier] = React.useState<ResolvedInspiration[]>([]);
+
+  React.useEffect(() => {
+    if (!hydrated || !todayKey) return;
+    setTodays(resolve(todayKey));
+    markInspirationSeen(todayKey);
+
+    const [year, month, day] = todayKey.split('-').map(Number);
+    const base = new Date(year, month - 1, day);
+    setEarlier(
+      history(
+        Array.from({ length: EARLIER_DAYS }, (_, index) => toDateKey(addDays(base, -(index + 1)))),
+      ),
+    );
+  }, [hydrated, todayKey, resolve, history]);
 
   const [testing, setTesting] = React.useState(false);
   const [testResult, setTestResult] = React.useState<TestResult | null>(null);
@@ -110,6 +155,79 @@ export default function NotificationsPage() {
   return (
     <div className="pb-4">
       <ScreenHeader eyebrow="Reminders and alerts" title="Notifications" />
+
+      <section className="mt-6 px-5">
+        <SectionTitle>Daily inspiration</SectionTitle>
+        {!todays || !now ? (
+          <Skeleton className="mt-3 h-[112px]" />
+        ) : (
+          <>
+            <div className="mt-3 rounded-tile bg-surface p-4">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-ink-soft" strokeWidth={1.7} />
+                <p className="text-[11px] leading-none text-ink-faint">Today</p>
+              </div>
+              <p className="mt-2.5 text-[15px] font-medium leading-snug text-ink">
+                {todays.inspiration.text}
+              </p>
+              {todays.reason ? (
+                <p className="mt-2 text-[11px] leading-snug text-ink-faint">
+                  {reasonCopy[todays.reason]}
+                </p>
+              ) : null}
+            </div>
+
+            {earlier.length > 0 ? (
+              <ul className="mt-2 space-y-2">
+                {earlier.map((entry) => (
+                  <li key={entry.dateKey} className="rounded-tile bg-surface/60 px-4 py-3">
+                    <p className="text-[10.5px] leading-none text-ink-faint">
+                      {formatEntryDate(entry.dateKey, now)}
+                    </p>
+                    <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">
+                      {entry.inspiration.text}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+
+            <div className="mt-2.5 rounded-tile bg-surface p-4">
+              <p className="text-[13px] font-medium text-ink">More of what helps you</p>
+              <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+                Pick any themes. Serenity also turns gentler after a heavy day, a rough night or a
+                few days away. Changes apply from tomorrow&apos;s message.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {inspirationThemes.map((theme) => {
+                  const on = themes.includes(theme.id);
+                  return (
+                    <button
+                      key={theme.id}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => toggleTheme(theme.id)}
+                      className={cn(
+                        'rounded-full px-3.5 py-2 text-[12.5px] font-medium transition-colors duration-150',
+                        'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+                        on
+                          ? 'bg-action-pill text-white'
+                          : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
+                      )}
+                    >
+                      {theme.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-[11px] leading-snug text-ink-faint">
+                All of this is worked out on your phone. Nothing about your mood or sleep is sent
+                anywhere.
+              </p>
+            </div>
+          </>
+        )}
+      </section>
 
       <section className="mt-6 px-5">
         {!ready ? (
@@ -250,8 +368,9 @@ export default function NotificationsPage() {
       {mode === 'web' ? (
         <p className="mt-4 px-6 text-[11.5px] leading-relaxed text-ink-faint">
           Serenity has no server to wake it, so a browser reminder is sent by the app itself. If
-          the app is not open within half an hour of the time, that day&apos;s reminder is skipped
-          rather than arriving late.
+          the app is not open within half an hour of the time, the daily and bedtime reminders are
+          skipped rather than arriving late. The daily inspiration still arrives whenever you open
+          Serenity before 10 PM.
         </p>
       ) : null}
     </div>

@@ -1,4 +1,4 @@
-import { Bell, Moon, Music, Sun, Vibrate, Volume2 } from 'lucide-react';
+import { Bell, Moon, Music, Sparkles, Sun, Vibrate, Volume2 } from 'lucide-react';
 
 import { getReminder } from '@/lib/reminders';
 import type { SettingToggle } from '@/types';
@@ -12,6 +12,7 @@ import type { SettingToggle } from '@/types';
  */
 const reminderTime = getReminder('reminders')?.time ?? '07:00';
 const bedtimeTime = getReminder('bedtime')?.time ?? '22:30';
+const inspirationTime = getReminder('inspiration')?.time ?? '08:00';
 export const settingToggles: SettingToggle[] = [
   {
     id: 'lightMode',
@@ -35,6 +36,13 @@ export const settingToggles: SettingToggle[] = [
     label: 'Bedtime wind down',
     description: `A nudge at ${bedtimeTime} to put the day down and pick something for sleep`,
     icon: Moon,
+    defaultOn: false,
+  },
+  {
+    id: 'inspiration',
+    label: 'Daily inspiration',
+    description: `A short, uplifting message each day at ${inspirationTime}`,
+    icon: Sparkles,
     defaultOn: false,
   },
   {

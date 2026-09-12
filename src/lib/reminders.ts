@@ -1,5 +1,7 @@
+import { inspirationForDate } from '@/data/inspirations';
+
 /**
- * The two scheduled nudges, and the date maths behind them.
+ * The scheduled nudges, and the date maths behind them.
  *
  * Everything here is pure and clock-injected — `nextOccurrence(time, from)`
  * never reads `Date.now()` itself — so the scheduler can be tested without
@@ -25,6 +27,14 @@ export interface ReminderDefinition {
    * across app updates and would cancel the wrong reminder.
    */
   nativeId: number;
+  /**
+   * For a message that changes every day: the body for a local date. Such a
+   * reminder is scheduled day by day on native, in the id range
+   * `nativeId * 1000` onwards, rather than as one repeating notification.
+   */
+  bodyFor?: (dateKey: string) => string;
+  /** How late it may still arrive; defaults to `LATE_DELIVERY_LIMIT_MS`. */
+  lateLimitMs?: number;
 }
 
 export const reminderDefinitions: ReminderDefinition[] = [
@@ -43,6 +53,18 @@ export const reminderDefinitions: ReminderDefinition[] = [
     body: 'Dim the lights and pick something for sleep.',
     url: '/sleep',
     nativeId: 2,
+  },
+  {
+    id: 'inspiration',
+    time: '08:00',
+    title: 'Daily Inspiration',
+    body: 'A short, uplifting thought for your day.',
+    bodyFor: inspirationForDate,
+    url: '/notifications',
+    nativeId: 3,
+    // A kind word is still welcome at lunchtime, unlike a wind-down nudge the
+    // next morning — so it may arrive any time until 22:00.
+    lateLimitMs: 14 * 60 * 60 * 1000,
   },
 ];
 
@@ -119,7 +141,26 @@ export function isDue(
   dueAt.setHours(parsed.hours, parsed.minutes, 0, 0);
 
   const elapsed = now.getTime() - dueAt.getTime();
-  if (elapsed < 0 || elapsed > LATE_DELIVERY_LIMIT_MS) return false;
+  if (elapsed < 0 || elapsed > (reminder.lateLimitMs ?? LATE_DELIVERY_LIMIT_MS)) return false;
 
   return lastDelivered !== dayKey(now);
+}
+
+/** What the notification says on a given local date. */
+export function reminderBody(reminder: ReminderDefinition, dateKey: string): string {
+  return reminder.bodyFor?.(dateKey) ?? reminder.body;
+}
+
+/**
+ * The next `count` days' occurrences of a wall-clock time: today if it is still
+ * ahead, then each following day. Built with `setDate`, so the hour holds
+ * across a daylight-saving change.
+ */
+export function upcomingDaily(time: string, from: Date, count: number): Date[] {
+  const first = nextOccurrence(time, from);
+  return Array.from({ length: count }, (_, index) => {
+    const next = new Date(first);
+    next.setDate(first.getDate() + index);
+    return next;
+  });
 }

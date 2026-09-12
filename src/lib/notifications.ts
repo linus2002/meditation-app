@@ -6,10 +6,17 @@ import {
   reminderKey,
 } from '@/lib/circles/schedule';
 import type { Occurrence } from '@/lib/circles/types';
-import { dayKey, isDue, reminderDefinitions, type ReminderDefinition } from '@/lib/reminders';
+import {
+  dayKey,
+  isDue,
+  reminderBody,
+  reminderDefinitions,
+  upcomingDaily,
+  type ReminderDefinition,
+} from '@/lib/reminders';
 
 /**
- * Delivering the two reminders, on whichever platform is underneath.
+ * Delivering the scheduled reminders, on whichever platform is underneath.
  *
  * There are two very different backends here, and the difference decides what
  * the app may honestly promise:
@@ -195,9 +202,16 @@ async function displayWebNotification(
   }
 }
 
-function showWebNotification(reminder: ReminderDefinition): Promise<boolean> {
+/**
+ * What a reminder says on a date. The daily inspiration is chosen per reader,
+ * which only the app (not this module) knows how to do, so callers may pass
+ * their own; otherwise each reminder says its own fixed words.
+ */
+export type BodyResolver = (reminder: ReminderDefinition, dateKey: string) => string;
+
+function showWebNotification(reminder: ReminderDefinition, body: string): Promise<boolean> {
   return displayWebNotification(reminder.title, {
-    body: reminder.body,
+    body,
     tag: `serenity-${reminder.id}`,
     url: reminder.url,
   });
@@ -265,33 +279,63 @@ export async function sendTestNotification(): Promise<TestResult> {
  * cheap to re-register, and rewriting means a change of time or wording takes
  * effect on the next launch instead of living on in a stale pending entry.
  */
-async function syncNative(enabledIds: string[]): Promise<void> {
+/** How many days of a daily-changing message are handed to the OS at once. */
+const DAILY_MESSAGE_DAYS = 14;
+
+/** The native ids a daily-changing reminder uses: `nativeId * 1000` onwards. */
+function dailyNativeIds(entry: ReminderDefinition): number[] {
+  return Array.from({ length: DAILY_MESSAGE_DAYS }, (_, index) => entry.nativeId * 1000 + index);
+}
+
+async function syncNative(enabledIds: string[], bodyOf: BodyResolver): Promise<void> {
   const native = nativePlugin();
   if (!native) return;
 
   const enabled = reminderDefinitions.filter((entry) => enabledIds.includes(entry.id));
   const disabled = reminderDefinitions.filter((entry) => !enabledIds.includes(entry.id));
+  const daily = reminderDefinitions.filter((entry) => entry.bodyFor);
 
   try {
-    if (disabled.length > 0) {
-      await native.cancel({ notifications: disabled.map((entry) => ({ id: entry.nativeId })) });
+    // A message that changes every day cannot be one repeating notification,
+    // so it is scheduled as the next fortnight of single days, each carrying
+    // its own words — cleared and written fresh on every launch.
+    const toCancel = [
+      ...disabled.filter((entry) => !entry.bodyFor).map((entry) => entry.nativeId),
+      ...daily.flatMap(dailyNativeIds),
+    ];
+    if (toCancel.length > 0) {
+      await native.cancel({ notifications: toCancel.map((id) => ({ id })) });
     }
 
-    if (enabled.length === 0) return;
+    const now = new Date();
+    // Two shapes — one-off days and repeating rules — so typed as the plugin
+    // takes them.
+    const notifications = enabled.flatMap((entry): unknown[] => {
+      if (entry.bodyFor) {
+        const ids = dailyNativeIds(entry);
+        return upcomingDaily(entry.time, now, DAILY_MESSAGE_DAYS).map((at, index) => ({
+          id: ids[index],
+          title: entry.title,
+          body: bodyOf(entry, dayKey(at)),
+          schedule: { at, allowWhileIdle: true },
+          extra: { url: entry.url },
+        }));
+      }
 
-    await native.schedule({
-      notifications: enabled.map((entry) => {
-        const [hour, minute] = entry.time.split(':').map(Number);
-        return {
+      const [hour, minute] = entry.time.split(':').map(Number);
+      return [
+        {
           id: entry.nativeId,
           title: entry.title,
           body: entry.body,
           // `on` with only hour and minute set repeats every day at that time.
           schedule: { on: { hour, minute }, allowWhileIdle: true },
           extra: { url: entry.url },
-        };
-      }),
+        },
+      ];
     });
+
+    if (notifications.length > 0) await native.schedule({ notifications });
   } catch {
     // A shell without the plugin installed simply has no reminders, and the
     // app works exactly as it did before.
@@ -309,11 +353,13 @@ async function syncNative(enabledIds: string[]): Promise<void> {
  * throttle, suspend or drop a timer set fourteen hours into the future, and
  * because this way the check also survives the app being closed and reopened.
  */
-export function startReminders(enabledIds: string[]): () => void {
+export function startReminders(enabledIds: string[], resolveBody?: BodyResolver): () => void {
   if (typeof window === 'undefined') return () => {};
 
+  const bodyOf: BodyResolver = resolveBody ?? reminderBody;
+
   if (nativePlugin()) {
-    void syncNative(enabledIds);
+    void syncNative(enabledIds, bodyOf);
     return () => {};
   }
 
@@ -331,7 +377,7 @@ export function startReminders(enabledIds: string[]): () => void {
     for (const reminder of enabled) {
       if (!isDue(reminder, now, delivered[reminder.id])) continue;
       markDelivered(reminder.id, dayKey(now));
-      void showWebNotification(reminder);
+      void showWebNotification(reminder, bodyOf(reminder, dayKey(now)));
     }
   };
 
