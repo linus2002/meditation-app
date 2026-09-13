@@ -27,7 +27,7 @@ export function GroupBanner({ href = '/circles' }: { href?: string }) {
 
       <Link
         href={href}
-        className="absolute bottom-4 right-4 rounded-full bg-[#3B1E6E] px-6 py-3 text-[13.5px] font-semibold leading-none text-white shadow-[0_10px_24px_-8px_rgba(24,8,54,0.65)] transition-transform duration-150 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#A98BD8]"
+        className="absolute bottom-4 right-4 rounded-full bg-[#2F5C1F] px-6 py-3 text-[13.5px] font-semibold leading-none text-white shadow-[0_10px_24px_-8px_rgba(14,34,8,0.65)] transition-transform duration-150 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#A98BD8]"
       >
         Join Now
       </Link>

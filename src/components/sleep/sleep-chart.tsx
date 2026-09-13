@@ -51,7 +51,7 @@ export function SleepChart({ nights }: { nights: SleepNight[] }) {
               {night.logged ? (
                 <span
                   className={cn(
-                    'w-full rounded-full bg-[linear-gradient(180deg,#8A7AF2_0%,#4FBCE0_55%,#2FE0CB_100%)] transition-all duration-500 ease-out',
+                    'w-full rounded-full bg-[linear-gradient(180deg,#61A644_0%,#4FBCE0_55%,#2FE0CB_100%)] transition-all duration-500 ease-out',
                     isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100',
                   )}
                   style={{ height: `${heightPercent}%` }}

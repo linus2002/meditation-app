@@ -59,7 +59,7 @@ export function DownloadButton({
           <linearGradient id="download-gradient" x1="0" y1="1" x2="1" y2="0">
             <stop offset="0%" stopColor="#3FD9C9" />
             <stop offset="52%" stopColor="#7CA9E8" />
-            <stop offset="100%" stopColor="#F07BC8" />
+            <stop offset="100%" stopColor="#1D9FDA" />
           </linearGradient>
         </defs>
       </svg>

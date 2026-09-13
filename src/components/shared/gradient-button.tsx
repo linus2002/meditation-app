@@ -10,7 +10,7 @@ interface GradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEleme
 }
 
 /**
- * The pink -> violet pill used for the primary call to action. The reference
+ * The blue -> green pill used for the primary call to action. The reference
  * uses a single flat gradient with no border and generous corner radius.
  */
 export const GradientButton = React.forwardRef<HTMLButtonElement, GradientButtonProps>(

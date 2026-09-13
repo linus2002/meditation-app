@@ -9,9 +9,9 @@ export function SerenityRing({ className }: { className?: string }) {
     <svg viewBox="0 0 40 40" aria-hidden="true" className={cn('shrink-0', className)}>
       <defs>
         <linearGradient id="mark-ring" x1="18%" y1="8%" x2="82%" y2="92%">
-          <stop offset="0%" stopColor="#F48FC8" />
-          <stop offset="38%" stopColor="#B98CEE" />
-          <stop offset="66%" stopColor="#7C7BF0" />
+          <stop offset="0%" stopColor="#1D9FDA" />
+          <stop offset="38%" stopColor="#61A644" />
+          <stop offset="66%" stopColor="#61A644" />
           <stop offset="100%" stopColor="#2FE0CB" />
         </linearGradient>
       </defs>

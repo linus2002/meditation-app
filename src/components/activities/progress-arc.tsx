@@ -46,8 +46,8 @@ export function ProgressArc({ value, className, gradientId = 'arc-gradient' }: P
     >
       <defs>
         <linearGradient id={gradientId} x1="0.62" y1="0" x2="0.24" y2="1">
-          <stop offset="0%" stopColor="#B96BF0" />
-          <stop offset="34%" stopColor="#8A7AF2" />
+          <stop offset="0%" stopColor="#61A644" />
+          <stop offset="34%" stopColor="#61A644" />
           <stop offset="68%" stopColor="#4FBCE0" />
           <stop offset="100%" stopColor="#2FE0CB" />
         </linearGradient>

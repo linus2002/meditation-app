@@ -343,6 +343,24 @@ How it behaves:
 Later: human-narrated audio for each session (recorded after review), and
 private cancer-support and caregiver Circles once invite-only circles exist.
 
+## Maria, the built-in guide
+
+The raised button in the middle of the bottom bar, drawn with the app's own
+logo ring, opens a chat with **Maria** (`/maria`). She is deliberately static:
+no AI, no API key, no network. She matches keywords in what the reader types
+(`src/lib/maria.ts`) to replies written for Serenity (`src/data/maria.ts`) and
+offers tap-to-start sessions and screens.
+
+- Covers stress, sleep, focus, low moods, anger, body tension, short on time,
+  getting started, and the way to Circles, the timer, stories, reminders and
+  progress. Cancer-support replies appear only where that track is on.
+- Anything about suicide or self-harm is checked first, and answered with care
+  and a pointer to local emergency services, a crisis line or someone
+  trusted — never a meditation.
+- She says plainly that she is not a person or an AI, and not a substitute for
+  professional care. The conversation is kept on the phone only, with a Clear
+  button.
+
 ## Progressive web app
 
 Serenity installs to the home screen and works with no connection at all.

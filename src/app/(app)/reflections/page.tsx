@@ -52,7 +52,7 @@ export default function ReflectionsPage() {
                     <div
                       role="img"
                       aria-label={`${formatEntryDate(entry.date)}: ${weightLabel(entry.weight)}`}
-                      className="w-full rounded-full bg-[linear-gradient(180deg,#B96BF0_0%,#8A7AF2_45%,#2FE0CB_100%)]"
+                      className="w-full rounded-full bg-[linear-gradient(180deg,#61A644_0%,#61A644_45%,#2FE0CB_100%)]"
                       style={{ height: `${(entry.weight / reflectionWeights.length) * 100}%` }}
                     />
                   </div>

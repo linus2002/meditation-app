@@ -181,7 +181,7 @@ export function DiscoverView() {
           href="/stories"
           className="group mb-4 flex items-center gap-3.5 rounded-tile bg-surface p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3FD9C9_0%,#7CA9E8_55%,#F07BC8_100%)]">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3FD9C9_0%,#7CA9E8_55%,#1D9FDA_100%)]">
             <BookOpen className="h-5 w-5 text-white" strokeWidth={1.8} />
           </span>
           <span className="min-w-0 flex-1">

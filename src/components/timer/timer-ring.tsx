@@ -31,8 +31,8 @@ export function TimerRing({ progress, className, children }: TimerRingProps) {
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} fill="none" aria-hidden="true" className="h-full w-full">
         <defs>
           <linearGradient id="timer-ring-gradient" x1="0.62" y1="0" x2="0.24" y2="1">
-            <stop offset="0%" stopColor="#B96BF0" />
-            <stop offset="34%" stopColor="#8A7AF2" />
+            <stop offset="0%" stopColor="#61A644" />
+            <stop offset="34%" stopColor="#61A644" />
             <stop offset="68%" stopColor="#4FBCE0" />
             <stop offset="100%" stopColor="#2FE0CB" />
           </linearGradient>

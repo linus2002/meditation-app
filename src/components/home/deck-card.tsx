@@ -25,9 +25,9 @@ const toneBloom: Record<DeckTone, string> = {
   activities:
     'radial-gradient(70% 120% at 88% 18%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 62%), radial-gradient(55% 90% at 96% 78%, rgba(4,60,58,0.45) 0%, rgba(4,60,58,0) 70%)',
   happiness:
-    'radial-gradient(65% 110% at 78% 22%, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 100% at 100% 86%, rgba(214,112,214,0.4) 0%, rgba(214,112,214,0) 72%)',
+    'radial-gradient(65% 110% at 78% 22%, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 60%), radial-gradient(60% 100% at 100% 86%, rgba(29,159,218,0.4) 0%, rgba(29,159,218,0) 72%)',
   relaxation:
-    'radial-gradient(60% 100% at 82% 16%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 58%), radial-gradient(62% 105% at 96% 88%, rgba(88,110,224,0.55) 0%, rgba(88,110,224,0) 74%)',
+    'radial-gradient(60% 100% at 82% 16%, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 58%), radial-gradient(62% 105% at 96% 88%, rgba(97,166,68,0.55) 0%, rgba(97,166,68,0) 74%)',
 };
 
 interface DeckCardProps {

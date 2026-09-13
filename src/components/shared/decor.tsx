@@ -110,7 +110,7 @@ export function StitchArc({ className }: { className?: string }) {
               y1={80 + inner * Math.sin(angle)}
               x2={80 + outer * Math.cos(angle)}
               y2={80 + outer * Math.sin(angle)}
-              stroke="#7A3560"
+              stroke="#1D9FDA"
               strokeOpacity={0.18}
               strokeWidth={2}
               strokeLinecap="round"

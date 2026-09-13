@@ -1,10 +1,10 @@
 import type { Config } from 'tailwindcss';
 
 /**
- * Design tokens are lifted directly from the reference artwork:
- * a deep indigo/navy canvas, muted slate labels, and three signature
- * gradients (lime-teal, green-magenta, lavender-blue) used by the
- * category deck, plus the pink -> violet action gradient.
+ * Design tokens: a deep indigo/navy canvas, muted slate labels, and the
+ * brand pair — blue #1D9FDA and green #61A644 — which took over from the
+ * original pink and purple. Blue -> green is the action gradient; the
+ * category deck keeps its lime-teal card beside blue and green ones.
  */
 const config: Config = {
   darkMode: ['class'],
@@ -84,13 +84,16 @@ const config: Config = {
           mint: '#7DD69B',
           teal: '#23A392',
           deepteal: '#0B5E5E',
-          blush: '#F3ABE9',
-          orchid: '#E489E8',
+          /* Brand pair: pink became blue, purple became green. */
+          blue: '#1D9FDA',
+          green: '#61A644',
+          blush: '#1D9FDA',
+          orchid: '#1D9FDA',
           lilac: '#C9CCF3',
           periwinkle: '#8FA0EC',
-          violet: '#8B8CF0',
-          indigo: '#6C6FE8',
-          pink: '#F48FC8',
+          violet: '#61A644',
+          indigo: '#61A644',
+          pink: '#1D9FDA',
           cyan: '#2FE0CB',
         },
       },
@@ -106,22 +109,20 @@ const config: Config = {
       },
       boxShadow: {
         deck: '0 18px 40px -18px rgba(0,0,0,0.65)',
-        pill: '0 12px 30px -10px rgba(139,140,240,0.55)',
+        pill: '0 12px 30px -10px rgba(63,162,143,0.5)',
         tile: '0 10px 30px -18px rgba(0,0,0,0.8)',
       },
       backgroundImage: {
         'deck-activities':
           'linear-gradient(118deg,#E8F27A 0%,#B9E683 22%,#63CB9F 48%,#23A392 70%,#0B5E5E 100%)',
         'deck-happiness':
-          'linear-gradient(102deg,#D2EDA2 0%,#F2C9E9 34%,#EE93E4 58%,#E489E8 74%,#F3C4F1 100%)',
+          'linear-gradient(102deg,#D2EDA2 0%,#BFE3F5 34%,#6EC3EA 58%,#1D9FDA 74%,#A9D9F2 100%)',
         'deck-relaxation':
-          'linear-gradient(104deg,#EAE6FB 0%,#CFD1F6 40%,#9FACEE 70%,#6E82E4 100%)',
-        'action-pill':
-          'linear-gradient(90deg,#F48FC8 0%,#DBA6EE 28%,#BDB4F6 50%,#8B8CF0 76%,#6C6FE8 100%)',
-        'analytics-pill':
-          'linear-gradient(90deg,#F08CC8 0%,#C98FEE 55%,#8E7BF0 100%)',
-        'nav-active': 'linear-gradient(135deg,#3FD9C9 0%,#7CA9E8 50%,#F07BC8 100%)',
-        'ring-active': 'linear-gradient(140deg,#B06BF0 0%,#7C7BF0 50%,#F07BC8 100%)',
+          'linear-gradient(104deg,#EAF3E4 0%,#CBE3BE 40%,#95C77E 70%,#61A644 100%)',
+        'action-pill': 'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
+        'analytics-pill': 'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
+        'nav-active': 'linear-gradient(135deg,#3FD9C9 0%,#7CA9E8 50%,#1D9FDA 100%)',
+        'ring-active': 'linear-gradient(140deg,#61A644 0%,#1D9FDA 100%)',
       },
       keyframes: {
         'accordion-down': {

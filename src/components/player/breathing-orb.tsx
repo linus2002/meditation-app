@@ -32,13 +32,13 @@ export function BreathingOrb({ breath, isPlaying, className }: BreathingOrbProps
 
       <span
         aria-hidden="true"
-        className="absolute h-full w-full rounded-full bg-[radial-gradient(circle,rgba(139,140,240,0.35)_0%,rgba(139,140,240,0)_68%)] blur-xl transition-transform duration-1000 ease-out"
+        className="absolute h-full w-full rounded-full bg-[radial-gradient(circle,rgba(97,166,68,0.35)_0%,rgba(97,166,68,0)_68%)] blur-xl transition-transform duration-1000 ease-out"
         style={{ transform: `scale(${0.8 + expansion * 0.3})` }}
       />
 
       <span
         aria-hidden="true"
-        className="absolute rounded-full bg-[conic-gradient(from_210deg,#2FE0CB,#8A7AF2,#F48FC8,#2FE0CB)] opacity-90 transition-transform ease-out [transition-duration:900ms]"
+        className="absolute rounded-full bg-[conic-gradient(from_210deg,#2FE0CB,#61A644,#1D9FDA,#2FE0CB)] opacity-90 transition-transform ease-out [transition-duration:900ms]"
         style={{ height: '82%', width: '82%', transform: `scale(${scale})` }}
       />
 

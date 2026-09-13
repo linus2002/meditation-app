@@ -135,7 +135,7 @@ export default function ProfilePage() {
                 <div
                   role="img"
                   aria-label={`${day.label}: ${day.minutes} mindful minutes`}
-                  className="w-full rounded-full bg-[linear-gradient(180deg,#B96BF0_0%,#8A7AF2_45%,#2FE0CB_100%)]"
+                  className="w-full rounded-full bg-[linear-gradient(180deg,#61A644_0%,#61A644_45%,#2FE0CB_100%)]"
                   style={{
                     // A hairline for empty days, so the week still reads as seven.
                     height: day.minutes > 0 ? `${Math.round((day.minutes / peakMinutes) * 100)}%` : '3px',
