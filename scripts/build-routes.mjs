@@ -44,9 +44,14 @@ const found = await collectRoutes(appDir);
 const catalogue = await readFile(path.join(root, 'src/data/meditations.ts'), 'utf8');
 const ids = [...catalogue.matchAll(/^\s{4}id: '([^']+)',$/gm)].map((m) => m[1]);
 
+// `/yoga/[id]` is expanded the same way, from the yoga library.
+const yogaSource = await readFile(path.join(root, 'src/data/yoga.ts'), 'utf8');
+const yogaIds = [...yogaSource.matchAll(/^\s{4}id: '([^']+)',\r?$/gm)].map((m) => m[1]);
+
 const routes = [
   ...found.filter((route) => !route.includes('[')),
   ...ids.map((id) => `/player/${id}`),
+  ...yogaIds.map((id) => `/yoga/${id}`),
 ].sort();
 
 /*
@@ -85,4 +90,6 @@ if (stamped === sw && !sw.includes(`const BUILD = '${version}';`)) {
 
 await writeFile(swPath, stamped, 'utf8');
 
-console.log(`[precache] ${routes.length} routes (${ids.length} sessions) @ ${version}`);
+console.log(
+  `[precache] ${routes.length} routes (${ids.length} sessions, ${yogaIds.length} yoga) @ ${version}`,
+);

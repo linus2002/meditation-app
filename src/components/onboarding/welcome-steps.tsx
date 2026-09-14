@@ -1,9 +1,10 @@
 'use client';
 
 import Image from 'next/image';
+import { PersonStanding, Sparkles, Users, type LucideIcon } from 'lucide-react';
 
 import { AuroraSweep } from '@/components/onboarding/aurora-sweep';
-import { SerenityMark } from '@/components/onboarding/serenity-mark';
+import { SerenityMark, SerenityRing } from '@/components/onboarding/serenity-mark';
 import { DiagonalSlashes, WaveLines } from '@/components/shared/decor';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { photos } from '@/data/images';
@@ -119,8 +120,87 @@ export function WelcomeLibrary({ onNext }: { onNext: () => void }) {
   );
 }
 
+/** What's new since the original tour. `ring` is drawn with the app's own logo. */
+const NEW_FEATURES: { title: string; body: string; icon: LucideIcon | 'ring' }[] = [
+  {
+    title: 'Yoga',
+    body: 'Gentle, guided yoga — one pose at a time, with a soft bell to move.',
+    icon: PersonStanding,
+  },
+  {
+    title: 'Circles',
+    body: 'Sit with a small group at the same time each day. No scores, just company.',
+    icon: Users,
+  },
+  {
+    title: 'Kapwa',
+    body: 'Your built-in guide, in the middle of the menu. Tell it how you feel.',
+    icon: 'ring',
+  },
+  {
+    title: 'Daily inspiration',
+    body: 'One short, kind message each day, chosen for how you’re doing.',
+    icon: Sparkles,
+  },
+];
+
 /**
- * Step three is the original reference screen, unchanged — headline weight mix,
+ * Step three: what's new. Four features, each an icon and one line, on the same
+ * dark ground as the rest of the tour with a soft blue and green glow behind.
+ */
+export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
+  return (
+    <div className="relative flex min-h-full flex-col overflow-hidden">
+      <WaveLines className="left-0 top-0 h-[300px] w-full" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-24 -top-20 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(29,159,218,0.35)_0%,rgba(29,159,218,0)_70%)]"
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -left-20 top-40 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(97,166,68,0.28)_0%,rgba(97,166,68,0)_70%)]"
+      />
+
+      <div className="relative mt-auto px-7 pb-[clamp(24px,4.4vh,40px)]">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-aurora-blue">
+          New in Serenity
+        </p>
+        <h2 className="mt-3 text-[clamp(26px,8.2vw,33px)] font-semibold leading-[1.2] tracking-[-0.02em] text-ink">
+          More ways to <span className="text-aurora-green">feel better</span>
+        </h2>
+
+        <ul className="mt-[clamp(18px,3.4vh,28px)] space-y-[clamp(10px,1.8vh,14px)]">
+          {NEW_FEATURES.map(({ title, body, icon: Icon }) => (
+            <li key={title} className="flex items-start gap-3.5">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface">
+                {Icon === 'ring' ? (
+                  <SerenityRing className="h-6 w-6" />
+                ) : (
+                  <Icon className="h-5 w-5 text-ink-soft" strokeWidth={1.7} />
+                )}
+              </span>
+              <div className="min-w-0 pt-0.5">
+                <p className="text-[15px] font-semibold leading-tight text-ink">{title}</p>
+                <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">{body}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <button
+          type="button"
+          onClick={onNext}
+          className="mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-ink text-[15px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Step four is the original reference screen, unchanged — headline weight mix,
  * wave lines, leaning bars and the gradient pill, in their original proportions.
  * It was always an intro screen; this is simply where it belongs in the flow.
  */

@@ -109,13 +109,15 @@ A new install starts empty rather than seeded with a fabricated history.
 
 ## First-run tour
 
-Three steps at `/welcome`, shown once on a fresh install and never again.
+Four steps at `/welcome`, shown once on a fresh install and never again.
 
 1. Full-bleed abstract sweep, wordmark and tagline low on the screen, a filled
    primary and an outlined secondary.
 2. A tilted grid of session artwork running off every edge, with the promise
    set over it.
-3. The original reference intro screen — headline weight mix, wave lines,
+3. **New in Serenity** — Yoga, Circles, Kapwa and Daily inspiration, each an
+   icon and one line, over a soft blue and green glow.
+4. The original reference intro screen — headline weight mix, wave lines,
    leaning bars, gradient pill — unchanged. It was always an intro with a Get
    Started button, so this is where it belongs in the flow.
 
@@ -343,12 +345,13 @@ How it behaves:
 Later: human-narrated audio for each session (recorded after review), and
 private cancer-support and caregiver Circles once invite-only circles exist.
 
-## Maria, the built-in guide
+## Kapwa, the built-in guide
 
 The raised button in the middle of the bottom bar, drawn with the app's own
-logo ring, opens a chat with **Maria** (`/maria`). She is deliberately static:
-no AI, no API key, no network. She matches keywords in what the reader types
-(`src/lib/maria.ts`) to replies written for Serenity (`src/data/maria.ts`) and
+logo ring, opens a chat with **Kapwa** (`/kapwa`), named for the Filipino idea
+of shared humanity. Kapwa is deliberately static: no AI, no API key, no
+network. It matches keywords in what the reader types
+(`src/lib/kapwa.ts`) to replies written for Serenity (`src/data/kapwa.ts`) and
 offers tap-to-start sessions and screens.
 
 - Covers stress, sleep, focus, low moods, anger, body tension, short on time,
@@ -357,9 +360,29 @@ offers tap-to-start sessions and screens.
 - Anything about suicide or self-harm is checked first, and answered with care
   and a pointer to local emergency services, a crisis line or someone
   trusted — never a meditation.
-- She says plainly that she is not a person or an AI, and not a substitute for
+- Kapwa says plainly that it is not a person or an AI, and not a substitute for
   professional care. The conversation is kept on the phone only, with a Clear
   button.
+
+## Yoga
+
+Six short, gentle yoga sessions written for Serenity (`src/data/yoga.ts`), from
+a 5-minute seated desk stretch to 15 minutes of floor stretches before bed.
+They live in the **Yoga** tab of Meditations (`/meditations?tab=yoga` opens it
+directly), with a four-card **Yoga for today** overview on the home screen.
+
+Each session (`/yoga/<id>`) opens on an overview — length, level, every pose
+with its time, and a safety note — then plays **one pose at a time**: the
+pose's name, one instruction, a countdown ring, what comes next, and a soft
+bell as each pose begins. Poses done on both sides run left then right. Pause
+keeps your place; skip moves on; the screen stays awake; an ambient bed plays
+if ambience is on. Time spent counts toward the day, the streak and the weekly
+chart like any sit.
+
+A session's length is always the sum of its poses (`src/lib/yoga.ts`), and the
+pose clock (`src/hooks/use-yoga-session.ts`) runs on the wall clock so a
+backgrounded tab does not drift. Every session is prerendered and precached,
+so yoga works offline once Serenity is installed.
 
 ## Progressive web app
 

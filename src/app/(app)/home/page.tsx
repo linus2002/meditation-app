@@ -8,6 +8,7 @@ import { RecommendedRail } from '@/components/home/recommended-rail';
 import { ReflectionPromptRow } from '@/components/home/reflection-prompt-row';
 import { StartGoalCard } from '@/components/home/start-goal-card';
 import { TodayRail } from '@/components/home/today-rail';
+import { YogaRail } from '@/components/yoga/yoga-rail';
 import { SectionTitle } from '@/components/shared/section-title';
 import { deckCards } from '@/data/categories';
 import { dailyGoal, startGoal } from '@/data/meditations';
@@ -29,6 +30,15 @@ export default function HomePage() {
 
       <HomeSection title="Your meditations for today">
         <TodayRail />
+      </HomeSection>
+
+      <HomeSection
+        title="Yoga for today"
+        description="Short, gentle yoga to wake up, stretch or wind down."
+        actionHref="/meditations?tab=yoga"
+        actionLabel="See all"
+      >
+        <YogaRail />
       </HomeSection>
 
       <HomeSection title="Free programs for you">

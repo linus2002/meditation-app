@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ListMusic, Play } from 'lucide-react';
+import { ListMusic } from 'lucide-react';
 
 import { recommended } from '@/data/recommended';
 import { formatMinutesLabel } from '@/lib/format';
@@ -16,13 +16,22 @@ import { formatMinutesLabel } from '@/lib/format';
 export function RecommendedRail() {
   return (
     <div className="rail flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1">
-      {recommended.map(({ meditation, collection, tint, image }) => (
-        <article
-          key={meditation.id}
-          className="w-[82vw] max-w-[330px] shrink-0 snap-start overflow-hidden rounded-[16px]"
-          style={{ backgroundColor: tint }}
-        >
-          <div className="relative aspect-[16/9]">
+      {/* One gradient for every card's play glyph — the same as Start Your Goal. */}
+      <svg aria-hidden="true" width="0" height="0" className="absolute">
+        <defs>
+          <linearGradient id="reco-play-gradient" x1="18%" y1="8%" x2="82%" y2="92%">
+            <stop offset="0%" stopColor="#1D9FDA" />
+            <stop offset="38%" stopColor="#61A644" />
+            <stop offset="66%" stopColor="#61A644" />
+            <stop offset="100%" stopColor="#2FE0CB" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      {recommended.map(({ meditation, collection, image }) => (
+        <article key={meditation.id} className="w-[82vw] max-w-[330px] shrink-0 snap-start">
+          {/* The artwork carries its own rounding; the text sits straight on the page. */}
+          <div className="relative aspect-[16/9] overflow-hidden rounded-[16px]">
             <Image
               src={image}
               alt=""
@@ -36,7 +45,7 @@ export function RecommendedRail() {
             </span>
           </div>
 
-          <div className="px-4 pb-4 pt-3.5">
+          <div className="px-0.5 pb-1 pt-3">
             <p className="truncate text-[15.5px] font-bold leading-tight text-ink">
               {meditation.title}
             </p>
@@ -46,16 +55,24 @@ export function RecommendedRail() {
 
             <Link
               href={`/player/${meditation.id}`}
-              className="mt-4 flex h-[46px] w-full items-center justify-center gap-2.5 rounded-full bg-ink text-[14px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="mt-4 flex h-[46px] w-full items-center justify-center gap-2.5 rounded-full bg-surface text-[14px] font-semibold text-ink shadow-tile transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
-              <Play className="h-[15px] w-[15px] fill-canvas-deep" />
+              <svg viewBox="0 0 24 24" aria-hidden="true" className="h-[18px] w-[18px] shrink-0">
+                <path
+                  d="M8 5.2 19 12 8 18.8Z"
+                  fill="url(#reco-play-gradient)"
+                  stroke="url(#reco-play-gradient)"
+                  strokeWidth="2.4"
+                  strokeLinejoin="round"
+                />
+              </svg>
               Start session
             </Link>
 
             <Link
               href={`/discover?category=${meditation.category}`}
               aria-label={`More in ${collection}`}
-              className="mx-auto mt-3 flex h-8 w-8 items-center justify-center rounded-full text-white/55 transition-colors hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="mx-auto mt-3 flex h-8 w-8 items-center justify-center rounded-full text-ink-faint transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <ListMusic className="h-[18px] w-[18px]" strokeWidth={1.8} />
             </Link>

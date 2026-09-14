@@ -2,8 +2,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import { mariaIntents, mariaQuickReplies } from '@/data/maria';
-import { normalise, replyTo } from '@/lib/maria';
+import { kapwaIntents, kapwaQuickReplies } from '@/data/kapwa';
+import { normalise, replyTo } from '@/lib/kapwa';
 
 const sessionIds = (reply: ReturnType<typeof replyTo>) =>
   reply.actions.flatMap((action) => (action.type === 'session' ? [action.id] : []));
@@ -54,7 +54,7 @@ describe('replyTo', () => {
   });
 
   it('understands every quick reply it offers', () => {
-    for (const quick of mariaQuickReplies) {
+    for (const quick of kapwaQuickReplies) {
       expect(replyTo(quick).intentId, quick).not.toBe('fallback');
     }
   });
@@ -78,7 +78,7 @@ describe('the replies', () => {
     );
     expect(known.size).toBeGreaterThan(0);
 
-    for (const intent of mariaIntents) {
+    for (const intent of kapwaIntents) {
       for (const action of intent.actions ?? []) {
         if (action.type === 'session') expect(known.has(action.id), action.id).toBe(true);
       }

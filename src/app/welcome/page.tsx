@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 
 import {
+  WelcomeFeatures,
   WelcomeIntent,
   WelcomeIntro,
   WelcomeLibrary,
@@ -11,7 +12,8 @@ import {
 import { useApp } from '@/providers/app-provider';
 
 /**
- * The first-run tour: three steps, shown once.
+ * The first-run tour: four steps, shown once — the mark, the library, what's
+ * new, and the original intro screen that ends on Get Started.
  *
  * Finishing or skipping sets `onboarded`, which persists to localStorage — so
  * it appears on a fresh install and never again, on the web or inside the
@@ -35,7 +37,8 @@ export default function WelcomePage() {
     <div data-theme="dark" className="contents">
       {step === 0 ? <WelcomeIntro onNext={() => setStep(1)} onSkip={finish} /> : null}
       {step === 1 ? <WelcomeLibrary onNext={() => setStep(2)} /> : null}
-      {step === 2 ? <WelcomeIntent onDone={finish} /> : null}
+      {step === 2 ? <WelcomeFeatures onNext={() => setStep(3)} /> : null}
+      {step === 3 ? <WelcomeIntent onDone={finish} /> : null}
     </div>
   );
 }

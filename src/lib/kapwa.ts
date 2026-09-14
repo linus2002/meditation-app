@@ -1,14 +1,14 @@
 import {
   crisisKeywords,
   crisisReply,
-  mariaFallback,
-  mariaIntents,
-  type MariaIntent,
-  type MariaReply,
-} from '@/data/maria';
+  kapwaFallback,
+  kapwaIntents,
+  type KapwaIntent,
+  type KapwaReply,
+} from '@/data/kapwa';
 
 /**
- * How Maria picks a reply. Pure, so it is tested directly.
+ * How Kapwa picks a reply. Pure, so it is tested directly.
  *
  * Keywords are matched as whole words or phrases, ignoring case and
  * punctuation: "CAN'T SLEEP!!" finds sleep, "stressed" finds stress, and
@@ -37,22 +37,22 @@ function contains(normalised: string, keyword: string): boolean {
   return new RegExp(`(^|\\s)${escapeRegExp(phrase)}(\\s|$)`).test(normalised);
 }
 
-function hits(normalised: string, intent: MariaIntent): number {
+function hits(normalised: string, intent: KapwaIntent): number {
   return intent.keywords.filter((keyword) => contains(normalised, keyword)).length;
 }
 
 export function replyTo(
   message: string,
   { turn = 0, supportTrack = false }: { turn?: number; supportTrack?: boolean } = {},
-): MariaReply {
+): KapwaReply {
   const text = normalise(message);
-  if (!text) return mariaFallback;
+  if (!text) return kapwaFallback;
 
   if (crisisKeywords.some((keyword) => contains(text, keyword))) return crisisReply;
 
-  let best: MariaIntent | null = null;
+  let best: KapwaIntent | null = null;
   let bestHits = 0;
-  for (const intent of mariaIntents) {
+  for (const intent of kapwaIntents) {
     if (intent.supportTrackOnly && !supportTrack) continue;
     const count = hits(text, intent);
     if (count > bestHits) {
@@ -61,7 +61,7 @@ export function replyTo(
     }
   }
 
-  if (!best) return mariaFallback;
+  if (!best) return kapwaFallback;
 
   return {
     intentId: best.id,

@@ -7,35 +7,35 @@ import { Send, Trash2 } from 'lucide-react';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { SerenityRing } from '@/components/onboarding/serenity-mark';
 import { getMeditation } from '@/data/meditations';
-import { mariaQuickReplies, mariaWelcome, type MariaAction } from '@/data/maria';
+import { kapwaQuickReplies, kapwaWelcome, type KapwaAction } from '@/data/kapwa';
 import { formatMinutesLabel } from '@/lib/format';
-import { replyTo } from '@/lib/maria';
+import { replyTo } from '@/lib/kapwa';
 import { supportTrackEnabled } from '@/lib/support-track';
 import { cn } from '@/lib/utils';
 
 interface ChatMessage {
   id: string;
-  from: 'maria' | 'you';
+  from: 'kapwa' | 'you';
   text: string;
-  actions?: MariaAction[];
+  actions?: KapwaAction[];
 }
 
 /** Kept on this phone only. */
-const STORAGE_KEY = 'serenity.maria.v1';
+const STORAGE_KEY = 'serenity.kapwa.v1';
 const MAX_MESSAGES = 100;
 const MAX_LENGTH = 300;
-/** A short pause before Maria answers, so the reply reads as a reply. */
+/** A short pause before Kapwa answers, so the reply reads as a reply. */
 const TYPING_MS = 700;
 
 function welcome(): ChatMessage {
-  return { id: 'welcome', from: 'maria', text: mariaWelcome.text, actions: mariaWelcome.actions };
+  return { id: 'welcome', from: 'kapwa', text: kapwaWelcome.text, actions: kapwaWelcome.actions };
 }
 
 /**
- * Chat with Maria, Serenity's built-in guide. No AI and no network: replies
- * come from `lib/maria`, and the conversation stays on the device.
+ * Chat with Kapwa, Serenity's built-in guide. No AI and no network: replies
+ * come from `lib/kapwa`, and the conversation stays on the device.
  */
-export function MariaChat() {
+export function KapwaChat() {
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [hydrated, setHydrated] = React.useState(false);
   const [draft, setDraft] = React.useState('');
@@ -86,7 +86,7 @@ export function MariaChat() {
       setMessages((current) =>
         [
           ...current,
-          { id: `maria-${Date.now()}`, from: 'maria' as const, text: reply.text, actions: reply.actions },
+          { id: `kapwa-${Date.now()}`, from: 'kapwa' as const, text: reply.text, actions: reply.actions },
         ].slice(-MAX_MESSAGES),
       );
       setTyping(false);
@@ -103,7 +103,7 @@ export function MariaChat() {
     <div className="pb-4">
       <ScreenHeader
         eyebrow="Your Serenity guide"
-        title="Maria"
+        title="Kapwa"
         action={
           <button
             type="button"
@@ -127,14 +127,14 @@ export function MariaChat() {
 
       <ol aria-live="polite" className="mt-5 space-y-3 px-4">
         {messages.map((message) =>
-          message.from === 'maria' ? (
+          message.from === 'kapwa' ? (
             <li key={message.id} className="flex items-end gap-2 pr-8">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface">
                 <SerenityRing className="h-[18px] w-[18px]" />
               </span>
               <div className="min-w-0">
                 <p className="rounded-2xl rounded-bl-md bg-surface px-3.5 py-2.5 text-[13.5px] leading-relaxed text-ink">
-                  <span className="sr-only">Maria: </span>
+                  <span className="sr-only">Kapwa: </span>
                   {message.text}
                 </p>
                 {message.actions && message.actions.length > 0 ? (
@@ -163,7 +163,7 @@ export function MariaChat() {
             </span>
             <p
               className="flex gap-1 rounded-2xl rounded-bl-md bg-surface px-4 py-3.5"
-              aria-label="Maria is typing"
+              aria-label="Kapwa is typing"
             >
               {[0, 1, 2].map((dot) => (
                 <span
@@ -179,7 +179,7 @@ export function MariaChat() {
 
       {hydrated && !typing ? (
         <div className="mt-4 flex flex-wrap gap-2 px-4">
-          {mariaQuickReplies.map((quick) => (
+          {kapwaQuickReplies.map((quick) => (
             <button
               key={quick}
               type="button"
@@ -199,11 +199,11 @@ export function MariaChat() {
           send(draft);
         }}
       >
-        <label htmlFor="maria-input" className="sr-only">
-          Message Maria
+        <label htmlFor="kapwa-input" className="sr-only">
+          Message Kapwa
         </label>
         <textarea
-          id="maria-input"
+          id="kapwa-input"
           rows={1}
           value={draft}
           maxLength={MAX_LENGTH}
@@ -214,7 +214,7 @@ export function MariaChat() {
               send(draft);
             }
           }}
-          placeholder="Tell Maria how you feel…"
+          placeholder="Tell Kapwa how you feel…"
           className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl bg-surface px-4 py-3 text-[13.5px] leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         />
         <button
@@ -228,7 +228,7 @@ export function MariaChat() {
       </form>
 
       <p className="mt-3 px-6 text-center text-[11px] leading-relaxed text-ink-faint">
-        Maria can’t give medical advice. In an emergency, call your local emergency number.
+        Kapwa can’t give medical advice. In an emergency, call your local emergency number.
       </p>
 
       <div ref={endRef} />
@@ -236,8 +236,8 @@ export function MariaChat() {
   );
 }
 
-/** A tap-to-go button under one of Maria's replies. */
-function ActionLink({ action }: { action: MariaAction }) {
+/** A tap-to-go button under one of Kapwa's replies. */
+function ActionLink({ action }: { action: KapwaAction }) {
   const className =
     'rounded-full bg-overlay/[0.06] px-3.5 py-2 text-[12.5px] font-medium text-ink transition-colors hover:bg-overlay/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
 

@@ -18,14 +18,14 @@ interface NavItem {
 
 /**
  * Five destinations, each named for what the screen actually holds: the home
- * feed, the meditations library, Maria (the built-in guide, raised in the
+ * feed, the meditations library, Kapwa (the built-in guide, raised in the
  * middle), the sleep screen and the profile page. Icon over label, so the
  * glyph is never the only thing telling you where a tab goes.
  */
 const NAV_ITEMS: NavItem[] = [
   { href: '/home', label: 'Home', icon: Home },
   { href: '/meditations', label: 'Meditations', icon: Flower2 },
-  { href: '/maria', label: 'Maria', featured: true },
+  { href: '/kapwa', label: 'Kapwa', featured: true },
   { href: '/sleep', label: 'Sleep', icon: Moon },
   { href: '/profile', label: 'Profile', icon: User },
 ];

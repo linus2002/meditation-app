@@ -1,43 +1,43 @@
 /**
- * Maria: Serenity's built-in guide.
+ * Kapwa: Serenity's built-in guide.
  *
- * Deliberately simple and honest about it. Maria is not a person and not an
- * AI — there is no API behind her. She matches keywords in what the reader
+ * Deliberately simple and honest about it. Kapwa is not a person and not an
+ * AI — there is no API behind it. Kapwa matches keywords in what the reader
  * types to replies written for Serenity, and offers real sessions and screens
  * to tap into. Everything runs on the phone; nothing typed leaves it.
  *
  * Session ids must exist in `src/data/meditations.ts` (a test checks).
  */
 
-export type MariaAction =
+export type KapwaAction =
   | { type: 'session'; id: string }
   | { type: 'page'; href: string; label: string };
 
-export interface MariaIntent {
+export interface KapwaIntent {
   id: string;
   /** Words or short phrases; matched whole, case and punctuation ignored. */
   keywords: string[];
   /** Rotated by turn, so repeating a question does not repeat the answer. */
   replies: string[];
-  actions?: MariaAction[];
+  actions?: KapwaAction[];
   /** Only offered where the cancer support track is switched on. */
   supportTrackOnly?: boolean;
 }
 
-export interface MariaReply {
+export interface KapwaReply {
   intentId: string;
   text: string;
-  actions: MariaAction[];
+  actions: KapwaAction[];
 }
 
-export const mariaWelcome: MariaReply = {
+export const kapwaWelcome: KapwaReply = {
   intentId: 'welcome',
-  text: 'Hi, I’m Maria. I can help you find a session for how you’re feeling, or show you around Serenity. How are you today?',
+  text: 'Hi, I’m Kapwa. I can help you find a session for how you’re feeling, or show you around Serenity. How are you today?',
   actions: [],
 };
 
-/** Tappable openers, shown under Maria's latest message. */
-export const mariaQuickReplies: string[] = [
+/** Tappable openers, shown under Kapwa's latest message. */
+export const kapwaQuickReplies: string[] = [
   'I feel stressed',
   'I can’t sleep',
   'Help me focus',
@@ -66,19 +66,19 @@ export const crisisKeywords: string[] = [
   'no reason to live',
 ];
 
-export const crisisReply: MariaReply = {
+export const crisisReply: KapwaReply = {
   intentId: 'crisis',
   text: 'I’m really sorry you’re going through this. I’m only a simple guide and I can’t help with something this important — but you deserve support right now. If you might act on these thoughts or you’re in danger, please call your local emergency number now. You can also reach a crisis line or talk to someone you trust. You don’t have to go through this alone.',
   actions: [],
 };
 
-export const mariaFallback: MariaReply = {
+export const kapwaFallback: KapwaReply = {
   intentId: 'fallback',
   text: 'I’m not sure I understood — I know simple things best. I can help with stress, sleep, focus, feeling low, getting started, or finding your way around Serenity. Try one of the suggestions below.',
   actions: [],
 };
 
-export const mariaIntents: MariaIntent[] = [
+export const kapwaIntents: KapwaIntent[] = [
   {
     id: 'greeting',
     keywords: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'kumusta'],
@@ -228,10 +228,10 @@ export const mariaIntents: MariaIntent[] = [
     id: 'about',
     keywords: [
       'who are you', 'what are you', 'are you real', 'real person', 'human', 'ai', 'chatbot',
-      'robot', 'bot', 'maria',
+      'robot', 'bot', 'kapwa',
     ],
     replies: [
-      'I’m Maria, Serenity’s built-in guide. I’m not a person and I’m not an AI — I answer from a set of replies written for Serenity, so I understand simple things best. I’m also not a replacement for a doctor or therapist.',
+      'I’m Kapwa, Serenity’s built-in guide. I’m not a person and I’m not an AI — I answer from a set of replies written for Serenity, so I understand simple things best. I’m also not a replacement for a doctor or therapist.',
     ],
   },
   {
