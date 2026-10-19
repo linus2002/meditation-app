@@ -2,13 +2,17 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 /**
  * Capacitor wraps the static export in `out/` as a native Android and iOS app.
- * Change `appId` to a bundle identifier you own before submitting to a store.
+ * `appId` is permanent once a store listing exists.
  */
 const config: CapacitorConfig = {
-  appId: 'com.example.serenity',
+  appId: 'com.linus2002.serenity',
   appName: 'Serenity',
   webDir: 'out',
   backgroundColor: '#000000',
+  server: {
+    // Serves the bundle from https://localhost, so it runs in a secure context.
+    androidScheme: 'https',
+  },
   android: {
     backgroundColor: '#000000',
   },

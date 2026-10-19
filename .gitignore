@@ -6,3 +6,8 @@ next-env.d.ts
 *.tsbuildinfo
 .DS_Store
 precache.json
+
+# Android signing keys and machine-specific SDK paths never belong in the repo.
+*.jks
+*.keystore
+local.properties

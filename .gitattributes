@@ -1,0 +1,2 @@
+# The Gradle wrapper runs on Linux in CI; a CRLF shebang breaks it.
+android/gradlew text eol=lf

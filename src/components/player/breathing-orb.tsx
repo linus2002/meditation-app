@@ -48,10 +48,25 @@ export function BreathingOrb({ breath, isPlaying, className }: BreathingOrbProps
         style={{ height: '82%', width: '82%', transform: `scale(${scale - 0.09})` }}
       />
 
-      <div className="relative z-10 flex flex-col items-center gap-1" aria-live="polite">
-        <p className="text-[clamp(0.8125rem,4vw,0.9375rem)] font-medium tracking-[0.02em] text-ink">
-          {isPlaying ? breath.phase.label : 'Ready when you are'}
-        </p>
+      {/* Held inside the inner disc so the label never spills over the ring. */}
+      <div
+        className="relative z-10 flex max-w-[56%] flex-col items-center gap-1 text-center"
+        aria-live="polite"
+      >
+        {isPlaying ? (
+          <p className="text-[clamp(0.8125rem,4vw,0.9375rem)] font-medium tracking-[0.02em] text-ink">
+            {breath.phase.label}
+          </p>
+        ) : (
+          <>
+            <p className="text-[clamp(1.125rem,5.4vw,1.375rem)] font-medium leading-none text-ink">
+              Ready
+            </p>
+            <p className="text-[clamp(0.6875rem,3.2vw,0.8125rem)] leading-tight text-ink-soft">
+              when you are
+            </p>
+          </>
+        )}
         {isPlaying ? (
           <p className="text-[clamp(1.625rem,8.7vw,2.125rem)] font-light leading-none tabular-nums text-ink">
             {breath.secondsLeft}

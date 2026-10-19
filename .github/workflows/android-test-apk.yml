@@ -1,0 +1,73 @@
+name: Android test APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write # to update the test-build release
+
+concurrency:
+  group: android-test-apk
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Public build-time values, read from repo Variables. They end up inside the
+      # APK, where anyone can read them, so none of them may be a secret.
+      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_SUPPORT_TRACK: ${{ vars.NEXT_PUBLIC_SUPPORT_TRACK }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # Capacitor 8 / Android Gradle Plugin need Java 21. The Android SDK is already on the runner.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The static export (MOBILE_BUILD=1) into out/, not the server build.
+      - name: Build the web app
+        run: npm run build:mobile
+
+      - name: Copy it into the Android project
+        run: npx cap sync android
+
+      - name: Build the APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Name the APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk serenity-test.apk
+
+      - name: Publish to the test-build release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          notes="Test build of ${GITHUB_SHA::7} ($(date -u '+%Y-%m-%d %H:%M UTC')). For testing only: install with \"Install unknown apps\"."
+          if gh release view test-build >/dev/null 2>&1; then
+            gh release edit test-build --notes "$notes" --prerelease
+            gh release upload test-build serenity-test.apk --clobber
+          else
+            gh release create test-build serenity-test.apk --title "Test build" --notes "$notes" --prerelease
+          fi
+
+      - name: Also keep it on the run page
+        uses: actions/upload-artifact@v4
+        with:
+          name: serenity-test-apk
+          path: serenity-test.apk
+          retention-days: 14

@@ -7,10 +7,11 @@ import { useAudio } from '@/providers/audio-provider';
 /**
  * Registers the offline service worker and keeps the installed app current.
  *
- * Only over http/https and only in production: a Capacitor build serves the app
- * from a `capacitor://` (iOS) or local `http://localhost` (Android) origin where
- * the files are already on the device, so the worker is unnecessary there, and
- * in development it would just serve stale bundles.
+ * Only in a browser and only in production: a Capacitor build serves the app
+ * from a `capacitor://` (iOS) or `https://localhost` (Android) origin where the
+ * files are already on the device, so the worker is unnecessary there, and in
+ * development it would just serve stale bundles. The Android origin is https,
+ * so the protocol alone cannot tell it apart; the native bridge can.
  *
  * An installed PWA is rarely reloaded by hand — it is opened, backgrounded and
  * opened again for weeks. So a new deploy is picked up on three occasions: when
@@ -27,6 +28,9 @@ export function ServiceWorkerRegistrar() {
     if (process.env.NODE_ENV !== 'production') return;
     if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return;
     if (!/^https?:$/.test(window.location.protocol)) return;
+    const bridge = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } })
+      .Capacitor;
+    if (bridge?.isNativePlatform?.()) return;
 
     // A page with no controller is installing for the first time. `clients.claim()`
     // will fire `controllerchange` for it, and that one is not an update.

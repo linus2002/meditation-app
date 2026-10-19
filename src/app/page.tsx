@@ -21,6 +21,14 @@ export default function EntryPage() {
 
   React.useEffect(() => {
     if (!hydrated) return;
+    // The native app answers every extensionless path with this page, so a cold
+    // load of /player/x (a reload, or a tapped reminder) lands here. Carry on to
+    // where it was headed rather than dropping the reader on the home screen.
+    const { pathname, search } = window.location;
+    if (pathname !== '/') {
+      router.replace(pathname + search);
+      return;
+    }
     router.replace(onboarded ? '/home' : '/welcome');
   }, [hydrated, onboarded, router]);
 

@@ -13,10 +13,10 @@ export interface TodayPick {
  * minutes rather than a proper sitting.
  */
 const PICKS: { id: string; rating: number }[] = [
-  { id: 'midday-reset', rating: 4.6 },
+  { id: 'quiet-the-noise', rating: 4.5 },
   { id: 'box-breathing', rating: 4.7 },
   { id: 'free-your-mind', rating: 4.8 },
-  { id: 'quiet-the-noise', rating: 4.5 },
+  { id: 'midday-reset', rating: 4.6 },
   { id: 'morning-clarity', rating: 4.9 },
 ];
 
