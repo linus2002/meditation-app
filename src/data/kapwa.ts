@@ -9,9 +9,12 @@
  * Session ids must exist in `src/data/meditations.ts` (a test checks).
  */
 
+import { crisisLines, emergencyLine, type SafetyLine } from '@/data/safety-lines';
+
 export type KapwaAction =
   | { type: 'session'; id: string }
-  | { type: 'page'; href: string; label: string };
+  | { type: 'page'; href: string; label: string }
+  | { type: 'call'; line: SafetyLine };
 
 export interface KapwaIntent {
   id: string;
@@ -64,12 +67,72 @@ export const crisisKeywords: string[] = [
   'don’t want to live',
   'dont want to live',
   'no reason to live',
+  'no point living',
+  'no point in living',
+  'not worth living',
+  'can’t go on',
+  'cant go on',
+  'better off dead',
+  'better off without me',
+  'take my life',
+  'take my own life',
+  'overdose',
+  'don’t want to be here anymore',
+  'dont want to be here anymore',
 ];
 
 export const crisisReply: KapwaReply = {
   intentId: 'crisis',
-  text: 'I’m really sorry you’re going through this. I’m only a simple guide and I can’t help with something this important — but you deserve support right now. If you might act on these thoughts or you’re in danger, please call your local emergency number now. You can also reach a crisis line or talk to someone you trust. You don’t have to go through this alone.',
-  actions: [],
+  text: 'I’m really sorry you’re going through this. I’m only a simple guide and I can’t help with something this important, but you deserve support right now. The crisis hotline below is free and answers day and night. If you might act on these thoughts or you’re in danger, call emergency services now. You don’t have to go through this alone.',
+  actions: [
+    { type: 'call', line: crisisLines[0] },
+    { type: 'call', line: crisisLines[1] },
+    { type: 'call', line: emergencyLine },
+  ],
+};
+
+/**
+ * Checked straight after the crisis list. During cancer treatment these can be
+ * signs of infection or another emergency, and the right answer is the care
+ * team or emergency services — never a meditation. Phrases are specific on
+ * purpose: "blood" alone would catch "blood test tomorrow".
+ */
+export const medicalUrgentKeywords: string[] = [
+  'fever',
+  'high temperature',
+  'temperature is high',
+  'chills',
+  'shivering',
+  'chest pain',
+  'chest hurts',
+  'can’t breathe',
+  'cant breathe',
+  'hard to breathe',
+  'trouble breathing',
+  'short of breath',
+  'shortness of breath',
+  'breathless',
+  'bleeding',
+  'coughing blood',
+  'vomiting blood',
+  'blood in my',
+  'can’t stop vomiting',
+  'cant stop vomiting',
+  'keep vomiting',
+  'keep throwing up',
+  'fainted',
+  'passed out',
+  'seizure',
+  'severe pain',
+  'unbearable pain',
+  'worst pain',
+  'worst headache',
+];
+
+export const medicalUrgentReply: KapwaReply = {
+  intentId: 'medical-urgent',
+  text: 'That could need medical attention now, and I can’t help assess it. Please contact your care team or your hospital’s after-hours line straight away. If you have a fever during chemotherapy, trouble breathing, chest pain or heavy bleeding, or you feel very unwell, call emergency services.',
+  actions: [{ type: 'call', line: emergencyLine }],
 };
 
 export const kapwaFallback: KapwaReply = {
@@ -148,8 +211,17 @@ export const kapwaIntents: KapwaIntent[] = [
     actions: [{ type: 'session', id: 'box-breathing' }],
   },
   {
+    // Before `body`, so "my body is in pain" lands here on a tie.
+    id: 'pain',
+    keywords: ['pain', 'painful', 'hurts', 'hurting', 'ache', 'aching', 'headache', 'sore', 'nausea', 'nauseous'],
+    replies: [
+      'I’m sorry you’re hurting. If the pain or sickness is new, severe or getting worse, please tell your care team. I can’t judge what it means. If it’s familiar and you’ve been told how to manage it, slow breathing can help you soften around it a little:',
+    ],
+    actions: [{ type: 'session', id: 'body-scan' }],
+  },
+  {
     id: 'body',
-    keywords: ['body', 'tension', 'headache', 'sore', 'pain', 'shoulders', 'relax', 'relaxed'],
+    keywords: ['body', 'tension', 'stiff', 'shoulders', 'relax', 'relaxed'],
     replies: [
       'Let’s check in with your body. This one moves your attention slowly from head to toe:',
     ],

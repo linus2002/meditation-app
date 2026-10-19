@@ -1,5 +1,6 @@
 'use client';
 
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 
 interface OptionRowProps<T> {
@@ -26,16 +27,12 @@ export function OptionRow<T extends string | number | null>({
 }: OptionRowProps<T>) {
   const groupId = `option-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
-  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
-    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
-    event.preventDefault();
-    const next = event.key === 'ArrowRight' ? index + 1 : index - 1;
-    onChange(options[(next + options.length) % options.length].value);
-  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>, index: number) =>
+    handleRovingKey(event, index, options.length, (next) => onChange(options[next].value));
 
   return (
     <div className={className}>
-      <p id={groupId} className="text-[11.5px] leading-none text-ink-muted">
+      <p id={groupId} className="text-label leading-none text-ink-muted">
         {label}
       </p>
 
@@ -59,7 +56,7 @@ export function OptionRow<T extends string | number | null>({
               onClick={() => onChange(option.value)}
               onKeyDown={(event) => handleKeyDown(event, index)}
               className={cn(
-                'shrink-0 rounded-full px-3.5 py-2 text-[12.5px] font-medium transition-colors duration-150',
+                'shrink-0 rounded-full px-3.5 py-2 text-caption font-medium transition-colors duration-150',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 isSelected
                   ? 'bg-action-pill text-white'

@@ -49,11 +49,11 @@ export function BreathingOrb({ breath, isPlaying, className }: BreathingOrbProps
       />
 
       <div className="relative z-10 flex flex-col items-center gap-1" aria-live="polite">
-        <p className="text-[clamp(12px,4vw,15px)] font-medium tracking-[0.02em] text-ink">
+        <p className="text-[clamp(0.8125rem,4vw,0.9375rem)] font-medium tracking-[0.02em] text-ink">
           {isPlaying ? breath.phase.label : 'Ready when you are'}
         </p>
         {isPlaying ? (
-          <p className="text-[clamp(26px,8.7vw,34px)] font-light leading-none tabular-nums text-ink">
+          <p className="text-[clamp(1.625rem,8.7vw,2.125rem)] font-light leading-none tabular-nums text-ink">
             {breath.secondsLeft}
           </p>
         ) : null}

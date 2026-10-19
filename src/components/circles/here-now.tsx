@@ -18,12 +18,12 @@ export function HereNow({
   className?: string;
 }) {
   if (!connected) {
-    return <p className={cn('text-[11.5px] text-ink-faint', className)}>Checking who is here…</p>;
+    return <p className={cn('text-label text-ink-faint', className)}>Checking who is here…</p>;
   }
 
   if (present.length === 0) {
     return (
-      <p className={cn('text-[11.5px] leading-relaxed text-ink-faint', className)}>
+      <p className={cn('text-label leading-relaxed text-ink-faint', className)}>
         No one here yet. The session starts on time either way.
       </p>
     );
@@ -44,11 +44,11 @@ export function HereNow({
           <MemberAvatar
             key={member.userId}
             name={member.userId === selfId ? 'You' : member.name}
-            className="h-7 w-7 text-[11px]"
+            className="h-7 w-7 text-label"
           />
         ))}
       </div>
-      <p className="text-[12px] text-ink-muted">{label}</p>
+      <p className="text-caption text-ink-muted">{label}</p>
     </div>
   );
 }

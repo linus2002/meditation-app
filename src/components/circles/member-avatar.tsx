@@ -13,7 +13,7 @@ export function MemberAvatar({ name, className }: { name: string | null; classNa
     <span
       aria-hidden="true"
       className={cn(
-        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-overlay/[0.1] text-[12px] font-semibold text-ink-soft ring-2 ring-canvas',
+        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-overlay/[0.1] text-caption font-semibold text-ink-soft ring-2 ring-canvas',
         className,
       )}
     >

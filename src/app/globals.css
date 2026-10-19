@@ -24,38 +24,47 @@
   :root,
   [data-theme='dark'] {
     /* shadcn/ui primitives */
-    --background: 234 51% 12%;
+    /*
+     * Neutral blacks matching Instagram's dark mode: #000000 canvas, #121212
+     * raised surfaces, #262626 fills and hairlines.
+     */
+    --background: 0 0% 0%;
     --foreground: 0 0% 100%;
-    --card: 234 42% 15%;
+    --card: 0 0% 7%;
     --card-foreground: 0 0% 100%;
-    --popover: 234 42% 15%;
+    --popover: 0 0% 7%;
     --popover-foreground: 0 0% 100%;
     --primary: 199 77% 48%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 234 30% 22%;
+    --secondary: 0 0% 15%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 234 24% 24%;
-    --muted-foreground: 234 15% 68%;
-    --accent: 234 30% 22%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 66%;
+    --accent: 0 0% 15%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 72% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 234 26% 26%;
-    --input: 234 26% 26%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
     --ring: 102 42% 46%;
     --radius: 0.875rem;
 
     /* The app's own palette, as RGB channels. */
-    --canvas: 14 16 48;
-    --canvas-deep: 10 12 36;
-    --canvas-raised: 22 25 57;
-    --canvas-slate: 42 42 46;
-    --surface: 20 23 51;
+    --canvas: 0 0 0;
+    --canvas-deep: 0 0 0;
+    --canvas-raised: 18 18 18;
+    --canvas-slate: 38 38 38;
+    --surface: 18 18 18;
 
     --ink: 255 255 255;
-    --ink-soft: 213 215 230;
-    --ink-muted: 142 146 174;
-    --ink-faint: 91 95 125;
+    --ink-soft: 219 219 219;
+    --ink-muted: 168 168 168;
+    /*
+     * Still the quietest text tone, but readable: 4.6:1 or better on every
+     * surface it sits on (WCAG AA is 4.5:1). Durations, disclaimers and
+     * privacy notes use it, so it cannot drop below that.
+     */
+    --ink-faint: 142 142 142;
 
     /*
      * The tint used for hairlines, dividers and raised fills. On a dark canvas
@@ -66,12 +75,21 @@
     --focus: 255 255 255;
     /* Bottom-nav glyphs at rest, painted through an SVG stroke. */
     --nav-idle: 138 141 168;
+    /*
+     * How much of its own colour a glass tile (the yoga tiles) mixes into its
+     * base. None on the dark page, where the dark pane is what frames the glow.
+     */
+    --tile-tint: 0%;
     /* Browser chrome, kept in step by the theme effect in AppProvider. */
-    --theme-color: #0e1030;
+    --theme-color: #000000;
   }
 
   [data-theme='light'] {
-    --background: 240 33% 98%;
+    /*
+     * A pure white page, as on Instagram's light mode. Cards and rows sit on it
+     * as a faint grey (`surface`) so they still read as separate pieces.
+     */
+    --background: 0 0% 100%;
     --foreground: 234 32% 14%;
     --card: 0 0% 100%;
     --card-foreground: 234 32% 14%;
@@ -91,21 +109,24 @@
     --input: 240 18% 88%;
     --ring: 102 42% 46%;
 
-    --canvas: 247 247 251;
+    --canvas: 255 255 255;
     --canvas-deep: 236 237 245;
     --canvas-raised: 255 255 255;
     --canvas-slate: 238 238 242;
-    --surface: 255 255 255;
+    --surface: 244 245 249;
 
     --ink: 24 26 46;
     --ink-soft: 58 61 88;
-    --ink-muted: 104 108 136;
-    --ink-faint: 130 134 160;
+    /* Both at least 4.5:1 on canvas, canvas-deep and white surfaces. */
+    --ink-muted: 92 96 124;
+    --ink-faint: 100 104 130;
 
     --overlay: 24 26 46;
     --focus: 76 79 150;
-    --nav-idle: 122 126 152;
-    --theme-color: #f7f7fb;
+    --nav-idle: 100 104 130;
+    /* On white, a white pane vanishes; a pastel of its own colour frames it. */
+    --tile-tint: 30%;
+    --theme-color: #ffffff;
   }
 }
 
@@ -149,6 +170,29 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /*
+   * Grows a small control's touch area to at least 44x44px without changing
+   * how it looks: an invisible layer, centred on the control, that takes the
+   * tap. Many readers have tremor or numb fingertips from treatment, and the
+   * 32-36px icon buttons were easy to miss.
+   *
+   * `position: relative` sits in this layer so that an `absolute` utility on
+   * the same element still wins.
+   */
+  .tap-target {
+    position: relative;
+  }
+
+  .tap-target::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
 }
 
 @layer utilities {
@@ -185,6 +229,101 @@
   .min-h-stage {
     min-height: 100vh;
     min-height: 100dvh;
+  }
+}
+
+/*
+ * Onboarding motion. Text marked `.reveal` waits invisible until its step is
+ * the one on screen, then rises into place; `--reveal-delay` staggers the lines.
+ * Leaving the step removes the animation, so swiping back plays it again.
+ */
+.reveal {
+  opacity: 0;
+}
+
+[data-active='true'] .reveal {
+  animation: onboarding-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--reveal-delay, 0ms);
+}
+
+@keyframes onboarding-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*
+ * The drifting rows of artwork. Each row holds its tiles twice over, so moving
+ * it by exactly half its width lands on an identical frame and the loop is
+ * seamless.
+ */
+.marquee {
+  animation: marquee var(--marquee-duration, 48s) linear infinite;
+}
+
+.marquee-reverse {
+  animation-direction: reverse;
+}
+
+@keyframes marquee {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/*
+ * The aurora behind the first onboarding screen. Each ribbon sways and
+ * stretches like a curtain of light (`aurora-sway`), its colours drift along
+ * its length (`aurora-flow`) and it brightens and fades (`aurora-glow`). Every
+ * band sets its own tilt and timings, so the three motions never fall into
+ * step and the sky keeps changing.
+ */
+.aurora-band {
+  background-size: 220% 100%;
+  will-change: transform, opacity, background-position;
+  animation:
+    aurora-sway var(--sway, 16s) ease-in-out infinite alternate,
+    aurora-flow var(--flow, 11s) ease-in-out infinite alternate,
+    aurora-glow var(--glow, 7s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes aurora-sway {
+  0% {
+    transform: rotate(var(--rot)) translate3d(0, 0, 0) scaleY(1) skewX(0deg);
+  }
+  50% {
+    transform: rotate(calc(var(--rot) + 4deg)) translate3d(5%, 4%, 0) scaleY(1.3) skewX(-7deg);
+  }
+  100% {
+    transform: rotate(calc(var(--rot) - 3deg)) translate3d(-4%, -3%, 0) scaleY(0.85) skewX(6deg);
+  }
+}
+
+@keyframes aurora-flow {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes aurora-glow {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
   }
 }
 

@@ -2,14 +2,15 @@
 
 import * as React from 'react';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
 import { ChevronsLeft, Moon } from 'lucide-react';
 
 import { NarrationControls } from '@/components/stories/narration-controls';
 import { StoryFavoriteButton } from '@/components/stories/story-favorite-button';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
+import { useBack } from '@/hooks/use-back';
 import { useNarration } from '@/hooks/use-narration';
 import { estimatedMinutes, estimatedSeconds, segmentStory } from '@/lib/story';
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useAudio } from '@/providers/audio-provider';
 import type { Story } from '@/types';
@@ -23,7 +24,7 @@ const SLEEP_TIMER_OPTIONS = [
 ] as const;
 
 export function StoryReader({ story }: { story: Story }) {
-  const router = useRouter();
+  const goBack = useBack('/stories');
   const { play: playBed, stop: stopBed, prime } = useAudio();
 
   const segments = React.useMemo(() => segmentStory(story), [story]);
@@ -58,6 +59,11 @@ export function StoryReader({ story }: { story: Story }) {
     }
     if (!speaking) setTimerEndsAt(null);
   }, [speaking, timerMinutes]);
+
+  const chooseTimer = (minutes: number) => {
+    setTimerMinutes(minutes);
+    setTimerEndsAt(minutes > 0 && narration.speaking ? Date.now() + minutes * 60_000 : null);
+  };
 
   // Nothing keeps sounding once the screen is gone.
   React.useEffect(() => () => stopBed(1), [stopBed]);
@@ -105,24 +111,24 @@ export function StoryReader({ story }: { story: Story }) {
       <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={goBack}
           aria-label="Go back"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
         </button>
-        <p className="text-[12px] leading-none text-ink-muted">
+        <p className="text-caption leading-none text-ink-muted">
           {estimatedMinutes(story)} Min. read
         </p>
         <StoryFavoriteButton storyId={story.id} title={story.title} size="md" className="-mr-1" />
       </header>
 
       <div className="relative px-6 pt-5">
-        <h1 className="text-[clamp(24px,7.4vw,29px)] font-bold leading-tight tracking-[-0.02em] text-ink">
+        <h1 className="text-[clamp(1.5rem,7.4vw,1.8125rem)] font-bold leading-tight tracking-[-0.02em] text-ink">
           {story.title}
         </h1>
-        <p className="mt-2 text-[12.5px] leading-relaxed text-ink-muted">{story.description}</p>
-        <p className="mt-1.5 text-[11.5px] leading-none text-ink-faint">
+        <p className="mt-2 text-caption leading-relaxed text-ink-muted">{story.description}</p>
+        <p className="mt-1.5 text-label leading-none text-ink-faint">
           Read by {story.voice}
         </p>
       </div>
@@ -139,7 +145,7 @@ export function StoryReader({ story }: { story: Story }) {
             />
           </>
         ) : (
-          <p className="rounded-tile bg-surface px-4 py-3.5 text-[12px] leading-relaxed text-ink-muted">
+          <p className="rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
             This browser cannot read aloud, so the story is here to read yourself. Narration works
             in Safari, Chrome and Edge.
           </p>
@@ -157,10 +163,10 @@ export function StoryReader({ story }: { story: Story }) {
               className="flex w-full items-center justify-between gap-3 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <span className="min-w-0">
-                <span className="block text-[13px] font-medium leading-tight text-ink">
+                <span className="block text-body-sm font-medium leading-tight text-ink">
                   Sound underneath
                 </span>
-                <span className="mt-0.5 block text-[11px] leading-tight text-ink-muted">
+                <span className="mt-0.5 block text-label leading-tight text-ink-muted">
                   A quiet bed behind the voice
                 </span>
               </span>
@@ -180,7 +186,7 @@ export function StoryReader({ story }: { story: Story }) {
             </button>
 
             <div className="mt-4">
-              <p id="story-sleep-timer" className="text-[11.5px] leading-none text-ink-muted">
+              <p id="story-sleep-timer" className="text-label leading-none text-ink-muted">
                 Stop after
               </p>
               <div
@@ -188,7 +194,7 @@ export function StoryReader({ story }: { story: Story }) {
                 aria-labelledby="story-sleep-timer"
                 className="mt-2.5 flex flex-wrap gap-2"
               >
-                {SLEEP_TIMER_OPTIONS.map((option) => {
+                {SLEEP_TIMER_OPTIONS.map((option, index) => {
                   const selected = timerMinutes === option.value;
                   return (
                     <button
@@ -197,16 +203,14 @@ export function StoryReader({ story }: { story: Story }) {
                       role="radio"
                       aria-checked={selected}
                       tabIndex={selected ? 0 : -1}
-                      onClick={() => {
-                        setTimerMinutes(option.value);
-                        setTimerEndsAt(
-                          option.value > 0 && narration.speaking
-                            ? Date.now() + option.value * 60_000
-                            : null,
-                        );
-                      }}
+                      onClick={() => chooseTimer(option.value)}
+                      onKeyDown={(event) =>
+                        handleRovingKey(event, index, SLEEP_TIMER_OPTIONS.length, (next) =>
+                          chooseTimer(SLEEP_TIMER_OPTIONS[next].value),
+                        )
+                      }
                       className={cn(
-                        'rounded-full px-3.5 py-2 text-[12.5px] font-medium transition-colors duration-150',
+                        'rounded-full px-3.5 py-2 text-caption font-medium transition-colors duration-150',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                         selected
                           ? 'bg-action-pill text-white'
@@ -220,7 +224,7 @@ export function StoryReader({ story }: { story: Story }) {
               </div>
 
               {timerEndsAt ? (
-                <p className="mt-3 flex items-center gap-1.5 text-[11px] leading-none text-ink-soft">
+                <p className="mt-3 flex items-center gap-1.5 text-label leading-none text-ink-soft">
                   <Moon className="h-3.5 w-3.5 text-aurora-violet" strokeWidth={1.9} />
                   Stopping in about {minutesLeft} min
                 </p>
@@ -236,7 +240,7 @@ export function StoryReader({ story }: { story: Story }) {
           <p
             key={index}
             className={cn(
-              'text-[14.5px] leading-[1.85] transition-colors duration-300',
+              'text-[0.90625rem] leading-[1.85] transition-colors duration-300',
               index > 0 && 'mt-4',
               narration.speaking && index === activeParagraph
                 ? 'text-ink'

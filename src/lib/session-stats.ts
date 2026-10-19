@@ -87,6 +87,12 @@ export function lifetimeTotals(sessions: SessionRecord[]): {
   return { minutes: Math.round(seconds / 60), sessions: sessions.length };
 }
 
+/** The date of the first recorded sitting, or null before there is one. */
+export function firstSessionDate(sessions: SessionRecord[]): Date | null {
+  if (sessions.length === 0) return null;
+  return new Date(Math.min(...sessions.map((session) => session.startedAt)));
+}
+
 /** Last seven days for the profile bar chart, oldest first. */
 export function weeklyMinutes(
   sessions: SessionRecord[],

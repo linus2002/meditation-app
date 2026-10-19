@@ -35,12 +35,12 @@ export function StoryCard({ story }: { story: Story }) {
           href={`/stories/${story.id}`}
           className="static before:absolute before:inset-0 before:rounded-tile before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          <p className="truncate text-[14px] font-semibold leading-tight text-ink">{story.title}</p>
+          <p className="truncate text-body-sm font-semibold leading-tight text-ink">{story.title}</p>
         </Link>
-        <p className="mt-0.5 truncate text-[11.5px] leading-tight text-ink-muted">
+        <p className="mt-0.5 truncate text-label leading-tight text-ink-muted">
           {story.description}
         </p>
-        <p className="mt-1 text-[11px] leading-none text-ink-faint">
+        <p className="mt-1 text-label leading-none text-ink-faint">
           {estimatedMinutes(story)} Min. · {CATEGORY_LABEL[story.category]}
         </p>
       </div>

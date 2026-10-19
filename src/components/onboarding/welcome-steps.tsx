@@ -1,5 +1,6 @@
 'use client';
 
+import type * as React from 'react';
 import Image from 'next/image';
 import { PersonStanding, Sparkles, Users, type LucideIcon } from 'lucide-react';
 
@@ -8,6 +9,15 @@ import { SerenityMark, SerenityRing } from '@/components/onboarding/serenity-mar
 import { DiagonalSlashes, WaveLines } from '@/components/shared/decor';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { photos } from '@/data/images';
+import { cn } from '@/lib/utils';
+
+/**
+ * Marks an element to rise into view when its step is on screen, `delay`
+ * milliseconds after the step arrives. See `.reveal` in globals.css.
+ */
+function reveal(delay: number): { className: string; style: React.CSSProperties } {
+  return { className: 'reveal', style: { '--reveal-delay': `${delay}ms` } as React.CSSProperties };
+}
 
 /**
  * Step one: the sweep fills the screen, the mark and tagline sit low, and two
@@ -22,28 +32,36 @@ export function WelcomeIntro({ onNext, onSkip }: { onNext: () => void; onSkip: (
       <AuroraSweep className="absolute inset-0" />
 
       <div className="relative mt-auto px-7 pb-[clamp(24px,4.4vh,40px)]">
-        <SerenityMark />
+        <div {...reveal(0)}>
+          <SerenityMark />
+        </div>
 
-        <p className="mt-[clamp(10px,1.9vh,16px)] text-center text-[clamp(16px,4.9vw,20px)] font-normal leading-snug text-ink">
+        <p
+          {...reveal(150)}
+          className="reveal mt-[clamp(10px,1.9vh,16px)] text-center text-[clamp(0.875rem,3.85vw,0.9375rem)] font-normal leading-[1.6] text-ink-soft">
           Quiet, wherever you are
         </p>
 
-        <button
-          type="button"
+        <GradientButton
           onClick={onNext}
-          className="mt-[clamp(26px,5vh,44px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-ink text-[15px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
+          style={reveal(300).style}
+          className="reveal mt-[clamp(26px,5vh,44px)] h-[clamp(52px,7.35vh,62px)] w-full"
         >
           Get Started
-        </button>
+        </GradientButton>
 
-        <p className="mt-[clamp(14px,2.4vh,20px)] text-center text-[13.5px] leading-none text-ink-muted">
+        <p
+          style={reveal(420).style}
+          className="reveal mt-[clamp(14px,2.4vh,20px)] text-center text-body-sm leading-none text-ink-muted"
+        >
           Been here before?
         </p>
 
         <button
           type="button"
           onClick={onSkip}
-          className="mt-[clamp(10px,1.9vh,16px)] h-[clamp(50px,7vh,56px)] w-full rounded-full border border-overlay/30 text-[15px] font-semibold text-ink transition-colors duration-150 hover:border-overlay/55 hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          style={reveal(480).style}
+          className="reveal mt-[clamp(10px,1.9vh,16px)] h-[clamp(50px,7vh,56px)] w-full rounded-full border border-overlay/30 text-[0.9375rem] font-semibold text-ink transition-colors duration-150 hover:border-overlay/55 hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           Skip the tour
         </button>
@@ -52,7 +70,7 @@ export function WelcomeIntro({ onNext, onSkip }: { onNext: () => void; onSkip: (
   );
 }
 
-/** The artwork tiled behind step two, tilted as one plane. */
+/** The artwork drifting behind step two, tilted as one plane. */
 const TILE_IMAGES = [
   photos.meditationSunrise,
   photos.oceanWave,
@@ -71,9 +89,17 @@ const TILE_IMAGES = [
   photos.nightSky,
 ];
 
+const ROWS = 4;
+const PER_ROW = 5;
+
+/** Five tiles per row, taken from the artwork in turn so neighbours differ. */
+const TILE_ROWS = Array.from({ length: ROWS }, (_, row) =>
+  Array.from({ length: PER_ROW }, (_, col) => TILE_IMAGES[(row * PER_ROW + col) % TILE_IMAGES.length]),
+);
+
 /**
- * Step two: a tilted grid of session artwork running off every edge, with the
- * promise set over it and a single action.
+ * Step two: rows of session artwork drifting past on a tilt, alternate rows in
+ * opposite directions, with the promise set over it and a single action.
  */
 export function WelcomeLibrary({ onNext }: { onNext: () => void }) {
   return (
@@ -83,14 +109,26 @@ export function WelcomeLibrary({ onNext }: { onNext: () => void }) {
         aria-hidden="true"
         className="pointer-events-none absolute left-1/2 top-[-6%] h-[92%] w-[168%] -translate-x-1/2 rotate-[-9deg]"
       >
-        <div className="grid grid-cols-4 gap-2.5">
-          {TILE_IMAGES.map((image, index) => (
+        <div className="flex flex-col gap-2.5">
+          {TILE_ROWS.map((row, rowIndex) => (
+            // Each row repeats its tiles once so the loop never shows a gap.
             <div
-              key={index}
-              className="relative aspect-[3/2] overflow-hidden rounded-xl"
-              style={{ opacity: index > 11 ? 0.55 : 1 }}
+              key={rowIndex}
+              className={cn('marquee flex w-max', rowIndex % 2 === 1 && 'marquee-reverse')}
+              style={
+                {
+                  opacity: rowIndex === ROWS - 1 ? 0.55 : 1,
+                  '--marquee-duration': `${44 + rowIndex * 8}s`,
+                } as React.CSSProperties
+              }
             >
-              <Image src={image} alt="" fill sizes="120px" placeholder="blur" className="object-cover" />
+              {[...row, ...row].map((image, index) => (
+                <div key={index} className="pr-2.5">
+                  <div className="relative aspect-[3/2] w-[158px] overflow-hidden rounded-xl">
+                    <Image src={image} alt="" fill sizes="158px" placeholder="blur" className="object-cover" />
+                  </div>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -103,18 +141,21 @@ export function WelcomeLibrary({ onNext }: { onNext: () => void }) {
       />
 
       <div className="relative mt-auto px-7 pb-[clamp(24px,4.4vh,40px)]">
-        <h2 className="text-[clamp(26px,8.2vw,33px)] font-semibold leading-[1.24] tracking-[-0.02em] text-ink">
+        <h2
+          style={reveal(0).style}
+          className="reveal text-[clamp(1.625rem,8.2vw,2.0625rem)] font-semibold leading-[1.24] tracking-[-0.02em] text-ink"
+        >
           Sessions, sleep sounds, breathing and stories
           <span className="text-aurora-blush"> — all in one quiet place.</span>
         </h2>
 
-        <button
-          type="button"
+        <GradientButton
           onClick={onNext}
-          className="mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-ink text-[15px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
+          style={reveal(250).style}
+          className="reveal mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,62px)] w-full"
         >
           Next
-        </button>
+        </GradientButton>
       </div>
     </div>
   );
@@ -162,16 +203,26 @@ export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
       />
 
       <div className="relative mt-auto px-7 pb-[clamp(24px,4.4vh,40px)]">
-        <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-aurora-blue">
+        <p
+          style={reveal(0).style}
+          className="reveal text-caption font-semibold uppercase tracking-[0.16em] text-aurora-blue"
+        >
           New in Serenity
         </p>
-        <h2 className="mt-3 text-[clamp(26px,8.2vw,33px)] font-semibold leading-[1.2] tracking-[-0.02em] text-ink">
-          More ways to <span className="text-aurora-green">feel better</span>
+        <h2
+          style={reveal(100).style}
+          className="reveal mt-3 text-[clamp(1.625rem,8.2vw,2.0625rem)] font-semibold leading-[1.2] tracking-[-0.02em] text-ink"
+        >
+          More ways to <span className="block text-aurora-green">feel better</span>
         </h2>
 
         <ul className="mt-[clamp(18px,3.4vh,28px)] space-y-[clamp(10px,1.8vh,14px)]">
-          {NEW_FEATURES.map(({ title, body, icon: Icon }) => (
-            <li key={title} className="flex items-start gap-3.5">
+          {NEW_FEATURES.map(({ title, body, icon: Icon }, index) => (
+            <li
+              key={title}
+              style={reveal(220 + index * 90).style}
+              className="reveal flex items-start gap-3.5"
+            >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface">
                 {Icon === 'ring' ? (
                   <SerenityRing className="h-6 w-6" />
@@ -180,27 +231,27 @@ export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
                 )}
               </span>
               <div className="min-w-0 pt-0.5">
-                <p className="text-[15px] font-semibold leading-tight text-ink">{title}</p>
-                <p className="mt-1 text-[12.5px] leading-snug text-ink-muted">{body}</p>
+                <p className="text-[0.9375rem] font-semibold leading-tight text-ink">{title}</p>
+                <p className="mt-1 text-caption leading-snug text-ink-muted">{body}</p>
               </div>
             </li>
           ))}
         </ul>
 
-        <button
-          type="button"
+        <GradientButton
           onClick={onNext}
-          className="mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,58px)] w-full rounded-full bg-ink text-[15px] font-semibold text-canvas transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas-deep"
+          style={reveal(640).style}
+          className="reveal mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,62px)] w-full"
         >
           Next
-        </button>
+        </GradientButton>
       </div>
     </div>
   );
 }
 
 /**
- * Step four is the original reference screen, unchanged — headline weight mix,
+ * Step four is the original reference screen — headline weight mix,
  * wave lines, leaning bars and the gradient pill, in their original proportions.
  * It was always an intro screen; this is simply where it belongs in the flow.
  */
@@ -209,23 +260,32 @@ export function WelcomeIntent({ onDone }: { onDone: () => void }) {
     <div className="relative flex min-h-full flex-col">
       <WaveLines className="left-0 top-0 h-[300px] w-full" />
       <div className="relative mt-auto px-7 pb-[clamp(20px,3.3vh,28px)]">
-        <DiagonalSlashes className="relative mb-[clamp(26px,4.7vh,40px)] ml-[36%] w-[59%]" />
-        <h1 className="text-[clamp(34px,12.8vw,50px)] leading-[1.11] tracking-[-0.025em] text-ink">
-          <span className="block font-light">Keep track</span>
+        <div {...reveal(0)}>
+          <DiagonalSlashes className="relative mb-[clamp(26px,4.7vh,40px)] ml-[36%] w-[59%]" />
+        </div>
+        {/* The reference's light-to-bold weight mix, with words about calm rather than tracking. */}
+        <h1
+          style={reveal(120).style}
+          className="reveal text-[clamp(1.625rem,8.2vw,2.0625rem)] leading-[1.24] tracking-[-0.02em] text-ink"
+        >
+          <span className="block font-light">Calm,</span>
           <span className="block font-light">
-            of <span className="font-bold">Your</span>
+            one <span className="font-semibold">breath</span>
           </span>
-          <span className="block font-bold">Health</span>
+          <span className="block font-semibold">at a time</span>
         </h1>
 
-        <p className="mt-[clamp(12px,1.9vh,16px)] max-w-[272px] text-[clamp(11.5px,3.33vw,13px)] font-normal leading-[1.62] text-ink-muted">
-          Lorem ipsum dolor sit amet consectetur. Diam malesuada vestibulum adipiscing nisi amet
-          vitae.
+        <p
+          style={reveal(300).style}
+          className="reveal mt-[clamp(12px,1.9vh,16px)] max-w-[300px] text-[clamp(0.875rem,3.85vw,0.9375rem)] font-normal leading-[1.6] text-ink-muted">
+          Short sessions for stress, sleep and harder days. Go at your own pace. Everything you
+          do here stays on your phone.
         </p>
 
         <GradientButton
           onClick={onDone}
-          className="mt-[clamp(22px,4.3vh,36px)] h-[clamp(52px,7.35vh,62px)] w-full"
+          style={reveal(460).style}
+          className="reveal mt-[clamp(22px,4.3vh,36px)] h-[clamp(52px,7.35vh,62px)] w-full"
         >
           Get Started
         </GradientButton>

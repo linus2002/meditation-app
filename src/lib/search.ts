@@ -1,4 +1,4 @@
-import { meditations } from '@/data/meditations';
+import { allSessions } from '@/data/meditations';
 import { stories } from '@/data/stories';
 import { soundscapeList, type SoundscapeMeta } from '@/lib/audio/soundscapes';
 import type { Meditation, Story } from '@/types';
@@ -122,7 +122,7 @@ export function searchLibrary(query: string): SearchResults {
   if (terms.length === 0) return EMPTY;
 
   const found = {
-    meditations: rank(meditations.map(meditationEntry), terms),
+    meditations: rank(allSessions.map(meditationEntry), terms),
     stories: rank(stories.map(storyEntry), terms),
     soundscapes: rank(soundscapeList.map(soundscapeEntry), terms),
   };

@@ -6,6 +6,20 @@ export function formatClock(totalSeconds: number): string {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
+/**
+ * 312 -> "5 minutes 12 seconds" — how a screen reader should say a clock, which
+ * it would otherwise read as "312" or "five colon twelve".
+ */
+export function formatSpokenTime(totalSeconds: number): string {
+  const safe = Math.max(0, Math.floor(totalSeconds));
+  const minutes = Math.floor(safe / 60);
+  const seconds = safe % 60;
+  const unit = (count: number, word: string) => `${count} ${word}${count === 1 ? '' : 's'}`;
+  if (minutes === 0) return unit(seconds, 'second');
+  if (seconds === 0) return unit(minutes, 'minute');
+  return `${unit(minutes, 'minute')} ${unit(seconds, 'second')}`;
+}
+
 /** 1800 -> "30 Min." — matches the label treatment on the Daily Goals card. */
 export function formatMinutesLabel(totalSeconds: number): string {
   return `${Math.round(totalSeconds / 60)} Min.`;

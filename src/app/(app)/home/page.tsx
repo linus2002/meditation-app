@@ -12,12 +12,11 @@ import { YogaRail } from '@/components/yoga/yoga-rail';
 import { SectionTitle } from '@/components/shared/section-title';
 import { deckCards } from '@/data/categories';
 import { dailyGoal, startGoal } from '@/data/meditations';
-import { currentUser } from '@/data/user';
 
 export default function HomePage() {
   return (
     <div className="pb-4">
-      <GreetingHeader firstName={currentUser.firstName} />
+      <GreetingHeader />
 
       <CategoryDeck cards={deckCards} />
 
@@ -35,7 +34,7 @@ export default function HomePage() {
       <HomeSection
         title="Yoga for today"
         description="Short, gentle yoga to wake up, stretch or wind down."
-        actionHref="/meditations?tab=yoga"
+        actionHref="/yoga"
         actionLabel="See all"
       >
         <YogaRail />
@@ -49,7 +48,7 @@ export default function HomePage() {
       <div aria-hidden="true" className="hairline mt-5 h-px w-full" />
 
       <div className="px-5 pt-4">
-        <SectionTitle>What Brings You Today ?</SectionTitle>
+        <SectionTitle>What brings you here today?</SectionTitle>
 
         <div className="mt-3 space-y-2.5">
           <DailyGoalCard meditation={dailyGoal} />

@@ -90,8 +90,8 @@ export default function SleepPage() {
       <div className="mt-5 grid grid-cols-2 gap-2.5 px-5">
         {summaryTiles.map((tile) => (
           <div key={tile.label} className="rounded-tile bg-surface px-4 py-3.5">
-            <p className="text-[11px] leading-none text-ink-muted">{tile.label}</p>
-            <p className="mt-2 text-[24px] font-light leading-none tracking-[-0.02em] text-ink">
+            <p className="text-label leading-none text-ink-muted">{tile.label}</p>
+            <p className="mt-2 text-[1.5rem] font-light leading-none tracking-[-0.02em] text-ink">
               {tile.value}
             </p>
           </div>

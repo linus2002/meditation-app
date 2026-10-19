@@ -63,7 +63,7 @@ export function NarrationControls({
         onValueChange={([next]) => narration.seekTo(next)}
       />
 
-      <div className="mt-2 flex items-center justify-between text-[11px] tabular-nums text-ink-muted">
+      <div className="mt-2 flex items-center justify-between text-label tabular-nums text-ink-muted">
         <span>{formatClock(elapsed)}</span>
         <span>about {formatClock(Math.max(0, totalSeconds - elapsed))} left</span>
       </div>
@@ -112,7 +112,7 @@ export function NarrationControls({
           type="button"
           onClick={() => narration.setVolume(narration.volume === 0 ? 1 : 0)}
           aria-label={narration.volume === 0 ? 'Unmute narration' : 'Mute narration'}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <VolumeIcon className="h-[18px] w-[18px]" strokeWidth={1.7} />
         </button>
@@ -122,12 +122,13 @@ export function NarrationControls({
           max={100}
           step={1}
           aria-label="Narration volume"
+          aria-valuetext={`${Math.round(narration.volume * 100)} percent`}
           onValueChange={([next]) => narration.setVolume(next / 100)}
           className="flex-1"
         />
       </div>
 
-      <p className="mt-2.5 text-[10.5px] leading-relaxed text-ink-faint">
+      <p className="mt-2.5 text-label leading-relaxed text-ink-faint">
         Volume and pace apply from the next sentence.
       </p>
     </div>

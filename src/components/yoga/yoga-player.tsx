@@ -1,14 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { ChevronsLeft, Pause, Play, SkipForward } from 'lucide-react';
+import { ChevronsLeft, Pause, Play, SkipForward, X } from 'lucide-react';
 
+import { EndSessionPrompt } from '@/components/session/end-session-prompt';
 import { SessionComplete } from '@/components/session/session-complete';
-import { GradientButton } from '@/components/shared/gradient-button';
 import { TimerRing } from '@/components/timer/timer-ring';
+import { yogaColor } from '@/components/yoga/yoga-glass-tile';
 import { YOGA_SAFETY, type YogaSession } from '@/data/yoga';
+import { useBack } from '@/hooks/use-back';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { useWakeLock } from '@/hooks/use-wake-lock';
 import { useYogaSession } from '@/hooks/use-yoga-session';
@@ -20,7 +20,7 @@ import { useAudio } from '@/providers/audio-provider';
 type Phase = 'intro' | 'running' | 'done';
 
 const iconButton =
-  'flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
+  'tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
 
 /**
  * A guided yoga session: an overview to decide, then one pose at a time — its
@@ -28,7 +28,9 @@ const iconButton =
  * bell as each pose begins. Time spent counts toward the day like any sit.
  */
 export function YogaPlayer({ session }: { session: YogaSession }) {
-  const router = useRouter();
+  // The session's own colour, as on its tile, tints the top of this page.
+  const color = yogaColor(session.id);
+  const goBack = useBack();
   const { settings } = useApp();
   const { bell, play, stop, prime } = useAudio();
 
@@ -68,20 +70,34 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   };
 
   const endEarly = () => {
+    setConfirmingEnd(false);
     recorder.commit(false);
     clock.stop();
     stop(1.2);
     setPhase('intro');
   };
 
+  // Ending is asked, not done: the corner button sits where Back usually is.
+  const [confirmingEnd, setConfirmingEnd] = React.useState(false);
+  const wasRunningRef = React.useRef(false);
+  const askToEnd = () => {
+    wasRunningRef.current = clock.running;
+    clock.pause();
+    setConfirmingEnd(true);
+  };
+  const keepGoing = () => {
+    setConfirmingEnd(false);
+    if (wasRunningRef.current) clock.resume();
+  };
+
   if (phase === 'running' && pose) {
     return (
       <div className="relative flex min-h-full flex-col">
         <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
-          <button type="button" onClick={endEarly} aria-label="End session" className={iconButton}>
-            <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
+          <button type="button" onClick={askToEnd} aria-label="End session" className={iconButton}>
+            <X className="h-5 w-5" strokeWidth={1.75} />
           </button>
-          <p className="text-[12px] leading-none text-ink-muted">
+          <p className="text-caption leading-none text-ink-muted">
             Pose {clock.index + 1} of {session.poses.length}
           </p>
           <span className="h-9 w-9" />
@@ -106,11 +122,11 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
             progress={pose.seconds > 0 ? 1 - clock.remaining / pose.seconds : 1}
             className="h-[min(56vw,30vh,220px)] w-[min(56vw,30vh,220px)]"
           >
-            <p className="text-[clamp(28px,9vw,36px)] font-light leading-none tabular-nums tracking-[-0.02em] text-ink">
+            <p className="text-[clamp(1.75rem,9vw,2.25rem)] font-light leading-none tabular-nums tracking-[-0.02em] text-ink">
               {formatClock(Math.ceil(clock.remaining))}
             </p>
             {pose.side ? (
-              <p className="mt-2 text-[11.5px] leading-none text-ink-muted">
+              <p className="mt-2 text-label leading-none text-ink-muted">
                 {poseSideLabel(pose.side)}
               </p>
             ) : null}
@@ -118,14 +134,14 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
 
           <h1
             aria-live="polite"
-            className="mt-[clamp(18px,4vh,32px)] text-[clamp(22px,7vw,28px)] font-bold leading-tight tracking-[-0.02em] text-ink"
+            className="mt-[clamp(18px,4vh,32px)] text-[clamp(1.375rem,7vw,1.75rem)] font-bold leading-tight tracking-[-0.02em] text-ink"
           >
             {pose.name}
           </h1>
-          <p className="mt-2 max-w-[310px] text-[13.5px] leading-relaxed text-ink-muted">
+          <p className="mt-2 max-w-[310px] text-body-sm leading-relaxed text-ink-muted">
             {pose.cue}
           </p>
-          <p className="mt-4 text-[12px] leading-none text-ink-faint">
+          <p className="mt-4 text-caption leading-none text-ink-faint">
             {next ? `Next: ${poseTitle(next)}` : 'Last pose'}
           </p>
 
@@ -152,6 +168,13 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
             </button>
           </div>
         </div>
+
+        <EndSessionPrompt
+          open={confirmingEnd}
+          secondsSoFar={elapsed}
+          onKeepGoing={keepGoing}
+          onEnd={endEarly}
+        />
       </div>
     );
   }
@@ -160,7 +183,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     return (
       <div className="relative flex min-h-full flex-col">
         <header className="relative flex items-center px-4 pt-[clamp(12px,2.4vh,20px)]">
-          <button type="button" onClick={() => router.back()} aria-label="Go back" className={iconButton}>
+          <button type="button" onClick={goBack} aria-label="Go back" className={iconButton}>
             <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
           </button>
         </header>
@@ -177,64 +200,73 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
 
   return (
     <div className="relative flex min-h-full flex-col pb-6">
+      {/*
+       * The session's own colour, as on its tile, filling the top half of the
+       * screen at full strength and fading into the page by the title.
+       */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 h-[54vh]"
+        style={{
+          background: `linear-gradient(180deg, ${color} 0%, ${color} 30%, ${color}a6 58%, ${color}33 82%, rgb(var(--canvas)) 100%)`,
+        }}
+      />
+
+      {/* Always dark: it sits on the colour at full strength in either theme. */}
       <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
-        <button type="button" onClick={() => router.back()} aria-label="Go back" className={iconButton}>
+        <button
+          type="button"
+          onClick={goBack}
+          aria-label="Go back"
+          className="tap-target flex h-9 w-9 items-center justify-center rounded-full text-black/70 transition-colors hover:bg-black/[0.06] hover:text-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        >
           <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
         </button>
-        <p className="text-[12px] leading-none text-ink-muted">Yoga · {session.focus}</p>
+        <p className="text-caption font-medium leading-none text-black/75">Yoga · {session.focus}</p>
         <span className="h-9 w-9" />
       </header>
 
-      <div className="relative mx-5 mt-3 aspect-[16/10] overflow-hidden rounded-[16px]">
-        <Image
-          src={session.image}
-          alt={session.imageAlt}
-          fill
-          sizes="(max-width: 430px) 90vw, 390px"
-          placeholder="blur"
-          priority
-          className="object-cover"
-        />
-      </div>
-
-      <div className="px-5">
-        <h1 className="mt-5 text-[clamp(22px,7vw,26px)] font-bold leading-tight tracking-[-0.02em] text-ink">
+      {/* The title sits where the colour fades out, so it reads in both themes. */}
+      <div className="relative flex min-h-[calc(50vh-56px)] shrink-0 flex-col justify-end px-5">
+        <h1 className="text-[clamp(1.375rem,7vw,1.625rem)] font-semibold leading-tight tracking-[-0.02em] text-ink">
           {session.title}
         </h1>
-        <p className="mt-1 text-[13px] leading-snug text-ink-muted">{session.subtitle}</p>
-        <p className="mt-3 text-[12px] leading-none text-ink-soft">
+        <p className="mt-1 text-body-sm leading-snug text-ink-muted">{session.subtitle}</p>
+        <p className="mt-3 text-caption leading-none text-ink-soft">
           {formatMinutesLabel(total)} · {session.level} · {session.poses.length} poses
         </p>
-        <p className="mt-3 text-[13px] leading-relaxed text-ink-muted">{session.description}</p>
+      </div>
 
-        <GradientButton
+      <div className="relative px-5">
+        <p className="mt-3 text-body-sm leading-relaxed text-ink-muted">{session.description}</p>
+
+        <button
           type="button"
           onClick={() => void begin()}
-          className="mt-5 h-12 w-full gap-2 text-[14px]"
+          className="mt-5 h-12 w-full rounded-full border border-black/10 bg-white text-body-sm font-medium text-black transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          <Play className="h-4 w-4 fill-white" />
-          Begin
-        </GradientButton>
+          Start
+        </button>
 
-        <h2 className="mt-7 text-[15px] font-medium leading-none text-ink-soft">The poses</h2>
+        <h2 className="mt-7 text-[0.9375rem] font-medium leading-none text-ink-soft">The poses</h2>
         <ol className="mt-3 space-y-1.5">
           {session.poses.map((item, index) => (
             <li
               key={`${item.name}-${item.side ?? 'both'}-${index}`}
               className="flex items-baseline justify-between gap-3 rounded-xl bg-surface px-3.5 py-2.5"
             >
-              <span className="min-w-0 text-[13px] leading-snug text-ink">
+              <span className="min-w-0 text-body-sm leading-snug text-ink">
                 <span className="text-ink-faint">{index + 1}. </span>
                 {poseTitle(item)}
               </span>
-              <span className="shrink-0 text-[11.5px] tabular-nums text-ink-faint">
+              <span className="shrink-0 text-label tabular-nums text-ink-faint">
                 {formatClock(item.seconds)}
               </span>
             </li>
           ))}
         </ol>
 
-        <p className="mt-5 rounded-tile bg-surface px-4 py-3 text-[11.5px] leading-relaxed text-ink-muted">
+        <p className="mt-5 rounded-tile bg-surface px-4 py-3 text-label leading-relaxed text-ink-muted">
           {YOGA_SAFETY}
         </p>
       </div>

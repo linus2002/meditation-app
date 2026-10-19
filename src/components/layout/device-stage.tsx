@@ -39,16 +39,16 @@ function UnsupportedScreen() {
         </span>
       </div>
 
-      <h1 className="mt-7 text-[24px] font-bold leading-tight tracking-[-0.015em] text-ink">
+      <h1 className="mt-7 text-[1.5rem] font-bold leading-tight tracking-[-0.015em] text-ink">
         Made for phones and tablets
       </h1>
 
-      <p className="mx-auto mt-3 max-w-[300px] text-[13px] leading-[1.65] text-ink-muted">
+      <p className="mx-auto mt-3 max-w-[300px] text-body-sm leading-[1.65] text-ink-muted">
         Serenity is a handheld experience and is not available on laptop or desktop screens. Open it
         on your phone or tablet, or narrow this window to 1024px or less.
       </p>
 
-      <p className="mt-7 text-[11px] uppercase tracking-[0.18em] text-ink-faint">
+      <p className="mt-7 text-label uppercase tracking-[0.18em] text-ink-faint">
         Phone · Tablet · iPad
       </p>
     </main>

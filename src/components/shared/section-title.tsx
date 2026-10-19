@@ -14,11 +14,11 @@ interface SectionTitleProps {
 export function SectionTitle({ children, actionHref, actionLabel, className }: SectionTitleProps) {
   return (
     <div className={cn('flex items-baseline justify-between gap-3', className)}>
-      <h2 className="text-[15px] font-medium leading-none text-ink-soft">{children}</h2>
+      <h2 className="text-[0.9375rem] font-medium leading-none text-ink-soft">{children}</h2>
       {actionHref && actionLabel ? (
         <Link
           href={actionHref}
-          className="text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="tap-target text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           {actionLabel}
         </Link>

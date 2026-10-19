@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 
 interface DateStripProps {
@@ -24,13 +25,8 @@ export function DateStrip({ days, selectedDate, onSelect }: DateStripProps) {
     active?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }, [selectedDate]);
 
-  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
-    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
-    event.preventDefault();
-    const next = event.key === 'ArrowRight' ? index + 1 : index - 1;
-    const target = days[(next + days.length) % days.length];
-    onSelect(target.date);
-  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>, index: number) =>
+    handleRovingKey(event, index, days.length, (next) => onSelect(days[next].date));
 
   return (
     <div
@@ -52,7 +48,7 @@ export function DateStrip({ days, selectedDate, onSelect }: DateStripProps) {
             onClick={() => onSelect(day.date)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              'relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[15px] transition-colors duration-200',
+              'relative flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[0.9375rem] transition-colors duration-200',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
               isSelected ? 'font-medium text-ink' : 'font-normal text-ink-faint hover:text-ink-soft',
             )}

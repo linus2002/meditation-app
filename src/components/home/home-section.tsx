@@ -31,20 +31,20 @@ export function HomeSection({
     <section className={cn('pt-7', className)}>
       <div className="px-5">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="text-[clamp(17px,4.8vw,20px)] font-medium leading-tight tracking-[-0.01em] text-ink">
+          <h2 className="text-[clamp(1.0625rem,4.8vw,1.25rem)] font-medium leading-tight tracking-[-0.01em] text-ink">
             {title}
           </h2>
           {actionHref && actionLabel ? (
             <Link
               href={actionHref}
-              className="shrink-0 text-[12.5px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="tap-target shrink-0 text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               {actionLabel}
             </Link>
           ) : null}
         </div>
         {description ? (
-          <p className="mt-1.5 text-[13.5px] leading-[1.45] text-ink-muted">{description}</p>
+          <p className="mt-1.5 text-body-sm leading-[1.45] text-ink-muted">{description}</p>
         ) : null}
       </div>
 

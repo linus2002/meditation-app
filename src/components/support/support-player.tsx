@@ -3,10 +3,11 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { ChevronsLeft, Pause, Play } from 'lucide-react';
+import { ChevronsLeft, Pause, Play, X } from 'lucide-react';
 
 import { BreathingOrb } from '@/components/player/breathing-orb';
 import { VolumeControl } from '@/components/player/volume-control';
+import { EndSessionPrompt } from '@/components/session/end-session-prompt';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { DraftNotice, LargeTextToggle } from '@/components/support/support-parts';
 import { EXTEND_SECONDS, supportDisclaimer, type SupportSession } from '@/data/support-track';
@@ -114,11 +115,29 @@ export function SupportPlayer({
   };
 
   const end = () => {
+    setConfirmingEnd(false);
     listenedRef.current += player.elapsed;
     record(0);
     player.pause();
     stop(1.5);
     setStage('done');
+  };
+
+  // The corner button used to end the session outright. Someone tired in the
+  // chemo chair reaching for it to go back would lose the session, so it asks.
+  const [confirmingEnd, setConfirmingEnd] = React.useState(false);
+  const wasPlayingRef = React.useRef(false);
+  const askToEnd = () => {
+    wasPlayingRef.current = player.isPlaying;
+    player.pause();
+    setConfirmingEnd(true);
+  };
+  const carryOn = () => {
+    setConfirmingEnd(false);
+    if (wasPlayingRef.current) {
+      void prime();
+      player.play();
+    }
   };
 
   const keepGoing = () => {
@@ -135,13 +154,17 @@ export function SupportPlayer({
       <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
         <button
           type="button"
-          onClick={() => (stage === 'playing' ? end() : router.push('/support'))}
-          aria-label="Back to support"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          onClick={() => (stage === 'playing' ? askToEnd() : router.push('/support'))}
+          aria-label={stage === 'playing' ? 'End session' : 'Back to support'}
+          className="tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
+          {stage === 'playing' ? (
+            <X className="h-5 w-5" strokeWidth={1.75} />
+          ) : (
+            <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
+          )}
         </button>
-        <p className="text-[12px] leading-none text-ink-muted">{session.moment}</p>
+        <p className="text-caption leading-none text-ink-muted">{session.moment}</p>
         <div className="mt-1.5">
           <LargeTextToggle on={largeText} onToggle={onToggleLargeText} />
         </div>
@@ -154,12 +177,12 @@ export function SupportPlayer({
           <h1
             className={cn(
               'font-bold leading-tight tracking-[-0.02em] text-ink',
-              size('text-[24px]', 'text-[29px]'),
+              size('text-[1.5rem]', 'text-[1.8125rem]'),
             )}
           >
             {session.title}
           </h1>
-          <p className={cn('mt-2 text-ink-muted', size('text-[13px]', 'text-[16px]'))}>
+          <p className={cn('mt-2 text-ink-muted', size('text-body-sm', 'text-[1rem]'))}>
             {formatMinutesLabel(session.durationSeconds)}
           </p>
 
@@ -167,7 +190,7 @@ export function SupportPlayer({
             {session.intro.map((line) => (
               <p
                 key={line}
-                className={cn('leading-relaxed text-ink-soft', size('text-[15px]', 'text-[19px]'))}
+                className={cn('leading-relaxed text-ink-soft', size('text-[0.9375rem]', 'text-[1.1875rem]'))}
               >
                 {line}
               </p>
@@ -178,12 +201,12 @@ export function SupportPlayer({
             <GradientButton
               type="button"
               onClick={start}
-              className={cn('w-full gap-2', size('h-14 text-[16px]', 'h-16 text-[19px]'))}
+              className={cn('w-full gap-2', size('h-14 text-[1rem]', 'h-16 text-[1.1875rem]'))}
             >
               <Play className="h-5 w-5" strokeWidth={2} />
               Start
             </GradientButton>
-            <p className="mt-4 text-center text-[11px] leading-relaxed text-ink-faint">
+            <p className="mt-4 text-center text-label leading-relaxed text-ink-faint">
               {supportDisclaimer.short}
             </p>
           </div>
@@ -199,12 +222,12 @@ export function SupportPlayer({
             <h1
               className={cn(
                 'mt-8 text-center font-semibold leading-tight text-ink',
-                size('text-[20px]', 'text-[25px]'),
+                size('text-[1.25rem]', 'text-[1.5625rem]'),
               )}
             >
               {session.title}
             </h1>
-            <p className={cn('mt-2 text-ink-muted', size('text-[13px]', 'text-[16px]'))}>
+            <p className={cn('mt-2 text-ink-muted', size('text-body-sm', 'text-[1rem]'))}>
               {player.isPlaying
                 ? `${formatMinutesSeconds(player.remaining)} left`
                 : 'Paused. Take all the time you need.'}
@@ -232,7 +255,7 @@ export function SupportPlayer({
               onClick={end}
               className={cn(
                 'mt-4 w-full py-2 text-center text-ink-muted hover:text-ink',
-                size('text-[13px]', 'text-[16px]'),
+                size('text-body-sm', 'text-[1rem]'),
               )}
             >
               End here
@@ -244,7 +267,7 @@ export function SupportPlayer({
           <p
             className={cn(
               'text-center font-medium leading-snug text-ink',
-              size('text-[19px]', 'text-[23px]'),
+              size('text-[1.1875rem]', 'text-[1.4375rem]'),
             )}
           >
             {session.closing}
@@ -255,7 +278,7 @@ export function SupportPlayer({
               <GradientButton
                 type="button"
                 onClick={keepGoing}
-                className={cn('w-full', size('h-14 text-[15px]', 'h-16 text-[18px]'))}
+                className={cn('w-full', size('h-14 text-[0.9375rem]', 'h-16 text-[1.125rem]'))}
               >
                 Keep going for {Math.round(EXTEND_SECONDS / 60)} more minutes
               </GradientButton>
@@ -264,7 +287,7 @@ export function SupportPlayer({
               href="/support"
               className={cn(
                 'flex w-full items-center justify-center rounded-full border border-overlay/25 text-ink transition-colors hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
-                size('h-12 text-[14px]', 'h-14 text-[17px]'),
+                size('h-12 text-body-sm', 'h-14 text-[1.0625rem]'),
               )}
             >
               Back to support
@@ -272,6 +295,13 @@ export function SupportPlayer({
           </div>
         </div>
       )}
+
+      <EndSessionPrompt
+        open={confirmingEnd}
+        secondsSoFar={listenedRef.current + player.elapsed}
+        onKeepGoing={carryOn}
+        onEnd={end}
+      />
     </div>
   );
 }

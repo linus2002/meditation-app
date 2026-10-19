@@ -8,7 +8,7 @@ import { LiveRoom } from '@/components/circles/live-room';
  */
 export default function CircleLivePage() {
   return (
-    <Suspense fallback={<div className="px-5 pt-6 text-[13px] text-ink-muted">Loading…</div>}>
+    <Suspense fallback={<div className="px-5 pt-6 text-body-sm text-ink-muted">Loading…</div>}>
       <LiveRoom />
     </Suspense>
   );

@@ -6,6 +6,7 @@ import { ScreenHeader } from '@/components/layout/screen-header';
 import { SectionTitle } from '@/components/shared/section-title';
 import { StoryCard } from '@/components/stories/story-card';
 import { stories, storyCategories } from '@/data/stories';
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 import type { StoryCategory } from '@/types';
@@ -28,7 +29,7 @@ export default function StoriesPage() {
     <div className="pb-4">
       <ScreenHeader eyebrow="Read or listen" title="Stories" />
 
-      <p className="mt-4 px-5 text-[12.5px] leading-relaxed text-ink-muted">
+      <p className="mt-4 px-5 text-caption leading-relaxed text-ink-muted">
         Slow stories with nothing much happening in them. Read them yourself, or have them read to
         you.
       </p>
@@ -38,7 +39,7 @@ export default function StoriesPage() {
         aria-label="Filter stories"
         className="rail mt-5 flex gap-2 overflow-x-auto px-5"
       >
-        {storyCategories.map((category) => {
+        {storyCategories.map((category, index) => {
           const selected = filter === category.value;
           return (
             <button
@@ -48,8 +49,13 @@ export default function StoriesPage() {
               aria-checked={selected}
               tabIndex={selected ? 0 : -1}
               onClick={() => setFilter(category.value)}
+              onKeyDown={(event) =>
+                handleRovingKey(event, index, storyCategories.length, (next) =>
+                  setFilter(storyCategories[next].value),
+                )
+              }
               className={cn(
-                'shrink-0 rounded-full px-4 py-2 text-[12.5px] font-medium transition-colors duration-150',
+                'shrink-0 rounded-full px-4 py-2 text-caption font-medium transition-colors duration-150',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 selected
                   ? 'bg-action-pill text-white'

@@ -35,15 +35,15 @@ export function TodayRail() {
               />
             </span>
 
-            <span className="mt-2.5 line-clamp-2 text-[14px] font-semibold leading-snug text-ink">
+            <span className="mt-2.5 line-clamp-2 text-body-sm font-semibold leading-snug text-ink">
               {meditation.title}
             </span>
           </Link>
 
-          <p className="mt-1 truncate text-[12.5px] leading-tight text-ink-muted">
+          <p className="mt-1 truncate text-caption leading-tight text-ink-muted">
             {meditation.narrator}
           </p>
-          <p className="mt-1.5 flex items-center gap-1 text-[12px] leading-none text-ink-muted">
+          <p className="mt-1.5 flex items-center gap-1 text-caption leading-none text-ink-muted">
             {rating.toFixed(1)}
             <Star
               aria-hidden="true"

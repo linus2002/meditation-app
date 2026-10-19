@@ -21,7 +21,7 @@ export function SupportSessionScreen({ id }: { id: string }) {
     return (
       <div className="flex min-h-full flex-col">
         <SupportUnavailable />
-        <Link href="/home" className="mx-auto text-[13px] font-medium text-ink-soft hover:text-ink">
+        <Link href="/home" className="mx-auto text-body-sm font-medium text-ink-soft hover:text-ink">
           Back to Serenity
         </Link>
       </div>

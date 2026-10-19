@@ -26,7 +26,7 @@ export function NextSessionCard({
 
   if (!occurrence) {
     return (
-      <div className="rounded-tile bg-surface p-4 text-[12.5px] text-ink-muted">
+      <div className="rounded-tile bg-surface p-4 text-caption text-ink-muted">
         This circle has no sessions scheduled.
       </div>
     );
@@ -62,22 +62,22 @@ export function NextSessionCard({
           />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] leading-none text-ink-faint">Next session</p>
-          <p className="mt-1.5 text-[15px] font-semibold leading-tight text-ink">{title}</p>
-          <p className="mt-1 text-[12px] leading-relaxed text-ink-muted">{detail}</p>
+          <p className="text-label leading-none text-ink-faint">Next session</p>
+          <p className="mt-1.5 text-[0.9375rem] font-semibold leading-tight text-ink">{title}</p>
+          <p className="mt-1 text-caption leading-relaxed text-ink-muted">{detail}</p>
         </div>
       </div>
 
       {roomOpen && children ? <div className="mt-3.5">{children}</div> : null}
 
       {canJoin(phase) ? (
-        <GradientButton asChild className="mt-4 h-11 w-full text-[13px]">
+        <GradientButton asChild className="mt-4 h-11 w-full text-body-sm">
           <Link href={{ pathname: '/circles/live', query: { id: circle.id } }}>Join the room</Link>
         </GradientButton>
       ) : phase === 'closing' ? (
         <Link
           href={`/player/${circle.meditationId}`}
-          className="mt-4 flex h-11 w-full items-center justify-center rounded-full border border-overlay/25 text-[13px] font-medium text-ink transition-colors hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="mt-4 flex h-11 w-full items-center justify-center rounded-full border border-overlay/25 text-body-sm font-medium text-ink transition-colors hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           Sit on your own
         </Link>

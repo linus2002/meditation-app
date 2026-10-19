@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { CloudOff, Loader2, Smartphone, Trash2 } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
+import { useUndo } from '@/components/layout/undo-toast';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { SectionTitle } from '@/components/shared/section-title';
 import { SkeletonList } from '@/components/shared/skeleton';
@@ -15,8 +16,23 @@ import { formatBytes } from '@/lib/offline-downloads';
 
 export default function DownloadsPage() {
   const { support, loaded, sessions, totalLabel, error, isBusy, remove } = useDownloads();
+  const offerUndo = useUndo();
+
+  // An offline copy may be the only way to play in a hospital with no signal,
+  // and cannot be fetched back without one. So the row goes at once, but the
+  // copy itself is only deleted once the chance to undo has passed.
+  const [leaving, setLeaving] = React.useState<string[]>([]);
+  const removeCopy = (id: string, title: string) => {
+    setLeaving((current) => [...current, id]);
+    offerUndo({
+      message: `${title} removed from this device`,
+      undo: () => setLeaving((current) => current.filter((entry) => entry !== id)),
+      commit: () => void remove(id),
+    });
+  };
 
   const saved = sessions
+    .filter((entry) => !leaving.includes(entry.id))
     .map((entry) => ({ entry, meditation: getMeditation(entry.id) }))
     .filter((row): row is { entry: typeof row.entry; meditation: NonNullable<typeof row.meditation> } =>
       Boolean(row.meditation),
@@ -75,14 +91,14 @@ export default function DownloadsPage() {
                     href={`/player/${meditation.id}`}
                     className="static before:absolute before:inset-0 before:rounded-tile before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                   >
-                    <p className="truncate text-[14px] font-semibold leading-tight text-ink">
+                    <p className="truncate text-body-sm font-semibold leading-tight text-ink">
                       {meditation.title}
                     </p>
                   </Link>
-                  <p className="mt-0.5 truncate text-[11.5px] leading-tight text-ink-muted">
+                  <p className="mt-0.5 truncate text-label leading-tight text-ink-muted">
                     {meditation.subtitle}
                   </p>
-                  <p className="mt-1 text-[11px] leading-none text-ink-faint">
+                  <p className="mt-1 text-label leading-none text-ink-faint">
                     Ready offline · {formatBytes(entry.bytes)}
                   </p>
                 </div>
@@ -90,9 +106,9 @@ export default function DownloadsPage() {
                 <button
                   type="button"
                   disabled={isBusy(entry.id)}
-                  onClick={() => void remove(entry.id)}
+                  onClick={() => removeCopy(entry.id, meditation.title)}
                   aria-label={`Remove the offline copy of ${meditation.title}`}
-                  className="relative z-10 flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                  className="relative z-10 tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                 >
                   {isBusy(entry.id) ? (
                     <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} />
@@ -109,7 +125,7 @@ export default function DownloadsPage() {
             title="Nothing downloaded yet"
             body="Open a session and tap the download arrow. It will then open with no connection at all."
             action={
-              <GradientButton asChild className="mt-6 h-11 px-7 text-[13px]">
+              <GradientButton asChild className="mt-6 h-11 px-7 text-body-sm">
                 <Link href="/meditations">Browse sessions</Link>
               </GradientButton>
             }
@@ -117,7 +133,7 @@ export default function DownloadsPage() {
         )}
 
         {error ? (
-          <p className="mt-4 rounded-tile bg-surface px-4 py-3 text-[11.5px] leading-relaxed text-ink-muted">
+          <p className="mt-4 rounded-tile bg-surface px-4 py-3 text-label leading-relaxed text-ink-muted">
             {error}
           </p>
         ) : null}
@@ -131,13 +147,13 @@ export default function DownloadsPage() {
            * here it does not. Every sound in Serenity is generated on the
            * device as it plays, so the sound was never the part at risk.
            */}
-          <p className="mt-3 rounded-tile bg-surface px-4 py-3.5 text-[12px] leading-relaxed text-ink-muted">
+          <p className="mt-3 rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
             Serenity makes every sound on your device as it plays, so the audio needs no
             downloading and already works with no signal. A download saves the parts that do come
             over the network — the session screen and its artwork — so the whole thing opens on a
             plane, on the underground, or anywhere with nothing to connect to.
           </p>
-          <p className="mt-2.5 px-1 text-[11.5px] leading-relaxed text-ink-faint">
+          <p className="mt-2.5 px-1 text-label leading-relaxed text-ink-faint">
             Sessions share most of what they need, so the first download is the expensive one and
             each session after it costs far less than its own size suggests. Downloads survive
             app updates, and stay until you remove them.
@@ -164,8 +180,8 @@ function EmptyState({
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-overlay/[0.06]">
         {icon}
       </span>
-      <p className="mt-4 text-[15px] font-medium text-ink">{title}</p>
-      <p className="mt-1.5 max-w-[260px] text-[12.5px] leading-relaxed text-ink-muted">{body}</p>
+      <p className="mt-4 text-[0.9375rem] font-medium text-ink">{title}</p>
+      <p className="mt-1.5 max-w-[260px] text-caption leading-relaxed text-ink-muted">{body}</p>
       {action}
     </div>
   );

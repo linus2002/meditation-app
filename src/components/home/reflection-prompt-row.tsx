@@ -36,7 +36,7 @@ export function ReflectionPromptRow() {
   return (
     <Link
       href="/reflections"
-      className="flex items-center gap-3.5 rounded-tile bg-surface p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+      className="flex items-center gap-3.5 rounded-tile border border-overlay/[0.1] bg-canvas-raised p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
     >
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
         {written ? (
@@ -47,10 +47,10 @@ export function ReflectionPromptRow() {
       </span>
 
       <span className="min-w-0 flex-1">
-        <span className="block text-[13.5px] font-medium leading-snug text-ink">
+        <span className="block text-body-sm font-medium leading-snug text-ink">
           {prompt.question}
         </span>
-        <span className="mt-1 block text-[11.5px] leading-none text-ink-faint">
+        <span className="mt-1 block text-label leading-none text-ink-faint">
           {written ? 'Written today' : 'A sentence is plenty'}
         </span>
       </span>

@@ -39,26 +39,26 @@ export function ProgramRail() {
                 aria-hidden="true"
                 className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center"
               >
-                <span className="text-[clamp(20px,6vw,26px)] font-bold uppercase leading-[1.05] tracking-[0.01em] text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">
+                <span className="text-[clamp(1.25rem,6vw,1.625rem)] font-bold uppercase leading-[1.05] tracking-[0.01em] text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">
                   {program.title}
                 </span>
-                <span className="mt-2 text-[10px] font-semibold uppercase tracking-[0.28em] text-white/80">
+                <span className="mt-2 text-label font-semibold uppercase tracking-[0.28em] text-white/80">
                   {program.author}
                 </span>
               </span>
 
-              <span className="absolute left-3 top-3 rounded-full bg-canvas-deep/85 px-3 py-1.5 text-[10.5px] font-semibold leading-none text-white backdrop-blur-sm">
+              <span className="absolute left-3 top-3 rounded-full bg-canvas-deep/85 px-3 py-1.5 text-label font-semibold leading-none text-white backdrop-blur-sm">
                 Free
               </span>
             </span>
 
-            <span className="mt-3 block truncate text-[15px] font-semibold leading-tight text-ink">
+            <span className="mt-3 block truncate text-[0.9375rem] font-semibold leading-tight text-ink">
               {program.title}
             </span>
           </Link>
 
-          <p className="mt-1 truncate text-[12.5px] leading-tight text-ink-muted">
-            {program.author} · {program.sessions} sessions
+          <p className="mt-1 truncate text-caption leading-tight text-ink-muted">
+            {program.author} · {program.sessions.length} sessions
           </p>
         </li>
       ))}

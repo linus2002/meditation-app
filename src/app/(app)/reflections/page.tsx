@@ -4,6 +4,7 @@ import * as React from 'react';
 import { NotebookPen, Trash2 } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
+import { useUndo } from '@/components/layout/undo-toast';
 import { ReflectionCard } from '@/components/reflections/reflection-card';
 import { SectionTitle } from '@/components/shared/section-title';
 import { SkeletonList } from '@/components/shared/skeleton';
@@ -12,7 +13,15 @@ import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
 export default function ReflectionsPage() {
-  const { reflections, removeReflection, hydrated } = useApp();
+  const { reflections, removeReflection, saveReflection, hydrated } = useApp();
+  const offerUndo = useUndo();
+
+  // Reflections live only on this phone, so a slip of the thumb would be
+  // permanent. The entry is kept here until the Undo has passed.
+  const deleteEntry = (entry: (typeof reflections)[number]) => {
+    removeReflection(entry.date);
+    offerUndo({ message: 'Reflection deleted', undo: () => saveReflection(entry) });
+  };
 
   // Only meaningful once there is something to compare against.
   const average =
@@ -37,8 +46,8 @@ export default function ReflectionsPage() {
       {hydrated && reflections.length >= 3 ? (
         <section className="mt-6 px-5">
           <div className="rounded-tile bg-surface p-4">
-            <p className="text-[11px] leading-none text-ink-muted">Recently, most days felt</p>
-            <p className="mt-2 text-[22px] font-light leading-none tracking-[-0.02em] text-ink">
+            <p className="text-label leading-none text-ink-muted">Recently, most days felt</p>
+            <p className="mt-2 text-[1.375rem] font-light leading-none tracking-[-0.02em] text-ink">
               {weightLabel(Math.round(average ?? 3))}
             </p>
 
@@ -58,7 +67,7 @@ export default function ReflectionsPage() {
                   </div>
                 ))}
             </div>
-            <p className="mt-2 text-[10.5px] leading-none text-ink-faint">
+            <p className="mt-2 text-label leading-none text-ink-faint">
               Taller is lighter. This is a record, not a score.
             </p>
           </div>
@@ -75,8 +84,8 @@ export default function ReflectionsPage() {
             <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-full bg-overlay/[0.06]">
               <NotebookPen className="h-5 w-5 text-ink-soft" strokeWidth={1.6} />
             </span>
-            <p className="mt-3.5 text-[13.5px] font-medium text-ink">Nothing written yet</p>
-            <p className="mx-auto mt-1.5 max-w-[240px] text-[11.5px] leading-relaxed text-ink-muted">
+            <p className="mt-3.5 text-body-sm font-medium text-ink">Nothing written yet</p>
+            <p className="mx-auto mt-1.5 max-w-[240px] text-label leading-relaxed text-ink-muted">
 A new prompt arrives each day, and what you write stays on this device.
             </p>
           </div>
@@ -85,26 +94,26 @@ A new prompt arrives each day, and what you write stays on this device.
             {reflections.map((entry) => (
               <li key={entry.date} className="rounded-tile bg-surface p-4">
                 <div className="flex items-baseline justify-between gap-3">
-                  <p className="text-[12px] font-medium leading-none text-ink">
+                  <p className="text-caption font-medium leading-none text-ink">
                     {formatEntryDate(entry.date)}
                   </p>
-                  <span className="text-[11px] leading-none text-ink-muted">
+                  <span className="text-label leading-none text-ink-muted">
                     {weightLabel(entry.weight)}
                   </span>
                 </div>
 
-                <p className="mt-2.5 text-[11.5px] leading-snug text-ink-faint">{entry.prompt}</p>
-                <p className="mt-1.5 whitespace-pre-wrap text-[13px] leading-relaxed text-ink-soft">
+                <p className="mt-2.5 text-label leading-snug text-ink-faint">{entry.prompt}</p>
+                <p className="mt-1.5 whitespace-pre-wrap text-body-sm leading-relaxed text-ink-soft">
                   {entry.answer}
                 </p>
 
                 <div className="mt-3 flex justify-end">
                   <button
                     type="button"
-                    onClick={() => removeReflection(entry.date)}
+                    onClick={() => deleteEntry(entry)}
                     aria-label={`Delete the reflection from ${formatEntryDate(entry.date)}`}
                     className={cn(
-                      'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[11.5px] text-ink-faint',
+                      'tap-target inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-label text-ink-faint',
                       'transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                     )}
                   >

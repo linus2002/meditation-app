@@ -42,7 +42,7 @@ export function SleepChart({ nights }: { nights: SleepNight[] }) {
             >
               <span
                 className={cn(
-                  'text-[10px] tabular-nums transition-opacity',
+                  'text-label tabular-nums transition-opacity',
                   isActive ? 'text-ink opacity-100' : 'opacity-0',
                 )}
               >
@@ -66,14 +66,14 @@ export function SleepChart({ nights }: { nights: SleepNight[] }) {
 
       <div className="mt-2 flex justify-between gap-2">
         {nights.map((night) => (
-          <span key={night.key} className="flex-1 text-center text-[10px] text-ink-faint">
+          <span key={night.key} className="flex-1 text-center text-label text-ink-faint">
             {night.label}
           </span>
         ))}
       </div>
 
       {!anyLogged ? (
-        <p className="mt-3 text-[11.5px] leading-relaxed text-ink-faint">
+        <p className="mt-3 text-label leading-relaxed text-ink-faint">
           No nights logged yet. Add last night above and the week fills in from there.
         </p>
       ) : null}

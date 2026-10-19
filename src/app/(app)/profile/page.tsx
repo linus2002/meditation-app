@@ -2,17 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import {
-  ArrowDownToLine,
-  Bell,
-  BookOpen,
-  ChevronRight,
-  Flame,
-  Heart,
-  HeartHandshake,
-  Timer,
-  TimerReset,
-} from 'lucide-react';
+import { ChevronRight, User } from 'lucide-react';
 
 import { InstallPrompt } from '@/components/layout/install-prompt';
 import { ScreenHeader } from '@/components/layout/screen-header';
@@ -21,33 +11,24 @@ import { Skeleton } from '@/components/shared/skeleton';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { settingToggles } from '@/data/settings';
-import { currentUser } from '@/data/user';
+import { appShortcuts } from '@/data/shortcuts';
 import { useReminders } from '@/hooks/use-reminders';
 import { formatDuration } from '@/lib/format';
 import { reminderDefinitions } from '@/lib/reminders';
-import { currentStreak, lifetimeTotals, weeklyMinutes } from '@/lib/session-stats';
-import { supportTrackEnabled } from '@/lib/support-track';
+import { currentStreak, firstSessionDate, lifetimeTotals, weeklyMinutes } from '@/lib/session-stats';
 import { useApp } from '@/providers/app-provider';
 
 /** The toggles that need notification permission behind them. */
 const reminderIds = new Set(reminderDefinitions.map((entry) => entry.id));
 
-const shortcuts = [
-  { href: '/timer', label: 'Unguided timer', icon: TimerReset },
-  { href: '/stories', label: 'Read-aloud stories', icon: BookOpen },
-  { href: '/favorites', label: 'Saved sessions', icon: Heart },
-  { href: '/downloads', label: 'Downloads', icon: ArrowDownToLine },
-  { href: '/notifications', label: 'Notifications', icon: Bell },
-  { href: '/activities', label: 'Daily activities', icon: Flame },
-  { href: '/sleep', label: 'Sleep and timers', icon: Timer },
-  // Only once the track has passed clinical review and been switched on.
-  ...(supportTrackEnabled
-    ? [{ href: '/support', label: 'Support during cancer', icon: HeartHandshake }]
-    : []),
-];
 
 export default function ProfilePage() {
-  const { settings, setSetting, sessions, hydrated } = useApp();
+  const { settings, setSetting, sessions, hydrated, name, setName } = useApp();
+
+  // Edited locally and saved on blur or Enter, so the greeting does not flicker
+  // through every keystroke.
+  const [draftName, setDraftName] = React.useState('');
+  React.useEffect(() => setDraftName(name), [name]);
   const { permission, mode: reminderMode, enable, disable } = useReminders();
 
   /*
@@ -77,6 +58,12 @@ export default function ProfilePage() {
     [sessions, today],
   );
   const totals = React.useMemo(() => lifetimeTotals(sessions), [sessions]);
+  const startedOn = React.useMemo(() => {
+    const first = firstSessionDate(sessions);
+    return first
+      ? first.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+      : null;
+  }, [sessions]);
   const streak = React.useMemo(
     () => (today ? currentStreak(sessions, today) : 0),
     [sessions, today],
@@ -94,29 +81,61 @@ export default function ProfilePage() {
 
   return (
     <div className="pb-4">
-      <ScreenHeader eyebrow="Your account" title="Profile" />
+      {/*
+       * There are no accounts: everything here is this phone's own record. The
+       * reference showed a made-up member's name and join date, which every
+       * reader saw as their own, so this states what is actually known.
+       */}
+      <ScreenHeader eyebrow="On this phone" title="Profile" />
 
       <section className="mt-6 flex items-center gap-4 px-5">
         <Avatar className="h-16 w-16">
-          <AvatarFallback className="text-[18px]">{currentUser.initials}</AvatarFallback>
+          <AvatarFallback>
+            <User className="h-7 w-7" strokeWidth={1.6} aria-hidden="true" />
+          </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="truncate text-[18px] font-bold leading-tight tracking-[-0.01em] text-ink">
-            {`${currentUser.firstName} ${currentUser.lastName}`}
+          <p className="truncate text-[1.125rem] font-bold leading-tight tracking-[-0.01em] text-ink">
+            {hydrated && name ? name : 'Your practice'}
           </p>
-          <p className="mt-1 text-[12px] leading-none text-ink-muted">
-            Member since {currentUser.memberSince}
+          <p className="mt-1 text-caption leading-snug text-ink-muted">
+            {!hydrated
+              ? ' '
+              : startedOn
+                ? `Practising since ${startedOn}`
+                : 'Your first session will start the count'}
           </p>
         </div>
+      </section>
+
+      {/* Kept on this phone only; the home screen greets the reader by it. */}
+      <section className="mt-5 px-5">
+        <label htmlFor="profile-name" className="text-label text-ink-muted">
+          What should we call you?
+        </label>
+        <input
+          id="profile-name"
+          type="text"
+          value={draftName}
+          maxLength={40}
+          autoComplete="given-name"
+          placeholder="Your first name"
+          onChange={(event) => setDraftName(event.target.value)}
+          onBlur={() => setName(draftName)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') event.currentTarget.blur();
+          }}
+          className="mt-2 h-12 w-full rounded-full border border-overlay/[0.12] bg-overlay/[0.04] px-4 text-body-sm text-ink outline-none placeholder:text-ink-faint focus:border-overlay/30"
+        />
       </section>
 
       <section className="mt-5 grid grid-cols-3 gap-2.5 px-5">
         {stats.map((stat) => (
           <div key={stat.label} className="rounded-tile bg-surface px-2 py-3.5 text-center">
-            <p className="whitespace-nowrap text-[18px] font-semibold leading-none tracking-[-0.02em] text-ink">
+            <p className="whitespace-nowrap text-[1.125rem] font-semibold leading-none tracking-[-0.02em] text-ink">
               {stat.value}
             </p>
-            <p className="mt-1.5 text-[11px] leading-none text-ink-muted">{stat.label}</p>
+            <p className="mt-1.5 text-label leading-none text-ink-muted">{stat.label}</p>
           </div>
         ))}
       </section>
@@ -147,13 +166,13 @@ export default function ProfilePage() {
           </div>
           <div className="mt-2 flex justify-between gap-2">
             {week.map((day) => (
-              <span key={`${day.key}-label`} className="flex-1 text-center text-[10px] text-ink-faint">
+              <span key={`${day.key}-label`} className="flex-1 text-center text-label text-ink-faint">
                 {day.label}
               </span>
             ))}
           </div>
           {totals.sessions === 0 ? (
-            <p className="mt-3 text-[11px] leading-relaxed text-ink-faint">
+            <p className="mt-3 text-label leading-relaxed text-ink-faint">
               Nothing logged yet. Finish a session and it appears here.
             </p>
           ) : null}
@@ -186,11 +205,11 @@ export default function ProfilePage() {
                 <div className="min-w-0 flex-1">
                   <label
                     htmlFor={`setting-${toggle.id}`}
-                    className="block text-[13.5px] font-medium leading-tight text-ink"
+                    className="block text-body-sm font-medium leading-tight text-ink"
                   >
                     {toggle.label}
                   </label>
-                  <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+                  <p className="mt-0.5 text-label leading-snug text-ink-muted">
                     {toggle.description}
                   </p>
                 </div>
@@ -213,7 +232,7 @@ export default function ProfilePage() {
         </ul>
 
         {reminderNote ? (
-          <p className="mt-3 px-1 text-[11.5px] leading-relaxed text-ink-faint">{reminderNote}</p>
+          <p className="mt-3 px-1 text-label leading-relaxed text-ink-faint">{reminderNote}</p>
         ) : null}
       </section>
 
@@ -227,7 +246,7 @@ export default function ProfilePage() {
       <section className="mt-6 px-5">
         <SectionTitle>Shortcuts</SectionTitle>
         <ul className="mt-3 space-y-2.5">
-          {shortcuts.map(({ href, label, icon: Icon }) => (
+          {appShortcuts.map(({ href, label, description, icon: Icon }) => (
             <li key={href}>
               <Link
                 href={href}
@@ -236,7 +255,14 @@ export default function ProfilePage() {
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
                   <Icon className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.7} />
                 </span>
-                <span className="flex-1 text-[13.5px] font-medium text-ink">{label}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-body-sm font-medium leading-tight text-ink">
+                    {label}
+                  </span>
+                  <span className="mt-0.5 block text-label leading-snug text-ink-muted">
+                    {description}
+                  </span>
+                </span>
                 <ChevronRight className="h-4 w-4 text-ink-faint" strokeWidth={1.8} />
               </Link>
             </li>

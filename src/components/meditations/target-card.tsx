@@ -15,10 +15,10 @@ export function TargetCard() {
         <Target className="h-6 w-6 text-aurora-lime" strokeWidth={1.9} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-[15px] font-semibold leading-tight text-ink">
+        <span className="block text-[0.9375rem] font-semibold leading-tight text-ink">
           Set a Meditation Target
         </span>
-        <span className="mt-0.5 block text-[12px] leading-tight text-ink-muted">
+        <span className="mt-0.5 block text-caption leading-tight text-ink-muted">
           Track your meditation practice
         </span>
       </span>

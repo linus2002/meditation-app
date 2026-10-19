@@ -101,13 +101,13 @@ export function SupportHub() {
                 <div key={suggestion.appointment.id} className="rounded-tile bg-surface p-4">
                   <div className="flex items-center gap-2">
                     <CalendarHeart className="h-4 w-4 text-ink-soft" strokeWidth={1.7} />
-                    <p className="text-[11px] leading-none text-ink-faint">From your appointments</p>
+                    <p className="text-label leading-none text-ink-faint">From your appointments</p>
                   </div>
-                  <p className="mt-2.5 text-[17px] font-semibold leading-tight text-ink">
+                  <p className="mt-2.5 text-[1.0625rem] font-semibold leading-tight text-ink">
                     {copy.headline}
                   </p>
-                  <p className="mt-1.5 text-[12.5px] leading-relaxed text-ink-muted">{copy.line}</p>
-                  <GradientButton asChild className="mt-4 h-12 w-full text-[14px]">
+                  <p className="mt-1.5 text-caption leading-relaxed text-ink-muted">{copy.line}</p>
+                  <GradientButton asChild className="mt-4 h-12 w-full text-body-sm">
                     <Link href={`/support/${session.id}`}>
                       {session.title} · {formatMinutesLabel(session.durationSeconds)}
                     </Link>
@@ -157,15 +157,15 @@ export function SupportHub() {
                     key={`${entry.sessionId}-${entry.startedAt}`}
                     className="flex items-baseline justify-between gap-3 rounded-tile bg-surface px-4 py-3"
                   >
-                    <span className="min-w-0 truncate text-[13px] text-ink">{session.title}</span>
-                    <span className="shrink-0 text-[11px] text-ink-faint">
+                    <span className="min-w-0 truncate text-body-sm text-ink">{session.title}</span>
+                    <span className="shrink-0 text-label text-ink-faint">
                       {relativeDayLabel(toDateKey(new Date(entry.startedAt)), new Date())}
                     </span>
                   </li>
                 );
               })}
             </ul>
-            <p className="mt-2 px-1 text-[11px] leading-relaxed text-ink-faint">
+            <p className="mt-2 px-1 text-label leading-relaxed text-ink-faint">
               Only you can see this. There are no streaks or goals here — come whenever it helps.
             </p>
           </section>
@@ -187,7 +187,7 @@ function MomentRow({ momentTitle, sessionIds }: { momentTitle: string; sessionId
 
   return (
     <li className="rounded-tile bg-surface">
-      <p className="px-4 pt-3.5 text-[15px] font-semibold leading-tight text-ink">{momentTitle}</p>
+      <p className="px-4 pt-3.5 text-[0.9375rem] font-semibold leading-tight text-ink">{momentTitle}</p>
       <ul className="mt-1 pb-1.5">
         {sessions.map((session) => (
           <li key={session.id}>
@@ -196,8 +196,8 @@ function MomentRow({ momentTitle, sessionIds }: { momentTitle: string; sessionId
               className="flex items-center gap-3 px-4 py-2.5 transition-colors hover:bg-overlay/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <div className="min-w-0 flex-1">
-                <p className="text-[13.5px] font-medium leading-snug text-ink-soft">{session.title}</p>
-                <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+                <p className="text-body-sm font-medium leading-snug text-ink-soft">{session.title}</p>
+                <p className="mt-0.5 text-label leading-snug text-ink-muted">
                   {formatMinutesLabel(session.durationSeconds)} · {session.forWho}
                 </p>
               </div>
@@ -258,14 +258,14 @@ function AppointmentsSection({
                 key={entry.id}
                 className="flex items-center justify-between gap-3 rounded-xl bg-overlay/[0.05] py-2 pl-3.5 pr-1.5"
               >
-                <span className="text-[13px] text-ink">
+                <span className="text-body-sm text-ink">
                   {kindLabel(entry.kind)} · <span className="text-ink-muted">{dayLabel(entry.date)}</span>
                 </span>
                 <button
                   type="button"
                   onClick={() => onRemove(entry.id)}
                   aria-label={`Remove ${kindLabel(entry.kind)} on ${dayLabel(entry.date)}`}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-ink-faint hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                  className="tap-target flex h-8 w-8 items-center justify-center rounded-full text-ink-faint hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                 >
                   <X className="h-4 w-4" strokeWidth={1.8} />
                 </button>
@@ -273,7 +273,7 @@ function AppointmentsSection({
             ))}
           </ul>
         ) : (
-          <p className="mb-3.5 text-[12px] leading-relaxed text-ink-muted">
+          <p className="mb-3.5 text-caption leading-relaxed text-ink-muted">
             Add the date of a scan, results or chemo, and the right session will be waiting at the
             top on the day and the day before.
           </p>
@@ -288,7 +288,7 @@ function AppointmentsSection({
               aria-checked={kind === entry.id}
               onClick={() => setKind(entry.id)}
               className={cn(
-                'rounded-full px-3.5 py-2 text-[12.5px] font-medium transition-colors',
+                'rounded-full px-3.5 py-2 text-caption font-medium transition-colors',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 kind === entry.id
                   ? 'bg-action-pill text-white'
@@ -313,24 +313,24 @@ function AppointmentsSection({
               setDate(event.target.value);
               setMessage(null);
             }}
-            className="min-w-0 flex-1 rounded-xl bg-overlay/[0.06] px-3.5 py-2.5 text-[13px] text-ink [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="min-w-0 flex-1 rounded-xl bg-overlay/[0.06] px-3.5 py-2.5 text-body-sm text-ink [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           />
           <button
             type="button"
             onClick={add}
-            className="shrink-0 rounded-full bg-overlay/[0.08] px-5 text-[13px] font-medium text-ink hover:bg-overlay/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="shrink-0 rounded-full bg-overlay/[0.08] px-5 text-body-sm font-medium text-ink hover:bg-overlay/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             Add
           </button>
         </div>
 
         {message ? (
-          <p role="status" className="mt-2 text-[11.5px] text-ink-muted">
+          <p role="status" className="mt-2 text-label text-ink-muted">
             {message}
           </p>
         ) : null}
 
-        <p className="mt-3 text-[11px] leading-relaxed text-ink-faint">
+        <p className="mt-3 text-label leading-relaxed text-ink-faint">
           Only the date and kind are saved, on this phone. Past dates clear themselves.
         </p>
       </div>

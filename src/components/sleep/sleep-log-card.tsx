@@ -7,6 +7,7 @@ import { GradientButton } from '@/components/shared/gradient-button';
 import { Skeleton } from '@/components/shared/skeleton';
 import { toDateKey } from '@/lib/date';
 import { minutesAsleep } from '@/lib/sleep-stats';
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
@@ -72,18 +73,18 @@ export function SleepLogCard() {
       <div className="rounded-tile bg-surface p-4">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-[11px] leading-none text-ink-muted">Last night</p>
-            <p className="mt-2 text-[24px] font-light leading-none tracking-[-0.02em] text-ink">
+            <p className="text-label leading-none text-ink-muted">Last night</p>
+            <p className="mt-2 text-[1.5rem] font-light leading-none tracking-[-0.02em] text-ink">
               {Math.floor(slept / 60)}h {String(slept % 60).padStart(2, '0')}m
             </p>
-            <p className="mt-2 text-[11.5px] leading-none text-ink-faint">
+            <p className="mt-2 text-label leading-none text-ink-faint">
               {existing.bedtime} – {existing.wakeTime} · {QUALITY_LABELS[existing.quality - 1]}
             </p>
           </div>
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="flex items-center gap-1.5 rounded-full bg-overlay/[0.06] px-3 py-1.5 text-[11.5px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="flex items-center gap-1.5 rounded-full bg-overlay/[0.06] px-3 py-1.5 text-label font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             <PencilLine className="h-3.5 w-3.5" strokeWidth={1.8} />
             Edit
@@ -91,7 +92,7 @@ export function SleepLogCard() {
         </div>
 
         {justSaved ? (
-          <p className="mt-3 flex items-center gap-1.5 text-[11.5px] leading-none text-ink-muted">
+          <p className="mt-3 flex items-center gap-1.5 text-label leading-none text-ink-muted">
             <Check className="h-3.5 w-3.5 text-aurora-mint" strokeWidth={2.2} />
             Saved to this device.
           </p>
@@ -102,39 +103,39 @@ export function SleepLogCard() {
 
   return (
     <div className="rounded-tile bg-surface p-4">
-      <p className="text-[13.5px] font-medium leading-tight text-ink">How did you sleep?</p>
-      <p className="mt-1 text-[11.5px] leading-snug text-ink-muted">
+      <p className="text-body-sm font-medium leading-tight text-ink">How did you sleep?</p>
+      <p className="mt-1 text-label leading-snug text-ink-muted">
         Everything on this screen comes from what you enter here, and stays on this device.
       </p>
 
       <div className="mt-4 grid grid-cols-2 gap-2.5">
         <label className="block">
-          <span className="block text-[11px] leading-none text-ink-muted">Bedtime</span>
+          <span className="block text-label leading-none text-ink-muted">Bedtime</span>
           <input
             type="time"
             value={bedtime}
             onChange={(event) => setBedtime(event.target.value)}
-            className="mt-1.5 h-11 w-full rounded-xl bg-overlay/[0.06] px-3 text-[15px] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-1.5 h-11 w-full rounded-xl bg-overlay/[0.06] px-3 text-[0.9375rem] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           />
         </label>
         <label className="block">
-          <span className="block text-[11px] leading-none text-ink-muted">Woke</span>
+          <span className="block text-label leading-none text-ink-muted">Woke</span>
           <input
             type="time"
             value={wakeTime}
             onChange={(event) => setWakeTime(event.target.value)}
-            className="mt-1.5 h-11 w-full rounded-xl bg-overlay/[0.06] px-3 text-[15px] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-1.5 h-11 w-full rounded-xl bg-overlay/[0.06] px-3 text-[0.9375rem] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           />
         </label>
       </div>
 
       {duration ? (
-        <p className="mt-2.5 text-[11.5px] leading-none text-ink-faint">
+        <p className="mt-2.5 text-label leading-none text-ink-faint">
           That is {duration} in bed.
         </p>
       ) : null}
 
-      <p id="sleep-quality-label" className="mt-4 text-[11.5px] leading-none text-ink-muted">
+      <p id="sleep-quality-label" className="mt-4 text-label leading-none text-ink-muted">
         How rested did you feel?
       </p>
       <div
@@ -154,6 +155,9 @@ export function SleepLogCard() {
               aria-label={word}
               tabIndex={selected || (quality === null && index === 0) ? 0 : -1}
               onClick={() => setQuality(score)}
+              onKeyDown={(event) =>
+                handleRovingKey(event, index, QUALITY_LABELS.length, (next) => setQuality(next + 1))
+              }
               className="group flex flex-1 flex-col items-center gap-1.5 rounded-xl py-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <span
@@ -164,7 +168,7 @@ export function SleepLogCard() {
               />
               <span
                 className={cn(
-                  'text-[9.5px] leading-none transition-colors',
+                  'text-label leading-none transition-colors',
                   selected ? 'text-ink' : 'text-ink-faint',
                 )}
               >
@@ -179,7 +183,7 @@ export function SleepLogCard() {
         <GradientButton
           onClick={handleSave}
           disabled={quality === null || minutes === null}
-          className="h-11 flex-1 text-[13px]"
+          className="h-11 flex-1 text-body-sm"
         >
           {existing ? 'Update night' : 'Save night'}
         </GradientButton>
@@ -187,7 +191,7 @@ export function SleepLogCard() {
           <button
             type="button"
             onClick={() => setEditing(false)}
-            className="h-11 rounded-full px-4 text-[13px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="h-11 rounded-full px-4 text-body-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             Cancel
           </button>

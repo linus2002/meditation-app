@@ -38,11 +38,11 @@ export function GroupStreak({
         <Sprout className="h-[18px] w-[18px] text-ink-soft" strokeWidth={1.7} />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[11px] leading-none text-ink-faint">Together</p>
-        <p className="mt-1.5 text-[15px] font-semibold leading-tight text-ink">
+        <p className="text-label leading-none text-ink-faint">Together</p>
+        <p className="mt-1.5 text-[0.9375rem] font-semibold leading-tight text-ink">
           {streak === 0 ? 'A fresh start' : `${streak}-day circle streak`}
         </p>
-        <p className="mt-1 text-[12px] leading-relaxed text-ink-muted">{today}</p>
+        <p className="mt-1 text-caption leading-relaxed text-ink-muted">{today}</p>
       </div>
     </div>
   );

@@ -13,10 +13,10 @@ export function CirclesUnavailable({ reason = 'unconfigured' }: { reason?: 'unco
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-overlay/[0.06]">
         <Icon className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />
       </span>
-      <p className="mt-4 text-[15px] font-medium text-ink">
+      <p className="mt-4 text-[0.9375rem] font-medium text-ink">
         {offline ? 'You are offline' : 'Circles is not available yet'}
       </p>
-      <p className="mt-1.5 max-w-[270px] text-[12.5px] leading-relaxed text-ink-muted">
+      <p className="mt-1.5 max-w-[270px] text-caption leading-relaxed text-ink-muted">
         {offline
           ? 'Circles needs a connection to see who else is sitting. Everything else in Serenity works as usual.'
           : 'This build of Serenity is not connected to Circles. Everything else works as usual.'}

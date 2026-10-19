@@ -3,7 +3,7 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Flower2, Home, Moon, User, type LucideIcon } from 'lucide-react';
+import { Flower2, Home, Moon, PersonStanding, type LucideIcon } from 'lucide-react';
 
 import { SerenityRing } from '@/components/onboarding/serenity-mark';
 import { cn } from '@/lib/utils';
@@ -19,15 +19,16 @@ interface NavItem {
 /**
  * Five destinations, each named for what the screen actually holds: the home
  * feed, the meditations library, Kapwa (the built-in guide, raised in the
- * middle), the sleep screen and the profile page. Icon over label, so the
- * glyph is never the only thing telling you where a tab goes.
+ * middle), yoga and the sleep screen. Profile lives behind the avatar at the
+ * top of the home screen instead. Icon over label, so the glyph is never the
+ * only thing telling you where a tab goes.
  */
 const NAV_ITEMS: NavItem[] = [
   { href: '/home', label: 'Home', icon: Home },
   { href: '/meditations', label: 'Meditations', icon: Flower2 },
   { href: '/kapwa', label: 'Kapwa', featured: true },
+  { href: '/yoga', label: 'Yoga', icon: PersonStanding },
   { href: '/sleep', label: 'Sleep', icon: Moon },
-  { href: '/profile', label: 'Profile', icon: User },
 ];
 
 export function BottomNav() {
@@ -94,7 +95,7 @@ export function BottomNav() {
                 {/* The active label picks up the same gradient as its icon. */}
                 <span
                   className={cn(
-                    'whitespace-nowrap text-[11px] font-medium leading-none tracking-[0.01em]',
+                    'whitespace-nowrap text-label font-medium leading-none tracking-[0.01em]',
                     isActive
                       ? 'bg-nav-active bg-clip-text text-transparent'
                       : 'text-[rgb(var(--nav-idle))]',

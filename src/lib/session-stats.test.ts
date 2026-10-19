@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   currentStreak,
   formatHoursMinutes,
+  firstSessionDate,
   lifetimeTotals,
   recentDays,
   sessionsOn,
@@ -148,5 +149,19 @@ describe('weeklyMinutes and recentDays', () => {
     expect(days).toHaveLength(5);
     expect(days[0].date).toBe('2026-09-05');
     expect(days[4].date).toBe('2026-09-09');
+  });
+});
+
+describe('firstSessionDate', () => {
+  it('is the earliest sitting, whatever order they were stored in', () => {
+    const first = new Date(2026, 2, 3, 8, 0).getTime();
+    const later = new Date(2026, 8, 9, 8, 0).getTime();
+    expect(firstSessionDate([sit('2026-09-09', 10, later), sit('2026-03-03', 5, first)])).toEqual(
+      new Date(first),
+    );
+  });
+
+  it('is null before anything is recorded', () => {
+    expect(firstSessionDate([])).toBeNull();
   });
 });

@@ -51,6 +51,14 @@ export interface Meditation {
   image: StaticImageData;
   /** Short alt text describing the artwork. */
   imageAlt: string;
+  /**
+   * Purpose-made full-bleed artwork for the top of the player, where a session
+   * has one; otherwise the player uses `image`. It carries no lettering of its
+   * own, since the title is set over it.
+   */
+  cover?: StaticImageData;
+  /** CSS `object-position` for the cover, keeping its subject in a tall frame. */
+  coverFocus?: string;
   /** The synthesised bed that plays while this session runs. */
   soundscape: SoundscapeId;
   /** Marks the "Daily Goals" entry surfaced on the home screen. */
@@ -125,13 +133,6 @@ export interface SleepNight {
   quality: number;
   /** False when the night has no entry, so the gap can be drawn as a gap. */
   logged: boolean;
-}
-
-export interface UserProfile {
-  firstName: string;
-  lastName: string;
-  initials: string;
-  memberSince: string;
 }
 
 export interface SettingToggle {

@@ -3,6 +3,8 @@ import {
   crisisReply,
   kapwaFallback,
   kapwaIntents,
+  medicalUrgentKeywords,
+  medicalUrgentReply,
   type KapwaIntent,
   type KapwaReply,
 } from '@/data/kapwa';
@@ -14,7 +16,8 @@ import {
  * punctuation: "CAN'T SLEEP!!" finds sleep, "stressed" finds stress, and
  * "hi" does not fire inside "this". The intent with the most keyword hits
  * wins; ties go to the one listed first. Anything about self-harm is checked
- * before all of it.
+ * before all of it, then medical warning signs, so neither can ever be
+ * answered with a meditation.
  */
 
 /** Lower case, curly apostrophes straightened, other punctuation to spaces. */
@@ -49,6 +52,7 @@ export function replyTo(
   if (!text) return kapwaFallback;
 
   if (crisisKeywords.some((keyword) => contains(text, keyword))) return crisisReply;
+  if (medicalUrgentKeywords.some((keyword) => contains(text, keyword))) return medicalUrgentReply;
 
   let best: KapwaIntent | null = null;
   let bestHits = 0;

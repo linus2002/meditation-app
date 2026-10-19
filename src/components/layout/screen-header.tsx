@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { ChevronsLeft } from 'lucide-react';
 
+import { useBack } from '@/hooks/use-back';
 import { cn } from '@/lib/utils';
 
 interface ScreenHeaderProps {
@@ -19,27 +19,27 @@ interface ScreenHeaderProps {
  * left, sitting slightly above a centred eyebrow and title stack.
  */
 export function ScreenHeader({ eyebrow, title, action, className }: ScreenHeaderProps) {
-  const router = useRouter();
+  const goBack = useBack();
 
   return (
     <header className={cn('relative px-4 pt-[clamp(20px,5.7vh,48px)]', className)}>
       <div className="grid grid-cols-[36px_1fr_36px] items-start gap-2">
         <button
           type="button"
-          onClick={() => router.back()}
+          onClick={goBack}
           aria-label="Go back"
-          className="-mt-1.5 flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="-mt-1.5 tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <ChevronsLeft className="h-[22px] w-[22px]" strokeWidth={1.75} />
         </button>
 
         <div className="flex flex-col items-center gap-[5px] text-center">
           {eyebrow ? (
-            <p className="text-[clamp(11px,3.1vw,12px)] font-normal leading-none text-ink-muted">
+            <p className="text-[clamp(0.75rem,3.1vw,0.8125rem)] font-normal leading-none text-ink-muted">
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="text-[clamp(16px,4.8vw,19px)] font-medium leading-tight tracking-[-0.01em] text-ink">
+          <h1 className="text-[clamp(1rem,4.8vw,1.1875rem)] font-medium leading-tight tracking-[-0.01em] text-ink">
             {title}
           </h1>
         </div>

@@ -70,18 +70,18 @@ export function SessionComplete({
           <Check className="h-7 w-7 text-white" strokeWidth={2.4} />
         </span>
 
-        <p className="mt-4 text-[clamp(26px,8vw,32px)] font-bold leading-none tracking-[-0.02em] text-ink">
+        <p className="mt-4 text-[clamp(1.625rem,8vw,2rem)] font-bold leading-none tracking-[-0.02em] text-ink">
           {minutes} {minutes === 1 ? 'minute' : 'minutes'}
         </p>
-        <p className="mt-2 text-[12.5px] leading-none text-ink-muted">added to today</p>
+        <p className="mt-2 text-caption leading-none text-ink-muted">added to today</p>
       </div>
 
       {/* Where the day now stands. */}
       {hydrated && day ? (
         <div className="mt-6 rounded-tile bg-surface p-4">
           <div className="flex items-baseline justify-between gap-3">
-            <p className="text-[12px] leading-none text-ink-muted">Today</p>
-            <p className="text-[12px] leading-none text-ink-soft">
+            <p className="text-caption leading-none text-ink-muted">Today</p>
+            <p className="text-caption leading-none text-ink-soft">
               {day.minutes} / {day.goalMinutes} min
             </p>
           </div>
@@ -94,11 +94,11 @@ export function SessionComplete({
           </div>
 
           <div className="mt-3 flex items-center justify-between gap-3">
-            <p className="text-[11.5px] leading-none text-ink-faint">
+            <p className="text-label leading-none text-ink-faint">
               {goalMet ? "That's the day's goal met." : `${day.goalMinutes - day.minutes} min to go.`}
             </p>
             {streak >= 2 ? (
-              <p className="flex items-center gap-1.5 text-[11.5px] leading-none text-ink-soft">
+              <p className="flex items-center gap-1.5 text-label leading-none text-ink-soft">
                 <Flame className="h-3.5 w-3.5 text-aurora-pink" strokeWidth={1.9} />
                 {streak} days
               </p>
@@ -116,8 +116,8 @@ export function SessionComplete({
         <div className="mt-6 rounded-tile bg-surface p-4">
           <div className="flex items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[12.5px] font-medium leading-tight text-ink">How was that?</p>
-              <p className="mt-0.5 truncate text-[11.5px] leading-tight text-ink-faint">
+              <p className="text-caption font-medium leading-tight text-ink">How was that?</p>
+              <p className="mt-0.5 truncate text-label leading-tight text-ink-faint">
                 {ratings[rated.id] ? 'Tap the same star to clear it.' : 'Only you ever see this.'}
               </p>
             </div>
@@ -133,14 +133,14 @@ export function SessionComplete({
       {/* The reflection, only while it is still unwritten. */}
       {hydrated && !reflectionWritten ? (
         <div className="mt-6">
-          <p className="mb-3 text-[12px] leading-none text-ink-muted">While it is still fresh</p>
+          <p className="mb-3 text-caption leading-none text-ink-muted">While it is still fresh</p>
           <ReflectionCard />
         </div>
       ) : null}
 
       {nextUp ? (
         <div className="mt-6">
-          <p className="mb-3 text-[12px] leading-none text-ink-muted">If you want to keep going</p>
+          <p className="mb-3 text-caption leading-none text-ink-muted">If you want to keep going</p>
           <Link
             href={`/player/${nextUp.id}`}
             className="flex items-center gap-3.5 rounded-tile bg-surface p-3 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
@@ -156,10 +156,10 @@ export function SessionComplete({
               />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[13.5px] font-semibold leading-tight text-ink">
+              <span className="block truncate text-body-sm font-semibold leading-tight text-ink">
                 {nextUp.title}
               </span>
-              <span className="mt-0.5 block truncate text-[11.5px] leading-tight text-ink-muted">
+              <span className="mt-0.5 block truncate text-label leading-tight text-ink-muted">
                 {formatMinutesLabel(nextUp.durationSeconds)} · {nextUp.narrator}
               </span>
             </span>
@@ -174,7 +174,7 @@ export function SessionComplete({
 
       <Link
         href="/activities"
-        className="mt-3 block w-full rounded-full py-2 text-center text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        className="mt-3 block w-full rounded-full py-2 text-center text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         See your progress
       </Link>

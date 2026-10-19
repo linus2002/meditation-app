@@ -33,6 +33,7 @@ export function TodayPromptCard({
   const [draft, setDraft] = React.useState(myAnswer?.body ?? '');
   const [editing, setEditing] = React.useState(!myAnswer);
   const [saving, setSaving] = React.useState(false);
+  const [confirmingRemove, setConfirmingRemove] = React.useState(false);
   const [message, setMessage] = React.useState<string | null>(null);
 
   React.useEffect(() => {
@@ -78,8 +79,8 @@ export function TodayPromptCard({
 
   return (
     <div className="rounded-tile bg-surface p-4">
-      <p className="text-[11px] leading-none text-ink-faint">Today&apos;s prompt</p>
-      <p className="mt-2 text-[14px] font-medium leading-snug text-ink">{today.question}</p>
+      <p className="text-label leading-none text-ink-faint">Today&apos;s prompt</p>
+      <p className="mt-2 text-body-sm font-medium leading-snug text-ink">{today.question}</p>
 
       {editing ? (
         <>
@@ -98,11 +99,11 @@ export function TodayPromptCard({
               }
             }}
             placeholder="One line, for your circle"
-            className="mt-3 w-full resize-none rounded-xl bg-overlay/[0.06] px-3.5 py-3 text-[13px] leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-3 w-full resize-none rounded-xl bg-overlay/[0.06] px-3.5 py-3 text-body-sm leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           />
           <div className="mt-2 flex items-center justify-between gap-3">
             <span
-              className={count > ANSWER_MAX ? 'text-[11px] text-ink' : 'text-[11px] text-ink-faint'}
+              className={count > ANSWER_MAX ? 'text-label text-ink' : 'text-label text-ink-faint'}
             >
               {count}/{ANSWER_MAX}
             </span>
@@ -114,7 +115,7 @@ export function TodayPromptCard({
                     setDraft(myAnswer.body);
                     setEditing(false);
                   }}
-                  className="rounded-full px-3 py-1.5 text-[12px] text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                  className="rounded-full px-3 py-1.5 text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                 >
                   Cancel
                 </button>
@@ -123,7 +124,7 @@ export function TodayPromptCard({
                 type="button"
                 onClick={() => void save()}
                 disabled={saving}
-                className="flex items-center gap-1.5 rounded-full bg-action-pill px-4 py-1.5 text-[12px] font-medium text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                className="flex items-center gap-1.5 rounded-full bg-action-pill px-4 py-1.5 text-caption font-medium text-white disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
               >
                 {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={1.8} /> : null}
                 Share
@@ -133,37 +134,65 @@ export function TodayPromptCard({
         </>
       ) : myAnswer ? (
         <div className="mt-3">
-          <p className="rounded-xl bg-overlay/[0.05] px-3.5 py-3 text-[13px] leading-snug text-ink-soft">
+          <p className="rounded-xl bg-overlay/[0.05] px-3.5 py-3 text-body-sm leading-snug text-ink-soft">
             {myAnswer.body}
           </p>
           {myAnswer.hidden ? (
-            <p className="mt-2 text-[11px] text-ink-faint">
+            <p className="mt-2 text-label text-ink-faint">
               Hidden from the circle after reports. Only you can see it.
             </p>
           ) : null}
-          <div className="mt-2 flex gap-3">
-            <button
-              type="button"
-              onClick={() => setEditing(true)}
-              className="text-[12px] text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-            >
-              Edit
-            </button>
-            <button
-              type="button"
-              onClick={() => void remove()}
-              disabled={saving}
-              className="text-[12px] text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-            >
-              Remove
-            </button>
-          </div>
+          {/*
+           * Removing takes the answer off the circle's server, so it is asked
+           * first rather than undone after.
+           */}
+          {confirmingRemove ? (
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <p className="text-caption text-ink-soft">Remove your answer for today?</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setConfirmingRemove(false);
+                  void remove();
+                }}
+                disabled={saving}
+                className="tap-target text-caption font-medium text-destructive hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              >
+                Remove
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingRemove(false)}
+                className="tap-target text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              >
+                Keep it
+              </button>
+            </div>
+          ) : (
+            <div className="mt-2 flex gap-3">
+              <button
+                type="button"
+                onClick={() => setEditing(true)}
+                className="tap-target text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              >
+                Edit
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirmingRemove(true)}
+                disabled={saving}
+                className="tap-target text-caption text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              >
+                Remove
+              </button>
+            </div>
+          )}
         </div>
       ) : null}
 
-      {message ? <p className="mt-2 text-[11.5px] text-ink-muted">{message}</p> : null}
+      {message ? <p className="mt-2 text-label text-ink-muted">{message}</p> : null}
 
-      <p className="mt-3 text-[11px] leading-relaxed text-ink-faint">
+      <p className="mt-3 text-label leading-relaxed text-ink-faint">
         Only your circle sees answers. If you are having a hard time, please talk to someone you
         trust or a local support line. A circle is not a crisis service.
       </p>

@@ -22,6 +22,8 @@ interface PersistedState {
   sleepLogs: SleepLog[];
   /** The reader's own 1-5 score per session id. There is no other source. */
   ratings: Record<string, number>;
+  /** What the home greeting calls the reader. Empty until they give one. */
+  name: string;
 }
 
 interface AppContextValue extends PersistedState {
@@ -47,6 +49,8 @@ interface AppContextValue extends PersistedState {
   /** 1-5. Passing the score already stored clears it. */
   rateMeditation: (id: string, score: number) => void;
   getRating: (id: string) => number | undefined;
+  /** Trimmed on save; an empty string clears it. */
+  setName: (name: string) => void;
 }
 
 const defaultSettings = settingToggles.reduce<Record<string, boolean>>((acc, toggle) => {
@@ -66,6 +70,7 @@ const initialState: PersistedState = {
   // reader never gave, on a screen whose whole job is to report what they did.
   sleepLogs: [],
   ratings: {},
+  name: '',
 };
 
 const AppContext = React.createContext<AppContextValue | null>(null);
@@ -90,6 +95,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           favoriteStories: parsed.favoriteStories ?? current.favoriteStories,
           sleepLogs: parsed.sleepLogs ?? current.sleepLogs,
           ratings: parsed.ratings ?? current.ratings,
+          name: parsed.name ?? current.name,
         }));
       }
     } catch {
@@ -189,6 +195,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
+  const setName = React.useCallback((name: string) => {
+    setState((current) => ({ ...current, name: name.trim().slice(0, 40) }));
+  }, []);
+
   const removeReflection = React.useCallback((date: string) => {
     setState((current) => ({
       ...current,
@@ -211,7 +221,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.dataset.theme = light ? 'light' : 'dark';
 
     const meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', light ? '#F7F7FB' : '#0E1030');
+    if (meta) meta.setAttribute('content', light ? '#FFFFFF' : '#000000');
   }, [hydrated, state.settings.lightMode]);
 
   const value = React.useMemo<AppContextValue>(
@@ -234,6 +244,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveSleepLog,
       removeSleepLog,
       rateMeditation,
+      setName,
     }),
     [
       state,
@@ -249,6 +260,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       saveSleepLog,
       removeSleepLog,
       rateMeditation,
+      setName,
     ],
   );
 

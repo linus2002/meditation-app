@@ -170,10 +170,10 @@ export function JoinFlow() {
 
         <section className="mt-6 space-y-2.5 px-5">
           <div className="rounded-tile bg-surface p-4">
-            <label htmlFor="welcome-name" className="text-[13px] font-medium text-ink">
+            <label htmlFor="welcome-name" className="text-body-sm font-medium text-ink">
               What should your circle call you?
             </label>
-            <p className="mt-0.5 text-[11.5px] text-ink-muted">
+            <p className="mt-0.5 text-label text-ink-muted">
               Optional. Without a name you appear as &ldquo;A member&rdquo;.
             </p>
             <div className="mt-2.5 flex gap-2">
@@ -185,13 +185,13 @@ export function JoinFlow() {
                   setNameSaved(false);
                 }}
                 placeholder="First name or nickname"
-                className="w-full rounded-xl bg-overlay/[0.06] px-3.5 py-2.5 text-[13px] text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                className="w-full rounded-xl bg-overlay/[0.06] px-3.5 py-2.5 text-body-sm text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
               />
               <button
                 type="button"
                 onClick={() => void saveName()}
                 disabled={!name.trim() || nameSaved}
-                className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-[12px] font-medium text-ink disabled:opacity-50"
+                className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-caption font-medium text-ink disabled:opacity-50"
               >
                 {nameSaved ? 'Saved' : 'Save'}
               </button>
@@ -200,10 +200,10 @@ export function JoinFlow() {
 
           <div className="flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5">
             <div className="min-w-0 flex-1">
-              <label htmlFor="welcome-reminders" className="block text-[13px] font-medium text-ink">
+              <label htmlFor="welcome-reminders" className="block text-body-sm font-medium text-ink">
                 Remind me before sessions
               </label>
-              <p className="mt-0.5 text-[11.5px] text-ink-muted">
+              <p className="mt-0.5 text-label text-ink-muted">
                 One nudge, ten minutes before. Never about streaks or who has sat.
               </p>
             </div>
@@ -214,14 +214,14 @@ export function JoinFlow() {
             />
           </div>
 
-          <p className="px-1 text-[11.5px] leading-relaxed text-ink-faint">
+          <p className="px-1 text-label leading-relaxed text-ink-faint">
             When you sit — in the room or on your own — your circle sees that you sat. Never for
             how long or what. You can turn this off in the circle&apos;s settings.
           </p>
 
-          {note ? <p className="px-1 text-[12px] text-ink-muted">{note}</p> : null}
+          {note ? <p className="px-1 text-caption text-ink-muted">{note}</p> : null}
 
-          <GradientButton asChild className="mt-2 h-11 w-full text-[13px]">
+          <GradientButton asChild className="mt-2 h-11 w-full text-body-sm">
             <Link href={{ pathname: '/circles/view', query: { id: joinedId } }}>
               Go to my circle
             </Link>
@@ -250,16 +250,16 @@ export function JoinFlow() {
               ))}
             </ul>
           ) : (
-            <p className="rounded-tile bg-surface px-4 py-3.5 text-[12.5px] leading-relaxed text-ink-muted">
+            <p className="rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
               {openCount === 0
                 ? 'No circles are open to join right now. Check back soon.'
                 : 'No circle meets at a good time for you yet. Try another time of day, or check back soon as new circles open.'}
             </p>
           )}
 
-          {error ? <p className="mt-3 px-1 text-[12px] text-ink-muted">{error}</p> : null}
+          {error ? <p className="mt-3 px-1 text-caption text-ink-muted">{error}</p> : null}
           {atLimit ? (
-            <p className="mt-3 px-1 text-[12px] text-ink-muted">
+            <p className="mt-3 px-1 text-caption text-ink-muted">
               {circlesErrorMessage('too_many_circles')}
             </p>
           ) : null}
@@ -267,7 +267,7 @@ export function JoinFlow() {
           <button
             type="button"
             onClick={() => setStep('intake')}
-            className="mt-5 w-full text-center text-[12.5px] font-medium text-ink-muted hover:text-ink"
+            className="mt-5 w-full text-center text-caption font-medium text-ink-muted hover:text-ink"
           >
             Change my answers
           </button>
@@ -296,20 +296,20 @@ export function JoinFlow() {
           type="button"
           onClick={() => void showCircles()}
           disabled={!goal || !time || !experience || finding}
-          className="h-11 w-full gap-2 text-[13px]"
+          className="h-11 w-full gap-2 text-body-sm"
         >
           {finding ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} /> : null}
           Show me circles
         </GradientButton>
-        {error ? <p className="mt-3 px-1 text-[12px] text-ink-muted">{error}</p> : null}
-        <p className="mt-3 px-1 text-[11.5px] leading-relaxed text-ink-faint">
+        {error ? <p className="mt-3 px-1 text-caption text-ink-muted">{error}</p> : null}
+        <p className="mt-3 px-1 text-label leading-relaxed text-ink-faint">
           Your answers stay on this phone. They are only used to suggest circles.
         </p>
       </section>
 
       <section className="mt-8 px-5">
         <SectionTitle>How circles work</SectionTitle>
-        <ul className="mt-3 space-y-2 text-[12px] leading-relaxed text-ink-muted">
+        <ul className="mt-3 space-y-2 text-caption leading-relaxed text-ink-muted">
           <li className="rounded-tile bg-surface px-4 py-3">
             A small group, never more than twenty, that sits at the same time.
           </li>

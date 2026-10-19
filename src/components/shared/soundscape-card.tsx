@@ -59,7 +59,7 @@ export function SoundscapeCard({ meta }: { meta: SoundscapeMeta }) {
         <span className="min-w-0 flex-1">
           <span
             className={cn(
-              'block truncate text-[14px] font-semibold leading-tight',
+              'block truncate text-body-sm font-semibold leading-tight',
               active ? 'text-white' : 'text-ink',
             )}
           >
@@ -67,7 +67,7 @@ export function SoundscapeCard({ meta }: { meta: SoundscapeMeta }) {
           </span>
           <span
             className={cn(
-              'mt-0.5 block truncate text-[11.5px] leading-tight',
+              'mt-0.5 block truncate text-label leading-tight',
               active ? 'text-white/75' : 'text-ink-muted',
             )}
           >
@@ -75,7 +75,7 @@ export function SoundscapeCard({ meta }: { meta: SoundscapeMeta }) {
           </span>
           <span
             className={cn(
-              'mt-1 block text-[11px] leading-none',
+              'mt-1 block text-label leading-none',
               active ? 'text-white/75' : 'text-ink-faint',
             )}
           >

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { Star } from 'lucide-react';
 
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 
 interface RatingStarsProps {
@@ -40,6 +41,7 @@ export function RatingStars({
   if (readOnly) {
     return (
       <span
+        role="img"
         className={cn('inline-flex items-center gap-0.5', className)}
         aria-label={value ? `Rated ${value} out of 5` : 'Not rated'}
       >
@@ -59,10 +61,10 @@ export function RatingStars({
     <div
       role="radiogroup"
       aria-label={label}
-      className={cn('inline-flex items-center gap-1', className)}
+      className={cn('inline-flex items-center', className)}
       onMouseLeave={() => setHovered(null)}
     >
-      {SCORES.map((score) => {
+      {SCORES.map((score, index) => {
         const filled = score <= shown;
         return (
           <button
@@ -73,10 +75,14 @@ export function RatingStars({
             aria-label={`${score} out of 5`}
             tabIndex={value === score || (value === undefined && score === 1) ? 0 : -1}
             onClick={() => onChange(score)}
+            onKeyDown={(event) =>
+              handleRovingKey(event, index, SCORES.length, (next) => onChange(SCORES[next]))
+            }
             onMouseEnter={() => setHovered(score)}
             onFocus={() => setHovered(score)}
             onBlur={() => setHovered(null)}
-            className="rounded-md p-0.5 transition-transform duration-150 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            // 24px star + 10px padding each side: a 44px target with no gap between.
+            className="rounded-lg p-2.5 transition-transform duration-150 hover:scale-110 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             <Star
               aria-hidden="true"

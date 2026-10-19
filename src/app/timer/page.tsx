@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronsLeft, Pause, Play, Square } from 'lucide-react';
+import { Pause, Play, Square, X } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
+import { EndSessionPrompt } from '@/components/session/end-session-prompt';
 import { SessionComplete } from '@/components/session/session-complete';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
@@ -114,10 +115,24 @@ export default function TimerPage() {
   };
 
   const endEarly = () => {
+    setConfirmingEnd(false);
     recorder.commit(false);
     stop(1.5);
     countdown.reset(totalSeconds);
     setPhase('setup');
+  };
+
+  // Ending is asked, not done: the corner button sits where Back usually is.
+  const [confirmingEnd, setConfirmingEnd] = React.useState(false);
+  const wasRunningRef = React.useRef(false);
+  const askToEnd = () => {
+    wasRunningRef.current = countdown.running;
+    countdown.pause();
+    setConfirmingEnd(true);
+  };
+  const keepGoing = () => {
+    setConfirmingEnd(false);
+    if (wasRunningRef.current) countdown.resume();
   };
 
   const isSitting = phase === 'warmup' || phase === 'running';
@@ -131,11 +146,11 @@ export default function TimerPage() {
         <header className="relative flex items-center px-4 pt-[clamp(12px,2.4vh,20px)]">
           <button
             type="button"
-            onClick={endEarly}
+            onClick={askToEnd}
             aria-label="End sit"
-            className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
-            <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
+            <X className="h-5 w-5" strokeWidth={1.75} />
           </button>
         </header>
       ) : (
@@ -152,10 +167,10 @@ export default function TimerPage() {
             progress={phase === 'warmup' ? 0 : countdown.progress}
             className="h-[min(66vw,34vh,260px)] w-[min(66vw,34vh,260px)]"
           >
-            <p className="text-[clamp(30px,10vw,40px)] font-light leading-none tabular-nums tracking-[-0.02em] text-ink">
+            <p className="text-[clamp(1.875rem,10vw,2.5rem)] font-light leading-none tabular-nums tracking-[-0.02em] text-ink">
               {formatClock(Math.ceil(countdown.remaining))}
             </p>
-            <p className="mt-2 text-[11.5px] leading-none text-ink-muted">
+            <p className="mt-2 text-label leading-none text-ink-muted">
               {phase === 'warmup' ? 'Settling' : `of ${minutes} min`}
             </p>
           </TimerRing>
@@ -176,7 +191,7 @@ export default function TimerPage() {
 
             <button
               type="button"
-              onClick={endEarly}
+              onClick={askToEnd}
               aria-label="End sit"
               className="flex h-12 w-12 items-center justify-center rounded-full border border-overlay/15 text-ink-muted transition-colors hover:border-overlay/35 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
@@ -185,7 +200,7 @@ export default function TimerPage() {
           </div>
 
           {intervalMinutes > 0 ? (
-            <p className="mt-5 text-[11px] leading-none text-ink-faint">
+            <p className="mt-5 text-label leading-none text-ink-faint">
               Bell every {intervalMinutes} min
             </p>
           ) : null}
@@ -195,17 +210,18 @@ export default function TimerPage() {
           <SessionComplete
             minutes={minutes}
             againLabel="Sit again"
-            onAgain={() => setPhase(warmupSeconds > 0 ? 'warmup' : 'running')}
+            // Through `begin`, so the chosen ambience starts again with the sit.
+            onAgain={() => void begin()}
             nextUp={suggestNext(undefined, 'breathing')}
           />
         </div>
       ) : (
         <div className="relative flex-1 px-5 pb-[clamp(18px,3.8vh,32px)] pt-6">
           <div className="text-center">
-            <p className="text-[clamp(56px,18vw,72px)] font-light leading-none tabular-nums tracking-[-0.03em] text-ink">
+            <p className="text-[clamp(3.5rem,18vw,4.5rem)] font-light leading-none tabular-nums tracking-[-0.03em] text-ink">
               {minutes}
             </p>
-            <p className="mt-1.5 text-[12px] leading-none text-ink-muted">minutes</p>
+            <p className="mt-1.5 text-caption leading-none text-ink-muted">minutes</p>
           </div>
 
           <OptionRow
@@ -249,12 +265,19 @@ export default function TimerPage() {
           <button
             type="button"
             onClick={() => router.push('/activities')}
-            className="mt-3 w-full rounded-full py-2 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-3 w-full rounded-full py-2 text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             See your progress
           </button>
         </div>
       )}
+
+      <EndSessionPrompt
+        open={confirmingEnd}
+        secondsSoFar={elapsed}
+        onKeepGoing={keepGoing}
+        onEnd={endEarly}
+      />
     </div>
   );
 }

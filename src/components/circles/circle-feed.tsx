@@ -37,7 +37,7 @@ export function CircleFeed({
 
   if (items.length === 0) {
     return (
-      <p className="rounded-tile bg-surface px-4 py-3.5 text-[12px] leading-relaxed text-ink-muted">
+      <p className="rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
         Nothing yet this week. Sits and answers from your circle will appear here.
       </p>
     );
@@ -49,7 +49,7 @@ export function CircleFeed({
         <li key={item.key} className="flex gap-3 rounded-tile bg-surface px-4 py-3">
           <MemberAvatar name={item.isSelf ? 'You' : item.name === 'A member' || item.name === 'A former member' ? null : item.name} />
           <div className="min-w-0 flex-1">
-            <p className="text-[12.5px] leading-snug text-ink">
+            <p className="text-caption leading-snug text-ink">
               <span className="font-medium">{item.name}</span>{' '}
               <span className="text-ink-muted">
                 {item.kind === 'joined'
@@ -63,15 +63,15 @@ export function CircleFeed({
             </p>
 
             {item.kind === 'answered' ? (
-              <p className="mt-1 text-[12.5px] leading-snug text-ink-soft">{item.body}</p>
+              <p className="mt-1 text-caption leading-snug text-ink-soft">{item.body}</p>
             ) : null}
 
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-              <span className="text-[11px] text-ink-faint">{formatAgo(now - item.at)}</span>
+              <span className="text-label text-ink-faint">{formatAgo(now - item.at)}</span>
 
               {item.kind === 'answered' && !item.isSelf ? (
                 reported.has(item.key) ? (
-                  <span className="text-[11px] text-ink-faint">Reported. Thank you.</span>
+                  <span className="text-label text-ink-faint">Reported. Thank you.</span>
                 ) : reporting === item.key ? (
                   <span className="flex flex-wrap items-center gap-1.5">
                     {reasons.map((reason) => (
@@ -84,7 +84,7 @@ export function CircleFeed({
                             setReporting(null);
                           });
                         }}
-                        className="rounded-full bg-overlay/[0.06] px-2.5 py-1 text-[11px] text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                        className="rounded-full bg-overlay/[0.06] px-2.5 py-1 text-label text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                       >
                         {reason.label}
                       </button>
@@ -92,7 +92,7 @@ export function CircleFeed({
                     <button
                       type="button"
                       onClick={() => setReporting(null)}
-                      className="text-[11px] text-ink-faint hover:text-ink"
+                      className="text-label text-ink-faint hover:text-ink"
                     >
                       Cancel
                     </button>
@@ -102,14 +102,14 @@ export function CircleFeed({
                     <button
                       type="button"
                       onClick={() => onMute(item.userId)}
-                      className="text-[11px] text-ink-faint hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                      className="text-label text-ink-faint hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                     >
                       Hide their answers
                     </button>
                     <button
                       type="button"
                       onClick={() => setReporting(item.key)}
-                      className="text-[11px] text-ink-faint hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                      className="text-label text-ink-faint hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                     >
                       Report
                     </button>

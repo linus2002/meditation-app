@@ -8,12 +8,12 @@ const config: CapacitorConfig = {
   appId: 'com.example.serenity',
   appName: 'Serenity',
   webDir: 'out',
-  backgroundColor: '#0E1030',
+  backgroundColor: '#000000',
   android: {
-    backgroundColor: '#0E1030',
+    backgroundColor: '#000000',
   },
   ios: {
-    backgroundColor: '#0E1030',
+    backgroundColor: '#000000',
     // Keeps content clear of the notch and home indicator.
     contentInset: 'always',
   },

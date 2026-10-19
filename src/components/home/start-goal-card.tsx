@@ -1,24 +1,25 @@
 import Link from 'next/link';
 
+import { formatMinutesLabel } from '@/lib/format';
 import type { Meditation } from '@/types';
 
 /**
- * Copy is transcribed verbatim from the reference artwork, including the
- * "sessiom" spelling on the third line.
+ * Layout follows the reference artwork. Its copy carried a typo ("sessiom");
+ * the third line now says how long the session is instead.
  */
 export function StartGoalCard({ meditation }: { meditation: Meditation }) {
   return (
     <Link
       href={`/player/${meditation.id}`}
-      className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-tile bg-surface px-5 py-5 shadow-tile transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+      className="group relative flex items-center justify-between gap-4 overflow-hidden rounded-tile border border-overlay/[0.1] bg-canvas-raised px-5 py-5 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
     >
       <div>
-        <p className="text-[11px] font-normal leading-none text-ink-muted">{meditation.subtitle}</p>
-        <p className="mt-2 text-[16px] font-semibold leading-none tracking-[-0.01em] text-ink">
+        <p className="text-label font-normal leading-none text-ink-muted">{meditation.subtitle}</p>
+        <p className="mt-2 text-[1rem] font-semibold leading-none tracking-[-0.01em] text-ink">
           {meditation.title}
         </p>
-        <p className="mt-2 text-[10px] font-normal leading-none text-ink-muted">
-          Ready to start your first sessiom
+        <p className="mt-2 text-label font-normal leading-none text-ink-muted">
+          A gentle first session · {formatMinutesLabel(meditation.durationSeconds)}
         </p>
       </div>
 

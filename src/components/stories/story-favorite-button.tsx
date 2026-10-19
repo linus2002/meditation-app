@@ -31,6 +31,7 @@ export function StoryFavoriteButton({
       className={cn(
         'flex shrink-0 items-center justify-center rounded-full transition-transform duration-150 hover:scale-110',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+        'tap-target',
         size === 'md' ? 'h-10 w-10' : 'h-9 w-9',
         className,
       )}

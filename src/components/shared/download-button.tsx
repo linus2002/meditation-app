@@ -50,6 +50,7 @@ export function DownloadButton({
       className={cn(
         'flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 hover:scale-110 active:scale-95 disabled:hover:scale-100',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+        'tap-target',
         size === 'sm' ? 'h-8 w-8' : 'h-10 w-10',
         className,
       )}

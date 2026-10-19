@@ -95,7 +95,7 @@ export default function ActivitiesPage() {
         ) : (
         <div className="relative -ml-[7vw] aspect-square w-[56vw] max-w-[240px] shrink-0">
           <ProgressArc value={day.completion} />
-          <p className="absolute left-[13%] top-1/2 -translate-y-1/2 text-[clamp(22px,7.9vw,31px)] font-semibold leading-none tracking-[-0.02em] text-ink">
+          <p className="absolute left-[13%] top-1/2 -translate-y-1/2 text-[clamp(1.375rem,7.9vw,1.9375rem)] font-semibold leading-none tracking-[-0.02em] text-ink">
             {formatPercent(day.completion)}
           </p>
         </div>
@@ -124,13 +124,13 @@ export default function ActivitiesPage() {
       </section>
 
       {ready && day.sessions === 0 ? (
-        <p className="relative -mt-2 px-5 text-[11.5px] leading-relaxed text-ink-faint">
+        <p className="relative -mt-2 px-5 text-label leading-relaxed text-ink-faint">
           Nothing recorded for this day yet. Finish a session and it lands here.
         </p>
       ) : null}
 
       <div className="mt-auto flex justify-end pb-[clamp(16px,3.8vh,32px)]">
-        <GradientButton tone="analytics" asChild className="-mr-5 h-12 pl-7 pr-12 text-[13px]">
+        <GradientButton tone="analytics" asChild className="-mr-5 h-12 pl-7 pr-12 text-body-sm">
           <Link href="/sleep">
             Sleep Analytics
             <ArrowRight className="ml-3 h-4 w-4" strokeWidth={1.75} />

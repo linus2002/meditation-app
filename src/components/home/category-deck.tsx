@@ -1,61 +1,36 @@
-'use client';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 
-import * as React from 'react';
-
-import { DeckCard } from '@/components/home/deck-card';
-import type { DeckCard as DeckCardModel } from '@/types';
+import type { DeckCard } from '@/types';
 
 /**
- * The overlapping stack of gradient cards below the greeting.
+ * The row of collection tiles below the greeting.
  *
- * The stack is a slot machine rather than a static list: `order` holds the card
- * ids from back to front, and each card animates to whichever slot it currently
- * occupies. Tapping a card behind the front swaps the two — the tapped card
- * slides down into the front position and the card that was there slides back
- * to the slot it vacated.
+ * Each tile is a plain outlined card on the canvas — title at the top, a small
+ * arrow in the corner — rather than artwork, so the home screen opens quietly.
+ * The row swipes sideways: tiles start on the page gutter, in line with the
+ * search bar, and are sized so two fit with the next one peeking in, which is
+ * what tells you the row scrolls.
  */
-export function CategoryDeck({ cards }: { cards: DeckCardModel[] }) {
-  const [order, setOrder] = React.useState(() => cards.map((card) => card.id));
-
-  const bringToFront = React.useCallback((id: string) => {
-    setOrder((previous) => {
-      const from = previous.indexOf(id);
-      const front = previous.length - 1;
-      if (from === -1 || from === front) return previous;
-
-      const next = [...previous];
-      next[from] = next[front];
-      next[front] = id;
-      return next;
-    });
-  }, []);
-
+export function CategoryDeck({ cards }: { cards: DeckCard[] }) {
   return (
-    <section
-      aria-label="Collections"
-      className="mt-7 px-3.5
-        [--deck-h:clamp(112px,36.4vw,142px)]
-        [--deck-overlap:clamp(33px,10.8vw,42px)]
-        [--deck-step:calc(var(--deck-h)-var(--deck-overlap))]"
-    >
-      {/* Unpadded so the cards' `inset-x-0` lands on the section's content edge. */}
-      <div
-        className="relative"
-        style={{ height: `calc(var(--deck-h) + ${cards.length - 1} * var(--deck-step))` }}
-      >
-        {/* Rendered in a fixed DOM order so a reorder is purely a transform. */}
-        {cards.map((card) => {
-          const slot = order.indexOf(card.id);
-          return (
-            <DeckCard
-              key={card.id}
-              card={card}
-              slot={slot}
-              isFront={slot === order.length - 1}
-              onBringToFront={() => bringToFront(card.id)}
-            />
-          );
-        })}
+    <section aria-label="Collections" className="mt-6">
+      <div className="rail flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-1">
+        {cards.map((card) => (
+          <Link
+            key={card.id}
+            href={card.href}
+            className="flex aspect-[1.05] w-[48vw] max-w-[200px] shrink-0 snap-start flex-col justify-between rounded-[22px] border border-overlay/25 p-4 transition-colors duration-150 hover:border-overlay/45 hover:bg-overlay/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          >
+            <div>
+              <h2 className="text-[clamp(1rem,4.6vw,1.125rem)] font-semibold leading-[1.2] text-ink">
+                {card.title}
+              </h2>
+              <p className="mt-1 text-[0.8125rem] leading-snug text-ink-muted">{card.caption}</p>
+            </div>
+            <ArrowUpRight aria-hidden="true" className="h-5 w-5 self-end text-ink" strokeWidth={1.8} />
+          </Link>
+        ))}
       </div>
     </section>
   );

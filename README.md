@@ -47,9 +47,11 @@ Decisions that follow directly from the artwork:
 - **The nav carries exactly three icon-only destinations** (heart, cog, alarm), as
   drawn. Discovery and saved sessions are reached from the header search control
   and the deck card overflow menus rather than by adding nav items.
-- **Copy is transcribed verbatim**, including `Ready to start your first sessiom`
-  on the Start Your Goal card — the reference spells it that way. Change the string
-  in `src/components/home/start-goal-card.tsx` if you want it corrected.
+- **Layout follows the reference; placeholder copy does not.** The reference's
+  stand-in text (Lorem ipsum on the intro, the name "Sherman Whitaker", the
+  "sessiom" typo, "Watch Complete sessions") has been replaced with real copy.
+  There are no accounts, so Home greets by time of day and Profile describes the
+  phone's own record rather than a named member.
 - **Dark surface only.** The reference shows a single dark treatment, so no theme
   toggle is exposed. Light tokens exist in `globals.css` purely so the shadcn/ui
   primitives stay well-formed.

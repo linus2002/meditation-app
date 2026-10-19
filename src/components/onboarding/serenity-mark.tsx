@@ -27,10 +27,10 @@ export function SerenityRing({ className }: { className?: string }) {
 export function SerenityMark({ className }: { className?: string }) {
   return (
     <div className={cn('flex items-center justify-center gap-3', className)}>
-      <span className="text-[clamp(34px,10.5vw,44px)] font-semibold leading-none tracking-[-0.03em] text-ink">
+      <span className="text-[clamp(1.625rem,8.2vw,2.0625rem)] font-semibold leading-none tracking-[-0.02em] text-ink">
         Serenity
       </span>
-      <SerenityRing className="h-[clamp(26px,8vw,34px)] w-[clamp(26px,8vw,34px)]" />
+      <SerenityRing className="h-[clamp(20px,6.2vw,26px)] w-[clamp(20px,6.2vw,26px)]" />
     </div>
   );
 }

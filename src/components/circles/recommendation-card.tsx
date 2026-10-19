@@ -32,25 +32,25 @@ export function RecommendationCard({
   return (
     <li className="rounded-tile bg-surface p-4">
       <div className="flex items-baseline justify-between gap-3">
-        <p className="text-[15px] font-semibold leading-tight text-ink">{circle.name}</p>
-        <p className="shrink-0 text-[11px] text-ink-faint">
+        <p className="text-[0.9375rem] font-semibold leading-tight text-ink">{circle.name}</p>
+        <p className="shrink-0 text-label text-ink-faint">
           {circle.memberCount === 0
             ? 'New circle'
             : `${circle.memberCount} ${circle.memberCount === 1 ? 'member' : 'members'}`}
         </p>
       </div>
 
-      <p className="mt-1.5 text-[12px] leading-relaxed text-ink-muted">{circle.description}</p>
+      <p className="mt-1.5 text-caption leading-relaxed text-ink-muted">{circle.description}</p>
 
       <ul className="mt-2.5 space-y-1">
         {lines.map((line) => (
-          <li key={line} className="text-[11.5px] leading-snug text-ink-soft">
+          <li key={line} className="text-label leading-snug text-ink-soft">
             {line}
           </li>
         ))}
       </ul>
 
-      <p className="mt-2.5 text-[11px] text-ink-faint">
+      <p className="mt-2.5 text-label text-ink-faint">
         {circle.memberCount === 0 ? 'Be one of the first' : `Room for ${seatsLeft} more`}
       </p>
 
@@ -58,7 +58,7 @@ export function RecommendationCard({
         type="button"
         onClick={onJoin}
         disabled={joining || disabled}
-        className="mt-3.5 h-10 w-full gap-2 text-[13px]"
+        className="mt-3.5 h-10 w-full gap-2 text-body-sm"
       >
         {joining ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} /> : null}
         Join {circle.name}

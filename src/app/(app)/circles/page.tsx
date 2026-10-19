@@ -71,10 +71,10 @@ export default function CirclesPage() {
                       )}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] font-semibold leading-tight text-ink">
+                      <p className="truncate text-body-sm font-semibold leading-tight text-ink">
                         {circle.name}
                       </p>
-                      <p className="mt-0.5 truncate text-[11.5px] text-ink-muted">
+                      <p className="mt-0.5 truncate text-label text-ink-muted">
                         {open
                           ? 'The room is open now'
                           : occurrence
@@ -92,13 +92,13 @@ export default function CirclesPage() {
           </ul>
 
           {status === 'offline' ? (
-            <p className="mt-3 px-1 text-[11.5px] text-ink-faint">{circlesErrorMessage('offline')}</p>
+            <p className="mt-3 px-1 text-label text-ink-faint">{circlesErrorMessage('offline')}</p>
           ) : null}
 
           {memberships.length < 2 ? (
             <Link
               href="/circles/join"
-              className="mt-5 block text-center text-[12.5px] font-medium text-ink-muted hover:text-ink"
+              className="mt-5 block text-center text-caption font-medium text-ink-muted hover:text-ink"
             >
               Find another circle
             </Link>
@@ -107,15 +107,15 @@ export default function CirclesPage() {
       ) : (
         <section className="mt-6 px-5">
           <div className="rounded-tile bg-surface p-5">
-            <p className="text-[16px] font-semibold leading-snug text-ink">
+            <p className="text-[1rem] font-semibold leading-snug text-ink">
               Meditate with a small circle
             </p>
-            <p className="mt-2 text-[12.5px] leading-relaxed text-ink-muted">
+            <p className="mt-2 text-caption leading-relaxed text-ink-muted">
               A few people who want the same thing, sitting at the same time each day. You see
               when they have sat, and they see when you have. No leaderboards, and nobody keeping
               score — the streak belongs to the whole circle.
             </p>
-            <GradientButton asChild className="mt-5 h-11 w-full text-[13px]">
+            <GradientButton asChild className="mt-5 h-11 w-full text-body-sm">
               <Link href="/circles/join">Find your circle</Link>
             </GradientButton>
           </div>

@@ -95,16 +95,16 @@ export function DeckCard({ card, slot, isFront, onBringToFront }: DeckCardProps)
       )}
 
       <div className="pointer-events-none relative z-0 px-5 pt-3">
-        <h2 className="text-[clamp(21px,6.9vw,27px)] font-normal leading-[1.16] tracking-[-0.015em] text-white drop-shadow-[0_1px_10px_rgba(0,0,0,0.18)]">
+        <h2 className="text-[clamp(1.3125rem,6.9vw,1.6875rem)] font-normal leading-[1.16] tracking-[-0.015em] text-white drop-shadow-[0_1px_10px_rgba(0,0,0,0.18)]">
           {card.title}
         </h2>
-        <p className="mt-0.5 text-[clamp(10.5px,3.1vw,12px)] font-semibold leading-none text-white/95">{card.caption}</p>
+        <p className="mt-0.5 text-[clamp(0.75rem,3.1vw,0.8125rem)] font-semibold leading-none text-white/95">{card.caption}</p>
       </div>
 
       <DropdownMenu>
         <DropdownMenuTrigger
           aria-label={`${card.title} options`}
-          className="absolute right-2.5 top-3 z-20 flex h-7 w-6 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-overlay/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
+          className="absolute right-2.5 top-3 z-20 tap-target flex h-7 w-6 items-center justify-center rounded-full text-white/85 transition-colors hover:bg-overlay/20 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus"
         >
           <MoreVertical className="h-[18px] w-[18px]" strokeWidth={2} />
         </DropdownMenuTrigger>

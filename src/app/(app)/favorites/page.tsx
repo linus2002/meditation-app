@@ -24,7 +24,12 @@ export default function FavoritesPage() {
 
   return (
     <div className="pb-4">
-      <ScreenHeader eyebrow={`${saved.length} sessions`} title="Saved" />
+      <ScreenHeader
+        eyebrow={
+          hydrated ? `${saved.length} ${saved.length === 1 ? 'session' : 'sessions'}` : 'Your sessions'
+        }
+        title="Saved"
+      />
 
       <div className="mt-6 px-5">
         {!hydrated ? (
@@ -40,11 +45,11 @@ export default function FavoritesPage() {
             <span className="flex h-14 w-14 items-center justify-center rounded-full bg-overlay/[0.06]">
               <HeartOff className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />
             </span>
-            <p className="mt-4 text-[15px] font-medium text-ink">Nothing saved yet</p>
-            <p className="mt-1.5 max-w-[250px] text-[12.5px] leading-relaxed text-ink-muted">
+            <p className="mt-4 text-[0.9375rem] font-medium text-ink">Nothing saved yet</p>
+            <p className="mt-1.5 max-w-[250px] text-caption leading-relaxed text-ink-muted">
               Tap the heart on any session and it will wait for you here.
             </p>
-            <GradientButton asChild className="mt-6 h-11 px-7 text-[13px]">
+            <GradientButton asChild className="mt-6 h-11 px-7 text-body-sm">
               <Link href="/discover">Browse sessions</Link>
             </GradientButton>
           </div>

@@ -13,6 +13,7 @@ import { SessionComplete } from '@/components/session/session-complete';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { Skeleton } from '@/components/shared/skeleton';
 import { getMeditation } from '@/data/meditations';
+import { useBack } from '@/hooks/use-back';
 import { useBreath } from '@/hooks/use-breath';
 import { useCircle } from '@/hooks/use-circle';
 import { useCirclePresence } from '@/hooks/use-circle-presence';
@@ -37,6 +38,7 @@ import { useCircles } from '@/providers/circles-provider';
 export function LiveRoom() {
   const id = useSearchParams().get('id') ?? '';
   const router = useRouter();
+  const goBack = useBack('/circles');
 
   const { status, userId, isMember } = useCircles();
   const { circle, loading } = useCircle(id || null);
@@ -142,13 +144,13 @@ export function LiveRoom() {
     <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
       <button
         type="button"
-        onClick={() => (joined && !completed ? stepAway() : router.back())}
+        onClick={() => (joined && !completed ? stepAway() : goBack())}
         aria-label="Go back"
-        className="flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        className="tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
       </button>
-      <p className="text-[12px] leading-none text-ink-muted">{circle?.name ?? 'Circle'}</p>
+      <p className="text-caption leading-none text-ink-muted">{circle?.name ?? 'Circle'}</p>
       <span className="h-9 w-9" />
     </header>
   );
@@ -170,7 +172,7 @@ export function LiveRoom() {
           {loading ? (
             <Skeleton className="h-[240px] w-[240px] rounded-full" />
           ) : (
-            <p className="text-center text-[13px] text-ink-muted">This circle could not be found.</p>
+            <p className="text-center text-body-sm text-ink-muted">This circle could not be found.</p>
           )}
         </div>
       </div>
@@ -182,10 +184,10 @@ export function LiveRoom() {
       <div className="flex min-h-full flex-col">
         {header}
         <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
-          <p className="text-[14px] text-ink">Join {circle.name} to sit with them.</p>
+          <p className="text-body-sm text-ink">Join {circle.name} to sit with them.</p>
           <Link
             href={{ pathname: '/circles/view', query: { id } }}
-            className="mt-4 text-[13px] font-medium text-ink-soft hover:text-ink"
+            className="mt-4 text-body-sm font-medium text-ink-soft hover:text-ink"
           >
             See the circle
           </Link>
@@ -232,11 +234,11 @@ export function LiveRoom() {
         />
 
         <div className="mt-[clamp(14px,3.8vh,32px)] text-center">
-          <p className="text-[12px] leading-none text-ink-muted">Sitting together</p>
-          <h1 className="mt-2 text-[clamp(21px,6.7vw,26px)] font-bold leading-tight tracking-[-0.02em] text-ink">
+          <p className="text-caption leading-none text-ink-muted">Sitting together</p>
+          <h1 className="mt-2 text-[clamp(1.3125rem,6.7vw,1.625rem)] font-bold leading-tight tracking-[-0.02em] text-ink">
             {meditation.title}
           </h1>
-          <p className="mt-2 text-[12.5px] leading-relaxed text-ink-muted">{status_line}</p>
+          <p className="mt-2 text-caption leading-relaxed text-ink-muted">{status_line}</p>
         </div>
 
         <HereNow
@@ -254,25 +256,25 @@ export function LiveRoom() {
           <button
             type="button"
             onClick={stepAway}
-            className="mt-5 flex h-11 w-full items-center justify-center rounded-full border border-overlay/25 text-[13px] font-medium text-ink transition-colors hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-5 flex h-11 w-full items-center justify-center rounded-full border border-overlay/25 text-body-sm font-medium text-ink transition-colors hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             Step away
           </button>
         ) : canJoin(phase) ? (
-          <GradientButton type="button" onClick={joinRoom} className="mt-5 h-11 w-full text-[13px]">
+          <GradientButton type="button" onClick={joinRoom} className="mt-5 h-11 w-full text-body-sm">
             Join the room
           </GradientButton>
         ) : phase === 'closing' ? (
-          <GradientButton asChild className="mt-5 h-11 w-full text-[13px]">
+          <GradientButton asChild className="mt-5 h-11 w-full text-body-sm">
             <Link href={`/player/${meditation.id}`}>Sit on your own</Link>
           </GradientButton>
         ) : (
-          <p className="mt-5 text-center text-[11.5px] leading-relaxed text-ink-faint">
+          <p className="mt-5 text-center text-label leading-relaxed text-ink-faint">
             You can join from five minutes before the start.
           </p>
         )}
 
-        <p className="mt-4 text-center text-[11px] leading-relaxed text-ink-faint">
+        <p className="mt-4 text-center text-label leading-relaxed text-ink-faint">
           Everyone hears their own guide, in step. Nobody can see or hear you.
         </p>
       </div>

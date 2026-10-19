@@ -30,7 +30,7 @@ export function SoundscapeGrid({ limit }: { limit?: number }) {
   if (!supported) {
     return (
       <div className="rounded-tile bg-surface p-4">
-        <p className="text-[12px] leading-relaxed text-ink-muted">
+        <p className="text-caption leading-relaxed text-ink-muted">
           This browser does not support the Web Audio API, so ambient sound is unavailable.
         </p>
       </div>
@@ -63,12 +63,12 @@ export function SoundscapeGrid({ limit }: { limit?: number }) {
                 strokeWidth={1.7}
               />
               <span className="min-w-0">
-                <span className="block truncate text-[13px] font-medium leading-tight">
+                <span className="block truncate text-body-sm font-medium leading-tight">
                   {meta.name}
                 </span>
                 <span
                   className={cn(
-                    'mt-0.5 block truncate text-[10.5px] leading-tight',
+                    'mt-0.5 block truncate text-label leading-tight',
                     active ? 'text-white/75' : 'text-ink-faint',
                   )}
                 >

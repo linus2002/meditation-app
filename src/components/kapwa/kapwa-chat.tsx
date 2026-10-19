@@ -2,12 +2,14 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Send, Trash2 } from 'lucide-react';
+import { Phone, Send, Trash2 } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
+import { useUndo } from '@/components/layout/undo-toast';
 import { SerenityRing } from '@/components/onboarding/serenity-mark';
 import { getMeditation } from '@/data/meditations';
 import { kapwaQuickReplies, kapwaWelcome, type KapwaAction } from '@/data/kapwa';
+import { emergencyLine } from '@/data/safety-lines';
 import { formatMinutesLabel } from '@/lib/format';
 import { replyTo } from '@/lib/kapwa';
 import { supportTrackEnabled } from '@/lib/support-track';
@@ -36,6 +38,7 @@ function welcome(): ChatMessage {
  * come from `lib/kapwa`, and the conversation stays on the device.
  */
 export function KapwaChat() {
+  const offerUndo = useUndo();
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [hydrated, setHydrated] = React.useState(false);
   const [draft, setDraft] = React.useState('');
@@ -96,7 +99,21 @@ export function KapwaChat() {
   const clear = () => {
     window.clearTimeout(timer.current);
     setTyping(false);
+    const previous = messages;
     setMessages([welcome()]);
+    offerUndo({
+      message: 'Chat cleared',
+      undo: () => {
+        setMessages(previous);
+        // Written straight back too, in case Undo is tapped after leaving
+        // this screen, when the save effect above is no longer mounted.
+        try {
+          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(previous));
+        } catch {
+          // Nothing more to do; the chat simply stays cleared.
+        }
+      },
+    });
   };
 
   return (
@@ -109,7 +126,7 @@ export function KapwaChat() {
             type="button"
             onClick={clear}
             aria-label="Clear chat"
-            className="-mt-1.5 flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="-mt-1.5 tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             <Trash2 className="h-[18px] w-[18px]" strokeWidth={1.7} />
           </button>
@@ -120,7 +137,7 @@ export function KapwaChat() {
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-surface shadow-pill">
           <SerenityRing className="h-10 w-10" />
         </span>
-        <p className="mt-2 text-[11.5px] leading-relaxed text-ink-faint">
+        <p className="mt-2 text-label leading-relaxed text-ink-faint">
           A simple built-in guide — not a person or an AI. Your chat stays on this phone.
         </p>
       </div>
@@ -133,14 +150,14 @@ export function KapwaChat() {
                 <SerenityRing className="h-[18px] w-[18px]" />
               </span>
               <div className="min-w-0">
-                <p className="rounded-2xl rounded-bl-md bg-surface px-3.5 py-2.5 text-[13.5px] leading-relaxed text-ink">
+                <p className="rounded-2xl rounded-bl-md bg-surface px-3.5 py-2.5 text-body-sm leading-relaxed text-ink">
                   <span className="sr-only">Kapwa: </span>
                   {message.text}
                 </p>
                 {message.actions && message.actions.length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {message.actions.map((action) => (
-                      <ActionLink key={action.type === 'session' ? action.id : action.href} action={action} />
+                      <ActionLink key={actionKey(action)} action={action} />
                     ))}
                   </div>
                 ) : null}
@@ -148,7 +165,7 @@ export function KapwaChat() {
             </li>
           ) : (
             <li key={message.id} className="flex justify-end pl-12">
-              <p className="rounded-2xl rounded-br-md bg-action-pill px-3.5 py-2.5 text-[13.5px] leading-relaxed text-white">
+              <p className="rounded-2xl rounded-br-md bg-action-pill px-3.5 py-2.5 text-body-sm leading-relaxed text-white">
                 <span className="sr-only">You: </span>
                 {message.text}
               </p>
@@ -184,7 +201,7 @@ export function KapwaChat() {
               key={quick}
               type="button"
               onClick={() => send(quick)}
-              className="rounded-full border border-overlay/15 px-3.5 py-2 text-[12.5px] text-ink-soft transition-colors hover:bg-overlay/[0.05] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="rounded-full border border-overlay/15 px-3.5 py-2 text-caption text-ink-soft transition-colors hover:bg-overlay/[0.05] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               {quick}
             </button>
@@ -215,7 +232,7 @@ export function KapwaChat() {
             }
           }}
           placeholder="Tell Kapwa how you feel…"
-          className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl bg-surface px-4 py-3 text-[13.5px] leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl bg-surface px-4 py-3 text-body-sm leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         />
         <button
           type="submit"
@@ -227,8 +244,8 @@ export function KapwaChat() {
         </button>
       </form>
 
-      <p className="mt-3 px-6 text-center text-[11px] leading-relaxed text-ink-faint">
-        Kapwa can’t give medical advice. In an emergency, call your local emergency number.
+      <p className="mt-3 px-6 text-center text-caption leading-relaxed text-ink-muted">
+        Kapwa can’t give medical advice. In an emergency, call {emergencyLine.display}.
       </p>
 
       <div ref={endRef} />
@@ -236,10 +253,35 @@ export function KapwaChat() {
   );
 }
 
+function actionKey(action: KapwaAction): string {
+  if (action.type === 'session') return action.id;
+  if (action.type === 'page') return action.href;
+  return `tel:${action.line.dial}`;
+}
+
 /** A tap-to-go button under one of Kapwa's replies. */
 function ActionLink({ action }: { action: KapwaAction }) {
   const className =
-    'rounded-full bg-overlay/[0.06] px-3.5 py-2 text-[12.5px] font-medium text-ink transition-colors hover:bg-overlay/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
+    'rounded-full bg-overlay/[0.06] px-3.5 py-2 text-caption font-medium text-ink transition-colors hover:bg-overlay/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
+
+  if (action.type === 'call') {
+    // Full width and tall: this is the one action that has to be easy to hit.
+    // The number is printed, not hidden behind the link, so it can be dialled
+    // by hand on a device where `tel:` opens nothing.
+    const { label, display, dial } = action.line;
+    return (
+      <a
+        href={`tel:${dial}`}
+        className="flex min-h-[48px] w-full items-center gap-3 rounded-2xl bg-overlay/[0.08] px-4 py-2.5 text-ink transition-colors hover:bg-overlay/[0.12] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+      >
+        <Phone className="h-[18px] w-[18px] shrink-0" strokeWidth={1.8} aria-hidden="true" />
+        <span className="flex min-w-0 flex-col">
+          <span className="text-body-sm text-ink-soft">Call {label}</span>
+          <span className="text-[1rem] font-semibold tabular-nums">{display}</span>
+        </span>
+      </a>
+    );
+  }
 
   if (action.type === 'page') {
     return (

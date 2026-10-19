@@ -75,13 +75,13 @@ export function CircleView() {
     return (
       <div className="pb-4">
         <ScreenHeader title="Circles" />
-        <p className="mt-8 px-8 text-center text-[13px] text-ink-muted">
+        <p className="mt-8 px-8 text-center text-body-sm text-ink-muted">
           {error === 'offline'
             ? circlesErrorMessage('offline')
             : circlesErrorMessage(id ? error : 'missing')}
         </p>
         <div className="mt-5 flex justify-center">
-          <Link href="/circles" className="text-[13px] font-medium text-ink-soft hover:text-ink">
+          <Link href="/circles" className="text-body-sm font-medium text-ink-soft hover:text-ink">
             Back to Circles
           </Link>
         </div>
@@ -129,13 +129,13 @@ export function CircleView() {
         <ScreenHeader eyebrow={eyebrow} title={circle.name} />
         <section className="mt-6 space-y-2.5 px-5">
           <div className="rounded-tile bg-surface p-4">
-            <p className="text-[12.5px] leading-relaxed text-ink-muted">{circle.description}</p>
-            <p className="mt-3 text-[12px] text-ink-soft">
+            <p className="text-caption leading-relaxed text-ink-muted">{circle.description}</p>
+            <p className="mt-3 text-caption text-ink-soft">
               {describeDays(circle.sessionDays)}
               {occurrence ? ` at ${formatClock(occurrence.startsAt)} your time` : ''} ·{' '}
               {formatMinutesLabel(circle.durationSeconds)}
             </p>
-            <p className="mt-1 text-[11.5px] text-ink-faint">
+            <p className="mt-1 text-label text-ink-faint">
               {circle.memberCount === 0
                 ? 'Be one of the first.'
                 : `Room for ${Math.max(0, circle.capacity - circle.memberCount)} more.`}
@@ -146,18 +146,18 @@ export function CircleView() {
             type="button"
             onClick={() => void handleJoin()}
             disabled={joining || atLimit || full}
-            className="h-11 w-full gap-2 text-[13px]"
+            className="h-11 w-full gap-2 text-body-sm"
           >
             {joining ? <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} /> : null}
             {full ? 'This circle is full' : `Join ${circle.name}`}
           </GradientButton>
 
-          <p className="px-1 text-[11.5px] leading-relaxed text-ink-faint">
+          <p className="px-1 text-label leading-relaxed text-ink-faint">
             {atLimit
               ? circlesErrorMessage('too_many_circles')
               : 'Joining creates a private account on this device. No email needed.'}
           </p>
-          {joinError ? <p className="px-1 text-[12px] text-ink-muted">{joinError}</p> : null}
+          {joinError ? <p className="px-1 text-caption text-ink-muted">{joinError}</p> : null}
         </section>
       </div>
     );
@@ -212,7 +212,7 @@ export function CircleView() {
       </section>
 
       {error === 'offline' ? (
-        <p className="mt-3 px-6 text-[11.5px] text-ink-faint">{circlesErrorMessage('offline')}</p>
+        <p className="mt-3 px-6 text-label text-ink-faint">{circlesErrorMessage('offline')}</p>
       ) : null}
 
       <section className="mt-7 px-5">

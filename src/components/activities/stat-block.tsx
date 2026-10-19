@@ -17,7 +17,7 @@ interface StatBlockProps {
 export function StatBlock({ label, value, suffix, size = 'time', className }: StatBlockProps) {
   return (
     <div className={cn('flex flex-col', className)}>
-      <span className="text-[clamp(10px,3.1vw,12px)] font-normal leading-none text-ink-muted">
+      <span className="text-[clamp(0.75rem,3.1vw,0.8125rem)] font-normal leading-none text-ink-muted">
         {label}
       </span>
       <span className="mt-1.5 flex items-baseline">
@@ -25,14 +25,14 @@ export function StatBlock({ label, value, suffix, size = 'time', className }: St
           className={cn(
             'leading-none tracking-[-0.02em] text-ink',
             size === 'hero'
-              ? 'text-[clamp(32px,11.5vw,50px)] font-bold'
-              : 'text-[clamp(20px,6.8vw,28px)] font-light',
+              ? 'text-[clamp(2rem,11.5vw,3.125rem)] font-bold'
+              : 'text-[clamp(1.25rem,6.8vw,1.75rem)] font-light',
           )}
         >
           {value}
         </span>
         {suffix ? (
-          <span className="text-[clamp(12px,4.4vw,18px)] font-normal leading-none text-ink-muted">
+          <span className="text-[clamp(0.8125rem,4.4vw,1.125rem)] font-normal leading-none text-ink-muted">
             {suffix}
           </span>
         ) : null}

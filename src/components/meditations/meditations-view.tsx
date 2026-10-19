@@ -19,6 +19,7 @@ import { categories } from '@/data/categories';
 import { meditations } from '@/data/meditations';
 import { stories, storyCategories } from '@/data/stories';
 import { YOGA_SAFETY, yogaSessions } from '@/data/yoga';
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 import type { CategorySlug, StoryCategory } from '@/types';
@@ -31,6 +32,12 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'yoga', label: 'Yoga' },
   { id: 'soundscape', label: 'Soundscape' },
   { id: 'stories', label: 'Stories' },
+];
+
+/** The mood chips in the Meditation tab, "All" first. */
+const categoryFilters: { slug: CategorySlug | 'all'; name: string }[] = [
+  { slug: 'all', name: 'All' },
+  ...categories,
 ];
 
 function isTabId(value: string | null): value is TabId {
@@ -119,7 +126,7 @@ export function MeditationsView() {
         aria-label="Library sections"
         className="rail sticky top-[calc(env(safe-area-inset-top,0px)+62px)] z-20 flex gap-6 overflow-x-auto bg-canvas px-5"
       >
-        {TABS.map(({ id, label }) => {
+        {TABS.map(({ id, label }, index) => {
           const selected = tab === id;
           return (
             <button
@@ -129,8 +136,13 @@ export function MeditationsView() {
               aria-selected={selected}
               tabIndex={selected ? 0 : -1}
               onClick={() => setTab(id)}
+              onKeyDown={(event) =>
+                handleRovingKey(event, index, TABS.length, (next) => setTab(TABS[next].id), {
+                  vertical: false,
+                })
+              }
               className={cn(
-                'relative shrink-0 pb-2.5 pt-1 text-[15px] font-medium leading-none transition-colors',
+                'relative shrink-0 pb-2.5 pt-1 text-[0.9375rem] font-medium leading-none transition-colors',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 selected ? 'text-ink' : 'text-ink-faint hover:text-ink-muted',
               )}
@@ -175,7 +187,7 @@ export function MeditationsView() {
                 <span className="flex h-[68px] w-[68px] shrink-0 items-center justify-center rounded-full border border-dashed border-overlay/20">
                   <Bookmark className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />
                 </span>
-                <p className="text-[14px] leading-snug text-ink-muted">
+                <p className="text-body-sm leading-snug text-ink-muted">
                   Save your favorite content into your personal library.
                 </p>
               </div>
@@ -239,10 +251,10 @@ export function MeditationsView() {
                       className="absolute right-3 top-3 h-4 w-4 text-white/85"
                       strokeWidth={1.8}
                     />
-                    <span className="relative text-[14px] font-semibold leading-none text-white">
+                    <span className="relative text-body-sm font-semibold leading-none text-white">
                       {item.name}
                     </span>
-                    <span className="relative mt-1 text-[11px] leading-none text-white/85">
+                    <span className="relative mt-1 text-label leading-none text-white/85">
                       {item.sessionCount} sessions
                     </span>
                   </button>
@@ -261,7 +273,7 @@ export function MeditationsView() {
             <button
               type="button"
               onClick={() => setTab('yoga')}
-              className="mt-3 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="mt-3 text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               All {yogaSessions.length} yoga sessions
             </button>
@@ -275,7 +287,7 @@ export function MeditationsView() {
             <button
               type="button"
               onClick={() => setTab('soundscape')}
-              className="mt-3 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="mt-3 text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               All eight soundscapes
             </button>
@@ -291,7 +303,7 @@ export function MeditationsView() {
             <button
               type="button"
               onClick={() => setTab('stories')}
-              className="mt-3 text-[12px] font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="mt-3 text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               All {stories.length} stories
             </button>
@@ -306,7 +318,7 @@ export function MeditationsView() {
             aria-label="Filter by category"
             className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1"
           >
-            {[{ slug: 'all' as const, name: 'All' }, ...categories].map((item) => {
+            {categoryFilters.map((item, index) => {
               const selected = category === item.slug;
               return (
                 <button
@@ -316,8 +328,13 @@ export function MeditationsView() {
                   aria-checked={selected}
                   tabIndex={selected ? 0 : -1}
                   onClick={() => setCategory(item.slug)}
+                  onKeyDown={(event) =>
+                    handleRovingKey(event, index, categoryFilters.length, (next) =>
+                      setCategory(categoryFilters[next].slug),
+                    )
+                  }
                   className={cn(
-                    'shrink-0 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
+                    'shrink-0 rounded-full px-4 py-2 text-caption font-medium transition-colors',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                     selected
                       ? 'bg-action-pill text-white'
@@ -347,7 +364,7 @@ export function MeditationsView() {
 
       {tab === 'yoga' ? (
         <section className="mt-5 px-5">
-          <p className="text-[12.5px] leading-relaxed text-ink-muted">
+          <p className="text-caption leading-relaxed text-ink-muted">
             Gentle, guided yoga — one pose at a time, with a soft bell when it&apos;s time to move.
             Most need no mat.
           </p>
@@ -357,13 +374,13 @@ export function MeditationsView() {
               <YogaCard key={session.id} session={session} />
             ))}
           </ul>
-          <p className="mt-4 text-[11.5px] leading-relaxed text-ink-faint">{YOGA_SAFETY}</p>
+          <p className="mt-4 text-label leading-relaxed text-ink-faint">{YOGA_SAFETY}</p>
         </section>
       ) : null}
 
       {tab === 'soundscape' ? (
         <section className="mt-5 px-5">
-          <p className="text-[12.5px] leading-relaxed text-ink-muted">
+          <p className="text-caption leading-relaxed text-ink-muted">
             Ambient beds, synthesised on the fly rather than streamed. Play one on its own, or let a
             session bring its own.
           </p>
@@ -380,7 +397,7 @@ export function MeditationsView() {
             aria-label="Filter stories"
             className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1"
           >
-            {storyCategories.map((item) => {
+            {storyCategories.map((item, index) => {
               const selected = storyFilter === item.value;
               return (
                 <button
@@ -390,8 +407,13 @@ export function MeditationsView() {
                   aria-checked={selected}
                   tabIndex={selected ? 0 : -1}
                   onClick={() => setStoryFilter(item.value)}
+                  onKeyDown={(event) =>
+                    handleRovingKey(event, index, storyCategories.length, (next) =>
+                      setStoryFilter(storyCategories[next].value),
+                    )
+                  }
                   className={cn(
-                    'shrink-0 rounded-full px-4 py-2 text-[12px] font-medium transition-colors',
+                    'shrink-0 rounded-full px-4 py-2 text-caption font-medium transition-colors',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                     selected
                       ? 'bg-action-pill text-white'
@@ -419,7 +441,7 @@ export function MeditationsView() {
         </>
       ) : null}
 
-      <p className="mt-8 px-5 text-center text-[11.5px] leading-relaxed text-ink-faint">
+      <p className="mt-8 px-5 text-center text-label leading-relaxed text-ink-faint">
         {meditations.length} sessions · {yogaSessions.length} yoga · {stories.length} stories · 8
         soundscapes
       </p>

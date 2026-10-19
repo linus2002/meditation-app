@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import { reflectionWeights } from '@/data/reflections';
+import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 
 interface WeightScaleProps {
@@ -23,17 +24,14 @@ export function WeightScale({
   label = 'How did that sit?',
   className,
 }: WeightScaleProps) {
-  const handleKeyDown = (event: React.KeyboardEvent, index: number) => {
-    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
-    event.preventDefault();
-    const next = event.key === 'ArrowRight' ? index + 1 : index - 1;
-    const clamped = Math.min(reflectionWeights.length - 1, Math.max(0, next));
-    onChange(reflectionWeights[clamped].value);
-  };
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>, index: number) =>
+    handleRovingKey(event, index, reflectionWeights.length, (next) =>
+      onChange(reflectionWeights[next].value),
+    );
 
   return (
     <div className={className}>
-      <p id="weight-scale-label" className="text-[11.5px] leading-none text-ink-muted">
+      <p id="weight-scale-label" className="text-label leading-none text-ink-muted">
         {label}
       </p>
 
@@ -66,7 +64,7 @@ export function WeightScale({
               />
               <span
                 className={cn(
-                  'text-[9.5px] leading-none transition-colors',
+                  'text-label leading-none transition-colors',
                   isSelected ? 'text-ink' : 'text-ink-faint',
                 )}
               >

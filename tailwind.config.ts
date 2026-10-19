@@ -19,6 +19,17 @@ const config: Config = {
         /* Above this width the app is not offered — see DeviceStage. */
         desktop: '1025px',
       },
+      /*
+       * The small end of the type scale, in rem so the reader's own text-size
+       * setting applies. Nothing in the app goes below `label`: many readers
+       * are tired or in treatment, and 9-11px text was unreadable for them.
+       * Size only — line height stays with each `leading-*` class.
+       */
+      fontSize: {
+        label: '0.75rem', // 12px: badges, eyebrows, nav labels
+        caption: '0.8125rem', // 13px: metadata, chips, helper lines
+        'body-sm': '0.875rem', // 14px: the floor for sentences
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

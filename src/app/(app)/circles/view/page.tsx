@@ -9,7 +9,7 @@ import { CircleView } from '@/components/circles/circle-view';
  */
 export default function CircleViewPage() {
   return (
-    <Suspense fallback={<div className="px-5 pt-6 text-[13px] text-ink-muted">Loading…</div>}>
+    <Suspense fallback={<div className="px-5 pt-6 text-body-sm text-ink-muted">Loading…</div>}>
       <CircleView />
     </Suspense>
   );

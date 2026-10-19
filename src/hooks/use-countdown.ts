@@ -40,12 +40,16 @@ export function useCountdown({ seconds, onComplete }: UseCountdownOptions): Coun
     completeRef.current = onComplete;
   }, [onComplete]);
 
-  // A new length while idle re-arms the countdown.
+  // A new length while idle re-arms the countdown. Keyed on the length alone:
+  // keyed on `running` as well, every pause re-armed it, so pausing a sit
+  // threw away the time already sat and resuming started it over.
+  const runningRef = React.useRef(running);
+  runningRef.current = running;
   React.useEffect(() => {
-    if (running) return;
+    if (runningRef.current) return;
     totalRef.current = seconds;
     setRemaining(seconds);
-  }, [seconds, running]);
+  }, [seconds]);
 
   React.useEffect(() => {
     if (!running) return undefined;

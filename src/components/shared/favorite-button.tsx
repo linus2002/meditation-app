@@ -2,6 +2,7 @@
 
 import { Heart } from 'lucide-react';
 
+import { useUndo } from '@/components/layout/undo-toast';
 import { useApp } from '@/providers/app-provider';
 import { cn } from '@/lib/utils';
 
@@ -20,18 +21,32 @@ export function FavoriteButton({
   size = 'sm',
 }: FavoriteButtonProps) {
   const { isFavorite, toggleFavorite } = useApp();
+  const offerUndo = useUndo();
   const active = isFavorite(meditationId);
   const dimension = size === 'sm' ? 'h-4 w-4' : 'h-[18px] w-[18px]';
+
+  const toggle = () => {
+    toggleFavorite(meditationId);
+    // On the Saved screen an unsaved card vanishes on the spot, so taking a
+    // session off the list can always be undone.
+    if (active) {
+      offerUndo({
+        message: `${title} removed from saved`,
+        undo: () => toggleFavorite(meditationId),
+      });
+    }
+  };
 
   return (
     <button
       type="button"
       aria-pressed={active}
       aria-label={active ? `Remove ${title} from saved` : `Save ${title}`}
-      onClick={() => toggleFavorite(meditationId)}
+      onClick={toggle}
       className={cn(
         'flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 hover:scale-110 active:scale-95',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+        'tap-target',
         size === 'sm' ? 'h-8 w-8' : 'h-10 w-10',
         className,
       )}

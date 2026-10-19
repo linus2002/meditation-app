@@ -13,10 +13,10 @@ import { requestPermission } from '@/lib/notifications';
 import { useCircles } from '@/providers/circles-provider';
 
 const inputClass =
-  'w-full rounded-xl bg-overlay/[0.06] px-3.5 py-2.5 text-[13px] text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
+  'w-full rounded-xl bg-overlay/[0.06] px-3.5 py-2.5 text-body-sm text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
 
 const linkButton =
-  'text-[12px] font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 disabled:opacity-60';
+  'text-caption font-medium text-ink-muted hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 disabled:opacity-60';
 
 function errorText(error: unknown): string {
   return circlesErrorMessage(error instanceof CirclesError ? error.code : 'unknown');
@@ -97,10 +97,10 @@ export function CircleSettings({ circle }: { circle: Circle }) {
   return (
     <div className="space-y-2.5">
       <div className="rounded-tile bg-surface p-4">
-        <label htmlFor="circle-name" className="text-[13px] font-medium text-ink">
+        <label htmlFor="circle-name" className="text-body-sm font-medium text-ink">
           Your name in circles
         </label>
-        <p className="mt-0.5 text-[11.5px] text-ink-muted">
+        <p className="mt-0.5 text-label text-ink-muted">
           Optional. Without one you appear as &ldquo;A member&rdquo;.
         </p>
         <div className="mt-2.5 flex gap-2">
@@ -115,7 +115,7 @@ export function CircleSettings({ circle }: { circle: Circle }) {
             type="button"
             onClick={() => void saveName()}
             disabled={busy || name.trim() === (savedName ?? '')}
-            className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-[12px] font-medium text-ink disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-caption font-medium text-ink disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             Save
           </button>
@@ -124,10 +124,10 @@ export function CircleSettings({ circle }: { circle: Circle }) {
 
       <div className="flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5">
         <div className="min-w-0 flex-1">
-          <label htmlFor="circle-reminders" className="block text-[13px] font-medium text-ink">
+          <label htmlFor="circle-reminders" className="block text-body-sm font-medium text-ink">
             Remind me before sessions
           </label>
-          <p className="mt-0.5 text-[11.5px] text-ink-muted">
+          <p className="mt-0.5 text-label text-ink-muted">
             Ten minutes before each of your circles sits. Nothing else.
           </p>
         </div>
@@ -136,10 +136,10 @@ export function CircleSettings({ circle }: { circle: Circle }) {
 
       <div className="flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5">
         <div className="min-w-0 flex-1">
-          <label htmlFor="circle-share" className="block text-[13px] font-medium text-ink">
+          <label htmlFor="circle-share" className="block text-body-sm font-medium text-ink">
             Let my circle know when I sit
           </label>
-          <p className="mt-0.5 text-[11.5px] text-ink-muted">
+          <p className="mt-0.5 text-label text-ink-muted">
             They see that you sat, never for how long or what. It helps the circle&apos;s streak.
           </p>
         </div>
@@ -148,7 +148,7 @@ export function CircleSettings({ circle }: { circle: Circle }) {
 
       {muted.length > 0 ? (
         <div className="flex items-center justify-between gap-3 rounded-tile bg-surface px-4 py-3.5">
-          <p className="text-[12px] text-ink-muted">
+          <p className="text-caption text-ink-muted">
             You have hidden answers from {muted.length} {muted.length === 1 ? 'person' : 'people'}.
           </p>
           <button type="button" onClick={() => muted.forEach(toggleMute)} className={linkButton}>
@@ -158,14 +158,14 @@ export function CircleSettings({ circle }: { circle: Circle }) {
       ) : null}
 
       <div className="rounded-tile bg-surface p-4">
-        <p className="text-[13px] font-medium text-ink">Keep your place on a new phone</p>
+        <p className="text-body-sm font-medium text-ink">Keep your place on a new phone</p>
         {linkedEmail ? (
-          <p className="mt-0.5 text-[11.5px] text-ink-muted">
+          <p className="mt-0.5 text-label text-ink-muted">
             Linked to {linkedEmail}. Sign in with it on another device to find your circles.
           </p>
         ) : (
           <>
-            <p className="mt-0.5 text-[11.5px] text-ink-muted">
+            <p className="mt-0.5 text-label text-ink-muted">
               Your circle place lives on this device. Add an email and we will send a code to keep
               it. Optional.
             </p>
@@ -188,7 +188,7 @@ export function CircleSettings({ circle }: { circle: Circle }) {
                       setCodeSent(true);
                     })
                   }
-                  className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-[12px] font-medium text-ink disabled:opacity-50"
+                  className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-caption font-medium text-ink disabled:opacity-50"
                 >
                   Send code
                 </button>
@@ -212,7 +212,7 @@ export function CircleSettings({ circle }: { circle: Circle }) {
                       setLinkedEmail(email.trim());
                     })
                   }
-                  className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-[12px] font-medium text-ink disabled:opacity-50"
+                  className="shrink-0 rounded-full bg-overlay/[0.08] px-4 text-caption font-medium text-ink disabled:opacity-50"
                 >
                   Confirm
                 </button>
@@ -225,7 +225,7 @@ export function CircleSettings({ circle }: { circle: Circle }) {
       <div className="rounded-tile bg-surface p-4">
         {confirm === 'leave' ? (
           <>
-            <p className="text-[12.5px] text-ink">
+            <p className="text-caption text-ink">
               Leave {circle.name}? Days the circle already counted stay counted.
             </p>
             <div className="mt-3 flex gap-4">
@@ -249,7 +249,7 @@ export function CircleSettings({ circle }: { circle: Circle }) {
           </>
         ) : confirm === 'delete' ? (
           <>
-            <p className="text-[12.5px] text-ink">
+            <p className="text-caption text-ink">
               Delete your circles account? You leave every circle and your answers are removed.
               Your own sessions and history in Serenity are not affected.
             </p>
@@ -285,7 +285,7 @@ export function CircleSettings({ circle }: { circle: Circle }) {
         )}
       </div>
 
-      {message ? <p className="px-1 text-[11.5px] text-ink-muted" role="status">{message}</p> : null}
+      {message ? <p className="px-1 text-label text-ink-muted" role="status">{message}</p> : null}
     </div>
   );
 }

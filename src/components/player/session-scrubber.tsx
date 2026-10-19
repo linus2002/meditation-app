@@ -1,7 +1,7 @@
 'use client';
 
 import { Slider } from '@/components/ui/slider';
-import { formatClock } from '@/lib/format';
+import { formatClock, formatSpokenTime } from '@/lib/format';
 
 interface SessionScrubberProps {
   elapsed: number;
@@ -18,9 +18,11 @@ export function SessionScrubber({ elapsed, duration, onSeek }: SessionScrubberPr
         max={duration}
         step={1}
         aria-label="Session position"
+        aria-valuetext={`${formatSpokenTime(elapsed)} of ${formatSpokenTime(duration)}`}
         onValueChange={([next]) => onSeek(next)}
       />
-      <div className="mt-2 flex items-center justify-between text-[11px] tabular-nums text-ink-muted">
+      {/* Pulled up: the slider's 44px touch row is taller than the track it draws. */}
+      <div className="-mt-2 flex items-center justify-between text-label tabular-nums text-ink-muted">
         <span>{formatClock(elapsed)}</span>
         <span>-{formatClock(duration - elapsed)}</span>
       </div>

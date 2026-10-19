@@ -55,8 +55,8 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
     <div className="rounded-tile bg-surface p-4">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <p className="text-[11px] leading-none text-ink-muted">Wind down timer</p>
-          <p className="mt-2 text-[34px] font-light leading-none tabular-nums tracking-[-0.02em] text-ink">
+          <p className="text-label leading-none text-ink-muted">Wind down timer</p>
+          <p className="mt-2 text-[2.125rem] font-light leading-none tabular-nums tracking-[-0.02em] text-ink">
             {formatClock(remaining)}
           </p>
         </div>
@@ -96,7 +96,7 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
             onClick={() => choosePreset(preset)}
             aria-pressed={minutes === preset}
             className={cn(
-              'rounded-full px-3.5 py-1.5 text-[12px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+              'rounded-full px-3.5 py-1.5 text-caption font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
               minutes === preset
                 ? 'bg-action-pill text-white'
                 : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',

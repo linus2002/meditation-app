@@ -15,7 +15,7 @@ export const deckCards: DeckCard[] = [
   {
     id: 'happiness',
     title: 'Happiness',
-    caption: 'Watch Complete sessions',
+    caption: 'Sessions to lift your mood',
     tone: 'happiness',
     href: '/discover?category=happiness',
     image: photos.openArms,
@@ -23,7 +23,7 @@ export const deckCards: DeckCard[] = [
   {
     id: 'relaxation',
     title: 'Relaxation',
-    caption: 'Watch Complete sessions',
+    caption: 'Sessions to help you unwind',
     tone: 'relaxation',
     href: '/discover?category=relaxation',
     image: photos.aerialSea,

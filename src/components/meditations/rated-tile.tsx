@@ -42,15 +42,15 @@ export function RatedTile({ meditation, meta }: RatedTileProps) {
           href={`/player/${meditation.id}`}
           className="static before:absolute before:inset-0 before:rounded-tile before:content-[''] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          <span className="block text-[13.5px] font-semibold leading-tight text-ink line-clamp-2">
+          <span className="block text-body-sm font-semibold leading-tight text-ink line-clamp-2">
             {meditation.title}
           </span>
         </Link>
-        <span className="mt-1 block truncate text-[11.5px] leading-tight text-ink-muted">
+        <span className="mt-1 block truncate text-label leading-tight text-ink-muted">
           {meditation.narrator}
         </span>
         {meta ? (
-          <span className="mt-1 flex items-center gap-1 text-[11.5px] leading-none text-ink-soft">
+          <span className="mt-1 flex items-center gap-1 text-label leading-none text-ink-soft">
             {meta}
           </span>
         ) : null}

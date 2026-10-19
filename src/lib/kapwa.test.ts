@@ -32,7 +32,55 @@ describe('replyTo', () => {
   it('puts self-harm before everything else', () => {
     const reply = replyTo('I am so stressed I want to die');
     expect(reply.intentId).toBe('crisis');
-    expect(reply.actions).toEqual([]);
+    expect(sessionIds(reply)).toEqual([]);
+  });
+
+  it('gives a crisis a number to call, never a session', () => {
+    const reply = replyTo('want to die');
+    const calls = reply.actions.filter((action) => action.type === 'call');
+    expect(calls.length).toBeGreaterThan(0);
+    expect(reply.actions.every((action) => action.type === 'call')).toBe(true);
+  });
+
+  it('recognises the ways people actually say it', () => {
+    for (const phrase of [
+      'I can’t go on like this',
+      'everyone would be better off without me',
+      'there is no point living anymore',
+      'I just dont want to be here anymore',
+    ]) {
+      expect(replyTo(phrase).intentId, phrase).toBe('crisis');
+    }
+  });
+
+  it('sends medical warning signs to the care team, not a meditation', () => {
+    for (const phrase of [
+      'I have a fever after chemo',
+      'my chest pain is back',
+      'I cant breathe properly',
+      'there is bleeding that will not stop',
+      'I keep throwing up',
+      'stressed and short of breath',
+    ]) {
+      const reply = replyTo(phrase, { supportTrack: true });
+      expect(reply.intentId, phrase).toBe('medical-urgent');
+      expect(sessionIds(reply), phrase).toEqual([]);
+      expect(reply.actions.some((action) => action.type === 'call'), phrase).toBe(true);
+    }
+  });
+
+  it('still lets self-harm win over a medical sign', () => {
+    expect(replyTo('I have a fever and I want to die').intentId).toBe('crisis');
+  });
+
+  it('does not treat a routine blood test as urgent', () => {
+    expect(replyTo('I have a blood test tomorrow').intentId).not.toBe('medical-urgent');
+  });
+
+  it('points everyday pain to the care team before offering anything', () => {
+    const reply = replyTo('my back is sore and I have a headache');
+    expect(reply.intentId).toBe('pain');
+    expect(reply.text).toMatch(/care team/);
   });
 
   it('owns up when it does not understand', () => {

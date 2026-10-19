@@ -1,10 +1,10 @@
 import { notFound } from 'next/navigation';
 
 import { PlayerView } from '@/components/player/player-view';
-import { getMeditation, meditations } from '@/data/meditations';
+import { allSessions, getMeditation } from '@/data/meditations';
 
 export function generateStaticParams() {
-  return meditations.map((meditation) => ({ id: meditation.id }));
+  return allSessions.map((meditation) => ({ id: meditation.id }));
 }
 
 export default async function PlayerPage({ params }: { params: Promise<{ id: string }> }) {

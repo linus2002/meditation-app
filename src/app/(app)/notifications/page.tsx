@@ -165,13 +165,13 @@ export default function NotificationsPage() {
             <div className="mt-3 rounded-tile bg-surface p-4">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-ink-soft" strokeWidth={1.7} />
-                <p className="text-[11px] leading-none text-ink-faint">Today</p>
+                <p className="text-label leading-none text-ink-faint">Today</p>
               </div>
-              <p className="mt-2.5 text-[15px] font-medium leading-snug text-ink">
+              <p className="mt-2.5 text-[0.9375rem] font-medium leading-snug text-ink">
                 {todays.inspiration.text}
               </p>
               {todays.reason ? (
-                <p className="mt-2 text-[11px] leading-snug text-ink-faint">
+                <p className="mt-2 text-label leading-snug text-ink-faint">
                   {reasonCopy[todays.reason]}
                 </p>
               ) : null}
@@ -181,10 +181,10 @@ export default function NotificationsPage() {
               <ul className="mt-2 space-y-2">
                 {earlier.map((entry) => (
                   <li key={entry.dateKey} className="rounded-tile bg-surface/60 px-4 py-3">
-                    <p className="text-[10.5px] leading-none text-ink-faint">
+                    <p className="text-label leading-none text-ink-faint">
                       {formatEntryDate(entry.dateKey, now)}
                     </p>
-                    <p className="mt-1.5 text-[12.5px] leading-snug text-ink-muted">
+                    <p className="mt-1.5 text-caption leading-snug text-ink-muted">
                       {entry.inspiration.text}
                     </p>
                   </li>
@@ -193,8 +193,8 @@ export default function NotificationsPage() {
             ) : null}
 
             <div className="mt-2.5 rounded-tile bg-surface p-4">
-              <p className="text-[13px] font-medium text-ink">More of what helps you</p>
-              <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+              <p className="text-body-sm font-medium text-ink">More of what helps you</p>
+              <p className="mt-0.5 text-label leading-snug text-ink-muted">
                 Pick any themes. Serenity also turns gentler after a heavy day, a rough night or a
                 few days away. Changes apply from tomorrow&apos;s message.
               </p>
@@ -208,7 +208,7 @@ export default function NotificationsPage() {
                       aria-pressed={on}
                       onClick={() => toggleTheme(theme.id)}
                       className={cn(
-                        'rounded-full px-3.5 py-2 text-[12.5px] font-medium transition-colors duration-150',
+                        'rounded-full px-3.5 py-2 text-caption font-medium transition-colors duration-150',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                         on
                           ? 'bg-action-pill text-white'
@@ -220,7 +220,7 @@ export default function NotificationsPage() {
                   );
                 })}
               </div>
-              <p className="mt-3 text-[11px] leading-snug text-ink-faint">
+              <p className="mt-3 text-label leading-snug text-ink-faint">
                 All of this is worked out on your phone. Nothing about your mood or sleep is sent
                 anywhere.
               </p>
@@ -239,8 +239,8 @@ export default function NotificationsPage() {
                 <StatusIcon className="h-[18px] w-[18px] text-ink-soft" strokeWidth={1.7} />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="text-[14px] font-semibold leading-tight text-ink">{status.title}</p>
-                <p className="mt-1 text-[12px] leading-relaxed text-ink-muted">{status.body}</p>
+                <p className="text-body-sm font-semibold leading-tight text-ink">{status.title}</p>
+                <p className="mt-1 text-caption leading-relaxed text-ink-muted">{status.body}</p>
               </div>
             </div>
 
@@ -248,7 +248,7 @@ export default function NotificationsPage() {
               <GradientButton
                 type="button"
                 onClick={() => void allow()}
-                className="mt-4 h-11 w-full text-[13px]"
+                className="mt-4 h-11 w-full text-body-sm"
               >
                 Allow notifications
               </GradientButton>
@@ -275,15 +275,15 @@ export default function NotificationsPage() {
                 <div className="min-w-0 flex-1">
                   <label
                     htmlFor={`notification-${reminder.id}`}
-                    className="block text-[13.5px] font-medium leading-tight text-ink"
+                    className="block text-body-sm font-medium leading-tight text-ink"
                   >
                     {reminderLabels[reminder.id] ?? reminder.title}
                   </label>
-                  <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+                  <p className="mt-0.5 text-label leading-snug text-ink-muted">
                     {`"${reminder.title}" at ${reminder.time}`}
                   </p>
                   {ready ? (
-                    <p className="mt-1 text-[11px] leading-none text-ink-faint">
+                    <p className="mt-1 text-label leading-none text-ink-faint">
                       {checked
                         ? describeSchedule(reminder.time, now, delivered[reminder.id])
                         : 'Off'}
@@ -315,11 +315,11 @@ export default function NotificationsPage() {
             <div className="min-w-0 flex-1">
               <label
                 htmlFor="notification-circles"
-                className="block text-[13.5px] font-medium leading-tight text-ink"
+                className="block text-body-sm font-medium leading-tight text-ink"
               >
                 Before circle sessions
               </label>
-              <p className="mt-0.5 text-[11.5px] leading-snug text-ink-muted">
+              <p className="mt-0.5 text-label leading-snug text-ink-muted">
                 {`Ten minutes before ${memberships.map((entry) => entry.circle.name).join(' and ')} sits.`}
               </p>
             </div>
@@ -336,7 +336,7 @@ export default function NotificationsPage() {
       <section className="mt-6 px-5">
         <SectionTitle>Try it</SectionTitle>
         <div className="mt-3 rounded-tile bg-surface p-4">
-          <p className="text-[12px] leading-relaxed text-ink-muted">
+          <p className="text-caption leading-relaxed text-ink-muted">
             Send one notification now to see what a reminder looks like and check that this device
             shows it.
           </p>
@@ -344,7 +344,7 @@ export default function NotificationsPage() {
             type="button"
             onClick={() => void runTest()}
             disabled={testing || !granted}
-            className="mt-4 h-11 w-full gap-2 text-[13px]"
+            className="mt-4 h-11 w-full gap-2 text-body-sm"
           >
             {testing ? (
               <Loader2 className="h-4 w-4 animate-spin" strokeWidth={1.8} />
@@ -354,11 +354,11 @@ export default function NotificationsPage() {
             Send a test notification
           </GradientButton>
           {testResult ? (
-            <p role="status" className="mt-3 text-[11.5px] leading-relaxed text-ink-faint">
+            <p role="status" className="mt-3 text-label leading-relaxed text-ink-faint">
               {testMessages[testResult]}
             </p>
           ) : !granted && ready ? (
-            <p className="mt-3 text-[11.5px] leading-relaxed text-ink-faint">
+            <p className="mt-3 text-label leading-relaxed text-ink-faint">
               Allow notifications above to send a test.
             </p>
           ) : null}
@@ -366,7 +366,7 @@ export default function NotificationsPage() {
       </section>
 
       {mode === 'web' ? (
-        <p className="mt-4 px-6 text-[11.5px] leading-relaxed text-ink-faint">
+        <p className="mt-4 px-6 text-label leading-relaxed text-ink-faint">
           Serenity has no server to wake it, so a browser reminder is sent by the app itself. If
           the app is not open within half an hour of the time, the daily and bedtime reminders are
           skipped rather than arriving late. The daily inspiration still arrives whenever you open

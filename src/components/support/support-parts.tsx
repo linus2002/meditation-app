@@ -10,8 +10,8 @@ export function SupportUnavailable() {
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-overlay/[0.06]">
         <HeartHandshake className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />
       </span>
-      <p className="mt-4 text-[15px] font-medium text-ink">Not available yet</p>
-      <p className="mt-1.5 max-w-[270px] text-[12.5px] leading-relaxed text-ink-muted">
+      <p className="mt-4 text-[0.9375rem] font-medium text-ink">Not available yet</p>
+      <p className="mt-1.5 max-w-[270px] text-caption leading-relaxed text-ink-muted">
         This part of Serenity is still being prepared. Everything else works as usual.
       </p>
     </div>
@@ -25,9 +25,9 @@ export function SupportUnavailable() {
 export function SupportDisclaimer({ className }: { className?: string }) {
   return (
     <div className={cn('rounded-tile bg-surface p-4', className)}>
-      <p className="text-[13px] font-medium text-ink">{supportDisclaimer.title}</p>
-      <p className="mt-1.5 text-[12px] leading-relaxed text-ink-muted">{supportDisclaimer.body}</p>
-      <p className="mt-2 text-[12px] leading-relaxed text-ink-muted">{supportDisclaimer.urgent}</p>
+      <p className="text-body-sm font-medium text-ink">{supportDisclaimer.title}</p>
+      <p className="mt-1.5 text-caption leading-relaxed text-ink-muted">{supportDisclaimer.body}</p>
+      <p className="mt-2 text-caption leading-relaxed text-ink-muted">{supportDisclaimer.urgent}</p>
     </div>
   );
 }
@@ -40,7 +40,7 @@ export function DraftNotice({ className }: { className?: string }) {
   return (
     <div className={cn('flex items-start gap-2.5 rounded-tile bg-overlay/[0.06] px-4 py-3', className)}>
       <FileWarning className="mt-0.5 h-4 w-4 shrink-0 text-ink-soft" strokeWidth={1.7} />
-      <p className="text-[11.5px] leading-relaxed text-ink-muted">
+      <p className="text-label leading-relaxed text-ink-muted">
         Draft wording, awaiting review by a qualified clinician before release.
       </p>
     </div>
@@ -56,7 +56,7 @@ export function LargeTextToggle({ on, onToggle }: { on: boolean; onToggle: () =>
       aria-label="Larger text"
       onClick={onToggle}
       className={cn(
-        '-mt-1.5 flex h-9 w-9 items-center justify-center rounded-full text-[13px] font-semibold transition-colors',
+        '-mt-1.5 tap-target flex h-9 w-9 items-center justify-center rounded-full text-body-sm font-semibold transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
         on ? 'bg-action-pill text-white' : 'text-ink-muted hover:bg-overlay/[0.06] hover:text-ink',
       )}
