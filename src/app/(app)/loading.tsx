@@ -9,7 +9,7 @@ import { Skeleton, SkeletonList } from '@/components/shared/skeleton';
  */
 export default function AppLoading() {
   return (
-    <div aria-busy="true" className="px-5 pb-4 pt-[clamp(20px,5.7vh,48px)]">
+    <div aria-busy="true" className="px-5 pb-4 pt-[var(--header-gap)]">
       <Skeleton className="mx-auto h-[14px] w-24" />
       <Skeleton className="mx-auto mt-2 h-[26px] w-44" />
       <Skeleton className="mt-8 h-[180px]" />

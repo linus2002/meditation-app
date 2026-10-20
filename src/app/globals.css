@@ -49,6 +49,14 @@
     --ring: 102 42% 46%;
     --radius: 0.875rem;
 
+    /*
+     * How far below the top of the app frame every screen's header icons sit.
+     * Headers differ in button size, so each sets its own top padding as this
+     * minus the space above the icon inside its button; that is what keeps the
+     * menu, back and close icons on one line from screen to screen.
+     */
+    --header-gap: 14px;
+
     /* The app's own palette, as RGB channels. */
     --canvas: 0 0 0;
     --canvas-deep: 0 0 0;
@@ -151,6 +159,19 @@
     border-radius: 6px;
   }
 
+  /*
+   * Browsers still mark focus as "visible" after a tap in some cases (a closing
+   * menu handing focus back to its button, say), which leaves a ring on whatever
+   * was just touched. The ring is only wanted while someone is moving with keys,
+   * so it is hidden unless the layout's input script has seen Tab or an arrow.
+   * Covers both this outline and the `focus-visible:ring-*` utilities.
+   */
+  html:not([data-keyboard]) :focus-visible {
+    outline: none !important;
+    --tw-ring-offset-shadow: 0 0 #0000 !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
+  }
+
   ::selection {
     background: rgba(97, 166, 68, 0.45);
   }
@@ -211,19 +232,27 @@
     );
   }
 
-  .safe-bottom {
-    padding-bottom: max(env(safe-area-inset-bottom), 0px);
-  }
-
   /*
    * Viewport height for the device frame. `dvh` tracks a mobile browser's
    * collapsing URL bar, but the `vh` line has to come first so a browser
    * without `dvh` still gets a definite height rather than falling back to
    * auto — an auto-height frame is what drops the bottom nav into the page.
+   *
+   * The frame stops short of the system bars. Android draws the app edge to
+   * edge, under the status bar and the gesture/button bar, and an installed
+   * iOS web app does the same; the insets are 0 everywhere else. Keeping the
+   * whole frame clear means no screen has to remember to, so nothing inside it
+   * adds the insets again. Only `fixed` layers (sheets, toasts), which sit on
+   * the viewport rather than the frame, still account for them themselves.
    */
   .h-stage {
-    height: 100vh;
-    height: 100dvh;
+    height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+
+  .stage-insets {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .min-h-stage {
@@ -325,6 +354,33 @@
   50% {
     opacity: 1;
   }
+}
+
+/* The heart a double tap leaves on a full-screen video: swells, then lifts away. */
+@keyframes heart-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.4);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.15);
+  }
+  32% {
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -60%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -110%) scale(0.9);
+  }
+}
+
+.heart-pop {
+  animation: heart-pop 800ms ease-out forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

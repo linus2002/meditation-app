@@ -93,7 +93,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   if (phase === 'running' && pose) {
     return (
       <div className="relative flex min-h-full flex-col">
-        <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
+        <header className="relative flex items-center justify-between px-4 pt-[calc(var(--header-gap)-8px)]">
           <button type="button" onClick={askToEnd} aria-label="End session" className={iconButton}>
             <X className="h-5 w-5" strokeWidth={1.75} />
           </button>
@@ -182,7 +182,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   if (phase === 'done') {
     return (
       <div className="relative flex min-h-full flex-col">
-        <header className="relative flex items-center px-4 pt-[clamp(12px,2.4vh,20px)]">
+        <header className="relative flex items-center px-4 pt-[calc(var(--header-gap)-8px)]">
           <button type="button" onClick={goBack} aria-label="Go back" className={iconButton}>
             <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
           </button>
@@ -213,7 +213,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
       />
 
       {/* Always dark: it sits on the colour at full strength in either theme. */}
-      <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
+      <header className="relative flex items-center justify-between px-4 pt-[calc(var(--header-gap)-8px)]">
         <button
           type="button"
           onClick={goBack}

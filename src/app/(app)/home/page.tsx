@@ -4,10 +4,9 @@ import { GroupBanner } from '@/components/home/group-banner';
 import { HomeSection } from '@/components/home/home-section';
 import { ProgramRail } from '@/components/home/program-rail';
 import { RecommendedRail } from '@/components/home/recommended-rail';
-import { ReflectionPromptRow } from '@/components/home/reflection-prompt-row';
 import { TodayRail } from '@/components/home/today-rail';
+import { VideoRail } from '@/components/home/video-rail';
 import { YogaRail } from '@/components/yoga/yoga-rail';
-import { SectionTitle } from '@/components/shared/section-title';
 import { deckCards } from '@/data/categories';
 
 export default function HomePage() {
@@ -37,17 +36,9 @@ export default function HomePage() {
         <ProgramRail />
       </HomeSection>
 
-      {/* Full-bleed hairline separating the rails from the day's reflection. */}
-      <div aria-hidden="true" className="hairline mt-5 h-px w-full" />
-
-      <div className="px-5 pt-4">
-        <SectionTitle actionHref="/reflections" actionLabel="History">
-          Today&apos;s Reflection
-        </SectionTitle>
-
-        <div className="mt-3">
-          <ReflectionPromptRow />
-        </div>
+      {/* Full width: the panel runs edge to edge. */}
+      <div className="mt-7">
+        <VideoRail />
       </div>
 
       <div className="mt-7 px-5">

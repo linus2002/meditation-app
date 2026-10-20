@@ -151,7 +151,7 @@ export function SupportPlayer({
 
   return (
     <div className="relative flex min-h-full flex-col">
-      <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
+      <header className="relative flex items-center justify-between px-4 pt-[calc(var(--header-gap)-10px)]">
         <button
           type="button"
           onClick={() => (stage === 'playing' ? askToEnd() : router.push('/support'))}

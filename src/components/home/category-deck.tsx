@@ -14,22 +14,22 @@ import type { DeckCard } from '@/types';
 export function CategoryDeck({ cards }: { cards: DeckCard[] }) {
   return (
     <section aria-label="Collections" className="mt-6 px-5">
-      <ul className="space-y-2.5">
+      <ul className="space-y-2">
         {cards.map((card) => (
           <li key={card.id}>
             <Link
               href={card.href}
-              className="flex items-center justify-between gap-3 rounded-[22px] border border-overlay/25 px-4 py-3.5 transition-colors duration-150 hover:border-overlay/45 hover:bg-overlay/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="flex items-center justify-between gap-3 rounded-[18px] border border-overlay/25 px-4 py-2.5 transition-colors duration-150 hover:border-overlay/45 hover:bg-overlay/[0.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <div className="min-w-0">
-                <h2 className="text-[clamp(1rem,4.6vw,1.125rem)] font-semibold leading-[1.2] text-ink">
+                <h2 className="text-[0.9375rem] font-semibold leading-[1.2] text-ink">
                   {card.title}
                 </h2>
-                <p className="mt-1 truncate text-[0.8125rem] leading-snug text-ink-muted">
+                <p className="mt-0.5 truncate text-caption leading-snug text-ink-muted">
                   {card.caption}
                 </p>
               </div>
-              <ArrowUpRight aria-hidden="true" className="h-5 w-5 shrink-0 text-ink" strokeWidth={1.8} />
+              <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0 text-ink" strokeWidth={1.8} />
             </Link>
           </li>
         ))}

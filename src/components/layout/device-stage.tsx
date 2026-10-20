@@ -14,7 +14,8 @@ import { Smartphone, Tablet } from 'lucide-react';
 export function DeviceStage({ children }: { children: ReactNode }) {
   return (
     <>
-      <div className="min-h-stage flex w-full justify-center bg-canvas-deep desktop:hidden">
+      {/* The bands behind the system bars take the app's own canvas on a phone. */}
+      <div className="min-h-stage stage-insets flex w-full justify-center bg-canvas sm:bg-canvas-deep desktop:hidden">
         <div className="rail h-stage relative flex w-full max-w-[430px] flex-col overflow-y-auto overflow-x-hidden overscroll-contain bg-canvas sm:border-x sm:border-overlay/[0.06]">
           {children}
         </div>

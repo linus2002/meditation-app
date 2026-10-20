@@ -13,7 +13,7 @@ import { NotificationBell } from '@/components/shared/notification-bell';
  */
 export function LibraryHeader() {
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-end bg-canvas px-5 pb-3 pt-[calc(env(safe-area-inset-top,0px)+10px)]">
+    <header className="sticky top-0 z-30 flex items-center justify-end bg-canvas px-5 pb-3 pt-[calc(var(--header-gap)-13px)]">
       <div className="-mr-2 flex items-center gap-0.5">
         <IconButton label="Search sessions" asChild>
           <Link href="/search">

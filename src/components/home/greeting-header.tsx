@@ -12,8 +12,8 @@ import { timeOfDayGreeting } from '@/lib/greeting';
 import { useApp } from '@/providers/app-provider';
 
 /**
- * The top of the home screen: the menu on the left, the notification bell and
- * the profile avatar on the right (Profile's only way in now that the bottom bar holds
+ * The top of the home screen: the menu on the left, the Reflect pill, the
+ * notification bell and the profile avatar on the right (Profile's only way in now that the bottom bar holds
  * Yoga instead), a large greeting, and a search bar beneath it. Serenity has no accounts, so the
  * greeting uses the name the reader gave on Profile, kept on this phone, and
  * leaves it out until they give one.
@@ -33,10 +33,17 @@ export function GreetingHeader() {
   React.useEffect(() => setNow(new Date()), []);
 
   return (
-    <header className="px-5 pt-[calc(env(safe-area-inset-top,0px)+10px)]">
+    <header className="px-5 pt-[calc(var(--header-gap)-11px)]">
       <div className="flex items-center justify-between">
         <AppMenu />
         <div className="-mr-1 flex items-center gap-1.5">
+          {/* The day's reflection, one tap from the top of the app. */}
+          <Link
+            href="/reflections"
+            className="mr-1 flex h-8 items-center rounded-full bg-aurora-blue px-3.5 text-caption font-semibold leading-none text-white transition-transform duration-150 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          >
+            Reflect
+          </Link>
           <NotificationBell />
           <Link
             href="/profile"

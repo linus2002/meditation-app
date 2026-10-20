@@ -34,7 +34,7 @@ export default function SearchPage() {
 
   return (
     <div className="min-h-full pb-8">
-      <header className="sticky top-0 z-30 flex items-center gap-2 bg-canvas px-3 pb-3 pt-[calc(env(safe-area-inset-top,0px)+10px)]">
+      <header className="sticky top-0 z-30 flex items-center gap-2 bg-canvas px-3 pb-3 pt-[calc(var(--header-gap)-13px)]">
         <button
           type="button"
           onClick={goBack}

@@ -108,7 +108,7 @@ export function StoryReader({ story }: { story: Story }) {
       <WaveLines className="left-0 top-0 h-[240px] w-full" />
       <EdgeCurves className="-right-4 top-[26%] h-[300px] w-[110px]" />
 
-      <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)]">
+      <header className="relative flex items-center justify-between px-4 pt-[calc(var(--header-gap)-10px)]">
         <button
           type="button"
           onClick={goBack}

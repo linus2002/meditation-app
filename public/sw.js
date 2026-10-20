@@ -205,6 +205,11 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Video streams in byte ranges straight from the network. A cached full copy
+  // cannot answer a range request (Safari then refuses to play it), and caching
+  // tens of megabytes behind a home-screen rail would crowd out everything else.
+  if (request.destination === 'video' || request.headers.has('range')) return;
+
   // Never serve our own update channel from a cache.
   if (url.pathname === MANIFEST || url.pathname === '/sw.js') {
     event.respondWith(fresh(request, { noStore: true }));

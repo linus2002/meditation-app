@@ -8,6 +8,7 @@ import { NavigationTracker } from '@/components/layout/navigation-tracker';
 import { UndoProvider } from '@/components/layout/undo-toast';
 import { ReminderScheduler } from '@/components/layout/reminder-scheduler';
 import { ServiceWorkerRegistrar } from '@/components/layout/service-worker';
+import { SystemBars } from '@/components/layout/system-bars';
 import { AppProvider } from '@/providers/app-provider';
 import { AudioProvider } from '@/providers/audio-provider';
 import { CirclesProvider } from '@/providers/circles-provider';
@@ -61,6 +62,13 @@ export const viewport: Viewport = {
  */
 const themeScript = `try{var s=JSON.parse(localStorage.getItem('serenity.state.v1')||'{}');var l=s&&s.settings&&s.settings.lightMode;document.documentElement.dataset.theme=l?'light':'dark';if(l){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#FFFFFF');}}catch(e){}`;
 
+/*
+ * Tracks whether the reader is moving with keys, so focus rings show for
+ * keyboard and switch users but never linger on something that was tapped.
+ * Tab or an arrow turns the rings on; any pointer press turns them off.
+ */
+const inputScript = `(function(){var d=document.documentElement;document.addEventListener('keydown',function(e){if(e.key==='Tab'||e.key.indexOf('Arrow')===0)d.setAttribute('data-keyboard','');},true);document.addEventListener('pointerdown',function(){d.removeAttribute('data-keyboard');},true);})()`;
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // The theme script below may switch `data-theme` to light before React
@@ -68,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={poppins.variable} data-theme="dark" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: inputScript }} />
       </head>
       <body className="bg-canvas font-sans text-ink antialiased">
         <AppProvider>
@@ -78,6 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </UndoProvider>
               <NavigationTracker />
               <HardwareBack />
+              <SystemBars />
               <ServiceWorkerRegistrar />
               <ReminderScheduler />
               <CircleSync />

@@ -171,7 +171,7 @@ export default function WelcomePage() {
       </div>
 
       {/* Where you are in the tour; each dot also jumps straight to its step. */}
-      <div className="pointer-events-none absolute inset-x-0 top-[calc(env(safe-area-inset-top,0px)+14px)] z-10 flex justify-center gap-1.5">
+      <div className="pointer-events-none absolute inset-x-0 top-3.5 z-10 flex justify-center gap-1.5">
         {steps.map((_, index) => (
           <button
             key={index}

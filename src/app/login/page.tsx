@@ -62,11 +62,11 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-[radial-gradient(90%_55%_at_50%_45%,rgba(0,0,0,0.55)_0%,rgba(0,0,0,0)_100%)]" />
       </div>
 
-      <div className="relative flex flex-1 flex-col items-center justify-center px-7 pt-[calc(env(safe-area-inset-top,0px)+48px)]">
+      <div className="relative flex flex-1 flex-col items-center justify-center px-7 pt-12">
         <SerenityMark />
       </div>
 
-      <div className="relative px-7 pb-[calc(env(safe-area-inset-bottom,0px)+28px)]">
+      <div className="relative px-7 pb-7">
         <p className="text-center text-body-sm font-medium text-ink-soft">Quiet, wherever you are.</p>
 
         <GradientButton onClick={() => setSheet('email')} className="mt-5 h-[54px] w-full gap-2.5">

@@ -76,7 +76,6 @@ export default function ActivitiesPage() {
       <ScreenHeader
         eyebrow={selectedDate ? monthLabel(selectedDate) : ''}
         title="Daily Activities"
-        className="pt-[clamp(20px,6.6vh,56px)]"
       />
 
       {ready ? (

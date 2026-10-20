@@ -22,7 +22,7 @@ export function ScreenHeader({ eyebrow, title, action, className }: ScreenHeader
   const goBack = useBack();
 
   return (
-    <header className={cn('relative px-4 pt-[clamp(20px,5.7vh,48px)]', className)}>
+    <header className={cn('relative px-4 pt-[calc(var(--header-gap)-1px)]', className)}>
       <div className="grid grid-cols-[36px_1fr_36px] items-start gap-2">
         <button
           type="button"

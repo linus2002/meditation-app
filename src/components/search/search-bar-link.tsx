@@ -13,7 +13,7 @@ export function SearchBarLink({ className }: { className?: string }) {
     <Link
       href="/search"
       className={cn(
-        'flex h-12 items-center gap-3 rounded-full border border-overlay/[0.12] bg-overlay/[0.04] px-4 text-body-sm text-ink-faint transition-colors hover:border-overlay/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+        'flex h-12 items-center gap-3 rounded-full bg-overlay/[0.03] px-4 text-body-sm text-ink-faint transition-colors hover:bg-overlay/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
         className,
       )}
     >

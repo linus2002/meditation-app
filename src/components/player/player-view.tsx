@@ -256,7 +256,7 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
         />
       </div>
 
-      <header className="relative flex items-center justify-between px-4 pt-[clamp(12px,2.4vh,20px)] text-white">
+      <header className="relative flex items-center justify-between px-4 pt-[calc(var(--header-gap)-10px)] text-white">
         <button
           type="button"
           onClick={goBack}
