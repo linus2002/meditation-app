@@ -52,7 +52,13 @@ const SheetContent = React.forwardRef<
   SheetContentProps
 >(({ side = 'bottom', className, children, ...props }, ref) => (
   <SheetPrimitive.Portal>
-    <SheetOverlay />
+    {/*
+     * The overlay is portalled to <body>, outside any themed wrapper, so a sheet
+     * that pins its own theme (the sign-in sheets are always dark) hands it to
+     * the overlay too; otherwise a light-mode reader gets a pale veil over a
+     * dark screen.
+     */}
+    <SheetOverlay data-theme={(props as { 'data-theme'?: string })['data-theme']} />
     <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
       {children}
       <SheetPrimitive.Close className="absolute right-5 top-5 rounded-full p-1 text-ink-muted opacity-80 transition hover:opacity-100 focus:outline-none">

@@ -5,14 +5,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Flower2, Home, Moon, PersonStanding, type LucideIcon } from 'lucide-react';
 
-import { SerenityRing } from '@/components/onboarding/serenity-mark';
+import { KapwaIcon } from '@/components/kapwa/kapwa-icon';
 import { cn } from '@/lib/utils';
 
 interface NavItem {
   href: string;
   label: string;
   icon?: LucideIcon;
-  /** The raised centre button, drawn with the app's own logo ring. */
+  /** The raised centre button, drawn with Kapwa's own mark. */
   featured?: boolean;
 }
 
@@ -85,7 +85,7 @@ export function BottomNav() {
                         isActive ? 'ring-2 ring-aurora-blue/70' : 'ring-1 ring-overlay/10',
                       )}
                     >
-                      <SerenityRing className="h-8 w-8" />
+                      <KapwaIcon className="h-8 w-8" />
                     </span>
                   </span>
                 ) : Icon ? (

@@ -6,7 +6,7 @@ import { Phone, Send, Trash2 } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { useUndo } from '@/components/layout/undo-toast';
-import { SerenityRing } from '@/components/onboarding/serenity-mark';
+import { KapwaIcon } from '@/components/kapwa/kapwa-icon';
 import { getMeditation } from '@/data/meditations';
 import { kapwaQuickReplies, kapwaWelcome, type KapwaAction } from '@/data/kapwa';
 import { emergencyLine } from '@/data/safety-lines';
@@ -135,7 +135,7 @@ export function KapwaChat() {
 
       <div className="mt-4 flex flex-col items-center px-5 text-center">
         <span className="flex h-16 w-16 items-center justify-center rounded-full bg-surface shadow-pill">
-          <SerenityRing className="h-10 w-10" />
+          <KapwaIcon className="h-10 w-10" />
         </span>
         <p className="mt-2 text-label leading-relaxed text-ink-faint">
           A simple built-in guide — not a person or an AI. Your chat stays on this phone.
@@ -147,7 +147,7 @@ export function KapwaChat() {
           message.from === 'kapwa' ? (
             <li key={message.id} className="flex items-end gap-2 pr-8">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface">
-                <SerenityRing className="h-[18px] w-[18px]" />
+                <KapwaIcon className="h-[18px] w-[18px]" />
               </span>
               <div className="min-w-0">
                 <p className="rounded-2xl rounded-bl-md bg-surface px-3.5 py-2.5 text-body-sm leading-relaxed text-ink">
@@ -176,7 +176,7 @@ export function KapwaChat() {
         {typing ? (
           <li className="flex items-end gap-2">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface">
-              <SerenityRing className="h-[18px] w-[18px]" />
+              <KapwaIcon className="h-[18px] w-[18px]" />
             </span>
             <p
               className="flex gap-1 rounded-2xl rounded-bl-md bg-surface px-4 py-3.5"

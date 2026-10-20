@@ -9,13 +9,13 @@ import { homeVideos, type HomeVideo } from '@/data/videos';
 /**
  * Short portrait videos, above the group banner. Runs the full width of the
  * screen: a title on the canvas with a blue glow in its top-right corner, then
- * a square-edged blue band, lit the same way, whose cards swipe sideways.
+ * a row of cards, straight on the canvas, that swipes sideways.
  *
  * Each clip plays silently on a loop while it is on screen and pauses once it
  * scrolls away, so the rail never spends data or battery out of sight. Small
  * controls on each card bring the sound up (one card speaks at a time), pause
- * it, or open the full-screen feed, which swipes from clip to clip. Readers who ask for reduced motion get the still
- * until they press play.
+ * it, or open the full-screen feed, which swipes from clip to clip. Readers who
+ * ask for reduced motion get the still until they press play.
  */
 export function VideoRail() {
   // The card whose sound is on, if any.
@@ -43,14 +43,8 @@ export function VideoRail() {
         </h2>
       </div>
 
-      <div className="relative mt-5 overflow-hidden bg-[#1D9FDA] pb-5 pt-5">
-        {/* A lighter blue in the panel's own top-right corner. */}
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-16 -top-20 h-60 w-60 rounded-full bg-[radial-gradient(circle,rgba(160,222,250,0.75)_0%,rgba(110,200,240,0.3)_45%,rgba(29,159,218,0)_70%)] blur-xl"
-        />
-
-        <h3 className="relative px-5 text-[0.9375rem] font-semibold leading-tight text-white">
+      <div className="relative mt-5">
+        <h3 className="relative px-5 text-[0.9375rem] font-semibold leading-tight text-ink">
           Latest videos
         </h3>
 
@@ -153,7 +147,7 @@ function VideoCard({
   const iconClass = 'h-4 w-4';
 
   return (
-    <li className="relative aspect-[9/16] w-[40vw] max-w-[168px] shrink-0 snap-start overflow-hidden rounded-[12px] bg-white/15 ring-1 ring-white/25">
+    <li className="relative aspect-[9/16] w-[44vw] max-w-[184px] shrink-0 snap-start overflow-hidden rounded-[12px] bg-overlay/[0.06] ring-1 ring-overlay/[0.08]">
       <video
         ref={ref}
         src={video.src}
@@ -184,6 +178,14 @@ function VideoCard({
             so the running time sits well back from the title. */}
         <p className="mt-1 text-[0.6875rem] font-light leading-none text-white/70">{video.eyebrow}</p>
       </div>
+
+      {/* Anywhere on the card opens the feed; the small controls sit above this. */}
+      <button
+        type="button"
+        onClick={() => onExpand(ref.current?.currentTime ?? 0)}
+        aria-label={`Open ${video.title}`}
+        className="absolute inset-0 h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white"
+      />
 
       <div className="absolute inset-x-1 bottom-1 flex items-center justify-between">
         <ControlButton

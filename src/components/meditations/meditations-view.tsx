@@ -121,7 +121,7 @@ export function MeditationsView() {
       <div
         role="tablist"
         aria-label="Library sections"
-        className="rail sticky top-[62px] z-20 flex gap-6 overflow-x-auto bg-canvas px-5"
+        className="rail sticky top-[calc(var(--header-gap)+43px)] z-20 flex gap-6 overflow-x-auto bg-canvas px-5"
       >
         {TABS.map(({ id, label }, index) => {
           const selected = tab === id;

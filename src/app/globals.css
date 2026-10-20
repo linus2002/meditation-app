@@ -50,12 +50,13 @@
     --radius: 0.875rem;
 
     /*
-     * How far below the top of the app frame every screen's header icons sit.
+     * How far below the top of the screen every header's icons sit: 14px under
+     * the status bar (the frame runs up beneath it; see `.h-stage`).
      * Headers differ in button size, so each sets its own top padding as this
      * minus the space above the icon inside its button; that is what keeps the
      * menu, back and close icons on one line from screen to screen.
      */
-    --header-gap: 14px;
+    --header-gap: calc(env(safe-area-inset-top, 0px) + 14px);
 
     /* The app's own palette, as RGB channels. */
     --canvas: 0 0 0;
@@ -238,20 +239,25 @@
    * without `dvh` still gets a definite height rather than falling back to
    * auto — an auto-height frame is what drops the bottom nav into the page.
    *
-   * The frame stops short of the system bars. Android draws the app edge to
-   * edge, under the status bar and the gesture/button bar, and an installed
-   * iOS web app does the same; the insets are 0 everywhere else. Keeping the
-   * whole frame clear means no screen has to remember to, so nothing inside it
-   * adds the insets again. Only `fixed` layers (sheets, toasts), which sit on
-   * the viewport rather than the frame, still account for them themselves.
+   * Android draws the app edge to edge, under the status bar and the
+   * gesture/button bar, and an installed iOS web app does the same; the insets
+   * are 0 everywhere else. The two edges are treated differently on purpose:
+   *
+   * - Top: the frame runs up under the status bar, so artwork and the canvas
+   *   fill it. Headers keep their controls clear of it through
+   *   `--header-gap`, which already includes the inset.
+   * - Bottom: the frame stops above the gesture/button bar, so the nav and
+   *   every bottom button stay tappable without each screen adding the inset.
+   *
+   * `fixed` layers (sheets, toasts) sit on the viewport rather than the frame
+   * and account for both insets themselves.
    */
   .h-stage {
-    height: calc(100vh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-    height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    height: calc(100vh - env(safe-area-inset-bottom, 0px));
+    height: calc(100dvh - env(safe-area-inset-bottom, 0px));
   }
 
   .stage-insets {
-    padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 

@@ -19,8 +19,8 @@ export interface Recommendation {
 const PICKS: { id: string; collection: string; image?: StaticImageData }[] = [
   // Every slot uses purpose-made card artwork rather than the session's own
   // photograph, and nothing here repeats the "Your meditations for today" row.
-  { id: 'ocean-drift', collection: 'Unwinding Collection', image: photos.recoOne },
   { id: 'open-heart', collection: 'Gratitude Collection', image: photos.recoFour },
+  { id: 'ocean-drift', collection: 'Unwinding Collection', image: photos.recoOne },
   { id: 'meditation-daily', collection: 'Focus Collection', image: photos.recoThree },
   { id: 'deep-rest', collection: 'Sleep Collection', image: photos.recoTwo },
   { id: 'body-scan', collection: 'Relaxation Collection', image: photos.recoFive },
