@@ -39,14 +39,12 @@ async function collectRoutes(dir, base = '') {
 
 const found = await collectRoutes(appDir);
 
-// `/player/[id]` is expanded from the catalogue, which is the only dynamic
-// route and is fully prerendered by generateStaticParams.
-const catalogue = await readFile(path.join(root, 'src/data/meditations.ts'), 'utf8');
-const ids = [...catalogue.matchAll(/^\s{4}id: '([^']+)',$/gm)].map((m) => m[1]);
-
-// `/yoga/[id]` is expanded the same way, from the yoga library.
-const yogaSource = await readFile(path.join(root, 'src/data/yoga.ts'), 'utf8');
-const yogaIds = [...yogaSource.matchAll(/^\s{4}id: '([^']+)',\r?$/gm)].map((m) => m[1]);
+// `/player/[id]` and `/yoga/[id]` are expanded from the content pulled from
+// Sanity (src/content/content.json), the same list generateStaticParams uses.
+// This runs after `content:pull`, so it sees what the build will render.
+const content = JSON.parse(await readFile(path.join(root, 'src/content/content.json'), 'utf8'));
+const ids = content.meditations.map((item) => item.id);
+const yogaIds = content.yoga.map((item) => item.id);
 
 const routes = [
   ...found.filter((route) => !route.includes('[')),

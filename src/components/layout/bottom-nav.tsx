@@ -81,11 +81,30 @@ export function BottomNav() {
                   <span className="relative h-[22px] w-[22px]">
                     <span
                       className={cn(
-                        'absolute bottom-1.5 left-1/2 flex h-[52px] w-[52px] -translate-x-1/2 items-center justify-center rounded-full bg-surface shadow-pill',
-                        isActive ? 'ring-2 ring-aurora-blue/70' : 'ring-1 ring-overlay/10',
+                        // The brand blue into green, glassed over: a sheen from the
+                        // top-left, a deeper tint at the bottom-right and a thin
+                        // bright rim. No drop shadow.
+                        'absolute bottom-1.5 left-1/2 flex h-[52px] w-[52px] -translate-x-1/2 items-center justify-center overflow-hidden rounded-full',
+                        'bg-[linear-gradient(135deg,#1D9FDA_0%,#2FB8B4_52%,#61A644_100%)]',
+                        isActive
+                          ? 'ring-2 ring-aurora-blue/60 ring-offset-2 ring-offset-canvas'
+                          : 'ring-1 ring-inset ring-white/35',
                       )}
                     >
-                      <KapwaIcon className="h-8 w-8" />
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-[radial-gradient(120%_90%_at_22%_12%,rgba(255,255,255,0.55)_0%,rgba(255,255,255,0.12)_42%,rgba(255,255,255,0)_62%)]"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="absolute inset-0 bg-[radial-gradient(90%_80%_at_85%_95%,rgba(6,40,60,0.35)_0%,rgba(6,40,60,0)_60%)]"
+                      />
+                      <span
+                        aria-hidden="true"
+                        className="absolute -left-2 top-[46%] h-3 w-[140%] -rotate-[24deg] bg-white/15 blur-[2px]"
+                      />
+                      {/* The mark in white, so it reads on the gradient. */}
+                      <KapwaIcon className="relative h-8 w-8 brightness-0 invert" />
                     </span>
                   </span>
                 ) : Icon ? (

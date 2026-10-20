@@ -11,3 +11,10 @@ precache.json
 *.jks
 *.keystore
 local.properties
+
+# Sanity Studio build output and local cache.
+studio/dist
+studio/.sanity
+
+# Original video files, kept locally: the app streams them from Sanity.
+media-backup/

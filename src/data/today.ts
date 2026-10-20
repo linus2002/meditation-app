@@ -1,3 +1,4 @@
+import { content } from '@/content';
 import { getMeditation } from '@/data/meditations';
 import type { Meditation } from '@/types';
 
@@ -10,15 +11,10 @@ export interface TodayPick {
 /**
  * The short sits offered on the home screen for the current day. Deliberately
  * weighted towards the quick ones — this row is for the days you have a few
- * minutes rather than a proper sitting.
+ * minutes rather than a proper sitting. Picked and ordered in Sanity
+ * (Studio → Home screen).
  */
-const PICKS: { id: string; rating: number }[] = [
-  { id: 'quiet-the-noise', rating: 4.5 },
-  { id: 'box-breathing', rating: 4.7 },
-  { id: 'free-your-mind', rating: 4.8 },
-  { id: 'midday-reset', rating: 4.6 },
-  { id: 'morning-clarity', rating: 4.9 },
-];
+const PICKS: { id: string; rating: number }[] = content.home.today;
 
 export const todaysPicks: TodayPick[] = PICKS.flatMap(({ id, rating }) => {
   const meditation = getMeditation(id);

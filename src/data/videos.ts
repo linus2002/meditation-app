@@ -1,9 +1,11 @@
+import { content } from '@/content';
+
 /**
  * Short portrait videos for the home screen's video rail.
  *
- * The files live in `public/videos/` (Next does not import video), and each has
- * a still taken from the clip so the card shows something before it loads.
- * Portrait 9:16, encoded so playback can start before the download finishes.
+ * Edited in Sanity (Studio → Videos). The clips stream from Sanity's CDN rather
+ * than shipping in the app; each has a still, downloaded with the rest of the
+ * content, so the card shows something before the clip loads.
  */
 export interface HomeVideo {
   id: string;
@@ -14,33 +16,4 @@ export interface HomeVideo {
   poster: string;
 }
 
-export const homeVideos: HomeVideo[] = [
-  {
-    id: 'overthinking',
-    title: 'Overthinking',
-    eyebrow: '2 min watch',
-    src: '/videos/overthinking.mp4',
-    poster: '/videos/overthinking-poster.jpg',
-  },
-  {
-    id: 'autopilot',
-    title: 'Autopilot',
-    eyebrow: '2 min watch',
-    src: '/videos/videotwo.mp4',
-    poster: '/videos/videotwo-poster.jpg',
-  },
-  {
-    id: 'connection',
-    title: 'Connection',
-    eyebrow: '2 min watch',
-    src: '/videos/connection.mp4',
-    poster: '/videos/connection-poster.jpg',
-  },
-  {
-    id: 'forgiveness',
-    title: 'Forgiveness',
-    eyebrow: '2 min watch',
-    src: '/videos/forgiveness.mp4',
-    poster: '/videos/forgiveness-poster.jpg',
-  },
-];
+export const homeVideos: HomeVideo[] = content.videos;

@@ -46,16 +46,19 @@ describe('poseTitle', () => {
 
 describe('the yoga library', () => {
   // Read as text: the data file imports photographs, which tests cannot load.
-  const source = readFileSync(fileURLToPath(new URL('../data/yoga.ts', import.meta.url)), 'utf8');
+  // The yoga library as pulled from Sanity, read as JSON.
+  const { yoga } = JSON.parse(
+    readFileSync(fileURLToPath(new URL('../content/content.json', import.meta.url)), 'utf8'),
+  ) as { yoga: { id: string; soundscape: string }[] };
 
-  it('gives every session a unique id the precache script can find', () => {
-    const ids = [...source.matchAll(/^\s{4}id: '([^']+)',\r?$/gm)].map((match) => match[1]);
+  it('gives every session a unique id', () => {
+    const ids = yoga.map((session) => session.id);
     expect(ids.length).toBeGreaterThanOrEqual(6);
     expect(new Set(ids).size).toBe(ids.length);
   });
 
   it('only uses real soundscapes', () => {
-    const scapes = [...source.matchAll(/soundscape: '([a-z]+)'/g)].map((match) => match[1]);
+    const scapes = yoga.map((session) => session.soundscape);
     const known = ['rain', 'ocean', 'forest', 'night', 'bowl', 'pad', 'drone', 'chimes'];
     for (const scape of scapes) expect(known).toContain(scape);
   });

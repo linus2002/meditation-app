@@ -1,3 +1,5 @@
+import { content } from '@/content';
+
 export interface ReflectionPrompt {
   id: string;
   /** The question shown for the day. */
@@ -7,24 +9,10 @@ export interface ReflectionPrompt {
 /**
  * Reflective prompts, deliberately written to invite noticing rather than
  * self-judgement. None of them ask you to score yourself as a person: the app
- * is not a diagnostic instrument and should never read like one.
+ * is not a diagnostic instrument and should never read like one. Edited in
+ * Sanity (Studio → Reflection prompts).
  */
-export const reflectionPrompts: ReflectionPrompt[] = [
-  { id: 'handled-better', question: 'What did you handle better than you expected?' },
-  { id: 'most-yourself', question: 'When did you feel most like yourself today?' },
-  { id: 'quietly-well', question: 'What went quietly well that you might otherwise skip past?' },
-  { id: 'not-yours', question: "What are you carrying that isn't yours to carry?" },
-  { id: 'tell-a-friend', question: 'What would you say to a friend who had the day you just had?' },
-  { id: 'rushed', question: 'Where did you rush today when you did not need to?' },
-  { id: 'steady', question: 'When did you feel steady, even briefly?' },
-  { id: 'kinder', question: 'Where were you kinder than you strictly had to be?' },
-  { id: 'leave-behind', question: 'What is one thing you would like to leave behind today?' },
-  { id: 'attention', question: 'What did you give your attention to that deserved it?' },
-  { id: 'readier', question: 'What are you readier for now than you were a month ago?' },
-  { id: 'noticed', question: "What did you notice today that you'd usually miss?" },
-  { id: 'took-more', question: 'What took more out of you than it should have?' },
-  { id: 'asked-and-gave', question: 'What did today ask of you, and what did you give it?' },
-];
+export const reflectionPrompts: ReflectionPrompt[] = content.reflectionPrompts;
 
 /**
  * How the reflection sat — the weight of the thought, not a verdict on you.

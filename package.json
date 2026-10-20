@@ -8,13 +8,16 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "build:mobile": "cross-env MOBILE_BUILD=1 next build",
+    "build:mobile": "npm run content:pull && node scripts/build-routes.mjs && cross-env MOBILE_BUILD=1 next build",
     "sync:mobile": "npm run build:mobile && cap sync",
     "open:android": "npm run sync:mobile && cap open android",
     "open:ios": "npm run sync:mobile && cap open ios",
-    "prebuild": "node scripts/build-routes.mjs",
+    "prebuild": "npm run content:pull && node scripts/build-routes.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "content:import": "vite-node --config vitest.config.ts scripts/sanity/import.ts",
+    "studio": "npm --prefix studio run dev",
+    "content:pull": "node scripts/sanity/pull.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
@@ -45,6 +48,7 @@
   },
   "devDependencies": {
     "@capacitor/cli": "^8.5.1",
+    "@sanity/client": "^8.10.0",
     "@types/node": "^20.17.19",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",

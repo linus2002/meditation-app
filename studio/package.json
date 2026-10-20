@@ -1,0 +1,21 @@
+{
+  "name": "serenity-studio",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Sanity Studio for editing Serenity's content",
+  "scripts": {
+    "dev": "sanity dev --port 3333",
+    "build": "sanity build",
+    "deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "@sanity/vision": "^6.20.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "sanity": "^6.20.0",
+    "styled-components": "^6.6.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

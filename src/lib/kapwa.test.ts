@@ -116,14 +116,12 @@ describe('normalise', () => {
 
 describe('the replies', () => {
   it('only suggest sessions that exist', () => {
-    // Read the catalogue as text: it imports images, which tests cannot load.
-    const catalogue = readFileSync(
-      fileURLToPath(new URL('../data/meditations.ts', import.meta.url)),
-      'utf8',
-    );
-    const known = new Set(
-      [...catalogue.matchAll(/^\s{4}id: '([^']+)',\r?$/gm)].map((match) => match[1]),
-    );
+    // The content pulled from Sanity, read as JSON. Guards against a session
+    // Kapwa names being renamed or removed in the Studio.
+    const content = JSON.parse(
+      readFileSync(fileURLToPath(new URL('../content/content.json', import.meta.url)), 'utf8'),
+    ) as { meditations: { id: string }[] };
+    const known = new Set(content.meditations.map((item) => item.id));
     expect(known.size).toBeGreaterThan(0);
 
     for (const intent of kapwaIntents) {

@@ -1,43 +1,23 @@
-import { Brain, CloudMoon, HeartPulse, Sparkles, Waves, Wind } from 'lucide-react';
-import { photos } from '@/data/images';
+import { Brain, CloudMoon, HeartPulse, Sparkles, Waves, Wind, type LucideIcon } from 'lucide-react';
+
+import { content, toImage } from '@/content';
 import type { Category, DeckCard } from '@/types';
 
-/** The three overlapping gradient cards at the top of the home screen. */
-export const deckCards: DeckCard[] = [
-  {
-    id: 'daily-activities',
-    title: 'Daily Activities',
-    caption: 'Watch your progress',
-    tone: 'activities',
-    href: '/activities',
-    image: photos.morningField,
-  },
-  {
-    id: 'happiness',
-    title: 'Happiness',
-    caption: 'Sessions to lift your mood',
-    tone: 'happiness',
-    href: '/discover?category=happiness',
-    image: photos.openArms,
-  },
-  {
-    id: 'relaxation',
-    title: 'Relaxation',
-    caption: 'Sessions to help you unwind',
-    tone: 'relaxation',
-    href: '/discover?category=relaxation',
-    image: photos.aerialSea,
-  },
-];
+/** Lucide icons a category can use; the Studio offers exactly these names. */
+const ICONS: Record<string, LucideIcon> = { Brain, CloudMoon, HeartPulse, Sparkles, Waves, Wind };
 
-export const categories: Category[] = [
-  { slug: 'focus', name: 'Focus', sessionCount: 14, icon: Brain, tone: 'activities' , image: photos.forestLight },
-  { slug: 'sleep', name: 'Sleep', sessionCount: 11, icon: CloudMoon, tone: 'relaxation' , image: photos.milkyWay },
-  { slug: 'anxiety', name: 'Anxiety', sessionCount: 9, icon: HeartPulse, tone: 'happiness' , image: photos.duskRidge },
-  { slug: 'happiness', name: 'Happiness', sessionCount: 12, icon: Sparkles, tone: 'happiness' , image: photos.palmDusk },
-  { slug: 'relaxation', name: 'Relaxation', sessionCount: 16, icon: Waves, tone: 'relaxation' , image: photos.aerialSea },
-  { slug: 'breathing', name: 'Breathing', sessionCount: 8, icon: Wind, tone: 'activities' , image: photos.mountainValley },
-];
+/** The collection shortcuts on the home screen (Studio → Home shortcuts). */
+export const deckCards: DeckCard[] = content.deckCards.map(({ image, ...card }) => ({
+  ...card,
+  image: toImage(image),
+}));
+
+/** The mood categories (Studio → Categories). The set of slugs is fixed by the app. */
+export const categories: Category[] = content.categories.map(({ image, icon, ...category }) => ({
+  ...category,
+  icon: ICONS[icon] ?? Sparkles,
+  image: toImage(image),
+}));
 
 export function getCategory(slug: string): Category | undefined {
   return categories.find((category) => category.slug === slug);
