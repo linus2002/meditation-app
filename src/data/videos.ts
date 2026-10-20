@@ -36,4 +36,11 @@ export const homeVideos: HomeVideo[] = [
     src: '/videos/connection.mp4',
     poster: '/videos/connection-poster.jpg',
   },
+  {
+    id: 'forgiveness',
+    title: 'Forgiveness',
+    eyebrow: '2 min watch',
+    src: '/videos/forgiveness.mp4',
+    poster: '/videos/forgiveness-poster.jpg',
+  },
 ];
