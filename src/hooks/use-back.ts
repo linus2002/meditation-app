@@ -18,7 +18,7 @@ export function useTrackNavigation(): void {
   }, [pathname]);
 }
 
-function canGoBackInApp(): boolean {
+export function canGoBackInApp(): boolean {
   // The Navigation API only lists this app's own entries, so it answers the
   // question exactly where it exists (Chromium, recent Safari).
   const navigation = (window as Window & { navigation?: { canGoBack?: boolean } }).navigation;

@@ -3,6 +3,7 @@ import { Poppins } from 'next/font/google';
 
 import { CircleSync } from '@/components/layout/circle-sync';
 import { DeviceStage } from '@/components/layout/device-stage';
+import { HardwareBack } from '@/components/layout/hardware-back';
 import { NavigationTracker } from '@/components/layout/navigation-tracker';
 import { UndoProvider } from '@/components/layout/undo-toast';
 import { ReminderScheduler } from '@/components/layout/reminder-scheduler';
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <DeviceStage>{children}</DeviceStage>
               </UndoProvider>
               <NavigationTracker />
+              <HardwareBack />
               <ServiceWorkerRegistrar />
               <ReminderScheduler />
               <CircleSync />

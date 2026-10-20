@@ -28,7 +28,7 @@ export function RecommendedRail() {
               placeholder="blur"
               className="object-cover"
             />
-            <span className="absolute left-3 top-3 rounded-full bg-canvas-deep/85 px-3.5 py-1.5 text-label font-semibold leading-none text-white backdrop-blur-sm">
+            <span className="absolute left-3 top-3 rounded-full bg-canvas-deep/85 px-2.5 py-1 text-label font-semibold leading-none text-white backdrop-blur-sm">
               {collection}
             </span>
           </div>
@@ -36,7 +36,7 @@ export function RecommendedRail() {
           {/* Title and narrator on the left, the action beside them. */}
           <div className="flex items-center gap-3 px-0.5 pb-1 pt-3">
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[0.96875rem] font-bold leading-tight text-ink">
+              <p className="truncate text-[0.96875rem] font-medium leading-tight text-ink">
                 {meditation.title}
               </p>
               <p className="mt-1 truncate text-body-sm leading-tight text-ink-muted">

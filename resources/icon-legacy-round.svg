@@ -1,0 +1,2 @@
+<!-- Pre-Android 8 round launcher icon. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><linearGradient id="ring" x1="18%" y1="8%" x2="82%" y2="92%"><stop offset="0%" stop-color="#1D9FDA"/><stop offset="38%" stop-color="#61A644"/><stop offset="66%" stop-color="#61A644"/><stop offset="100%" stop-color="#2FE0CB"/></linearGradient></defs><circle cx="24" cy="24" r="24" fill="#000000"/><circle cx="24" cy="24" r="12.7" fill="none" stroke="url(#ring)" stroke-width="4.6"/></svg>

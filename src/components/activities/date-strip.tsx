@@ -20,9 +20,17 @@ export function DateStrip({ days, selectedDate, onSelect }: DateStripProps) {
   const listRef = React.useRef<HTMLDivElement>(null);
 
   // Keep the active day in view when it changes from outside the strip.
+  // Scrolls the strip alone: `scrollIntoView` would also nudge every scrollable
+  // ancestor, including the app frame, which then stays shifted sideways.
   React.useEffect(() => {
-    const active = listRef.current?.querySelector<HTMLElement>('[data-selected="true"]');
-    active?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    const list = listRef.current;
+    const active = list?.querySelector<HTMLElement>('[data-selected="true"]');
+    if (!list || !active) return;
+    const listBox = list.getBoundingClientRect();
+    const activeBox = active.getBoundingClientRect();
+    const left =
+      list.scrollLeft + (activeBox.left - listBox.left) - (list.clientWidth - activeBox.width) / 2;
+    list.scrollTo({ left, behavior: 'smooth' });
   }, [selectedDate]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>, index: number) =>

@@ -76,13 +76,17 @@ export function BottomNav() {
               >
                 {featured ? (
                   // Raised above the bar, so the guide reads as the centre of the app.
-                  <span
-                    className={cn(
-                      '-mt-7 mb-0.5 flex h-[52px] w-[52px] items-center justify-center rounded-full bg-surface shadow-pill',
-                      isActive ? 'ring-2 ring-aurora-blue/70' : 'ring-1 ring-overlay/10',
-                    )}
-                  >
-                    <SerenityRing className="h-8 w-8" />
+                  // The slot is icon-sized and the button floats out of it, so
+                  // this label sits on the same line as the others.
+                  <span className="relative h-[22px] w-[22px]">
+                    <span
+                      className={cn(
+                        'absolute bottom-1.5 left-1/2 flex h-[52px] w-[52px] -translate-x-1/2 items-center justify-center rounded-full bg-surface shadow-pill',
+                        isActive ? 'ring-2 ring-aurora-blue/70' : 'ring-1 ring-overlay/10',
+                      )}
+                    >
+                      <SerenityRing className="h-8 w-8" />
+                    </span>
                   </span>
                 ) : Icon ? (
                   <Icon

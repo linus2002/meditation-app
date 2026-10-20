@@ -17,13 +17,13 @@ export interface Recommendation {
  * the whole catalogue — the point is a few good suggestions, not a browser.
  */
 const PICKS: { id: string; collection: string; image?: StaticImageData }[] = [
-  // The first two slots use purpose-made card artwork rather than the session's
-  // own photograph.
+  // Every slot uses purpose-made card artwork rather than the session's own
+  // photograph, and nothing here repeats the "Your meditations for today" row.
   { id: 'ocean-drift', collection: 'Unwinding Collection', image: photos.recoOne },
+  { id: 'open-heart', collection: 'Gratitude Collection', image: photos.recoFour },
+  { id: 'meditation-daily', collection: 'Focus Collection', image: photos.recoThree },
   { id: 'deep-rest', collection: 'Sleep Collection', image: photos.recoTwo },
-  { id: 'morning-clarity', collection: 'Focus Collection' },
-  { id: 'open-heart', collection: 'Gratitude Collection' },
-  { id: 'box-breathing', collection: 'Breathing Collection' },
+  { id: 'body-scan', collection: 'Relaxation Collection', image: photos.recoFive },
 ];
 
 export const recommended: Recommendation[] = PICKS.flatMap(({ id, collection, image }) => {

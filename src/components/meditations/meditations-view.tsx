@@ -14,22 +14,19 @@ import { RatingStars } from '@/components/shared/rating-stars';
 import { SectionTitle } from '@/components/shared/section-title';
 import { Skeleton, SkeletonList } from '@/components/shared/skeleton';
 import { StoryCard } from '@/components/stories/story-card';
-import { YogaCard } from '@/components/yoga/yoga-card';
 import { categories } from '@/data/categories';
 import { meditations } from '@/data/meditations';
 import { stories, storyCategories } from '@/data/stories';
-import { YOGA_SAFETY, yogaSessions } from '@/data/yoga';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 import type { CategorySlug, StoryCategory } from '@/types';
 
-type TabId = 'all' | 'meditation' | 'yoga' | 'soundscape' | 'stories';
+type TabId = 'all' | 'meditation' | 'soundscape' | 'stories';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'meditation', label: 'Meditation' },
-  { id: 'yoga', label: 'Yoga' },
   { id: 'soundscape', label: 'Soundscape' },
   { id: 'stories', label: 'Stories' },
 ];
@@ -51,7 +48,7 @@ function isTabId(value: string | null): value is TabId {
  * so the tab strip stays about content type and does not mix the two axes.
  */
 export function MeditationsView() {
-  // `?tab=yoga` opens straight onto a tab — the home screen links here.
+  // `?tab=stories` opens straight onto a tab. Yoga has its own page, /yoga.
   const requestedTab = useSearchParams().get('tab');
   const [tab, setTab] = React.useState<TabId>(isTabId(requestedTab) ? requestedTab : 'all');
   const [category, setCategory] = React.useState<CategorySlug | 'all'>('all');
@@ -264,22 +261,6 @@ export function MeditationsView() {
           </section>
 
           <section className="mt-8 px-5">
-            <SectionTitle>Yoga</SectionTitle>
-            <ul className="mt-3 space-y-2.5">
-              {yogaSessions.slice(0, 3).map((session) => (
-                <YogaCard key={session.id} session={session} />
-              ))}
-            </ul>
-            <button
-              type="button"
-              onClick={() => setTab('yoga')}
-              className="mt-3 text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-            >
-              All {yogaSessions.length} yoga sessions
-            </button>
-          </section>
-
-          <section className="mt-8 px-5">
             <SectionTitle>Soundscapes</SectionTitle>
             <div className="mt-3">
               <SoundscapeGrid limit={4} />
@@ -362,22 +343,6 @@ export function MeditationsView() {
         </>
       ) : null}
 
-      {tab === 'yoga' ? (
-        <section className="mt-5 px-5">
-          <p className="text-caption leading-relaxed text-ink-muted">
-            Gentle, guided yoga — one pose at a time, with a soft bell when it&apos;s time to move.
-            Most need no mat.
-          </p>
-          <SectionTitle className="mt-5">{`All ${yogaSessions.length} yoga sessions`}</SectionTitle>
-          <ul className="mt-3 space-y-2.5">
-            {yogaSessions.map((session) => (
-              <YogaCard key={session.id} session={session} />
-            ))}
-          </ul>
-          <p className="mt-4 text-label leading-relaxed text-ink-faint">{YOGA_SAFETY}</p>
-        </section>
-      ) : null}
-
       {tab === 'soundscape' ? (
         <section className="mt-5 px-5">
           <p className="text-caption leading-relaxed text-ink-muted">
@@ -442,8 +407,7 @@ export function MeditationsView() {
       ) : null}
 
       <p className="mt-8 px-5 text-center text-label leading-relaxed text-ink-faint">
-        {meditations.length} sessions · {yogaSessions.length} yoga · {stories.length} stories · 8
-        soundscapes
+        {meditations.length} sessions · {stories.length} stories · 8 soundscapes
       </p>
     </div>
   );
