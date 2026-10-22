@@ -6,7 +6,8 @@
  * Writes `src/content/content.json`, which every module under src/data reads,
  * and downloads each image into `public/content/images/`, so the website and
  * the APK carry their pictures with them and keep working offline. Videos are
- * left on Sanity's CDN and streamed, which is what keeps them out of the APK.
+ * left on Sanity's CDN and streamed, which is what keeps them out of the APK;
+ * so is each story's recorded narration.
  *
  * The dataset is public, so no token is needed. If Sanity cannot be reached the
  * build carries on with the content.json already in the repo, so a network
@@ -36,12 +37,13 @@ const QUERY = `{
     "breathPattern": breathPattern[]{ label, seconds }
   },
   "programs": *[_type == "program" && defined(slug.current)] | order(order asc) {
-    "id": slug.current, title, author, level, description, scrim,
+    "id": slug.current, title, author, level, description, scrim, featured,
     "sessionIds": sessions[]->slug.current, "image": image${IMG}
   },
   "stories": *[_type == "story" && defined(slug.current)] | order(order asc) {
-    "id": slug.current, title, description, category, voice,
-    "image": image${IMG}, imageAlt, soundscape, paragraphs
+    "id": slug.current, title, description, category, voice, featured,
+    "image": image${IMG}, "cover": cover${IMG}, imageAlt, soundscape, paragraphs,
+    "narration": narration{ "src": audio.asset->url, duration, paragraphStarts }
   },
   "yoga": *[_type == "yogaSession" && defined(slug.current)] | order(order asc) {
     "id": slug.current, title, subtitle, focus, level, "image": image${IMG}, imageAlt,
@@ -119,7 +121,7 @@ async function main() {
   const content = {
     meditations: await withImages(result.meditations, ['image', 'cover']),
     programs: await withImages(result.programs, ['image']),
-    stories: await withImages(result.stories, ['image']),
+    stories: await withImages(result.stories, ['image', 'cover']),
     yoga: await withImages(result.yoga, ['image']),
     videos: (await withImages(result.videos, ['poster'])).map((video) => ({ ...video, poster: video.poster?.src })),
     categories: await withImages(result.categories, ['image']),

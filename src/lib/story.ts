@@ -48,14 +48,17 @@ export function storyWordCount(story: Story): number {
 }
 
 /**
- * Estimated listening time. Real duration depends on the device voice and the
- * chosen rate, so this is shown as an approximation rather than a countdown.
+ * Listening time. A recorded story knows its own length; otherwise the real
+ * duration depends on the device voice and the chosen rate, so this is an
+ * approximation rather than a countdown.
  */
 export function estimatedMinutes(story: Story, rate = 1): number {
-  return Math.max(1, Math.round(storyWordCount(story) / (WORDS_PER_MINUTE * rate)));
+  return Math.max(1, Math.round(estimatedSeconds(story, rate) / 60));
 }
 
+/** Exact when the story has a recording, which plays at its own pace. */
 export function estimatedSeconds(story: Story, rate = 1): number {
+  if (story.narration) return Math.round(story.narration.duration);
   return Math.round((storyWordCount(story) / (WORDS_PER_MINUTE * rate)) * 60);
 }
 

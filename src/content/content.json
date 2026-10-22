@@ -1187,12 +1187,1349 @@
       "subtitle": "Bringing the calm back",
       "title": "Return to Shore",
       "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "anxiety",
+      "description": "For the thoughts you keep turning over. Notice what you are holding, feel where it sits in the body, and practise setting it down for a while.",
+      "durationMinutes": 12,
+      "id": "letting-go",
+      "image": {
+        "src": "/content/images/ef4a699661087024.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQADAQAAAAAAAAAAAAAAAAQBAwUG/8QAHhAAAgMBAAIDAAAAAAAAAAAAAQMAAhEEBRIiMZH/xAAYAQACAwAAAAAAAAAAAAAAAAABAwACBf/EABgRAQADAQAAAAAAAAAAAAAAAAABAhES/9oADAMBAAIRAxEAPwCTjWqywTk53n3c6kkVzZ5lfnWrp6gH9kfV0t7Nsdj2DWjW3o+Zic1pvW5GGJNO4Y9zv3L0uvVYzIiCRhJ0MsWknIiIF3//2Q=="
+      },
+      "imageAlt": "Abstract sea green gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "rain",
+      "subtitle": "Loosen your grip",
+      "title": "Letting Go",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "focus",
+      "description": "Take this one outside, or around the room. Attention rests on the feet, the ground and the rhythm of walking, and comes back there whenever it wanders.",
+      "durationMinutes": 10,
+      "id": "mindful-walk",
+      "image": {
+        "src": "/content/images/894617242fc1c06a.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYFBwT/xAAhEAACAQMDBQAAAAAAAAAAAAAAAQIDBBEFITEGEiMykf/EABYBAQEBAAAAAAAAAAAAAAAAAAMFBP/EABoRAQACAwEAAAAAAAAAAAAAAAADIQECETH/2gAMAwEAAhEDEQA/AOJ2k90W/TM6cF5IpkFYSzJblZplxGnjMlgux2hz0p7qdKVZuMVgGZK7pN+6+gZl45xbPDNKlJ45YBl0UZPXqg328sACgy//2Q=="
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "forest",
+      "subtitle": "One step at a time",
+      "title": "Mindful Walk",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "happiness",
+      "description": "Speak to yourself the way you would speak to a good friend having a hard day. A gentle practice for when the inner voice has been harsh.",
+      "durationMinutes": 15,
+      "id": "self-compassion",
+      "image": {
+        "src": "/content/images/ea080c0552b71a0e.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQADAAAAAAAAAAAAAAAAAAUEBgf/xAAgEAACAgMAAQUAAAAAAAAAAAAAAgEDBAUREgYxMoGh/8QAFwEAAwEAAAAAAAAAAAAAAAAAAQMEBv/EABgRAQEBAQEAAAAAAAAAAAAAAAEAAhID/9oADAMBAAIRAxEAPwDnXp7WJkVwzKVs7SoieSRwnaDZV4sQrxPC/ds6L05Dc+iLbrq0HmCUVMTi+wKiW0c+X4AdNSYLVsetfIrY1ccAGap82UqRyQAKnF//2Q=="
+      },
+      "imageAlt": "Abstract warm rose and amber gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "pad",
+      "subtitle": "Kindness, turned inward",
+      "title": "Self-Compassion",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "happiness",
+      "description": "Look back over the day and find three small things that went well. Stay with each one long enough to feel it, then let the day close.",
+      "durationMinutes": 10,
+      "id": "evening-gratitude",
+      "image": {
+        "src": "/content/images/f2c502c5ec4d2bf1.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAAAAUGAgMH/8QAHhAAAgMAAwADAAAAAAAAAAAAAQIAAwQFERIhYZH/xAAXAQADAQAAAAAAAAAAAAAAAAADBAUG/8QAGxEAAwACAwAAAAAAAAAAAAAAAAECAxETIUH/2gAMAwEAAhEDEQA/AKzuq9A9SC08bZaCepZH05y/RsEl8ObLfSSbU/ZP5HCNRmlM5Hr49q72UiJbecy0ryDhXUj6MRmcu0TnPZovUBj1M67rErPliIiC8GrITZdY2hiW+YiIZCp//9k="
+      },
+      "imageAlt": "Abstract warm rose and amber gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "chimes",
+      "subtitle": "Three good things",
+      "title": "Evening Gratitude",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "focus",
+      "description": "A longer sit for training attention. Rest on a single anchor, notice each time the mind leaves, and return without fuss. Good before demanding work.",
+      "durationMinutes": 20,
+      "id": "deep-focus",
+      "image": {
+        "src": "/content/images/9628e4028a9bcb16.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQFBwb/xAAeEAACAgMAAwEAAAAAAAAAAAABAgADBAUREhNRIf/EABkBAAIDAQAAAAAAAAAAAAAAAAMFAAECBP/EABkRAQEBAAMAAAAAAAAAAAAAAAABAhESE//aAAwDAQACEQMRAD8AyijWNYgISRdjrWqXpXk7HBvx1Cr5rJWzxMa/FLB07z7H1kIc7vLLTjnsS7vx0W1gCIg+jo9VnSONJF7t6iO/kRN0GKZkBY9+xES0f//Z"
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "drone",
+      "subtitle": "Hold one thing in mind",
+      "title": "Deep Focus",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "breathing",
+      "description": "An even, unhurried rhythm of five seconds in and five seconds out, paced by the sound of the sea. Simple, steadying, and easy to take anywhere.",
+      "durationMinutes": 10,
+      "id": "coherent-breathing",
+      "image": {
+        "src": "/content/images/e288354bf53bbb46.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAIFBgME/8QAIBAAAgICAgIDAAAAAAAAAAAAAQIAAwQRBRITITGBkf/EABgBAAIDAAAAAAAAAAAAAAAAAAIEAwUG/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAIBEQP/2gAMAwEAAhEDEQA/AILTT4AWA+JledSp7CqATtdyw6dBYP2VpyEZyXcH7l5TMR1m8yjreRqJ6uRvrOU2mGtRFdrOn5neIZHonRMrcmxgDpjEQqD5q17GLEkmIiQGn//Z"
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "ocean",
+      "subtitle": "Five in, five out",
+      "title": "Coherent Breathing",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 7
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 8
+        }
+      ],
+      "category": "breathing",
+      "description": "Breathe in for four, hold for seven, and let a long breath out for eight. A short practice that tells the body it is safe to slow down.",
+      "durationMinutes": 6,
+      "id": "relaxing-breath",
+      "image": {
+        "src": "/content/images/3c6701fa969d9eed.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAIEBgf/xAAiEAACAQMDBQEAAAAAAAAAAAABAgADBCEFERIGFCJBcZH/xAAXAQEBAQEAAAAAAAAAAAAAAAAEBQMG/8QAGxEAAgIDAQAAAAAAAAAAAAAAAAEDEgIEMVH/2gAMAwEAAhEDEQA/AOOaexJG2ZqLBG4gkSj0xp9EKHuHA+zWcLXhslRP2V4mc/sLwrofERItVpKxAqLETZAaszNhWftgMSwrsd8xEDgVpOge8mIibB2f/9k="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "night",
+      "subtitle": "Four, seven, eight",
+      "title": "The Relaxing Breath",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "relaxation",
+      "description": "Find where the day has settled in the body, the jaw, the shoulders, the belly, and soften each place in turn with a slow out-breath.",
+      "durationMinutes": 15,
+      "id": "stress-release",
+      "image": {
+        "src": "/content/images/3ad2c95fdc043e70.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAIFBgEE/8QAHxAAAgIBBQEBAAAAAAAAAAAAAAECAwQFERMhMRIi/8QAGQEAAgMBAAAAAAAAAAAAAAAAAQMAAgQF/8QAGBEBAAMBAAAAAAAAAAAAAAAAAAECERP/2gAMAwEAAhEDEQA/AMZLK6J4mZD7/TKGeoVcfvZ3T7IX2d2bIz448UaK/Kr5OmgUWVOuFzSs3QJi3NlHZLb09eBdOPjAGHQlffN2NtgAAv/Z"
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "forest",
+      "subtitle": "Unwind the day's tension",
+      "title": "Stress Release",
+      "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 7
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 8
+        }
+      ],
+      "category": "sleep",
+      "description": "Lie down, lights off. Attention moves slowly from the toes to the crown, and each part is allowed to grow heavy. No need to stay awake for the end.",
+      "durationMinutes": 30,
+      "id": "sleepy-body-scan",
+      "image": {
+        "src": "/content/images/aa1fcccac5b5187c.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAAAAMFAQQH/8QAHRAAAgIDAQEBAAAAAAAAAAAAAAECAwQRIRIxof/EABcBAAMBAAAAAAAAAAAAAAAAAAACAwb/xAAYEQEAAwEAAAAAAAAAAAAAAAAAARESQf/aAAwDAQACEQMRAD8A4vNtLiNadjLmizFnWoyf4R204sHtTTNBM2gopWPYJsp0q5+WtAloUxRbNJdGTdNr6ALwytssl7fQASD/2Q=="
+      },
+      "imageAlt": "Abstract midnight indigo gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": true,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "night",
+      "subtitle": "Drift off part by part",
+      "title": "Sleepy Body Scan",
+      "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "anxiety",
+      "description": "Five minutes for a racing heart. Feel your feet, name what you can see and hear, and let a slow, even breath bring you back to the room.",
+      "durationMinutes": 5,
+      "id": "panic-pause",
+      "image": {
+        "src": "/content/images/2a983ec181d14485.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGgABAAMAAwAAAAAAAAAAAAAAAAIDBQQGB//EAB0QAAICAwEBAQAAAAAAAAAAAAACAQMEBREhEhP/xAAXAQEBAQEAAAAAAAAAAAAAAAABAgMF/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAECERL/2gAMAwEAAhEDEQA/APOMGqrJpiuEjpPI0cVpLLBRrcuvGs97w27trTZT8xPpvxxdbrqtuHx5jgNR3rZpnoFPuuH+a9JrWoACrUSOAAUv/9k="
+      },
+      "imageAlt": "Abstract sea green gradient with soft glowing light",
+      "inLibrary": true,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "bowl",
+      "subtitle": "When it all feels too much",
+      "title": "Panic Pause",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "relaxation",
+      "description": "Nothing to get right. Sit, notice you are here, and feel the weight of the body on the chair or floor.",
+      "durationMinutes": 5,
+      "id": "calm-foundations-arrive",
+      "image": {
+        "src": "/content/images/9801afbb8c06784a.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQFBgH/xAAfEAABBQEAAgMAAAAAAAAAAAABAAIDBBEFEiEGIlH/xAAZAQACAwEAAAAAAAAAAAAAAAABBAACAwX/xAAZEQEBAQADAAAAAAAAAAAAAAAAARECEhP/2gAMAwEAAhEDEQA/AKCoRLEPEaV20HRt0hU3xzt12M8ZN1WnT7FN1c473iVy6494VCNoAos3L0mGR2H1qK3UPNnas8jD9XYpFizK4Y5yItDVRw4/qIiKP//Z"
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "bowl",
+      "subtitle": "Just sit down",
+      "title": "Arriving",
+      "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "breathing",
+      "description": "Find the breath where it is easiest to feel, at the nose, the chest or the belly, and let attention rest there.",
+      "durationMinutes": 6,
+      "id": "calm-foundations-breath",
+      "image": {
+        "src": "/content/images/a0428256454bc4ac.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAIEBQP/xAAfEAACAQUAAwEAAAAAAAAAAAABAgADBAURIRITInH/xAAZAQACAwEAAAAAAAAAAAAAAAACAwEEBQb/xAAaEQACAwEBAAAAAAAAAAAAAAAAAQIRMQMh/9oADAMBAAIRAxEAPwChjqVJ1+tSplrKizc1MJs0tAnwqTgua91bbuNfs2Zu2c5zjSwrX9sqXLACJG/yFNrgkEHkRTRZT8Mq6HTM5mKtwxEiWhQwg9RidkxEQBqP/9k="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "ocean",
+      "subtitle": "Your built-in anchor",
+      "title": "The Breath",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "relaxation",
+      "description": "A short scan from feet to head, noticing sensation without needing to change it.",
+      "durationMinutes": 8,
+      "id": "calm-foundations-body",
+      "image": {
+        "src": "/content/images/26d986f8c78e8088.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQGBwX/xAAiEAACAgIBAwUAAAAAAAAAAAABAgADBBESBQYTIUFRcZH/xAAXAQEBAQEAAAAAAAAAAAAAAAADAQQF/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAECESH/2gAMAwEAAhEDEQA/AMn7W6d525MNy6L0pQnokr/Z2XRU6pawX7mh2ZOEuNtbUJ18zNu3rl79VF8XgxGok27JpaxiHWJO0FrOsQaYEEidqp3ZQCx/YiJT6SEUcfeIiQb/2Q=="
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "drone",
+      "subtitle": "Feeling from the inside",
+      "title": "The Body",
+      "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "focus",
+      "description": "Thoughts will come. Practise noticing one, labelling it gently, and coming back to the breath.",
+      "durationMinutes": 8,
+      "id": "calm-foundations-thoughts",
+      "image": {
+        "src": "/content/images/9268f79fd19dc2f3.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAYEBf/EAB8QAAICAgIDAQAAAAAAAAAAAAABAgMEBRESISIxFP/EABcBAAMBAAAAAAAAAAAAAAAAAAIDBgT/xAAYEQEBAQEBAAAAAAAAAAAAAAAAAgEREv/aAAwDAQACEQMRAD8AhsLrK5J/DvfjqnFeqI/B2Fcb12bKGG4oUV7lBVZqdmKxztniRhlySXjgGTZ7aueXJp8rgCfTVk7xNqTjZ4Zod8+v0AGhyw22yc22wACa/9k="
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "pad",
+      "subtitle": "Letting them pass",
+      "title": "Thoughts",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "focus",
+      "description": "Small ways to return to this feeling during the day: a breath at a doorway, a pause before a message.",
+      "durationMinutes": 7,
+      "id": "calm-foundations-everyday",
+      "image": {
+        "src": "/content/images/8ee967eba369f722.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQADAQAAAAAAAAAAAAAAAAQBBQYH/8QAHhAAAgICAgMAAAAAAAAAAAAAAAECAwQREiIFEyP/xAAWAQEBAQAAAAAAAAAAAAAAAAADBAX/xAAaEQEAAwADAAAAAAAAAAAAAAAAAQIRAxIx/9oADAMBAAIRAxEAPwDzzCqrdn0SMeaooWPJxS3onll1pvTaIs+/2x4qezfvEMDjtOubtWrJJAptx3zYJsXdm6nFbZO13AHlLT0sfYABHf/Z"
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "forest",
+      "subtitle": "Taking it with you",
+      "title": "Everyday Calm",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "focus",
+      "description": "Rest attention on one small point and notice how often it wants to move.",
+      "durationMinutes": 6,
+      "id": "focus-reset-single-point",
+      "image": {
+        "src": "/content/images/c154a9074b071231.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAQGBf/EAB8QAAICAgIDAQAAAAAAAAAAAAACAQMEEQUhExQxUf/EABcBAAMBAAAAAAAAAAAAAAAAAAABBAb/xAAZEQEBAAMBAAAAAAAAAAAAAAAAAQIDERL/2gAMAwEAAhEDEQA/AMtk46+orr90cV0s70s6KeH5GvISFusiIj9Onddja0rLo0Ez6z118ZprWWdT9BVmNR550ygPZzBmePudV6ksm+yfsgE0W1Ldc/knsADD/9k="
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "chimes",
+      "subtitle": "One thing at a time",
+      "title": "Single Point",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "focus",
+      "description": "Wandering is not failing. Each time you notice and come back is the practice itself.",
+      "durationMinutes": 8,
+      "id": "focus-reset-wandering",
+      "image": {
+        "src": "/content/images/3390b5d896d57271.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAUEA//EAB0QAAIDAAMBAQAAAAAAAAAAAAABAgMEBREhBjH/xAAXAQADAQAAAAAAAAAAAAAAAAACAwUE/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAIBEf/aAAwDAQACEQMRAD8AjZ81Uqo9xRh5XFSodqKOFfPZoVKLk+0SeU+hrn2oS8L1agRGpO6uEdMkkCbq3qy5yQEda8nWi7xv0n6AA6DDG/0ACj3/2Q=="
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "pad",
+      "subtitle": "Every return counts",
+      "title": "The Wandering Mind",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "focus",
+      "description": "Set down what is unfinished, choose the one task ahead, and begin from a settled place.",
+      "durationMinutes": 7,
+      "id": "focus-reset-before-work",
+      "image": {
+        "src": "/content/images/63884baac9ece827.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAUEBgL/xAAfEAACAgICAwEAAAAAAAAAAAAAAQIDESEEEgUUMXH/xAAWAQEBAQAAAAAAAAAAAAAAAAADBAX/xAAYEQEBAAMAAAAAAAAAAAAAAAAAAgEDEf/aAAwDAQACEQMRAD8A43ylHH9BNY7YOVporlKXYrcmbnHq56/STcujezeqWDrtO5dUI3yS+A83vNjeQBxXilWxbe2YuRne2ANSeGJrYACUP//Z"
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "forest",
+      "subtitle": "Clear the desk inside",
+      "title": "Before Deep Work",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "focus",
+      "description": "A longer sit that stretches attention gently, a few breaths further each time.",
+      "durationMinutes": 12,
+      "id": "focus-reset-long-hold",
+      "image": {
+        "src": "/content/images/031fedd9775359f2.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAMEBQYH/8QAHhAAAgICAwEBAAAAAAAAAAAAAAECAwQREhNxISL/xAAYAQACAwAAAAAAAAAAAAAAAAABAgMFBv/EABcRAQEBAQAAAAAAAAAAAAAAAAABAhH/2gAMAwEAAhEDEQA/APNaKqnD6lsjtxoTf5iRV5EezWno2Me3HjFOSe/C/nGft1XNZOJq1pRBuZVtErm0nrwCXiWXXGbXFdhe2+IAaGVO6T5sAAO//9k="
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "drone",
+      "subtitle": "Staying a little longer",
+      "title": "The Long Hold",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "relaxation",
+      "description": "Mark the end of work so the mind stops reaching for it. Let attention widen and soften.",
+      "durationMinutes": 8,
+      "id": "focus-reset-close",
+      "image": {
+        "src": "/content/images/c57d5180823ca236.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQADAQAAAAAAAAAAAAAAAAYDBAcF/8QAHRAAAwACAwEBAAAAAAAAAAAAAAECAyEEBRESI//EABcBAQEBAQAAAAAAAAAAAAAAAAMCBAX/xAAYEQEBAAMAAAAAAAAAAAAAAAAAAgEDMf/aAAwDAQACEQMRAD8A4301SmlSLPqJx016kQ3WVKtbLDh1OOFX2gKcrZ172TFCrSBozzcbW8iBAHPOAv0RRTvEvQBctVMuKF8AAkD/2Q=="
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "bowl",
+      "subtitle": "Switch off on purpose",
+      "title": "Closing the Day",
+      "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "happiness",
+      "description": "Place a hand on your chest, feel its warmth, and notice what it is like to be met kindly.",
+      "durationMinutes": 6,
+      "id": "kind-to-yourself-hand-on-heart",
+      "image": {
+        "src": "/content/images/9fb7f6c4656fac8b.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAUEAgb/xAAgEAACAgICAgMAAAAAAAAAAAABAgARAwQFEiFhIjGB/8QAGAEAAgMAAAAAAAAAAAAAAAAAAgQDBQb/xAAbEQEAAgIDAAAAAAAAAAAAAAAAARECAxITIv/aAAwDAQACEQMRAD8A8Nr5KQG5T1NmqmDiNYbOJfkB+ynn0lwpasPHuI5TF002Gym9cist3EjLtBRRb69xA4GOyELjM7phHU1OtnazGx3NREYr0qoYg7HyWMREJK//2Q=="
+      },
+      "imageAlt": "Abstract warm rose and amber gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "pad",
+      "subtitle": "A simple gesture of care",
+      "title": "Hand on Heart",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "happiness",
+      "description": "Listen to how you speak to yourself, and try a gentler tone, as you would with a friend.",
+      "durationMinutes": 8,
+      "id": "kind-to-yourself-inner-voice",
+      "image": {
+        "src": "/content/images/374052b5c065d62c.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAcGAgX/xAAgEAACAgICAgMAAAAAAAAAAAABAgADBBEFBnGBEiGR/8QAGQEAAQUAAAAAAAAAAAAAAAAAAwECBAUG/8QAGxEAAwACAwAAAAAAAAAAAAAAAAECAxEEEhP/2gAMAwEAAhEDEQA/AJx1XhEyclDYNjcpZ4DEXHAFY3qY/qdqU3AMwHuUKq1HQadSPMrORddjRxjWjE5/EVpksFX6iaHORDkMfkP2IiyPQTyRN8dAr7BIns491oTQsce4iSLBSdB3bZLsT5iIjAp//9k="
+      },
+      "imageAlt": "Abstract warm rose and amber gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "chimes",
+      "subtitle": "Softening the critic",
+      "title": "The Inner Voice",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "happiness",
+      "description": "Whatever you are finding hard, others are finding hard too. Let that be a comfort rather than a weight.",
+      "durationMinutes": 8,
+      "id": "kind-to-yourself-common-ground",
+      "image": {
+        "src": "/content/images/d4e81023df21ad8b.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAQFBgID/8QAIhAAAQQBAgcAAAAAAAAAAAAAAgABAwQRIjEFEhMhI4GR/8QAGAEAAgMAAAAAAAAAAAAAAAAAAwQCBQb/xAAZEQEBAQEBAQAAAAAAAAAAAAABAAIRAxL/2gAMAwEAAhEDEQA/AKWaxhtKiOMs2eVnXVCeub+SQfquYirgGghf2q1fm1WvTtlbASRyuL5yikcWsxtdLBNsiKdSXd2R6xjs69QuTsPY3REdJbTQ7FiQpXdyfKIikQ7/2Q=="
+      },
+      "imageAlt": "Abstract warm rose and amber gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "bowl",
+      "subtitle": "You are not the only one",
+      "title": "Common Ground",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "anxiety",
+      "description": "Ask yourself what would help right now, and stay quiet long enough to hear an answer.",
+      "durationMinutes": 10,
+      "id": "kind-to-yourself-what-you-need",
+      "image": {
+        "src": "/content/images/c4d86b12c885a5ee.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAMEBgIF/8QAHRAAAgICAwEAAAAAAAAAAAAAAAECAwQSBREhYf/EABgBAAIDAAAAAAAAAAAAAAAAAAACAQMF/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAECEf/aAAwDAQACEQMRAD8AwnDcRXOG012Wc7i6HBpQRcxbqsatJ2RI8rLqknrNPv6X8YV3WNzMGMb5JLwHpZOs7m+0A4ebqbI9j6UpR+sACONV9AAJf//Z"
+      },
+      "imageAlt": "Abstract sea green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "rain",
+      "subtitle": "Asking, and listening",
+      "title": "What Do You Need?",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "happiness",
+      "description": "A few simple phrases of goodwill, offered to yourself first and then outward to others.",
+      "durationMinutes": 10,
+      "id": "kind-to-yourself-warm-wishes",
+      "image": {
+        "src": "/content/images/ae6cdaab09c7dd3f.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAUEBgf/xAAhEAABBAICAgMAAAAAAAAAAAABAAIDEQQFEiEicTFBof/EABcBAAMBAAAAAAAAAAAAAAAAAAIDBAb/xAAbEQADAQADAQAAAAAAAAAAAAAAAQIDERIxUf/aAAwDAQACEQMRAD8A8b12tlnIdxNK9j6x0dWFU1M+NFC0Fpv0qZysR7fmj6Ul6tvw0OOc8EqPG8B0ipNlgro/iJfZlKmfpzuKTxHa3xNBq0RHRLBpa0V9oiIByP/Z"
+      },
+      "imageAlt": "Abstract warm rose and amber gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "pad",
+      "subtitle": "May I be well",
+      "title": "Warm Wishes",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "relaxation",
+      "description": "Stay in bed a few minutes longer. Feel the body waking, and let the day arrive at its own pace.",
+      "durationMinutes": 5,
+      "id": "better-mornings-waking",
+      "image": {
+        "src": "/content/images/5e3c6b10647cf4fa.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYEBwX/xAAhEAACAgEEAgMAAAAAAAAAAAABAgADEQQFBhMxURIhIv/EABgBAAMBAQAAAAAAAAAAAAAAAAIDBAAF/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAECEv/aAAwDAQACEQMRAD8AkuLXVjUKLsYPuXzrR1gqBjE41TuS1IpRv0J7Wk5RaKwrNmS6za5NysdX1dx+hEjn3lrGLFom5pfLnYYg+ZpqdvZiI9ZWtGb4+TERBA//2Q=="
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "forest",
+      "subtitle": "Before you reach for the phone",
+      "title": "Waking Slowly",
+      "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "focus",
+      "description": "Pick one quality to carry with you today, patience, curiosity or kindness, and rest in it for a while.",
+      "durationMinutes": 6,
+      "id": "better-mornings-intention",
+      "image": {
+        "src": "/content/images/1893c9d96e62436f.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYFAwf/xAAdEAADAAMAAwEAAAAAAAAAAAAAAQIDBBEFEiEU/8QAGAEAAwEBAAAAAAAAAAAAAAAAAgMEBQb/xAAYEQEBAQEBAAAAAAAAAAAAAAABAAIREv/aAAwDAQACEQMRAD8A8m1Jn0l8KLwsRVcaJjVzw8cr6aups/mav3+G+Jc/rKtR7GOFlfEgZFeYx2++wD6SvDSGlb6jRu6ePjAJivbjC+AAOW3/2Q=="
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "chimes",
+      "subtitle": "Choose how to meet the day",
+      "title": "One Intention",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "breathing",
+      "description": "Steady, even counts to clear the fog and bring a little alertness without coffee.",
+      "durationMinutes": 5,
+      "id": "better-mornings-energy",
+      "image": {
+        "src": "/content/images/226e28bd5929389d.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAUGBwME/8QAIBAAAgICAQUBAAAAAAAAAAAAAQIAAwQRBQYSEyFRgf/EABcBAQEBAQAAAAAAAAAAAAAAAAQDBQb/xAAYEQEBAQEBAAAAAAAAAAAAAAABAAIDMf/aAAwDAQACEQMRAD8A7U8bQ+ICyDZEzfrXCroubxy9jl60xO0WLsD7KZzIGfYzMwP7NjWVue57M2e2DTmJLZeCq3sAREO4Zx0ErBfvR9meCxmG9MYiXYZ5Rd7E2HZiIkWSX//Z"
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "forest",
+      "subtitle": "A brighter start",
+      "title": "Energising Breath",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "happiness",
+      "description": "Name a few things you are glad of, and one thing in the day ahead you are looking forward to.",
+      "durationMinutes": 6,
+      "id": "better-mornings-gratitude",
+      "image": {
+        "src": "/content/images/4fc380b571bc72b3.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAUEAQb/xAAfEAABBQADAAMAAAAAAAAAAAABAAIDBBEFISIjQVH/xAAYAQACAwAAAAAAAAAAAAAAAAADBAABBv/EABkRAAIDAQAAAAAAAAAAAAAAAAABAgMRIf/aAAwDAQACEQMRAD8AhcgSGnrpQXPDpCCNVy5yUEkJBjO/qh1rVYWdfuakIbhp7LE3wnXIPnPn6Rb+St13WiYx5wIjJvBRzWnLTiGHCvPzyObISD2iK6yTM0k8hcSXIiIouf/Z"
+      },
+      "imageAlt": "Abstract warm rose and amber gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "pad",
+      "subtitle": "Something to look forward to",
+      "title": "Morning Gratitude",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "focus",
+      "description": "A last minute of stillness, then a cue to come back to whenever the day gets busy.",
+      "durationMinutes": 5,
+      "id": "better-mornings-step-out",
+      "image": {
+        "src": "/content/images/666fd06845e3ebb6.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQEAAwAAAAAAAAAAAAAAAAYCBAUH/8QAHBAAAgMAAwEAAAAAAAAAAAAAAQIAAwQREiEF/8QAFwEAAwEAAAAAAAAAAAAAAAAAAgMFBP/EABcRAQEBAQAAAAAAAAAAAAAAAAEAAiH/2gAMAwEAAhEDEQA/APFMmHkqxlh8vNS1SjqOZOZr1VQOplL8W+pRzZ2l0AoetaW1pyILSAvkTkaddDWkqG4iHyV2iKB6J3uViEHBiIstDaZj2PsREMlX/9k="
+      },
+      "imageAlt": "Abstract deep blue gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ava Lindqvist",
+      "soundscape": "chimes",
+      "subtitle": "Carry it through the door",
+      "title": "Stepping Out",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "anxiety",
+      "description": "Scan the body for tightness and heat. Just notice where stress has made a home today.",
+      "durationMinutes": 7,
+      "id": "letting-go-of-stress-map",
+      "image": {
+        "src": "/content/images/830dbf44704e91fa.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAMEBQb/xAAdEAACAwEBAQEBAAAAAAAAAAABAgADBBEFIQYi/8QAFwEAAwEAAAAAAAAAAAAAAAAAAAEDBf/EABcRAQEBAQAAAAAAAAAAAAAAAAABAhH/2gAMAwEAAhEDEQA/AK+eips69USDXRSqH+RMLL+iqrUIxMeh6620E1tLsHOWJ6RrXW4HOROf2a3bQxJiLq8wsv8AH+SdrWFfOxEKUY9xJsMRESr/2Q=="
+      },
+      "imageAlt": "Abstract sea green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "rain",
+      "subtitle": "Where does it sit?",
+      "title": "Stress Map",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 7
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 8
+        }
+      ],
+      "category": "relaxation",
+      "description": "Breathe into each tight place, and let it loosen a little more on every long breath out.",
+      "durationMinutes": 8,
+      "id": "letting-go-of-stress-release",
+      "image": {
+        "src": "/content/images/c0cdd76d1aaa5fd8.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQFBgf/xAAeEAACAgIDAQEAAAAAAAAAAAAAAQIDBREEEiExkf/EABgBAAIDAAAAAAAAAAAAAAAAAAEDAgQF/8QAGBEBAQADAAAAAAAAAAAAAAAAAQACERL/2gAMAwEAAhEDEQA/AMtVjaZcT2K3oxedxjquk1Hw28MjxlBR7P8ACsy93GureprZXFGyjNLn8qZJ6Bczqr7PTAzc3uu+v31kW+Cf3YBAkFHVcQAGN//Z"
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "ocean",
+      "subtitle": "Let the exhale do the work",
+      "title": "Release on the Out-Breath",
+      "tone": "relaxation"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "anxiety",
+      "description": "Give your worries a set time and place, so they do not need to follow you around all day.",
+      "durationMinutes": 8,
+      "id": "letting-go-of-stress-worry-time",
+      "image": {
+        "src": "/content/images/85c54b1c908534ec.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAAAAUGAQMEB//EAB8QAAICAgIDAQAAAAAAAAAAAAECAAMEEQUhEhNRcf/EABcBAQEBAQAAAAAAAAAAAAAAAAMBAgX/xAAYEQEAAwEAAAAAAAAAAAAAAAAAAQIRIf/aAAwDAQACEQMRAD8A8nxFqNQ6G51UYVljbRTqY4TGRnX2AkS7024NNAUKQdfI+uJbYVcYjKNERJy7KxjYdKdfkS6Lqs8VYy60ZLG1yezETJpamJ8j3ERKN//Z"
+      },
+      "imageAlt": "Abstract sea green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "pad",
+      "subtitle": "A place to put it",
+      "title": "Worry Time",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "anxiety",
+      "description": "Rather than pushing a feeling away, let awareness grow wider than it, until it has room to move.",
+      "durationMinutes": 10,
+      "id": "letting-go-of-stress-room",
+      "image": {
+        "src": "/content/images/ad12495a0b036b34.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQADAQAAAAAAAAAAAAAAAAYDBAUH/8QAJBAAAgIBAwIHAAAAAAAAAAAAAQIAAwQFBhETIhIhQUJRgZH/xAAXAQEBAQEAAAAAAAAAAAAAAAADAQIF/8QAFhEBAQEAAAAAAAAAAAAAAAAAAAEC/9oADAMBAAIRAxEAPwDzzTNtNZQr8eZm+u33r9JS6Bk4wxkDWIDx8zo3vQx7XQ/cdw9W2oZsF0PhIiUmX0Ose9P2JRIXT77Ao4adRLrD7jETJ9MbMxY8kxESjf/Z"
+      },
+      "imageAlt": "Abstract sea green gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "drone",
+      "subtitle": "Widening around the difficulty",
+      "title": "More Room",
+      "tone": "happiness"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "breathing",
+      "description": "A short, practical reset you can use anywhere: feet, breath, shoulders, and back to it.",
+      "durationMinutes": 5,
+      "id": "letting-go-of-stress-reset",
+      "image": {
+        "src": "/content/images/f5f12a4d72c73750.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAAAAUGAQIE/8QAIBAAAgEFAAIDAAAAAAAAAAAAAAECAwQFERITISIxkf/EABcBAAMBAAAAAAAAAAAAAAAAAAMEBQb/xAAYEQADAQEAAAAAAAAAAAAAAAAAAQIDMf/aAAwDAQACEQMRAD8AqeL8ErOKjBb0Zdq++kvRE4S/p0reKlFsnaOUtmvkpfhYikjPaRTYgmo6BrPI27k+VLQDq0KPKiiY+rPhLZKUakn9sASkq2dcPaAAYVfT/9k="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Noah Brandt",
+      "soundscape": "bowl",
+      "subtitle": "For the middle of a hard day",
+      "title": "The Two-Minute Reset",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "breathing",
+      "description": "Before changing anything, get to know your breath as it is: its pace, its depth, its pauses.",
+      "durationMinutes": 5,
+      "id": "breath-school-natural",
+      "image": {
+        "src": "/content/images/efe5a37d4ecb794b.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYEAQX/xAAfEAABBAICAwAAAAAAAAAAAAABAAIDBAURISMSFEL/xAAYAQACAwAAAAAAAAAAAAAAAAACBAEFBv/EABoRAQADAAMAAAAAAAAAAAAAAAACAxEBExT/2gAMAwEAAhEDEQA/APDxl+Fp7NJmLsb29TVOY6eB72+cmlTxmg6HRkbvSuZWYzkatTrrZB5RcyPrNtODHghFHaLzpmlM8DgrYbco+kRL8nYsFixIZSSUREA3/9k="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "bowl",
+      "subtitle": "Watching, not changing",
+      "title": "The Natural Breath",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "breathing",
+      "description": "Let the breath drop down into the belly, so the shoulders can stay still and soft.",
+      "durationMinutes": 6,
+      "id": "breath-school-belly",
+      "image": {
+        "src": "/content/images/43e6fab3a036a561.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQFBgf/xAAiEAABAwIGAwAAAAAAAAAAAAABAAIDBBEFBhITFDEhUZH/xAAXAQADAQAAAAAAAAAAAAAAAAADBAUG/8QAGBEBAQEBAQAAAAAAAAAAAAAAAQACMRH/2gAMAwEAAhEDEQA/AMJk2ODbaJmC5XQKehpWxh+kWXOMGqoYmsu8Ba04zBw9Ilbe3tVzIcs/rar7S6swCYhoFkVBzI3XO4PqI55KK+8sHTPdpHlToyT2SiJYqGu1jAwbY7RERSWe3//Z"
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "ocean",
+      "subtitle": "Low and slow",
+      "title": "Belly Breathing",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 4
+        }
+      ],
+      "category": "breathing",
+      "description": "In, hold, out, hold, four counts each. A steadying pattern for focus under pressure.",
+      "durationMinutes": 6,
+      "id": "breath-school-box",
+      "image": {
+        "src": "/content/images/b540775e0813c4dd.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAUGBwQI/8QAIBAAAgICAgIDAAAAAAAAAAAAAQIAAwQFERIGMSFBYf/EABgBAAMBAQAAAAAAAAAAAAAAAAIDBQQG/8QAGREBAAMBAQAAAAAAAAAAAAAAAAECAxIh/9oADAMBAAIRAxEAPwDNdY3cA8yy6rGbItCrKLqMwJx2aaT4ZlY7OGexQf0yzW/jndM56dV2sNb9T74iS+yy8Y5R4tT0PuIUaEzk8+UMR6k9p77FYdWIiJkqqXTL5Npb5aIiGS//2Q=="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "forest",
+      "subtitle": "Four even sides",
+      "title": "Box Breathing",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 5
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 5
+        }
+      ],
+      "category": "breathing",
+      "description": "An even five in and five out, kept up long enough for the body to settle into it.",
+      "durationMinutes": 8,
+      "id": "breath-school-coherent",
+      "image": {
+        "src": "/content/images/0a8c7264f09e74bb.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAYEB//EACIQAAICAQMEAwAAAAAAAAAAAAABAgMEBhESBRMhMSIyUf/EABgBAAMBAQAAAAAAAAAAAAAAAAIDBQQG/8QAGhEAAgMBAQAAAAAAAAAAAAAAAAEDETECE//aAAwDAQACEQMRAD8AkasyvtxXgrtPVU2U8pbM49X1Fvb5FJ0fUk8WHHl4LHpeHPOGtL7PrpjkySSBF36gldY5t+wGuhTiOaJtejRVOX6wDEiqzVCctvswAGLo/9k="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "ocean",
+      "subtitle": "Finding your rhythm",
+      "title": "Coherent Breathing",
+      "tone": "activities"
+    },
+    {
+      "breathPattern": [
+        {
+          "label": "Breathe in",
+          "seconds": 4
+        },
+        {
+          "label": "Hold",
+          "seconds": 7
+        },
+        {
+          "label": "Breathe out",
+          "seconds": 8
+        }
+      ],
+      "category": "sleep",
+      "description": "The long, slow out-breath that helps the body wind down. Best done lying down, lights low.",
+      "durationMinutes": 8,
+      "id": "breath-school-four-seven-eight",
+      "image": {
+        "src": "/content/images/4aa9238227f6d0a9.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAAAAIEAwYH/8QAHRAAAgICAwEAAAAAAAAAAAAAAAECAwQxERIhUf/EABgBAAIDAAAAAAAAAAAAAAAAAAEDAgQF/8QAGBEBAAMBAAAAAAAAAAAAAAAAAAECERL/2gAMAwEAAhEDEQA/AOE0YcnWpIvU40ox5ZHDza4UxUuSxLPpkvGbtMIlHqDE8qtvxgb1ANfVkumydbf0ApVTWYa2ABoP/9k="
+      },
+      "imageAlt": "Abstract midnight indigo gradient with soft glowing light",
+      "inLibrary": false,
+      "isDailyGoal": false,
+      "isSleep": false,
+      "narrator": "Ines Moreau",
+      "soundscape": "night",
+      "subtitle": "Four, seven, eight",
+      "title": "Breathing for Sleep",
+      "tone": "relaxation"
     }
   ],
   "programs": [
     {
       "author": "Ava Lindqvist",
       "description": "Six short practices that move from connection and gratitude through forgiveness to the day ahead. Take one a day, in order, or return to whichever you need.",
+      "featured": true,
       "id": "six-phase",
       "image": {
         "src": "/content/images/2052a7eac4cc332e.jpg",
@@ -1215,6 +2552,7 @@
     {
       "author": "Ines Moreau",
       "description": "A week of wind-downs for nights when sleep will not come. Each one is a little longer and a little quieter than the last.",
+      "featured": true,
       "id": "sleep-mastery",
       "image": {
         "src": "/content/images/7f3a4a0a867b09f2.jpg",
@@ -1238,6 +2576,7 @@
     {
       "author": "Noah Brandt",
       "description": "Five practices for anxious moments: noticing what is there, grounding in the body, and letting a wave of worry pass on its own.",
+      "featured": true,
       "id": "steady-mind",
       "image": {
         "src": "/content/images/2ef9ffe3efb56a62.jpg",
@@ -1259,6 +2598,7 @@
     {
       "author": "Ava Lindqvist",
       "description": "Four ocean-paced relaxations, from the shoreline out to open sea and back, for making room when everything feels tight.",
+      "featured": true,
       "id": "open-water",
       "image": {
         "src": "/content/images/24b716a2f5423bf8.jpg",
@@ -1275,12 +2615,151 @@
         "open-water-return"
       ],
       "title": "Open Water"
+    },
+    {
+      "author": "Noah Brandt",
+      "description": "Five first steps for anyone new to meditation: arriving, breathing, feeling the body, watching thoughts, and taking the calm into an ordinary day.",
+      "featured": false,
+      "id": "calm-foundations",
+      "image": {
+        "src": "/content/images/96136447a512c8e4.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQEAAwAAAAAAAAAAAAAAAAYEAgUH/8QAIBAAAgEEAgMBAAAAAAAAAAAAAQIAAwQFEQYhEjFxkf/EABgBAAMBAQAAAAAAAAAAAAAAAAABAwIF/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAECE//aAAwDAQACEQMRAD8AnuP4i3a2BdATN2Q4/Qq2zeFMA6nXYjJi30jEalOMnTe30hGzLWOHNvIshhKlK6dAD1Etsgq1LpmIHcQb6pcr37P7NVvUqKNB219iI0nJncsSWYn7ERA3/9k="
+      },
+      "level": "Beginner",
+      "scrim": "rgba(14,34,40,0.5)",
+      "sessionIds": [
+        "calm-foundations-arrive",
+        "calm-foundations-breath",
+        "calm-foundations-body",
+        "calm-foundations-thoughts",
+        "calm-foundations-everyday"
+      ],
+      "title": "Calm Foundations"
+    },
+    {
+      "author": "Ava Lindqvist",
+      "description": "Five sessions for a scattered mind. Train attention in short, kind repetitions, then carry it into the work that matters.",
+      "featured": false,
+      "id": "focus-reset",
+      "image": {
+        "src": "/content/images/b0d67c1bb5cdc568.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQADAQAAAAAAAAAAAAAAAAQCBQYH/8QAIhAAAgEDBAIDAAAAAAAAAAAAAAECAwQREhMhIgUxYZGh/8QAFgEBAQEAAAAAAAAAAAAAAAAABAMF/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAIRAf/aAAwDAQACEQMRAD8A848FdW0aKjVgjZXVa023tpZZx1vNKC7YL7eWrGZfpuzxh2vwnylwDOGnSuV9gvguuTpei2gvlgBpPtdTj19sAFB3/9k="
+      },
+      "level": "All levels",
+      "scrim": "rgba(10,26,60,0.52)",
+      "sessionIds": [
+        "focus-reset-single-point",
+        "focus-reset-wandering",
+        "focus-reset-before-work",
+        "focus-reset-long-hold",
+        "focus-reset-close"
+      ],
+      "title": "Focus Reset"
+    },
+    {
+      "author": "Ines Moreau",
+      "description": "Five gentle practices in self-compassion: meeting difficulty with warmth instead of criticism, one small step at a time.",
+      "featured": false,
+      "id": "kind-to-yourself",
+      "image": {
+        "src": "/content/images/8fb45eec36ff9b8c.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAUEA//EACAQAAICAwABBQAAAAAAAAAAAAABAgMEBRExBhIhImH/xAAYAQADAQEAAAAAAAAAAAAAAAADBAUBBv/EABkRAAMBAQEAAAAAAAAAAAAAAAABAgMRIf/aAAwDAQACEQMRAD8A4XVx9q+DDlU1Ot9SMVnqGPOOvx+knYb1Ti1GLRNnOjqL0nhP2dVay5JJcBEy9hKd8pAcUvhPdelzKXJPySsptJgGSG0I9j+7AAcVZ//Z"
+      },
+      "level": "Beginner",
+      "scrim": "rgba(54,20,40,0.48)",
+      "sessionIds": [
+        "kind-to-yourself-hand-on-heart",
+        "kind-to-yourself-inner-voice",
+        "kind-to-yourself-common-ground",
+        "kind-to-yourself-what-you-need",
+        "kind-to-yourself-warm-wishes"
+      ],
+      "title": "Kind to Yourself"
+    },
+    {
+      "author": "Ava Lindqvist",
+      "description": "Five short starts to the day. Wake the body, set one intention, and step out the door steadier than you woke up.",
+      "featured": false,
+      "id": "better-mornings",
+      "image": {
+        "src": "/content/images/6039a3a68ef1168b.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYEAwX/xAAfEAABBAIDAQEAAAAAAAAAAAABAAIDBAURBhIxIWH/xAAWAQEBAQAAAAAAAAAAAAAAAAAEAgb/xAAcEQACAgIDAAAAAAAAAAAAAAAAAQIDESEUImH/2gAMAwEAAhEDEQA/AK6tVjfUDiANhS+drPh7OZ4s0HLQK7WGN2h+rlc5FXlrvD2u8QI1yTNC7tZyeDLfLXkE+IpbIZRhtydN62iaqg/K9NlaeQxDZWfI2ZRCdORFSWw8n1JKV7nSEk/UREoKf//Z"
+      },
+      "level": "Beginner",
+      "scrim": "rgba(60,36,10,0.46)",
+      "sessionIds": [
+        "better-mornings-waking",
+        "better-mornings-intention",
+        "better-mornings-energy",
+        "better-mornings-gratitude",
+        "better-mornings-step-out"
+      ],
+      "title": "Better Mornings"
+    },
+    {
+      "author": "Noah Brandt",
+      "description": "Five practices for a body and mind under pressure: find where stress lives, release it, and build a little more room for the next hard day.",
+      "featured": false,
+      "id": "letting-go-of-stress",
+      "image": {
+        "src": "/content/images/07dd6b6253ddc917.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAQDBv/EAB8QAAIDAQABBQAAAAAAAAAAAAABAgQRAzEFEyEikf/EABgBAQADAQAAAAAAAAAAAAAAAAIBAwQF/8QAFxEBAQEBAAAAAAAAAAAAAAAAAAESAv/aAAwDAQACEQMRAD8AlqWK75JSzTK3eqwi4pLTjpeoxS+vQm6Xoy3Zr9MuXHkX3rfJ2ZZmA5m1aXvPJAeTnLDpJrfkh69Jb5AHFkZOTb8gAk3/2Q=="
+      },
+      "level": "All levels",
+      "scrim": "rgba(16,40,30,0.5)",
+      "sessionIds": [
+        "letting-go-of-stress-map",
+        "letting-go-of-stress-release",
+        "letting-go-of-stress-worry-time",
+        "letting-go-of-stress-room",
+        "letting-go-of-stress-reset"
+      ],
+      "title": "Letting Go of Stress"
+    },
+    {
+      "author": "Ines Moreau",
+      "description": "Five lessons in breathing, from simply noticing the breath to the classic patterns for calm, focus and sleep.",
+      "featured": false,
+      "id": "breath-school",
+      "image": {
+        "src": "/content/images/79b3152cb516b686.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAAAAQGAQIFB//EAB4QAAICAgMBAQAAAAAAAAAAAAABAgMFEQQSIhMh/8QAGAEAAwEBAAAAAAAAAAAAAAAAAQIDBAb/xAAXEQEBAQEAAAAAAAAAAAAAAAAAAQIS/9oADAMBAAIRAxEAPwDzTFcal8SLcVvRm2qtN6iitYvOfKtQm/xHQsy1c4+ZI6DG82IWN7Yx7sEJ8mMnvsB+oCr1kusAw5OlQXkAFgf/2Q=="
+      },
+      "level": "All levels",
+      "scrim": "rgba(20,24,58,0.5)",
+      "sessionIds": [
+        "breath-school-natural",
+        "breath-school-belly",
+        "breath-school-box",
+        "breath-school-coherent",
+        "breath-school-four-seven-eight"
+      ],
+      "title": "Breath School"
     }
   ],
   "stories": [
     {
       "category": "sleep",
+      "cover": {
+        "src": "/content/images/780b4569ebd29892.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAcEBgX/xAAjEAACAQQBBAMBAAAAAAAAAAABAgMABAURQRITITEGBwix/8QAFwEAAwEAAAAAAAAAAAAAAAAAAgMEBf/EAB0RAAEEAgMAAAAAAAAAAAAAAAABAgMxESEEEhP/2gAMAwEAAhEDEQA/AMX5yiuJMzlVt3EbmAeSON1as3b34wuQY3iyJ2HUqefH9qNfSNzcYG8v7uaHfch6IxvXPNdi2emOLmM0oKzs7dLsCPfFWy8Zz5c0gDZEa3BB0+NXsgLN0IST4J80rvma1kYs8sSMeOqlaHpCmsiNkzkz+Qs2litZu0rr0kr71WOHKXsYWMXEhQjeid0pU71XsElHs2bd6EPIAW37pSlWNoStn//Z"
+      },
       "description": "A long night watch, and nothing at all going wrong",
+      "featured": true,
       "id": "lighthouse",
       "image": {
         "src": "/content/images/4b8af38036392edb.jpg",
@@ -1289,6 +2768,20 @@
         "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAcEBf/EACUQAAICAgEDAwUAAAAAAAAAAAECAAMEEQYFEiEiIzFBcXKBgv/EABcBAAMBAAAAAAAAAAAAAAAAAAECAwT/xAAbEQACAgMBAAAAAAAAAAAAAAAAARETAhIUUf/aAAwDAQACEQMRAD8AsmVyFq2PcKl/uYL+UsFIpVC2vBY+mQvlfKLcrIFeDeKgh9S78n9zFXzPq+PUajWltRHap38QaNuA3KJZZr+U9cewmpcRFHjR8xIZT1bKVffyblsJ2QHiUqXpHoyJ/g5FlxYu22+d/WdEO7U7LsPsYiOZ0ZiGYktZYT+UREIp/9k="
       },
       "imageAlt": "A slow wave rolling across open water at dusk",
+      "narration": {
+        "duration": 105.4,
+        "paragraphStarts": [
+          0.8,
+          16.83,
+          31.4,
+          44.83,
+          60.15,
+          69.65,
+          87.58,
+          96.78
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/2f96e39da999f0feeaaef49ad8e6049e41118995.mp3"
+      },
       "paragraphs": [
         "The keeper climbs the stairs at dusk, the way she has for eleven years. There are ninety-four steps. She does not count them any more, but her legs still know where the landing is, and they slow a little before it without being asked.",
         "At the top, the lamp room is cold and smells faintly of brass polish. She sets down her tea. The glass is already clean. She cleans it anyway, in slow circles, because the doing of it is the point.",
@@ -1305,7 +2798,14 @@
     },
     {
       "category": "sleep",
+      "cover": {
+        "src": "/content/images/a9aca775efd6f531.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAIHCAME/8QAIRAAAQUAAQUBAQAAAAAAAAAAAQACAwQRBQYSEyExMlH/xAAWAQEBAQAAAAAAAAAAAAAAAAADBAL/xAAbEQACAgMBAAAAAAAAAAAAAAAAARExAgQVIf/aAAwDAQACEQMRAD8Atk9VcW3y7aaRH+ifXaubOquPMbpBbYY2nC7+LP0PVjbDZ2z1mkzZ3nfuKT+d8URrCJzY3nSNTrSUwyR7mUSjRFXqTi7EXfHbY4bmos9Sc8+i/wANcmJg99u6i1zp9TM9BrxordtiRpGFe9tmVxbrvnxEVjsmdErdiR85Lj7wIiJMaDdn/9k="
+      },
       "description": "Crossing dark water with nowhere to be until morning",
+      "featured": true,
       "id": "night-ferry",
       "image": {
         "src": "/content/images/7f3a4a0a867b09f2.jpg",
@@ -1314,6 +2814,20 @@
         "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAAAAUHAQIEBv/EACQQAAEEAAUFAQEAAAAAAAAAAAEAAgMEBQYREjEHIVFhcSJE/8QAGAEAAgMAAAAAAAAAAAAAAAAAAwUAAQT/xAAdEQACAgEFAAAAAAAAAAAAAAAAAQIDBBETITFB/9oADAMBAAIRAxEAPwCtrGULDJSBGSfi6K+Rb0387+NeFYeP9T8vUsQmFakyaFo/Dy7uXfPC8jiHWKe0Y2V4460Yf32M13D2mcch+oDKmhdNkFPlEwyFjw4uHOgRS2JdR3SWd9epW2Fo58oj79Znda14ZUfs9z7WQdURLgpqSiIqIf/Z"
       },
       "imageAlt": "The Milky Way arcing above a dark mountain range",
+      "narration": {
+        "duration": 111.4,
+        "paragraphStarts": [
+          0.8,
+          16.52,
+          30.03,
+          47.88,
+          56.5,
+          66.88,
+          80.03,
+          98.3
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d87d11c845ef6cbff9c5553af34eeac87b85ec17.mp3"
+      },
       "paragraphs": [
         "The ferry leaves at ten, and it is never full. There are perhaps a dozen of you, spread out across a cabin built for two hundred, each with a whole row of seats and no reason to speak.",
         "The engine settles into its note about a minute after leaving. It is a low sound, more felt than heard, and it does not change for the rest of the crossing.",
@@ -1330,7 +2844,14 @@
     },
     {
       "category": "sleep",
+      "cover": {
+        "src": "/content/images/3621cd1a8ca2c3b3.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYEBwL/xAAkEAACAgEDAwUBAAAAAAAAAAABAgADBAUGEQcSIRQiMUFRYf/EABYBAQEBAAAAAAAAAAAAAAAAAAMFBP/EACERAAEDBAIDAQAAAAAAAAAAAAEAAgQDBRESgbEhMnHB/9oADAMBAAIRAxEAPwDPRsHLyCWxmreosQGY8TXd09yGC+kdXI8OGPHBkxo/UnNtdarq0tdj9ntltVvR3wKidG7Az9rXLdDq3GZSIGAeUdG0Q6wyCR+KYydpZWPe9VhQMp4PmJ51TqClObYi1qAP0cxHbLmuGdQidbYTTjYri+Jc6sQD9TrfT5zqW1syjL9yV2AqR4Px+xEKX4aPo7WqP7cHpR2s6fQuo2gBuB/YiJUaBgKI9x2K/9k="
+      },
       "description": "An unhurried afternoon through fields and small stations",
+      "featured": true,
       "id": "slow-train",
       "image": {
         "src": "/content/images/7f0a49f49fe9bb04.jpg",
@@ -1339,6 +2860,20 @@
         "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAMEBgL/xAAiEAABBAICAgMBAAAAAAAAAAABAAIDBAYRBSESMSJRYXH/xAAWAQEBAQAAAAAAAAAAAAAAAAAFAwL/xAAdEQADAAICAwAAAAAAAAAAAAAAARECBAMFEzFB/9oADAMBAAIRAxEAPwCbH8JdacGkNB/SrvM4xT4hnlbla0Do67KyWI5vHxlasyUunlBJke52v5pRZHnlmzZL4alZwBOzJ3sIJdjteSfBl6GusK2dzW+JEjgHyuAPsNRY6zlL5JS41K7T9Nb0iSXYZwPelw32Y2KaRjfi4jQUjrUpj2XbRFFpU3WUH2JPL2iIqxE6z//Z"
       },
       "imageAlt": "Open fields under a low afternoon sun",
+      "narration": {
+        "duration": 90.5,
+        "paragraphStarts": [
+          0.8,
+          8.07,
+          20.85,
+          34.45,
+          48.3,
+          59.25,
+          69.38,
+          81.7
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/0f77e8c3f1e858374cb8760777d943267dad12f5.mp3"
+      },
       "paragraphs": [
         "It is the slow service, the one that stops everywhere, and you have taken it on purpose.",
         "The carriage smells of warm dust and old upholstery. Sunlight comes through the window in a long bar and lies across the seat beside you, and you can feel it through your sleeve.",
@@ -1355,7 +2890,14 @@
     },
     {
       "category": "relaxation",
+      "cover": {
+        "src": "/content/images/ade4f57228503e4c.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYDBQf/xAAnEAABAwMCBAcAAAAAAAAAAAABAAIDBBESBUEGEzFhFSEiJFKBkv/EABkBAAIDAQAAAAAAAAAAAAAAAAQHAAIDBv/EACQRAAEDAgUFAQAAAAAAAAAAAAEAAgQDEQYSFGHBEyJRUnGR/9oADAMBAAIRAxEAPwCEoadj6hrZHYs3I2V/p+hRO0pk1PNzOxFlCsju4EXurbhZz3SRUwBxEeZP2pivthg78FCYFkBk91jY5eQtPDjuEVQ6nBN0Sv67k39YF5HS0kfW7+vyXcoDJDny5pW+i3k7uiLo5Miq8We4kfSgqUCLSOZlJoOzQOFjLPU5n3U/7REVMzvK301H0H4F/9k="
+      },
       "description": "Wet streets, warm coat, nowhere in particular to be",
+      "featured": true,
       "id": "rain-walk",
       "image": {
         "src": "/content/images/8b76f0a26255aa76.jpg",
@@ -1364,6 +2906,20 @@
         "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGgABAAIDAQAAAAAAAAAAAAAAAAUGAQMHCP/EACMQAAEEAgEEAwEAAAAAAAAAAAEAAgMEERIFBiExMgcTYXH/xAAXAQADAQAAAAAAAAAAAAAAAAACBAUD/8QAIBEAAgAGAgMAAAAAAAAAAAAAAAECAwQFEjERMkFxof/aAAwDAQACEQMRAD8A7Kziq9dgMuG5UbyNyk6GWCrcfHK0HOjDlVOt8gSS9tw7+hSNbq5pfsWQ7HycDKRmV8a2izJtEvcLKrO2V8zzIbMhz7Hsiu46nhkGwigd+6hEs6/2PK3vjqvh5irWrB2P3SDYknBWxskpf3mlz59yiLdk1NmWcpdqgxw2ZGsznGyIiHFBZxLyf//Z"
       },
       "imageAlt": "Layered hills under low grey cloud",
+      "narration": {
+        "duration": 89.7,
+        "paragraphStarts": [
+          0.8,
+          9.35,
+          21.05,
+          32.5,
+          42.53,
+          55.93,
+          67.95,
+          76.05
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/9bfb771cf26f7cf38c34c984302a0c49174dbe9a.mp3"
+      },
       "paragraphs": [
         "It has been raining since before you woke, the steady kind that has settled in and made itself comfortable.",
         "You go out into it anyway, coat buttoned, hood up, hands in pockets. Within a minute your shoulders come down from where they had been sitting all morning.",
@@ -1380,7 +2936,14 @@
     },
     {
       "category": "mindfulness",
+      "cover": {
+        "src": "/content/images/00131436749550e7.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAcFBAb/xAAlEAABBAIBBAEFAAAAAAAAAAABAAIDBAUREgYTMVEhFCIyYpH/xAAZAQACAwEAAAAAAAAAAAAAAAACBAADBQb/xAAcEQACAwADAQAAAAAAAAAAAAAAAgEDERIxYVH/2gAMAwEAAhEDEQA/AKp1nghlxFKybTmM/oUpzuIpVBIX2X8x8Bo87Vbw0s8uOY28W/UBv2gH416Uy6glGbszk1xDLE9zeQ8aHtJU2tO6S2v4eBnr1RIRJO8u/Xwi1W4us7Zs3e3Jv8QNoj2fQoqjwqdKxNAXlsr3bPhx2Fwy12VKtswFze87m8b3soiw3ZuXZ0SIudGMyQSDk+KIu98AiIq5adGIVc6P/9k="
+      },
       "description": "Ten quiet minutes before the day starts asking",
+      "featured": true,
       "id": "morning-kitchen",
       "image": {
         "src": "/content/images/e81163d541b30e9e.jpg",
@@ -1389,6 +2952,20 @@
         "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAQFBgcD/8QAIxAAAQQABQUBAAAAAAAAAAAAAgABAwQFBgcRIRIxYWKRMv/EABcBAAMBAAAAAAAAAAAAAAAAAAIEBQP/xAAgEQACAQIHAQAAAAAAAAAAAAABAgADEQQFEiExUfAV/9oADAMBAAIRAxEAPwDo+F6dYUMbbubP5ZTZdP6HS7A7fFk8pa0UbkojcpHGT+3C9s56uR1hIMNrmJP2LbdLfRcNYg6uvbQ1yXDtTuANPft5ZyZAg6u4fEXD7mo+aJ7ByRYlaECfgWDsifGKqyQ2T4O/EzVe48bStHDCPT+XYeWVdNiFond3nPnyiJakoJN5TrswUAGSKjHLCxnLLu/siIiPMzXif//Z"
       },
       "imageAlt": "Sun cresting a line of rolling hills",
+      "narration": {
+        "duration": 95,
+        "paragraphStarts": [
+          0.8,
+          8.45,
+          22.63,
+          31.9,
+          41.75,
+          55.3,
+          65.88,
+          81.03
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/7377b0d8e7e11bfea054d2f7432d7bcbb726f167.mp3"
+      },
       "paragraphs": [
         "You are up before you needed to be, and the kitchen is still dark at the edges.",
         "The kettle goes on. It starts quietly, almost politely, and then works itself up into that full rolling sound before it clicks off and the room is silent again.",
@@ -1405,7 +2982,14 @@
     },
     {
       "category": "relaxation",
+      "cover": {
+        "src": "/content/images/f0dbbf51c50f5243.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAYFB//EACMQAAIBBAICAgMAAAAAAAAAAAECAwAEBREGEiExEyMyUeH/xAAWAQEBAQAAAAAAAAAAAAAAAAAEAwD/xAAgEQEAAgEDBQEAAAAAAAAAAAABAAMCBAUREiExQXGB/9oADAMBAAIRAxEAPwDasuEtYJHEkaEL4DKfdUNvxQRW7T3kqwxoNkk1yXivKruCK1gaYzKGP5PuqPl2fyGUw5gEwgiGuy9t9qLdutpgY18D8hKtrp63KwX9mpPzHitlK0BSSYr4L79mlchGGaZ3b5ozptb7a3Siuss92MYaOvjtgSfwOYuMeJFiSBwxB+xO2iP1VBHzLJbZTFZkE78w/wBpSlIPmSFk9eZO5e4diwBJ3oDQpSlTMSZXmf/Z"
+      },
       "description": "Long grass, low branches, and an afternoon with no edges",
+      "featured": true,
       "id": "old-orchard",
       "image": {
         "src": "/content/images/665f8d0040931e05.jpg",
@@ -1414,6 +2998,20 @@
         "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAUGBAf/xAAiEAABBAEEAwEBAAAAAAAAAAACAAEDBBEFBhIhEyIxFHH/xAAYAQACAwAAAAAAAAAAAAAAAAADBAECBf/EABoRAAIDAQEAAAAAAAAAAAAAAAABAhExEkH/2gAMAwEAAhEDEQA/AMntOuxi0FoHCObrktBuPaHggpzUGeKt5OT8xw+FX2vt1q0Q2HtO88LZCImyJY+5Whk1eXWLRjI4SBXDriPQksWMO49DLfh5oFuGHMYDIAi+MOOEXbYuRFYkeTTTnLk/uw/UV03Wg2i7rc0uj3bMNKU2AydvZ84/iibD1CxFq9iJiYo5DISYu8oifcUsRMMK1NjtfokOWQXaYhwDszYZEREpAXp//9k="
       },
       "imageAlt": "Sunlight breaking through the canopy of a broad old tree",
+      "narration": {
+        "duration": 88.1,
+        "paragraphStarts": [
+          0.8,
+          8.05,
+          21.53,
+          30.58,
+          41.35,
+          53.23,
+          63.8,
+          76.05
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/1e821e9a114a4fdc1f450934362e665659c2c015.mp3"
+      },
       "paragraphs": [
         "The orchard has not been properly tended in years, and it is all the better for it.",
         "The grass is long and goes over at the top, and it drags gently at your ankles as you walk in. The trees are old, low-branched, leaning in whatever direction the wind settled them.",
@@ -1426,6 +3024,456 @@
       ],
       "soundscape": "forest",
       "title": "The Old Orchard",
+      "voice": "Ava Lindqvist"
+    },
+    {
+      "category": "sleep",
+      "cover": {
+        "src": "/content/images/f47f1efbcb17a1bd.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAQGA//EACMQAAIBBAICAgMAAAAAAAAAAAECAwAEBRESIQYxE0FRgZH/xAAYAQACAwAAAAAAAAAAAAAAAAABAgAFBv/EACERAAEDAwQDAAAAAAAAAAAAAAEAAgQhMZEDERPRFGFi/9oADAMBAAIRAxEAPwCNMEwciSRYyD9gndX2+DUuAk49d7U+65YOPKtjw0CXEk298GA0v9rS4bK5G3QpfWCJNvSl4yN/utOZRO4aa4VEIQu62VFFg7jh1ExH51Sps15pnLfISRfGiceuKDqlDmkfOT0n8aP7wO1X41krl7aJ3YFiCd6rUplLmSMJIUZR6BXdKU+oxpFQn03uBoVFcMs8rSSwxM5++FKUqBo2siSV/9k="
+      },
+      "description": "A quiet evening with the roads closed and nowhere to go",
+      "id": "snowed-in-cabin",
+      "image": {
+        "src": "/content/images/030f3af63c24fefa.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAMEBQf/xAAhEAACAgIBBAMAAAAAAAAAAAAAAQIDBBETBRIhMSJSgf/EABcBAAMBAAAAAAAAAAAAAAAAAAABAwb/xAAWEQEBAQAAAAAAAAAAAAAAAAAAARH/2gAMAwEAAhEDEQA/APJMPEr4I7ivRnzMWEXtI62FZj8EU7Enoh1F1OPwnF/poZJiDhOtb9AvuH2QFkDJRZLt1so25Ly2AShpqKAAw//Z"
+      },
+      "imageAlt": "Abstract midnight indigo gradient with soft glowing light",
+      "narration": {
+        "duration": 90.3,
+        "paragraphStarts": [
+          0.8,
+          14.73,
+          26.58,
+          37.92,
+          48.78,
+          59.83,
+          69.18,
+          79.6
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/5f4a324564baa0e96698f3a805ccf8c3db6a3b15.mp3"
+      },
+      "paragraphs": [
+        "The snow started after lunch and has not stopped since. By four the road was gone. By five the radio said what you already knew: nothing is moving tonight, and nobody is expected to.",
+        "The stove ticks as it warms. You feed it one more log and close the little iron door, and the orange light comes through the gaps in thin lines across the floor.",
+        "Outside the window there is only white, falling straight down, in no hurry. No wind. Just the snow, settling on the snow that is already there.",
+        "The kettle has been filled. The blankets are on the chair. Everything that needed doing was done hours ago, and there is nothing left on the list.",
+        "Sound goes strange in weather like this. The world outside has gone soft and close, as if someone has laid a thick quilt over the whole valley.",
+        "You sit with your feet toward the stove. The heat finds your socks first, then your ankles, then works its way slowly up.",
+        "Somewhere out there the plough will come, tomorrow or the day after. Until then the cabin is the whole world, and the whole world is warm.",
+        "The snow keeps falling. The fire keeps burning. Neither of them needs you to watch, so after a while you stop watching."
+      ],
+      "soundscape": "night",
+      "title": "The Snowed-In Cabin",
+      "voice": "Ava Lindqvist"
+    },
+    {
+      "category": "sleep",
+      "cover": {
+        "src": "/content/images/30473933425ab498.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAQFBgMH/8QAIxAAAQQBBAIDAQAAAAAAAAAAAQACAwQRBRMhMRJBBhQi0f/EABcBAQEBAQAAAAAAAAAAAAAAAAUDAAT/xAAeEQACAgICAwAAAAAAAAAAAAABEQADAgQSIRMxUf/aAAwDAQACEQMRAD8A8c0tlaWdhkDnQ+x0QtDZo6UKzfpiV8p7yeAk8cYrQMZWiikccu/WWj+Lhpem2HzWNmUO22mQNaewPQTmvteUcsglCdigVFAtyRNpdcuaa5eGeIz5959oox+TMhwyWtLG8dtcOUXQNqpe5E61vyZmC3Pthm47x7xlWcOpWaVd0sD8P65RFHLqsqYd2Byv1DUrFuxuzFheQBw1EREqLz//2Q=="
+      },
+      "description": "Moored boats, slack ropes, and water that barely moves",
+      "id": "harbour-at-night",
+      "image": {
+        "src": "/content/images/4068413d3bf6f7be.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQADAQAAAAAAAAAAAAAAAAQCAwUH/8QAHRAAAgIDAQEBAAAAAAAAAAAAAAECAwQREiETMf/EABgBAAMBAQAAAAAAAAAAAAAAAAACAwEF/8QAFREBAQAAAAAAAAAAAAAAAAAAAAH/2gAMAwEAAhEDEQA/APBYVL6eo6lWJVKKbiidKt+7Mlkqta6O7JEE+Xjwjc0kgab7+7G9gSyNVx/GS5CXQA1CfSABMP/Z"
+      },
+      "imageAlt": "Abstract midnight indigo gradient with soft glowing light",
+      "narration": {
+        "duration": 103.3,
+        "paragraphStarts": [
+          0.8,
+          15.15,
+          28.05,
+          36.1,
+          51.08,
+          64.28,
+          76.93,
+          89.35
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/ef8afcec2fb45dd098a5ba721bc60896e2e6a0c4.mp3"
+      },
+      "paragraphs": [
+        "The last boat came in an hour ago. Its crew tied up, coiled their ropes, and walked off along the quay without looking back. Now the harbour belongs to nobody.",
+        "The water inside the wall is almost flat. It lifts a little against the hulls and lets them down again, so gently that the boats seem to be breathing.",
+        "A rope creaks somewhere. Then another, further off. Then nothing for a long time.",
+        "The lamps along the quay make long yellow lines across the water. When a ripple comes through, the lines break into pieces, and then, slowly, put themselves back together.",
+        "Out past the wall the open sea is doing what it does. In here, none of it arrives. The wall takes it all, and passes on only the softest part.",
+        "A gull settles on a mast, shifts its weight once, and tucks its head down. It has found the right place for the night. It does not need a better one.",
+        "The tide is turning, though you would never know it. It will turn again before morning, and again after that, without anyone having to decide.",
+        "Lift, and settle. A rope creaks. The lamps hold their lines on the water. Everything in the harbour is tied to something, and everything is still."
+      ],
+      "soundscape": "ocean",
+      "title": "The Harbour at Night",
+      "voice": "Noah Brandt"
+    },
+    {
+      "category": "sleep",
+      "cover": {
+        "src": "/content/images/712295bdf6bfbf19.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQFBgf/xAAhEAACAgICAgMBAAAAAAAAAAABAgADBAURMRJCBhMhcf/EABgBAAMBAQAAAAAAAAAAAAAAAAMEBQAC/8QAHxEAAgEEAgMAAAAAAAAAAAAAAAEEAgMREhQhMUJS/9oADAMBAAIRAxEAPwDkmhxdXXXRfkWst5/HVuhN7qsiupHyKHZsdB2D3Mf8yowqqqrdfW/1FR5WN3zK7V7Twx1RrWC+yjowsCVqnusGmxtnih5LXZ77IszbGrLKpP4Ilc+ZjMxPkp/sRpyaX7C3Fq+SCuff9RRmDoPVhyJKwqarF4NaDzI54ERJ1xIoW2zRX/HdaGHFHqD3EROEug78n//Z"
+      },
+      "description": "A narrow bed under the slope of the roof, and a long steady rain",
+      "id": "attic-rain",
+      "image": {
+        "src": "/content/images/560e7fd8b0801e0e.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAQFB//EAB0QAAIDAAIDAAAAAAAAAAAAAAABAgMRBBITISL/xAAYAQACAwAAAAAAAAAAAAAAAAABAwAEBf/EABcRAQEBAQAAAAAAAAAAAAAAAAABAhH/2gAMAwEAAhEDEQA/AOIchGdyINpmxfKpx1bpBKVb1abuuUiMOxNTYKb1HyvAVrBbNjfUhn6bAHaRFY/tgARRf//Z"
+      },
+      "imageAlt": "Abstract midnight indigo gradient with soft glowing light",
+      "narration": {
+        "duration": 83.9,
+        "paragraphStarts": [
+          0.8,
+          11.58,
+          23.95,
+          34.5,
+          41.98,
+          53,
+          62.95,
+          73.1
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/e9b1a33a4d52dce559a1656f0550248383b4a81c.mp3"
+      },
+      "paragraphs": [
+        "The attic room is the smallest in the house, and the best. The ceiling slopes down so low over the bed that you could touch it without sitting up.",
+        "The rain arrived just after dark. At first a few heavy drops, far apart, each one its own small knock on the slates. Then more. Then all of them at once.",
+        "Now it is a single sound, wide and even, spread across the whole roof just above your head. It is very close, and it cannot reach you.",
+        "Downstairs, someone turns off the last light. The stairs creak once and are quiet.",
+        "The gutter fills and runs. You can hear it start somewhere at the far end of the house and travel all the way along, past your window, and down.",
+        "Your quilt is heavy and slightly cool, and it warms where you lie. You find the place where your feet are comfortable and leave them there.",
+        "The rain does not get louder. It does not get softer. It has settled into exactly what it is going to be for the rest of the night.",
+        "There is the roof, and the rain on it, and you under both. Nothing else needs to be listened to. Nothing else needs to be done."
+      ],
+      "soundscape": "rain",
+      "title": "Rain on the Attic Roof",
+      "voice": "Ines Moreau"
+    },
+    {
+      "category": "sleep",
+      "cover": {
+        "src": "/content/images/72f2630559cc3f54.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYEBQf/xAAmEAACAgIBAwIHAAAAAAAAAAABAgADBBEFBhITByEiMTJBQ1Fx/8QAFwEBAQEBAAAAAAAAAAAAAAAAAwUBBP/EAB4RAQACAgEFAAAAAAAAAAAAAAEAAgMRBQQSE3Gh/9oADAMBAAIRAxEAPwCwPA1eMeYutmvcdpnPyOArZHFdxbY+ntlZZ1fgWUCxVRv3szBndSYYrdUrVXZT2uPcKdfOdVeUy6fLTXtJOtxmITsufZA5HQuZfabKsR3U/feonWX1AyMIeC2qzIZfyAa3EG2ZXZqLXBjDSs8t4jmMwkUvYHrOhphuUld7rt1OjrURJXUgX1GxLqZLeRvDkfAf6sREMCYrP//Z"
+      },
+      "description": "A slow night under a turning sky, far from any town",
+      "id": "observatory",
+      "image": {
+        "src": "/content/images/4c914a6fd6713329.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQEAAwAAAAAAAAAAAAAAAAIDAQQH/8QAHRAAAgICAwEAAAAAAAAAAAAAAAECAwQREhNBYf/EABcBAQEBAQAAAAAAAAAAAAAAAAADAQX/xAAWEQEBAQAAAAAAAAAAAAAAAAAAARH/2gAMAwEAAhEDEQA/APIMXGq6U3FGNlNXJ6SInlJV8YyR1JWz8Z37iCcmqHa9IGM23LewTsgtwW2Q4L6AK1wooAAf/9k="
+      },
+      "imageAlt": "Abstract midnight indigo gradient with soft glowing light",
+      "narration": {
+        "duration": 86.3,
+        "paragraphStarts": [
+          0.8,
+          12.55,
+          24.13,
+          31.15,
+          41.18,
+          51.4,
+          62.25,
+          74.53
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/95745baa73de941505316755e923eb7d5bce3f39.mp3"
+      },
+      "paragraphs": [
+        "The road up the hill ends at a gravel car park and a small white dome. Nobody else is here tonight. The caretaker left the key under the stone, as promised.",
+        "Inside, the dome is cool and smells of oil and old paper. You turn the handle and the roof opens with a long, low rumble, and there is the sky.",
+        "You do not need the telescope yet. You lie back on the bench and simply look.",
+        "There are more stars than you remember. The longer you look, the more there are, as if they are arriving one at a time to see who has come.",
+        "The sky is turning, very slowly. You cannot see it move, but if you wait, the bright star above the door edges across toward the hill.",
+        "There is no sound up here except the faint tick of the dome cooling, and once, far below, a dog in a farmyard, and then not even that.",
+        "Everything you can see has been there for a very long time and will be there a very long time after tonight. None of it is in a hurry. None of it is waiting for you.",
+        "The bench is hard and the blanket is warm. Above you the sky turns, star by star, toward a morning that is still a long way off."
+      ],
+      "soundscape": "drone",
+      "title": "The Hilltop Observatory",
+      "voice": "Ava Lindqvist"
+    },
+    {
+      "category": "relaxation",
+      "cover": {
+        "src": "/content/images/f0b4005034424931.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAcG/8QAJRAAAgEDAwQCAwAAAAAAAAAAAQIDAAQRBQYSBxMhYRQxIjJx/8QAFwEAAwEAAAAAAAAAAAAAAAAAAgMEBf/EAB4RAQACAgEFAAAAAAAAAAAAAAEAAgMhEQQSMTNB/9oADAMBAAIRAxEAPwDQ9N9u2FteJDfW3G4WHkGXz3Pf9qqP8RreYFJIkVSpLrgYx91Bdh7omi+MbsyTSLgiRT5UVTt5bpgjsrWC4LsJcOyDxyX3WZi6gwlj7JqlWuyT/cWlC+1Ey6ZZM1sFCBj45EZyR6pWe3NvGWfVCbQmCFVCqgfGMeqUkxicwW1efEzvT++nn1WyglYGN3GRiq71ZhTjYcRxye2Svj8cfVKVQVDu1H4vWyBardMt9IoSPCnH60pSl1NSSf/Z"
+      },
+      "description": "Warm air, damp soil, and an afternoon of small green things",
+      "id": "greenhouse",
+      "image": {
+        "src": "/content/images/ebdf3120a2236999.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAQEAAwAAAAAAAAAAAAAAAAMCBAUH/8QAHxAAAgICAwADAAAAAAAAAAAAAAIBAwQSBRETFDFh/8QAFwEBAQEBAAAAAAAAAAAAAAAAAAEDBf/EABgRAQADAQAAAAAAAAAAAAAAAAABAhES/9oADAMBAAIRAxEAPwDyniuDjIXZjuKOMpobWVgjhZyY8axJb5aWPt6RBhOuVa2o5WDX7T0sA3ZkIzd7AJ1LhTUvc/ZqKl/QAiiVL0AAj//Z"
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "narration": {
+        "duration": 110.1,
+        "paragraphStarts": [
+          0.8,
+          13.1,
+          28.48,
+          41.63,
+          55.2,
+          67.78,
+          82.2,
+          95.63
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/ae676133969ab295f18d992818814336e0fda517.mp3"
+      },
+      "paragraphs": [
+        "The greenhouse door sticks a little, the way it always has. You lift it as you push, and it opens, and the warm air comes out to meet you.",
+        "Inside it smells of soil and tomato leaves and something green you cannot name. The glass has fogged at the corners. The light comes in soft and even from every side.",
+        "There are seedlings to move today. Small ones, with two leaves each, crowded into a tray. You take them out one at a time and give each its own pot.",
+        "Your fingers find the root ball and lift it gently. The soil is damp and cool and holds its shape. You press it down around the stem, not too hard.",
+        "Outside, a breeze moves the hedge. In here, nothing moves at all except your hands, and the dust in the light, and very slowly, the plants.",
+        "One tray empties. The bench fills with small pots in neat rows. You water them with the can with the long spout, and the water darkens the soil all at once.",
+        "There is no hurry in a greenhouse. Nothing here grows faster because you are watching. It grows at the speed it grows, and that is the right speed.",
+        "You wipe your hands on your trousers and sit on the upturned crate. The warmth settles on your shoulders. The seedlings stand in their rows, getting on with it."
+      ],
+      "soundscape": "forest",
+      "title": "The Greenhouse",
+      "voice": "Noah Brandt"
+    },
+    {
+      "category": "relaxation",
+      "cover": {
+        "src": "/content/images/3068476ad9c0f6a6.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAAAAcIBAUG/8QAJBAAAQQCAgIBBQAAAAAAAAAAAgABAwQFBhESITETIkFRYXH/xAAaAQABBQEAAAAAAAAAAAAAAAAFAAECAwQG/8QAHBEBAAICAwEAAAAAAAAAAAAAAQADAhETFEEx/9oADAMBAAIRAxEAPwDn9TaxVtDKzFzz4ZStcy5z648Dg4n1dvSycZqEJOJRdf6PlbANfGWA3Ds4iTi/P5ZEsrq1N+Tn+ra7T2V6yVOQrkj9X9opev4THQ2SCaeAD+7ETM6K3mwiKLA1IU0Xds9jsrXgrXj+KWQWIT+rxyrC5zKW6uHiKGVxc3dy/fKIsIDkQjaoOpXLacjbmzlojmLntx7REU458n//2Q=="
+      },
+      "description": "A rowing boat, a slow current, and oars pulled in",
+      "id": "river-boat",
+      "image": {
+        "src": "/content/images/68fcd4823fe17ad4.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAYFBP/EACAQAAICAgICAwAAAAAAAAAAAAECAAMEEQUhEhMUIjL/xAAXAQEAAwAAAAAAAAAAAAAAAAACAwQF/8QAGBEBAQADAAAAAAAAAAAAAAAAAQACERL/2gAMAwEAAhEDEQA/AJvGdWuCzVtrrCdrJHi+Sp+Wvm2huWF2fgvj9WqDqVUscw0U9nBBkNoaiZfJ8pQMxwrgiIgZ801VYyW/Uzuuy7vV+oiNpSwLrGNhJPcREU7/2Q=="
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "narration": {
+        "duration": 79.8,
+        "paragraphStarts": [
+          0.8,
+          10.7,
+          17.45,
+          29.1,
+          39.98,
+          50.53,
+          59.6,
+          69.33
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/2bdeb9127f46cdaa7ee9f75ba9a93056e8440bae.mp3"
+      },
+      "paragraphs": [
+        "You row out to the middle of the river, where the current is, and then you stop rowing. You pull the oars in and lay them along the seats.",
+        "The boat turns a little, finds its own direction, and begins to drift.",
+        "The water is brown and slow and deep. It carries leaves and small sticks and you, all at the same speed, all in the same direction, without effort.",
+        "Willows lean out from the bank. Their long branches trail in the water and make small ripples that follow the current down for a while and then fade.",
+        "The sun is warm on your knees. You lean back against the stern and let your hand hang over the side, fingers just touching the surface.",
+        "A heron stands in the shallows, perfectly still. You pass it. It does not move. It does not even look.",
+        "There is no landing to reach, no time to be back by. The river knows the way, and has been going there for a very long time.",
+        "The boat turns slowly. The bank slides by. The water holds you up and carries you on, and asks nothing for it."
+      ],
+      "soundscape": "pad",
+      "title": "Drifting Downriver",
+      "voice": "Ines Moreau"
+    },
+    {
+      "category": "relaxation",
+      "cover": {
+        "src": "/content/images/c1e3d11699ca772c.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAUGBwP/xAAlEAABBAEEAgEFAAAAAAAAAAACAAEDBAUGERIhEyIHFSMxUmH/xAAYAQEAAwEAAAAAAAAAAAAAAAAEAQIDBf/EABsRAAIDAQEBAAAAAAAAAAAAAAECAAMRITIz/9oADAMBAAIRAxEAPwCT+N3bDRPSyF30HfeAh7F/460KvZomfrGXj/Z1ijZIKd95owK8bF2RM/anQ1ZZnsgAUmh8jsz99MhVXOqHdjbaVZwRks2ow0r9TLywRyycW5Ezv+UVAymNs2LsksOSr8C7b7uyIxoZu7J0DmStYW9YOIPfi/HfcVO4eMp78bSzSkzvs7ckRdBPnDr0znqTEVIsrIICTDs3XJERWr8iaN6M/9k="
+      },
+      "description": "Steam, tiled walls, and water exactly the right warmth",
+      "id": "bathhouse",
+      "image": {
+        "src": "/content/images/4489d7b886577c96.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAMFBgT/xAAiEAACAgIBAwUAAAAAAAAAAAAAAQIDBBEGBRITISIxMlH/xAAZAQACAwEAAAAAAAAAAAAAAAACBAABAwX/xAAYEQEBAQEBAAAAAAAAAAAAAAAAARESAv/aAAwDAQACEQMRAD8ApOMRjkS9y2XudCulaUUjD8f65XiRT7Wy5z+SY19W33Jill1yL4xLdZDyP4BmL+s1uxuLegFzQcVksO+xR9GSZGRY4/YA1N1yeSX6ACKf/9k="
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "narration": {
+        "duration": 85.9,
+        "paragraphStarts": [
+          0.8,
+          11.78,
+          24.3,
+          35.53,
+          43.25,
+          54.95,
+          65.58,
+          74.22
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/9ef1be19c8db862779b18144f8572892c5022d95.mp3"
+      },
+      "paragraphs": [
+        "The bathhouse opens early, and in the first hour it is almost empty. The attendant nods as you come in and goes back to folding towels.",
+        "The main room is tiled in pale green, floor to ceiling. Steam hangs just above the water. Light comes down through a high round window in a single soft column.",
+        "You step in slowly. The water is warm, warmer than you expect, and then exactly right. It closes over your knees, your waist, your shoulders.",
+        "You find the ledge along the wall and sit. The water holds your arms up for you. You let it.",
+        "Every sound in here is softened and stretched. A drip from a tap. A door somewhere. Water lapping at the edge of the pool, very gently, over and over.",
+        "Your shoulders, which you had not noticed were raised, come down. Your jaw loosens. Your hands open under the water without being told.",
+        "There is a clock on the far wall, but the steam has fogged the glass, and you cannot read it, and that seems right.",
+        "The light moves slowly across the tiles. The water stays warm. You stay where you are, and there is no reason at all to be anywhere else."
+      ],
+      "soundscape": "bowl",
+      "title": "The Old Bathhouse",
+      "voice": "Ava Lindqvist"
+    },
+    {
+      "category": "mindfulness",
+      "cover": {
+        "src": "/content/images/9fce43f73b0039da.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYFBAf/xAAiEAACAgIBBAMBAAAAAAAAAAABAgMEABEFBhITIQciQVH/xAAXAQADAQAAAAAAAAAAAAAAAAABBAUC/8QAHxEAAQQCAgMAAAAAAAAAAAAAAQACAxESITFBIjKR/9oADAMBAAIRAxEAPwCF4HhbEscslexpATEATru1+5U8PDyUfI147KrNG7DyEEAj8GYfTXULV4I+6kzsWZiVXZ952W+cnnuCVKUyAsrd5GiNZKubP10O1RAjDNO2elXch8diey0sAAR/trW8ZqS9Q8sYq7QhVRolOtYzWMjvKx9RwjGqK8Yp3Zo4UlRgr/0DNOtesWWSOWVihPsYxjjOEqOVY2Lcy+JQ3pYwBjGMXaBSoEm1/9k="
+      },
+      "description": "Flour, warm ovens, and the first loaves of the day",
+      "id": "bakery-dawn",
+      "image": {
+        "src": "/content/images/ae1ff8c2281efd4c.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAAAAUGAgMH/8QAIBAAAQQCAgMBAAAAAAAAAAAAAQACAwQFERMhBhJhcf/EABcBAQEBAQAAAAAAAAAAAAAAAAIDBAX/xAAYEQEBAAMAAAAAAAAAAAAAAAAAAQIREv/aAAwDAQACEQMRAD8Ar9HEAx7exaL+MhY07YFb69inwNHMwH9UB5RZgjiPFI0n4V1stVpsjnWQrsbacAOkWNuQyTudtFLlFcQ4+h7ULlduJ2SiKlOoYxt2UREQf//Z"
+      },
+      "imageAlt": "Abstract dusky violet gradient with soft glowing light",
+      "narration": {
+        "duration": 102.9,
+        "paragraphStarts": [
+          0.8,
+          11.75,
+          23.53,
+          35.13,
+          48.9,
+          59.75,
+          72.78,
+          87.25
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/c09fd79fbe48cfd765efce59c29dc366db45e6a9.mp3"
+      },
+      "paragraphs": [
+        "It is four in the morning and the street is dark, but the bakery is lit and warm. The ovens have been on for an hour.",
+        "The dough rose overnight under cloths. You lift the first cloth and there it is, soft and pale and twice the size it was.",
+        "You turn it out onto the floured table. It settles, slowly, under its own weight. You press your palms into it and feel it press back.",
+        "Fold, and turn. Fold, and turn. Your hands know the rhythm. Your mind does not need to be anywhere but here, in the flour and the warmth and the dough.",
+        "You shape the loaves one by one and set them in rows. Each one a little different. Each one fine just as it is.",
+        "The oven door opens with a breath of heat. The loaves go in on the long wooden paddle. The door closes. Now there is nothing to do but wait.",
+        "The smell comes slowly. First faint, then everywhere: warm crust, something sweet, something almost like toast. It fills the room and spills out under the door.",
+        "Outside, the sky is starting to grey. Inside, the first loaves come out and stand on the rack, crackling softly as they cool. The day has begun, gently."
+      ],
+      "soundscape": "pad",
+      "title": "The Bakery Before Dawn",
+      "voice": "Noah Brandt"
+    },
+    {
+      "category": "mindfulness",
+      "cover": {
+        "src": "/content/images/a11f1f8b35ed451f.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAcFBv/EACIQAAEEAgICAwEAAAAAAAAAAAEAAgMEBREGIRIiFDFRMv/EABgBAAMBAQAAAAAAAAAAAAAAAAIDBQEE/8QAHREAAgICAwEAAAAAAAAAAAAAAAECEQMhFDFBUf/aAAwDAQACEQMRAD8A3OB5bF5HNnHxU3xSNL2yGT60qTx2m2AOrRFgcxxPsoniJvkX5LlWpYqTz+0kjNeD/wBPa7N2QyL6r5cWRI9n9O8tbCmZ6WRVGilBOUHcrKRZ5JHSmMEhYHN+9HSKXjLRTgOyMD3WR08g7CJLySA4t+mBhx8/E4R1nvygDSB0Ol3HHq0NWOQQxgA/vaIup77+mrRk8jpxS5NztFnqBpnQRESpLYaej//Z"
+      },
+      "description": "Wet clay, steady hands, and a bowl taking its time",
+      "id": "pottery-wheel",
+      "image": {
+        "src": "/content/images/1a98131d0c7da1fd.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAQGBQf/xAAhEAACAgMAAAcAAAAAAAAAAAAAAQIDBAUREyEiMUFRgf/EABkBAAIDAQAAAAAAAAAAAAAAAAEEAAIDBf/EABkRAQACAwAAAAAAAAAAAAAAAAABEgIRE//aAAwDAQACEQMRAD8AzNd3V7lNPrZmMbaUuKTmumg1GXRcueLFfp27xozGSm1qE+dBHsMimOTJK2LXPsFOgWeWxsmvk6OuybYvykALMYUX5NrsbcgAFH//2Q=="
+      },
+      "imageAlt": "Abstract dusky violet gradient with soft glowing light",
+      "narration": {
+        "duration": 88.8,
+        "paragraphStarts": [
+          0.8,
+          10.93,
+          20.58,
+          29.68,
+          40.92,
+          52.45,
+          65.18,
+          76.3
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/9ce07ec6101a0812742e02b82987c2d087575905.mp3"
+      },
+      "paragraphs": [
+        "The studio is quiet on a weekday afternoon. Shelves of drying bowls line the walls, grey and pale and waiting for the kiln.",
+        "You sit at the wheel and press the pedal, and it begins to turn with a soft whir. You wet your hands in the bucket beside you.",
+        "The clay is cold and heavy. You throw it down onto the centre of the wheel and cup your hands around it, and lean in.",
+        "At first it wobbles. It pushes against your palms, this way, then that. You do not fight it. You keep your hands steady and let the wheel do the work.",
+        "Slowly, it stops wobbling. It comes to the centre and stays there, smooth and round and turning under your hands. There is a moment when you feel it settle.",
+        "You press your thumbs into the top and the clay opens. You draw the walls up, slowly, slowly, a little at a time. Too fast and it falls. So you do not go too fast.",
+        "Your whole attention is in your fingertips. The thought you were carrying in here has gone somewhere. There is only the clay, and the turning, and your hands.",
+        "The bowl stands on the wheel, still wet, still soft. Not perfect. You slow the pedal, and the wheel stops, and you sit for a moment and look at what you made."
+      ],
+      "soundscape": "chimes",
+      "title": "The Pottery Wheel",
+      "voice": "Ines Moreau"
+    },
+    {
+      "category": "mindfulness",
+      "cover": {
+        "src": "/content/images/d0e8a4cc4efbb076.jpg",
+        "width": 1200,
+        "height": 1200,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAQEBAQAAAAAAAAAAAAAAAAYFBwj/xAAiEAABBAEEAwEBAAAAAAAAAAABAAIDBBEFBhIhByIxE0H/xAAYAQACAwAAAAAAAAAAAAAAAAAEBQACA//EABsRAQACAwEBAAAAAAAAAAAAAAEAAgMRITFR/9oADAMBAAIRAxEAPwC08QWJm6XYqxSg2GezXvPTmq/ZJrEQa6eWIwZy45C4ZtfU7ejvNljWCtF6zDOSMn+Knv75m1PbtuvThsxS8SGyBuQEmpktTYHPsPyYN25Mre2qT2NyW3ega08R2fgRSN21M6wTNI79MDlydg5RQOQkNE26em15KcrH8yxzgS3PX1dW0+hWp7SjMETRhnwhEWYrxlsgCannfyG9zd2XQ04GR0iIjq+Rdb1n/9k="
+      },
+      "description": "Tall windows, old books, and a seat nobody else wants",
+      "id": "library-afternoon",
+      "image": {
+        "src": "/content/images/930c3219ca9bb535.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAMEBQYH/8QAIBAAAQQCAgMBAAAAAAAAAAAAAgABAxEEBQYSEyFBYf/EABgBAAIDAAAAAAAAAAAAAAAAAAECAAMF/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAESEUH/2gAMAwEAAhEDEQA/AKfD8TXvBG0oC5V9XSbDXa8o6CMV5FjbeXHrxs7V+rbx+US9KNiWpmeL5YsbXWY45hMItVIs+bbeaRz6l7RNlORiDENupwiGvqIjAieOMeqIiYX/2Q=="
+      },
+      "imageAlt": "Abstract dusky violet gradient with soft glowing light",
+      "narration": {
+        "duration": 92.1,
+        "paragraphStarts": [
+          0.8,
+          11.98,
+          24,
+          33.38,
+          46.93,
+          59.35,
+          70.08,
+          80.47
+        ],
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/8d82643b0e538f4661401723bf1a9ce4a8d0792c.mp3"
+      },
+      "paragraphs": [
+        "It is raining, so you came to the library. The reading room is long and high, with tall windows down one side and green lamps on every table.",
+        "You choose the seat at the far end, by the radiator. Nobody else ever sits here. The chair is wooden and has worn smooth where a thousand people have leaned back.",
+        "You take a book from the shelf without looking too hard at which one. It does not matter. That is not why you are here.",
+        "The rain runs down the tall windows in slow lines. The light through them is grey and even. The lamp makes a small warm circle on the table, just big enough for the open page.",
+        "Somewhere a page turns. Somewhere a chair scrapes, softly, and stops. Someone coughs once. Then the quiet comes back, and it is a deeper quiet than before.",
+        "You read a sentence. Then you read it again, slower. You notice the weight of the paper under your fingers, the faint smell of dust and glue.",
+        "Nobody here wants anything from you. The librarian at the desk is reading too. The clock above the door moves, but nobody looks at it.",
+        "The rain keeps on. The radiator ticks. You turn the page, and there is another one after it, and the afternoon is long enough for all of them."
+      ],
+      "soundscape": "rain",
+      "title": "An Afternoon in the Library",
       "voice": "Ava Lindqvist"
     }
   ],
@@ -2230,6 +4278,716 @@
       "soundscape": "chimes",
       "subtitle": "A classic, taken gently",
       "title": "Slow Sun Salutation"
+    },
+    {
+      "description": "Slow floor poses for hips that feel tight from sitting. Stay well inside what feels comfortable; the hips open in their own time.",
+      "focus": "Hips",
+      "id": "hip-opener",
+      "image": {
+        "src": "/content/images/28d5050485ebc7d2.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAIDAAAAAAAAAAAAAAAAAAUGAwQH/8QAIRAAAgMAAQMFAAAAAAAAAAAAAQIAAwQFERMhEiJBUXH/xAAYAQACAwAAAAAAAAAAAAAAAAADBAIFBv/EABkRAQEBAQEBAAAAAAAAAAAAAAEAEQISMf/aAAwDAQACEQMRAD8AxpxbWU+r4kLyOLsk9R4l3waMrZFBvTr0+5Cc+Ke0xWxD+GUQJaH3tzrYoW9hE1eT0qNbgMIjRy5LvRtYaNNoq8NIvltdxRvdESR9gtTdFjG1iTERGCDf/9k="
+      },
+      "imageAlt": "Abstract earthy terracotta gradient with soft glowing light",
+      "level": "Beginner",
+      "poses": [
+        {
+          "cue": "Sit cross-legged on a cushion. Let your knees be heavy and breathe slowly into your belly.",
+          "name": "Seated breath",
+          "seconds": 45
+        },
+        {
+          "cue": "On hands and knees, arch your back as you breathe in and round it as you breathe out.",
+          "name": "Cat–cow",
+          "seconds": 45
+        },
+        {
+          "cue": "Step one foot forward between your hands, lower the back knee and let your hips sink forward.",
+          "name": "Low lunge",
+          "seconds": 45,
+          "side": "left"
+        },
+        {
+          "cue": "Step one foot forward between your hands, lower the back knee and let your hips sink forward.",
+          "name": "Low lunge",
+          "seconds": 45,
+          "side": "right"
+        },
+        {
+          "cue": "Bring your big toes together, knees wide, and walk your hands forward. Rest your forehead down.",
+          "name": "Wide-knee child’s pose",
+          "seconds": 60
+        },
+        {
+          "cue": "Sit with the soles of your feet together and let your knees fall open. Fold forward only a little.",
+          "name": "Butterfly",
+          "seconds": 60
+        },
+        {
+          "cue": "Lying down, cross one ankle over the opposite knee and draw both legs gently toward you.",
+          "name": "Figure-four on your back",
+          "seconds": 60,
+          "side": "left"
+        },
+        {
+          "cue": "Lying down, cross one ankle over the opposite knee and draw both legs gently toward you.",
+          "name": "Figure-four on your back",
+          "seconds": 60,
+          "side": "right"
+        },
+        {
+          "cue": "Hold the outsides of your feet, knees wide, and rock slowly from side to side.",
+          "name": "Happy baby",
+          "seconds": 45
+        },
+        {
+          "cue": "Stretch your legs out long and let the floor hold you. Breathe naturally.",
+          "name": "Rest",
+          "seconds": 60
+        }
+      ],
+      "soundscape": "forest",
+      "subtitle": "Make room where you hold the most",
+      "title": "Gentle Hip Opener"
+    },
+    {
+      "description": "For rounded shoulders and a chest that has folded in over a screen. Small, careful backbends and lots of breath.",
+      "focus": "Posture",
+      "id": "posture-reset",
+      "image": {
+        "src": "/content/images/76f479e0aca506ab.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQFBwb/xAAeEAACAgMBAAMAAAAAAAAAAAABAgADBAUSESExYf/EABYBAQEBAAAAAAAAAAAAAAAAAAQDBf/EABoRAAIDAQEAAAAAAAAAAAAAAAABAgMREyH/2gAMAwEAAhEDEQA/AOSaitVPazlt5jK7nhZpOZTgvUebR1KVNXjXWnq1PJKuzPTctgpLEZc9DqxHhiaBsNViJksqupH5ESrkA4lw6jk/cgleSSPYiFQ6RBu+bCSYiJQjh//Z"
+      },
+      "imageAlt": "Abstract dawn peach gradient with soft glowing light",
+      "level": "Beginner",
+      "poses": [
+        {
+          "cue": "Stand tall with feet hip-width apart. Let the crown of your head lift and your shoulders soften.",
+          "name": "Mountain pose",
+          "seconds": 45
+        },
+        {
+          "cue": "Roll your shoulders up, back and down, slowly. Let them settle a little lower each time.",
+          "name": "Shoulder rolls",
+          "seconds": 30
+        },
+        {
+          "cue": "Interlace your hands behind you and draw them gently down. Lift your chest, not your chin.",
+          "name": "Clasped-hands chest opener",
+          "seconds": 45
+        },
+        {
+          "cue": "Rest one forearm on a doorframe at shoulder height and turn your body softly away.",
+          "name": "Doorway stretch",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Rest one forearm on a doorframe at shoulder height and turn your body softly away.",
+          "name": "Doorway stretch",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "On hands and knees, arch your back as you breathe in and round it as you breathe out.",
+          "name": "Cat–cow",
+          "seconds": 45
+        },
+        {
+          "cue": "From hands and knees, slide one arm under the other and rest your shoulder and ear down.",
+          "name": "Thread the needle",
+          "seconds": 45,
+          "side": "left"
+        },
+        {
+          "cue": "From hands and knees, slide one arm under the other and rest your shoulder and ear down.",
+          "name": "Thread the needle",
+          "seconds": 45,
+          "side": "right"
+        },
+        {
+          "cue": "Lie on your front, forearms under your shoulders. Lift your chest gently and keep your neck long.",
+          "name": "Sphinx",
+          "seconds": 45
+        },
+        {
+          "cue": "Sit back toward your heels and rest your forehead down. Arms forward or by your sides.",
+          "name": "Child’s pose",
+          "seconds": 45
+        },
+        {
+          "cue": "Sit or stand tall. Notice the space across your collarbones as you breathe.",
+          "name": "Closing breath",
+          "seconds": 45
+        }
+      ],
+      "soundscape": "chimes",
+      "subtitle": "Open the chest, lift the upper back",
+      "title": "Posture Reset"
+    },
+    {
+      "description": "Easy stretches for calves, hamstrings and feet that have done a lot of work. Ends with your legs up to rest.",
+      "focus": "Legs",
+      "id": "tired-legs",
+      "image": {
+        "src": "/content/images/3b478a7caf53f6c6.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAFwABAQEBAAAAAAAAAAAAAAAAAAMFBP/EACEQAAICAgIBBQAAAAAAAAAAAAACAQMEEQUSExQWITFB/8QAFwEBAQEBAAAAAAAAAAAAAAAAAQIEBf/EABYRAQEBAAAAAAAAAAAAAAAAAAABEf/aAAwDAQACEQMRAD8AyeH4TF9Ajskb0YfP4WKl2q1ge5PHhxUizGo19mPZneezs/YzSXdcq2oWYi9viAdS3pMb1IKTtccVrv8ASyVKAJq9da9QACX/2Q=="
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "level": "Gentle",
+      "poses": [
+        {
+          "cue": "Sit with your legs out in front of you. Lean back on your hands and breathe.",
+          "name": "Seated breath",
+          "seconds": 45
+        },
+        {
+          "cue": "Circle both ankles slowly one way, then the other. Spread your toes as you go.",
+          "name": "Ankle circles",
+          "seconds": 45
+        },
+        {
+          "cue": "Lying down, lift one leg and hold behind the thigh or use a strap. Keep the knee soft.",
+          "name": "Reclined hamstring stretch",
+          "seconds": 60,
+          "side": "left"
+        },
+        {
+          "cue": "Lying down, lift one leg and hold behind the thigh or use a strap. Keep the knee soft.",
+          "name": "Reclined hamstring stretch",
+          "seconds": 60,
+          "side": "right"
+        },
+        {
+          "cue": "On your side, hold your top foot and draw it gently toward your seat. Knees stay together.",
+          "name": "Lying quad stretch",
+          "seconds": 45,
+          "side": "left"
+        },
+        {
+          "cue": "On your side, hold your top foot and draw it gently toward your seat. Knees stay together.",
+          "name": "Lying quad stretch",
+          "seconds": 45,
+          "side": "right"
+        },
+        {
+          "cue": "Hands on a wall, step one foot back and press the heel down. Swap halfway through.",
+          "name": "Calf stretch at the wall",
+          "seconds": 45
+        },
+        {
+          "cue": "Lie with your seat near a wall and rest your legs up it. Let them be completely heavy.",
+          "name": "Legs up the wall",
+          "seconds": 90
+        },
+        {
+          "cue": "Bring your knees in, roll to one side, and pause before you sit up.",
+          "name": "Rest",
+          "seconds": 45
+        }
+      ],
+      "soundscape": "rain",
+      "subtitle": "After a long walk or a long day standing",
+      "title": "Tired Legs"
+    },
+    {
+      "description": "Five quiet minutes for hands, wrists and forearms. Done sitting, anywhere. Move only as far as feels comfortable.",
+      "focus": "Wrists and hands",
+      "id": "hands-and-wrists",
+      "image": {
+        "src": "/content/images/bf786b5b10e9d139.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGgABAQACAwAAAAAAAAAAAAAAAAUCAwQGB//EACEQAAEDAwQDAAAAAAAAAAAAAAIAAQMEBREGEiExIzNR/8QAGAEAAgMAAAAAAAAAAAAAAAAAAgQBBQb/xAAaEQEAAgMBAAAAAAAAAAAAAAAAAQIDESET/9oADAMBAAIRAxEAPwDHSwQ1BYPDqxdaKEQfaLLzWyahCkl9mFbrtVxyQv5W6+q4tfrO1xc1pMuRAFWbcIur3C8DJVGTFnKKPSBxglCIyZ+HWuWaRxxuREvJ2rjO7v2iIhG//9k="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "level": "Gentle",
+      "poses": [
+        {
+          "cue": "Sit tall with your hands resting on your thighs. Let your fingers soften.",
+          "name": "Seated breath",
+          "seconds": 30
+        },
+        {
+          "cue": "Make a soft fist, then spread your fingers as wide as they go. Repeat slowly.",
+          "name": "Finger spreads",
+          "seconds": 30
+        },
+        {
+          "cue": "Circle both wrists slowly one way, then the other. Keep your shoulders relaxed.",
+          "name": "Wrist circles",
+          "seconds": 30
+        },
+        {
+          "cue": "Extend one arm, palm up, and gently draw the fingers back with your other hand.",
+          "name": "Forearm stretch, palm up",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Extend one arm, palm up, and gently draw the fingers back with your other hand.",
+          "name": "Forearm stretch, palm up",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Extend one arm, palm down, and gently press the back of the hand toward you.",
+          "name": "Forearm stretch, palm down",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Extend one arm, palm down, and gently press the back of the hand toward you.",
+          "name": "Forearm stretch, palm down",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Press your palms together in front of your chest and lower them slowly until you feel a stretch.",
+          "name": "Prayer stretch",
+          "seconds": 30
+        },
+        {
+          "cue": "Let your hands hang and shake them loosely, like flicking off water.",
+          "name": "Shake it out",
+          "seconds": 30
+        },
+        {
+          "cue": "Rest your hands, palms up, on your lap. Notice the warmth in them.",
+          "name": "Closing breath",
+          "seconds": 30
+        }
+      ],
+      "soundscape": "pad",
+      "subtitle": "For a day of typing",
+      "title": "Hands & Wrists"
+    },
+    {
+      "description": "Standing poses that train balance and attention together. Keep a wall or chair close by and use it whenever you want.",
+      "focus": "Balance",
+      "id": "steady-balance",
+      "image": {
+        "src": "/content/images/9fe05dbe7b1cb59b.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAQFBgcC/8QAIxAAAgIBAwMFAAAAAAAAAAAAAgMAAQQFESEGEoEjMVFxkf/EABcBAQEBAQAAAAAAAAAAAAAAAAIDAQX/xAAXEQEBAQEAAAAAAAAAAAAAAAAAARIR/9oADAMBAAIRAxEAPwDlp4HcXtPTMRQJuiHmbzTdGS2u4zD9kjO6VU9JWq632+Z17yL5cXyE+sW1cRNXqGgmjKNd7cRJZDK9UZUPBXXmSl5TxHhp15iI6aoyzInlZFd39xETBf/Z"
+      },
+      "imageAlt": "Abstract dusky violet gradient with soft glowing light",
+      "level": "All levels",
+      "poses": [
+        {
+          "cue": "Stand tall and feel your weight spread evenly through both feet. Find one still point to look at.",
+          "name": "Mountain pose",
+          "seconds": 45
+        },
+        {
+          "cue": "Sway slowly forward, back and side to side, then come to rest in the middle.",
+          "name": "Weight shifts",
+          "seconds": 30
+        },
+        {
+          "cue": "Lift one knee to hip height and hold it with your hands, or let it float.",
+          "name": "Standing knee lift",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Lift one knee to hip height and hold it with your hands, or let it float.",
+          "name": "Standing knee lift",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Rest one foot on the opposite ankle or calf — never the knee. Hands at your chest.",
+          "name": "Tree pose",
+          "seconds": 45,
+          "side": "left"
+        },
+        {
+          "cue": "Rest one foot on the opposite ankle or calf — never the knee. Hands at your chest.",
+          "name": "Tree pose",
+          "seconds": 45,
+          "side": "right"
+        },
+        {
+          "cue": "Hands on a wall, hinge forward and lift one leg behind you. Keep your hips level.",
+          "name": "Warrior three at the wall",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Hands on a wall, hinge forward and lift one leg behind you. Keep your hips level.",
+          "name": "Warrior three at the wall",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Bend your knees as if sitting back into a chair, arms reaching forward.",
+          "name": "Chair pose",
+          "seconds": 30
+        },
+        {
+          "cue": "Stand still with your eyes closed if that feels safe. Notice how steady you already are.",
+          "name": "Closing breath",
+          "seconds": 45
+        }
+      ],
+      "soundscape": "bowl",
+      "subtitle": "Standing still, on purpose",
+      "title": "Steady Balance"
+    },
+    {
+      "description": "A short, brisk standing sequence for the afternoon slump. Gets the blood moving and the breath deeper.",
+      "focus": "Energy",
+      "id": "afternoon-energy",
+      "image": {
+        "src": "/content/images/b5d0b3877e94b655.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAMEBgUH/8QAJBAAAgEDAgYDAAAAAAAAAAAAAQIAAwQRBSEGEhQiMZFBUWH/xAAWAQEBAQAAAAAAAAAAAAAAAAADAgX/xAAZEQEBAAMBAAAAAAAAAAAAAAAAAQIDExH/2gAMAwEAAhEDEQA/AMXpXDlKraqxXJIlLVdD6WplVwJu+HqlqLWmGqpkD5Mn1ujbXFE8rISP2ZN2X1s44R5tTtOwbRND0yKSOZfcSehubi6e7BdmMvFmKnvb3ERKCIFGc7nz9xESCx//2Q=="
+      },
+      "imageAlt": "Abstract earthy terracotta gradient with soft glowing light",
+      "level": "Beginner",
+      "poses": [
+        {
+          "cue": "Stand tall, feet hip-width apart. Take three full breaths, a little bigger each time.",
+          "name": "Mountain pose",
+          "seconds": 30
+        },
+        {
+          "cue": "Sweep your arms up as you breathe in and down as you breathe out. Find a steady rhythm.",
+          "name": "Arm sweeps",
+          "seconds": 45
+        },
+        {
+          "cue": "Reach both arms up, then lean gently to one side. Keep breathing into your ribs.",
+          "name": "Standing side stretch",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Reach both arms up, then lean gently to one side. Keep breathing into your ribs.",
+          "name": "Standing side stretch",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Hinge at the hips and let your upper body hang. Soft knees, heavy head.",
+          "name": "Forward fold",
+          "seconds": 30
+        },
+        {
+          "cue": "Hands to your shins, lengthen your back forward, then fold again. Repeat with the breath.",
+          "name": "Half lift",
+          "seconds": 30
+        },
+        {
+          "cue": "Step one foot back, bend the front knee and reach your arms up. Back heel can lift.",
+          "name": "Crescent lunge",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Step one foot back, bend the front knee and reach your arms up. Back heel can lift.",
+          "name": "Crescent lunge",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Bend your knees as if sitting back into a chair, arms reaching forward.",
+          "name": "Chair pose",
+          "seconds": 30
+        },
+        {
+          "cue": "Let your arms swing loosely around your body as you turn from side to side.",
+          "name": "Standing twist",
+          "seconds": 30
+        },
+        {
+          "cue": "Stand still and feel your heart and breath settle back down.",
+          "name": "Closing breath",
+          "seconds": 30
+        }
+      ],
+      "soundscape": "forest",
+      "subtitle": "Wake up without more coffee",
+      "title": "Afternoon Lift"
+    },
+    {
+      "description": "Very little movement, a lot of support. Have a pillow or two and a blanket nearby, and let each pose do the work.",
+      "focus": "Calm",
+      "id": "restorative-rest",
+      "image": {
+        "src": "/content/images/f1371c9b18192cec.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAQFBwb/xAAfEAACAgEFAQEAAAAAAAAAAAABAgADBAUGERIhMRP/xAAXAQEAAwAAAAAAAAAAAAAAAAAEAgMF/8QAGBEAAwEBAAAAAAAAAAAAAAAAAAECAxH/2gAMAwEAAhEDEQA/AJNG28W3TR2rHJEzvcW3q6Mhwq+TSk3LRXidPxbwcfZxGvatVk3MQrCGxdqjbtRRnmRp7JawHyJe2lHcnqYjVbCPJHYsOVYcmU2XQhc/YiFkY0iKKE98MREs6R4f/9k="
+      },
+      "imageAlt": "Abstract dawn peach gradient with soft glowing light",
+      "level": "Gentle",
+      "poses": [
+        {
+          "cue": "Lie on your back with your knees bent. Gather your pillows and blanket within reach.",
+          "name": "Settling breath",
+          "seconds": 45
+        },
+        {
+          "cue": "Kneel with a pillow lengthways between your knees and rest your chest and cheek on it.",
+          "name": "Supported child’s pose",
+          "seconds": 90
+        },
+        {
+          "cue": "Sit beside the pillow, turn toward it and lay your chest down. Swap your cheek if you like.",
+          "name": "Supported twist",
+          "seconds": 75,
+          "side": "left"
+        },
+        {
+          "cue": "Sit beside the pillow, turn toward it and lay your chest down. Swap your cheek if you like.",
+          "name": "Supported twist",
+          "seconds": 75,
+          "side": "right"
+        },
+        {
+          "cue": "Lying down, slide a firm cushion under your lower back. Let your arms rest wide.",
+          "name": "Supported bridge",
+          "seconds": 90
+        },
+        {
+          "cue": "Soles of the feet together, knees falling open onto pillows. Hands on your belly.",
+          "name": "Reclined butterfly",
+          "seconds": 90
+        },
+        {
+          "cue": "Lie on your back with your calves resting on a chair seat. Cover yourself with a blanket.",
+          "name": "Legs on a chair",
+          "seconds": 90
+        },
+        {
+          "cue": "Stretch out, close your eyes and let the breath move on its own.",
+          "name": "Rest",
+          "seconds": 90
+        }
+      ],
+      "soundscape": "drone",
+      "subtitle": "Long holds, fully supported",
+      "title": "Restorative Rest"
+    },
+    {
+      "description": "Small movements you can do in a seat without bothering anyone. Helps stiffness and keeps the blood moving on a long journey.",
+      "focus": "On the go",
+      "id": "travel-stretch",
+      "image": {
+        "src": "/content/images/01b22be08bcde9d5.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAMEBQYH/8QAHhAAAgMBAAIDAAAAAAAAAAAAAAECAwQRBRIhMVH/xAAXAQEBAQEAAAAAAAAAAAAAAAADAgEF/8QAFxEBAQEBAAAAAAAAAAAAAAAAAQARIf/aAAwDAQACEQMRAD8A8czYU61Lnya/jsU5tcRHkuiq4r0Ok8XpzV19lXLoCtylWihklGKTQLtu+pzfK3wE9ixuKyN+qNbJKX6AUzNa6+/YAMjv/9k="
+      },
+      "imageAlt": "Abstract soft green gradient with soft glowing light",
+      "level": "Gentle",
+      "poses": [
+        {
+          "cue": "Sit back in your seat with both feet on the floor. Breathe slowly through your nose.",
+          "name": "Seated breath",
+          "seconds": 30
+        },
+        {
+          "cue": "Lift your toes, then your heels, in a slow rhythm. Keep going a little longer than you want to.",
+          "name": "Ankle pumps",
+          "seconds": 45
+        },
+        {
+          "cue": "Lift one knee a few centimetres, lower it, then the other. Like walking in your seat.",
+          "name": "Knee lifts",
+          "seconds": 30
+        },
+        {
+          "cue": "Roll your shoulders up, back and down, slowly. Let them settle a little lower each time.",
+          "name": "Shoulder rolls",
+          "seconds": 30
+        },
+        {
+          "cue": "Tilt one ear toward your shoulder. Let the opposite shoulder stay heavy.",
+          "name": "Seated neck stretch",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Tilt one ear toward your shoulder. Let the opposite shoulder stay heavy.",
+          "name": "Seated neck stretch",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Hold the armrest and turn gently from your belly, then your chest. Never force it.",
+          "name": "Seated twist",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Hold the armrest and turn gently from your belly, then your chest. Never force it.",
+          "name": "Seated twist",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Hands on your knees: arch forward as you breathe in, round your back as you breathe out.",
+          "name": "Seated cat–cow",
+          "seconds": 45
+        },
+        {
+          "cue": "Close your eyes for a few breaths and let your body settle into the seat.",
+          "name": "Closing breath",
+          "seconds": 30
+        }
+      ],
+      "soundscape": "drone",
+      "subtitle": "For trains, planes and long drives",
+      "title": "Travel Stretch"
+    },
+    {
+      "description": "Familiar poses with a wall to lean on, so you can feel the shape without worrying about balance. Good on stiff days.",
+      "focus": "Supported",
+      "id": "wall-yoga",
+      "image": {
+        "src": "/content/images/a9255a4d5312751e.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGQABAAMBAQAAAAAAAAAAAAAAAAIEBgUH/8QAIRAAAgICAgEFAAAAAAAAAAAAAQIAAwQRBSEGEhQxUYH/xAAXAQADAQAAAAAAAAAAAAAAAAACAwUE/8QAGhEBAQEAAwEAAAAAAAAAAAAAAQACAxESIf/aAAwDAQACEQMRAD8A8i47x629PUVOp06OGFB04ms4nkcOvGVGqbf3KPM5uMW3XsfkqYAaJy70lnrsFA50Ilv3CN33Ed0Wf1qnSSF6JkMhQ3zuIgExflGutQsREOTf/9k="
+      },
+      "imageAlt": "Abstract pale teal gradient with soft glowing light",
+      "level": "Beginner",
+      "poses": [
+        {
+          "cue": "Stand with your back against the wall, heels a little away. Feel the back of your head touch it.",
+          "name": "Mountain at the wall",
+          "seconds": 45
+        },
+        {
+          "cue": "Hands on the wall at chest height. Bend your elbows slowly, then press away.",
+          "name": "Wall push-away",
+          "seconds": 30
+        },
+        {
+          "cue": "Hands on the wall, walk your feet back and hinge until your back is long. Soft knees.",
+          "name": "Wall downward dog",
+          "seconds": 45
+        },
+        {
+          "cue": "Step one foot back and press the heel down. Keep your hips facing the wall.",
+          "name": "Wall calf stretch",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "Step one foot back and press the heel down. Keep your hips facing the wall.",
+          "name": "Wall calf stretch",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "One hand on the wall, rest the other foot on your ankle or calf — never the knee.",
+          "name": "Wall tree pose",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "One hand on the wall, rest the other foot on your ankle or calf — never the knee.",
+          "name": "Wall tree pose",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "One hand on the wall, hold your other foot and draw it gently toward your seat.",
+          "name": "Wall quad stretch",
+          "seconds": 30,
+          "side": "left"
+        },
+        {
+          "cue": "One hand on the wall, hold your other foot and draw it gently toward your seat.",
+          "name": "Wall quad stretch",
+          "seconds": 30,
+          "side": "right"
+        },
+        {
+          "cue": "Lie with your seat near the wall and rest your legs up it. Let them be completely heavy.",
+          "name": "Legs up the wall",
+          "seconds": 90
+        },
+        {
+          "cue": "Bring your knees in, roll to one side, and stay there for a few breaths.",
+          "name": "Rest",
+          "seconds": 45
+        }
+      ],
+      "soundscape": "pad",
+      "subtitle": "A little extra support",
+      "title": "Yoga at the Wall"
+    },
+    {
+      "description": "For when you feel wired or on edge. Long out-breaths, forward folds and grounding poses to help the body settle.",
+      "focus": "Calm",
+      "id": "calm-the-nerves",
+      "image": {
+        "src": "/content/images/d94846462d3f11fc.jpg",
+        "width": 900,
+        "height": 900,
+        "blurDataURL": "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAUABQDASIAAhEBAxEB/8QAGAABAAMBAAAAAAAAAAAAAAAAAAIEBQb/xAAfEAACAgIDAAMAAAAAAAAAAAABAgADBAUREzESFWH/xAAXAQEBAQEAAAAAAAAAAAAAAAABAAQF/8QAGBEBAQEBAQAAAAAAAAAAAAAAAAECERL/2gAMAwEAAhEDEQA/AMDX6qgYaN1gniWPqsexCCglLB3dFdQrdvJYG2xz5YJ185jROOa2emrXLYKo4iaeXm0WXFg4MS8wcjJalPkfZHqX9iIhJKl4iIkX/9k="
+      },
+      "imageAlt": "Abstract dusky violet gradient with soft glowing light",
+      "level": "All levels",
+      "poses": [
+        {
+          "cue": "Sit or lie down. Breathe in for four, out for six. Let the out-breath be the longer one.",
+          "name": "Grounding breath",
+          "seconds": 60
+        },
+        {
+          "cue": "Sit back toward your heels and rest your forehead down. Feel your back rise as you breathe.",
+          "name": "Child’s pose",
+          "seconds": 60
+        },
+        {
+          "cue": "On hands and knees, move slowly with the breath. There is no rush.",
+          "name": "Cat–cow",
+          "seconds": 45
+        },
+        {
+          "cue": "Sit with your legs out and fold forward over a pillow. Let your head rest.",
+          "name": "Seated forward fold",
+          "seconds": 60
+        },
+        {
+          "cue": "Lying down, let both knees fall to one side and turn your head the other way.",
+          "name": "Reclined twist",
+          "seconds": 45,
+          "side": "left"
+        },
+        {
+          "cue": "Lying down, let both knees fall to one side and turn your head the other way.",
+          "name": "Reclined twist",
+          "seconds": 45,
+          "side": "right"
+        },
+        {
+          "cue": "Hug your knees in and rock gently side to side.",
+          "name": "Knees to chest",
+          "seconds": 45
+        },
+        {
+          "cue": "Lie still with one hand on your chest and one on your belly. Feel them slow down.",
+          "name": "Rest with a hand on your heart",
+          "seconds": 90
+        }
+      ],
+      "soundscape": "ocean",
+      "subtitle": "Slow down a racing body",
+      "title": "Calm the Nerves"
     }
   ],
   "videos": [

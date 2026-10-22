@@ -1,16 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Play } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { ProgramSessionCard } from '@/components/programs/program-session-card';
 import { SectionTitle } from '@/components/shared/section-title';
-import { freePrograms, getProgram } from '@/data/programs';
+import { getProgram, programs } from '@/data/programs';
 import { formatDuration } from '@/lib/format';
 
 export function generateStaticParams() {
-  return freePrograms.map((program) => ({ id: program.id }));
+  return programs.map((program) => ({ id: program.id }));
 }
 
 /**
@@ -69,9 +68,8 @@ export default async function ProgramPage({ params }: { params: Promise<{ id: st
         {first ? (
           <Link
             href={`/player/${first.id}`}
-            className="mt-5 flex h-12 w-full items-center justify-center gap-2.5 rounded-full bg-action-pill text-body-sm font-semibold text-white transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-action-pill text-body-sm font-semibold text-white transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
-            <Play className="h-4 w-4 fill-white" strokeWidth={0} />
             Start session 1
           </Link>
         ) : null}

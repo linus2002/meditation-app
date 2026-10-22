@@ -8,8 +8,8 @@ import { NarrationControls } from '@/components/stories/narration-controls';
 import { StoryFavoriteButton } from '@/components/stories/story-favorite-button';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
 import { useBack } from '@/hooks/use-back';
-import { useNarration } from '@/hooks/use-narration';
-import { estimatedMinutes, estimatedSeconds, segmentStory } from '@/lib/story';
+import { useStoryPlayer } from '@/hooks/use-story-player';
+import { estimatedMinutes } from '@/lib/story';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useAudio } from '@/providers/audio-provider';
@@ -23,21 +23,26 @@ const SLEEP_TIMER_OPTIONS = [
   { value: 45, label: '45 min' },
 ] as const;
 
+/** Composed for the app by scripts/music/compose.mjs, one per story mood. */
+const musicFor = (story: Story) => `/audio/music/${story.category}.mp3`;
+
+/** Under the voice, not beside it: about 10 dB quieter than the narration. */
+const MUSIC_LEVEL = 0.55;
+
 export function StoryReader({ story }: { story: Story }) {
   const goBack = useBack('/stories');
-  const { play: playBed, stop: stopBed, prime } = useAudio();
+  const { playMusic, pauseMusic, stopMusic, prime } = useAudio();
 
-  const segments = React.useMemo(() => segmentStory(story), [story]);
-  const narration = useNarration(segments);
+  const narration = useStoryPlayer(story);
 
-  const [ambient, setAmbient] = React.useState(false);
+  const [music, setMusic] = React.useState(true);
   const [timerMinutes, setTimerMinutes] = React.useState(0);
   const [timerEndsAt, setTimerEndsAt] = React.useState<number | null>(null);
 
-  const totalSeconds = estimatedSeconds(story, narration.rate);
-  const activeParagraph = segments[narration.index]?.paragraph ?? -1;
+  const activeParagraph = narration.activeParagraph;
 
-  const { speaking, stop: stopNarration } = narration;
+  const { speaking, paused, stop: stopNarration } = narration;
+  const musicSrc = musicFor(story);
 
   // The sleep timer stops the reading and lets the bed fall away.
   React.useEffect(() => {
@@ -47,10 +52,19 @@ export function StoryReader({ story }: { story: Story }) {
       window.clearInterval(id);
       setTimerEndsAt(null);
       stopNarration();
-      stopBed(12);
+      stopMusic(12);
     }, 1000);
     return () => window.clearInterval(id);
-  }, [timerEndsAt, stopNarration, stopBed]);
+  }, [timerEndsAt, stopNarration, stopMusic]);
+
+  // The music follows the voice: in as it starts, down for a pause, and out
+  // gently once the last line has been read.
+  React.useEffect(() => {
+    if (!music) return;
+    if (speaking && !paused) playMusic(musicSrc, MUSIC_LEVEL);
+    else if (speaking) pauseMusic(0.8);
+    else stopMusic(4);
+  }, [music, speaking, paused, musicSrc, playMusic, pauseMusic, stopMusic]);
 
   // Arm the timer when narration starts, clear it when the reading stops.
   React.useEffect(() => {
@@ -66,23 +80,24 @@ export function StoryReader({ story }: { story: Story }) {
   };
 
   // Nothing keeps sounding once the screen is gone.
-  React.useEffect(() => () => stopBed(1), [stopBed]);
+  React.useEffect(() => () => stopMusic(1), [stopMusic]);
 
+  // Started from the tap itself, so mobile browsers allow the music to play.
   const startNarration = async () => {
     await prime();
-    if (ambient) void playBed(story.soundscape);
+    if (music) playMusic(musicSrc, MUSIC_LEVEL);
     narration.play();
   };
 
-  const toggleAmbient = async () => {
-    if (ambient) {
-      setAmbient(false);
-      stopBed(1.5);
+  const toggleMusic = async () => {
+    if (music) {
+      setMusic(false);
+      stopMusic(1.5);
       return;
     }
-    setAmbient(true);
+    setMusic(true);
     await prime();
-    if (narration.speaking) void playBed(story.soundscape);
+    if (narration.speaking && !narration.paused) playMusic(musicSrc, MUSIC_LEVEL);
   };
 
   const minutesLeft = timerEndsAt ? Math.ceil((timerEndsAt - Date.now()) / 60_000) : 0;
@@ -118,13 +133,24 @@ export function StoryReader({ story }: { story: Story }) {
           <ChevronsLeft className="h-5 w-5" strokeWidth={1.75} />
         </button>
         <p className="text-caption leading-none text-ink-muted">
-          {estimatedMinutes(story)} Min. read
+          {estimatedMinutes(story)} Min. {story.narration ? 'listen' : 'read'}
         </p>
         <StoryFavoriteButton storyId={story.id} title={story.title} size="md" className="-mr-1" />
       </header>
 
-      <div className="relative px-6 pt-5">
-        <h1 className="text-[clamp(1.5rem,7.4vw,1.8125rem)] font-bold leading-tight tracking-[-0.02em] text-ink">
+      <div className="relative px-6 pt-5 text-center">
+        <div className="relative mx-auto aspect-square w-[52vw] max-w-[200px] overflow-hidden shadow-[0_12px_40px_rgba(0,0,0,0.45)] ring-1 ring-inset ring-focus/10">
+          <Image
+            src={story.cover ?? story.image}
+            alt=""
+            fill
+            sizes="200px"
+            placeholder="blur"
+            priority
+            className="object-cover"
+          />
+        </div>
+        <h1 className="mt-5 text-[clamp(1.25rem,6vw,1.4375rem)] font-semibold leading-tight tracking-[-0.01em] text-ink">
           {story.title}
         </h1>
         <p className="mt-2 text-caption leading-relaxed text-ink-muted">{story.description}</p>
@@ -137,17 +163,11 @@ export function StoryReader({ story }: { story: Story }) {
       <div className="relative mt-6 px-6">
         {narration.supported ? (
           <>
-            <NarrationControls
-              narration={narration}
-              segments={segments}
-              totalSeconds={totalSeconds}
-              onStart={startNarration}
-            />
+            <NarrationControls player={narration} onStart={startNarration} />
           </>
         ) : (
           <p className="rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
-            This browser cannot read aloud, so the story is here to read yourself. Narration works
-            in Safari, Chrome and Edge.
+            This browser cannot read aloud, so the story is here to read yourself.
           </p>
         )}
       </div>
@@ -158,28 +178,28 @@ export function StoryReader({ story }: { story: Story }) {
           <div className="rounded-tile bg-surface p-4">
             <button
               type="button"
-              onClick={toggleAmbient}
-              aria-pressed={ambient}
+              onClick={toggleMusic}
+              aria-pressed={music}
               className="flex w-full items-center justify-between gap-3 rounded-xl text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               <span className="min-w-0">
                 <span className="block text-body-sm font-medium leading-tight text-ink">
-                  Sound underneath
+                  Background music
                 </span>
                 <span className="mt-0.5 block text-label leading-tight text-ink-muted">
-                  A quiet bed behind the voice
+                  Soft music under the voice
                 </span>
               </span>
               <span
                 className={cn(
                   'flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors',
-                  ambient ? 'bg-action-pill' : 'bg-overlay/12',
+                  music ? 'bg-action-pill' : 'bg-overlay/12',
                 )}
               >
                 <span
                   className={cn(
                     'block h-5 w-5 rounded-full bg-ink transition-transform',
-                    ambient ? 'translate-x-5' : 'translate-x-0',
+                    music ? 'translate-x-5' : 'translate-x-0',
                   )}
                 />
               </span>

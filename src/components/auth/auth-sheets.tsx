@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ArrowLeft, Loader2, Mail } from 'lucide-react';
 
 import { CODE_LENGTH, CodeInput } from '@/components/auth/code-input';
-import { SerenityRing } from '@/components/onboarding/serenity-mark';
+import { SerenityLogo } from '@/components/onboarding/serenity-mark';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { Sheet, SheetContent, SheetDescription, SheetTitle } from '@/components/ui/sheet';
 import {
@@ -63,7 +63,7 @@ function AuthSheetFrame({
 
         <div className="relative px-6 pt-8">
           <div className="flex items-center justify-center gap-2">
-            <SerenityRing className="h-6 w-6" />
+            <SerenityLogo className="h-6 w-6" />
             <span className="text-[1.0625rem] font-medium text-ink">Serenity</span>
           </div>
           <SheetTitle className="mt-8 text-center text-[1.625rem] font-semibold leading-tight tracking-[-0.02em]">

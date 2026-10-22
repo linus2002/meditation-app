@@ -1,0 +1,22 @@
+[
+  { "id": "letting-go", "title": "Letting Go", "subtitle": "Loosen your grip", "narrator": "Ines Moreau", "category": "anxiety", "durationMinutes": 12, "soundscape": "rain", "breath": "coherent",
+    "description": "For the thoughts you keep turning over. Notice what you are holding, feel where it sits in the body, and practise setting it down for a while." },
+  { "id": "mindful-walk", "title": "Mindful Walk", "subtitle": "One step at a time", "narrator": "Noah Brandt", "category": "focus", "durationMinutes": 10, "soundscape": "forest", "breath": "coherent",
+    "description": "Take this one outside, or around the room. Attention rests on the feet, the ground and the rhythm of walking, and comes back there whenever it wanders." },
+  { "id": "self-compassion", "title": "Self-Compassion", "subtitle": "Kindness, turned inward", "narrator": "Ava Lindqvist", "category": "happiness", "durationMinutes": 15, "soundscape": "pad", "breath": "coherent",
+    "description": "Speak to yourself the way you would speak to a good friend having a hard day. A gentle practice for when the inner voice has been harsh." },
+  { "id": "evening-gratitude", "title": "Evening Gratitude", "subtitle": "Three good things", "narrator": "Ines Moreau", "category": "happiness", "durationMinutes": 10, "soundscape": "chimes", "breath": "coherent",
+    "description": "Look back over the day and find three small things that went well. Stay with each one long enough to feel it, then let the day close." },
+  { "id": "deep-focus", "title": "Deep Focus", "subtitle": "Hold one thing in mind", "narrator": "Noah Brandt", "category": "focus", "durationMinutes": 20, "soundscape": "drone", "breath": "box",
+    "description": "A longer sit for training attention. Rest on a single anchor, notice each time the mind leaves, and return without fuss. Good before demanding work." },
+  { "id": "coherent-breathing", "title": "Coherent Breathing", "subtitle": "Five in, five out", "narrator": "Ava Lindqvist", "category": "breathing", "durationMinutes": 10, "soundscape": "ocean", "breath": "coherent",
+    "description": "An even, unhurried rhythm of five seconds in and five seconds out, paced by the sound of the sea. Simple, steadying, and easy to take anywhere." },
+  { "id": "relaxing-breath", "title": "The Relaxing Breath", "subtitle": "Four, seven, eight", "narrator": "Ines Moreau", "category": "breathing", "durationMinutes": 6, "soundscape": "night", "breath": "478",
+    "description": "Breathe in for four, hold for seven, and let a long breath out for eight. A short practice that tells the body it is safe to slow down." },
+  { "id": "stress-release", "title": "Stress Release", "subtitle": "Unwind the day's tension", "narrator": "Noah Brandt", "category": "relaxation", "durationMinutes": 15, "soundscape": "forest", "breath": "coherent",
+    "description": "Find where the day has settled in the body, the jaw, the shoulders, the belly, and soften each place in turn with a slow out-breath." },
+  { "id": "sleepy-body-scan", "title": "Sleepy Body Scan", "subtitle": "Drift off part by part", "narrator": "Ava Lindqvist", "category": "sleep", "durationMinutes": 30, "soundscape": "night", "breath": "478", "isSleep": true,
+    "description": "Lie down, lights off. Attention moves slowly from the toes to the crown, and each part is allowed to grow heavy. No need to stay awake for the end." },
+  { "id": "panic-pause", "title": "Panic Pause", "subtitle": "When it all feels too much", "narrator": "Noah Brandt", "category": "anxiety", "durationMinutes": 5, "soundscape": "bowl", "breath": "coherent",
+    "description": "Five minutes for a racing heart. Feel your feet, name what you can see and hear, and let a slow, even breath bring you back to the room." }
+]

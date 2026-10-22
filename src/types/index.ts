@@ -171,4 +171,20 @@ export interface Story {
   paragraphs: string[];
   /** Ambient bed offered under the narration. */
   soundscape: SoundscapeId;
+  /** Shown in the home screen rail. */
+  featured?: boolean;
+  /** Square poster for the home screen rail, when it differs from the artwork. */
+  cover?: StaticImageData;
+  /** A recorded reading; without one the device's own voice reads the text. */
+  narration?: StoryNarration;
+}
+
+/** A story read aloud ahead of time, with where each paragraph begins. */
+export interface StoryNarration {
+  /** Streamed from Sanity's CDN. */
+  src: string;
+  /** Seconds. */
+  duration: number;
+  /** Seconds into the audio at which each paragraph starts, one per paragraph. */
+  paragraphStarts: number[];
 }

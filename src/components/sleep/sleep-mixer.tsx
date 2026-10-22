@@ -3,7 +3,6 @@
 import { CloudMoon, CloudRain, Waves, Wind } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-import { VolumeControl } from '@/components/player/volume-control';
 import { sleepSoundscapeIds, soundscapes, type SoundscapeId } from '@/lib/audio/soundscapes';
 import { cn } from '@/lib/utils';
 import { useAudio } from '@/providers/audio-provider';
@@ -75,7 +74,6 @@ export function SleepMixer() {
         })}
       </div>
 
-      <VolumeControl className="mt-4" />
     </div>
   );
 }

@@ -389,6 +389,102 @@
   animation: heart-pop 800ms ease-out forwards;
 }
 
+/*
+ * The home screen's quick-action icons, each part moving on its own. Every
+ * cycle starts and ends at rest, so with reduced motion (below) each layer
+ * simply sits where the original artwork put it. Transform origins are the
+ * pivot in the 170px artwork: the leaf's stem, the tick's centre, the sun's.
+ */
+@keyframes quick-leaf {
+  0%,
+  100% {
+    transform: rotate(0deg) skewY(0deg);
+  }
+  30% {
+    transform: rotate(-7deg) skewY(-1.5deg);
+  }
+  55% {
+    transform: rotate(4deg) skewY(1deg);
+  }
+  75% {
+    transform: rotate(-2deg) skewY(-0.5deg);
+  }
+}
+
+.quick-leaf {
+  transform-origin: 71% 89%;
+  animation: quick-leaf 3.6s ease-in-out infinite;
+}
+
+@keyframes quick-sun {
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.06) rotate(6deg);
+  }
+}
+
+.quick-sun {
+  transform-origin: 52% 47%;
+  animation: quick-sun 4.8s ease-in-out infinite;
+}
+
+@keyframes quick-cloud {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(var(--drift));
+  }
+}
+
+.quick-cloud-left {
+  --drift: 6%;
+  animation: quick-cloud 6s ease-in-out infinite;
+}
+
+.quick-cloud-right {
+  --drift: -7%;
+  animation: quick-cloud 5.2s ease-in-out 0.8s infinite;
+}
+
+@keyframes quick-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-5%) rotate(-2deg);
+  }
+}
+
+.quick-float {
+  animation: quick-float 3.4s ease-in-out infinite;
+}
+
+/* A quick pop near the start of each cycle, then a long rest. */
+@keyframes quick-tick {
+  0%,
+  22%,
+  100% {
+    transform: scale(1);
+  }
+  8% {
+    transform: scale(1.28);
+  }
+  14% {
+    transform: scale(0.94);
+  }
+}
+
+.quick-tick {
+  transform-origin: 63.5% 58.8%;
+  animation: quick-tick 3.4s ease-out 0.6s infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

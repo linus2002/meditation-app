@@ -8,7 +8,6 @@ import { ChevronsLeft } from 'lucide-react';
 import { CirclesUnavailable } from '@/components/circles/circles-unavailable';
 import { HereNow } from '@/components/circles/here-now';
 import { BreathingOrb } from '@/components/player/breathing-orb';
-import { VolumeControl } from '@/components/player/volume-control';
 import { SessionComplete } from '@/components/session/session-complete';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { Skeleton } from '@/components/shared/skeleton';
@@ -250,8 +249,6 @@ export function LiveRoom() {
       </div>
 
       <div className="relative px-7 pb-[clamp(18px,3.8vh,32px)]">
-        <VolumeControl />
-
         {joined ? (
           <button
             type="button"

@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { ChevronsLeft, Pause, Play, X } from 'lucide-react';
 
 import { BreathingOrb } from '@/components/player/breathing-orb';
-import { VolumeControl } from '@/components/player/volume-control';
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { DraftNotice, LargeTextToggle } from '@/components/support/support-parts';
@@ -249,7 +248,6 @@ export function SupportPlayer({
                 )}
               </button>
             </div>
-            <VolumeControl className="mt-6" />
             <button
               type="button"
               onClick={end}

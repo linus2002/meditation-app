@@ -20,7 +20,7 @@ import { Brain, CloudMoon, HeartPulse, Sparkles, Waves, Wind } from 'lucide-reac
 import { categories, deckCards } from '@/data/categories';
 import { inspirations } from '@/data/inspirations';
 import { meditations, programSessions } from '@/data/meditations';
-import { freePrograms } from '@/data/programs';
+import { programs } from '@/data/programs';
 import { recommended } from '@/data/recommended';
 import { reflectionPrompts } from '@/data/reflections';
 import { stories } from '@/data/stories';
@@ -157,7 +157,7 @@ async function buildDocuments() {
   }
 
   console.log('Programmes');
-  for (const [index, program] of freePrograms.entries()) {
+  for (const [index, program] of programs.entries()) {
     docs.push({
       _id: `program-${program.id}`,
       _type: 'program',
@@ -169,6 +169,7 @@ async function buildDocuments() {
       sessions: keyed(program.sessions.map((session) => ref(meditationDocId(session.id)))),
       image: await image(program.image),
       scrim: program.scrim,
+      featured: program.featured,
       order: order(index),
     });
   }

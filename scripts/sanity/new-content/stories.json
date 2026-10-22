@@ -1,0 +1,192 @@
+[
+  {
+    "id": "snowed-in-cabin",
+    "title": "The Snowed-In Cabin",
+    "description": "A quiet evening with the roads closed and nowhere to go",
+    "category": "sleep",
+    "voice": "Ava Lindqvist",
+    "soundscape": "night",
+    "imageAlt": "A small wooden cabin under deep snow, one window lit at night",
+    "paragraphs": [
+      "The snow started after lunch and has not stopped since. By four the road was gone. By five the radio said what you already knew: nothing is moving tonight, and nobody is expected to.",
+      "The stove ticks as it warms. You feed it one more log and close the little iron door, and the orange light comes through the gaps in thin lines across the floor.",
+      "Outside the window there is only white, falling straight down, in no hurry. No wind. Just the snow, settling on the snow that is already there.",
+      "The kettle has been filled. The blankets are on the chair. Everything that needed doing was done hours ago, and there is nothing left on the list.",
+      "Sound goes strange in weather like this. The world outside has gone soft and close, as if someone has laid a thick quilt over the whole valley.",
+      "You sit with your feet toward the stove. The heat finds your socks first, then your ankles, then works its way slowly up.",
+      "Somewhere out there the plough will come, tomorrow or the day after. Until then the cabin is the whole world, and the whole world is warm.",
+      "The snow keeps falling. The fire keeps burning. Neither of them needs you to watch, so after a while you stop watching."
+    ]
+  },
+  {
+    "id": "harbour-at-night",
+    "title": "The Harbour at Night",
+    "description": "Moored boats, slack ropes, and water that barely moves",
+    "category": "sleep",
+    "voice": "Noah Brandt",
+    "soundscape": "ocean",
+    "imageAlt": "Small boats moored in a calm harbour under a dark blue sky",
+    "paragraphs": [
+      "The last boat came in an hour ago. Its crew tied up, coiled their ropes, and walked off along the quay without looking back. Now the harbour belongs to nobody.",
+      "The water inside the wall is almost flat. It lifts a little against the hulls and lets them down again, so gently that the boats seem to be breathing.",
+      "A rope creaks somewhere. Then another, further off. Then nothing for a long time.",
+      "The lamps along the quay make long yellow lines across the water. When a ripple comes through, the lines break into pieces, and then, slowly, put themselves back together.",
+      "Out past the wall the open sea is doing what it does. In here, none of it arrives. The wall takes it all, and passes on only the softest part.",
+      "A gull settles on a mast, shifts its weight once, and tucks its head down. It has found the right place for the night. It does not need a better one.",
+      "The tide is turning, though you would never know it. It will turn again before morning, and again after that, without anyone having to decide.",
+      "Lift, and settle. A rope creaks. The lamps hold their lines on the water. Everything in the harbour is tied to something, and everything is still."
+    ]
+  },
+  {
+    "id": "attic-rain",
+    "title": "Rain on the Attic Roof",
+    "description": "A narrow bed under the slope of the roof, and a long steady rain",
+    "category": "sleep",
+    "voice": "Ines Moreau",
+    "soundscape": "rain",
+    "imageAlt": "Raindrops on a skylight above a dim attic room",
+    "paragraphs": [
+      "The attic room is the smallest in the house, and the best. The ceiling slopes down so low over the bed that you could touch it without sitting up.",
+      "The rain arrived just after dark. At first a few heavy drops, far apart, each one its own small knock on the slates. Then more. Then all of them at once.",
+      "Now it is a single sound, wide and even, spread across the whole roof just above your head. It is very close, and it cannot reach you.",
+      "Downstairs, someone turns off the last light. The stairs creak once and are quiet.",
+      "The gutter fills and runs. You can hear it start somewhere at the far end of the house and travel all the way along, past your window, and down.",
+      "Your quilt is heavy and slightly cool, and it warms where you lie. You find the place where your feet are comfortable and leave them there.",
+      "The rain does not get louder. It does not get softer. It has settled into exactly what it is going to be for the rest of the night.",
+      "There is the roof, and the rain on it, and you under both. Nothing else needs to be listened to. Nothing else needs to be done."
+    ]
+  },
+  {
+    "id": "observatory",
+    "title": "The Hilltop Observatory",
+    "description": "A slow night under a turning sky, far from any town",
+    "category": "sleep",
+    "voice": "Ava Lindqvist",
+    "soundscape": "drone",
+    "imageAlt": "A small domed observatory on a hill under a sky full of stars",
+    "paragraphs": [
+      "The road up the hill ends at a gravel car park and a small white dome. Nobody else is here tonight. The caretaker left the key under the stone, as promised.",
+      "Inside, the dome is cool and smells of oil and old paper. You turn the handle and the roof opens with a long, low rumble, and there is the sky.",
+      "You do not need the telescope yet. You lie back on the bench and simply look.",
+      "There are more stars than you remember. The longer you look, the more there are, as if they are arriving one at a time to see who has come.",
+      "The sky is turning, very slowly. You cannot see it move, but if you wait, the bright star above the door edges across toward the hill.",
+      "There is no sound up here except the faint tick of the dome cooling, and once, far below, a dog in a farmyard, and then not even that.",
+      "Everything you can see has been there for a very long time and will be there a very long time after tonight. None of it is in a hurry. None of it is waiting for you.",
+      "The bench is hard and the blanket is warm. Above you the sky turns, star by star, toward a morning that is still a long way off."
+    ]
+  },
+  {
+    "id": "greenhouse",
+    "title": "The Greenhouse",
+    "description": "Warm air, damp soil, and an afternoon of small green things",
+    "category": "relaxation",
+    "voice": "Noah Brandt",
+    "soundscape": "forest",
+    "imageAlt": "Rows of potted seedlings in a sunlit glass greenhouse",
+    "paragraphs": [
+      "The greenhouse door sticks a little, the way it always has. You lift it as you push, and it opens, and the warm air comes out to meet you.",
+      "Inside it smells of soil and tomato leaves and something green you cannot name. The glass has fogged at the corners. The light comes in soft and even from every side.",
+      "There are seedlings to move today. Small ones, with two leaves each, crowded into a tray. You take them out one at a time and give each its own pot.",
+      "Your fingers find the root ball and lift it gently. The soil is damp and cool and holds its shape. You press it down around the stem, not too hard.",
+      "Outside, a breeze moves the hedge. In here, nothing moves at all except your hands, and the dust in the light, and very slowly, the plants.",
+      "One tray empties. The bench fills with small pots in neat rows. You water them with the can with the long spout, and the water darkens the soil all at once.",
+      "There is no hurry in a greenhouse. Nothing here grows faster because you are watching. It grows at the speed it grows, and that is the right speed.",
+      "You wipe your hands on your trousers and sit on the upturned crate. The warmth settles on your shoulders. The seedlings stand in their rows, getting on with it."
+    ]
+  },
+  {
+    "id": "river-boat",
+    "title": "Drifting Downriver",
+    "description": "A rowing boat, a slow current, and oars pulled in",
+    "category": "relaxation",
+    "voice": "Ines Moreau",
+    "soundscape": "pad",
+    "imageAlt": "A small wooden rowing boat on a calm river lined with willows",
+    "paragraphs": [
+      "You row out to the middle of the river, where the current is, and then you stop rowing. You pull the oars in and lay them along the seats.",
+      "The boat turns a little, finds its own direction, and begins to drift.",
+      "The water is brown and slow and deep. It carries leaves and small sticks and you, all at the same speed, all in the same direction, without effort.",
+      "Willows lean out from the bank. Their long branches trail in the water and make small ripples that follow the current down for a while and then fade.",
+      "The sun is warm on your knees. You lean back against the stern and let your hand hang over the side, fingers just touching the surface.",
+      "A heron stands in the shallows, perfectly still. You pass it. It does not move. It does not even look.",
+      "There is no landing to reach, no time to be back by. The river knows the way, and has been going there for a very long time.",
+      "The boat turns slowly. The bank slides by. The water holds you up and carries you on, and asks nothing for it."
+    ]
+  },
+  {
+    "id": "bathhouse",
+    "title": "The Old Bathhouse",
+    "description": "Steam, tiled walls, and water exactly the right warmth",
+    "category": "relaxation",
+    "voice": "Ava Lindqvist",
+    "soundscape": "bowl",
+    "imageAlt": "A quiet tiled bathhouse pool with soft steam and morning light",
+    "paragraphs": [
+      "The bathhouse opens early, and in the first hour it is almost empty. The attendant nods as you come in and goes back to folding towels.",
+      "The main room is tiled in pale green, floor to ceiling. Steam hangs just above the water. Light comes down through a high round window in a single soft column.",
+      "You step in slowly. The water is warm, warmer than you expect, and then exactly right. It closes over your knees, your waist, your shoulders.",
+      "You find the ledge along the wall and sit. The water holds your arms up for you. You let it.",
+      "Every sound in here is softened and stretched. A drip from a tap. A door somewhere. Water lapping at the edge of the pool, very gently, over and over.",
+      "Your shoulders, which you had not noticed were raised, come down. Your jaw loosens. Your hands open under the water without being told.",
+      "There is a clock on the far wall, but the steam has fogged the glass, and you cannot read it, and that seems right.",
+      "The light moves slowly across the tiles. The water stays warm. You stay where you are, and there is no reason at all to be anywhere else."
+    ]
+  },
+  {
+    "id": "bakery-dawn",
+    "title": "The Bakery Before Dawn",
+    "description": "Flour, warm ovens, and the first loaves of the day",
+    "category": "mindfulness",
+    "voice": "Noah Brandt",
+    "soundscape": "pad",
+    "imageAlt": "Fresh loaves of bread cooling on a wooden rack in warm light",
+    "paragraphs": [
+      "It is four in the morning and the street is dark, but the bakery is lit and warm. The ovens have been on for an hour.",
+      "The dough rose overnight under cloths. You lift the first cloth and there it is, soft and pale and twice the size it was.",
+      "You turn it out onto the floured table. It settles, slowly, under its own weight. You press your palms into it and feel it press back.",
+      "Fold, and turn. Fold, and turn. Your hands know the rhythm. Your mind does not need to be anywhere but here, in the flour and the warmth and the dough.",
+      "You shape the loaves one by one and set them in rows. Each one a little different. Each one fine just as it is.",
+      "The oven door opens with a breath of heat. The loaves go in on the long wooden paddle. The door closes. Now there is nothing to do but wait.",
+      "The smell comes slowly. First faint, then everywhere: warm crust, something sweet, something almost like toast. It fills the room and spills out under the door.",
+      "Outside, the sky is starting to grey. Inside, the first loaves come out and stand on the rack, crackling softly as they cool. The day has begun, gently."
+    ]
+  },
+  {
+    "id": "pottery-wheel",
+    "title": "The Pottery Wheel",
+    "description": "Wet clay, steady hands, and a bowl taking its time",
+    "category": "mindfulness",
+    "voice": "Ines Moreau",
+    "soundscape": "chimes",
+    "imageAlt": "Hands shaping wet clay on a spinning pottery wheel",
+    "paragraphs": [
+      "The studio is quiet on a weekday afternoon. Shelves of drying bowls line the walls, grey and pale and waiting for the kiln.",
+      "You sit at the wheel and press the pedal, and it begins to turn with a soft whir. You wet your hands in the bucket beside you.",
+      "The clay is cold and heavy. You throw it down onto the centre of the wheel and cup your hands around it, and lean in.",
+      "At first it wobbles. It pushes against your palms, this way, then that. You do not fight it. You keep your hands steady and let the wheel do the work.",
+      "Slowly, it stops wobbling. It comes to the centre and stays there, smooth and round and turning under your hands. There is a moment when you feel it settle.",
+      "You press your thumbs into the top and the clay opens. You draw the walls up, slowly, slowly, a little at a time. Too fast and it falls. So you do not go too fast.",
+      "Your whole attention is in your fingertips. The thought you were carrying in here has gone somewhere. There is only the clay, and the turning, and your hands.",
+      "The bowl stands on the wheel, still wet, still soft. Not perfect. You slow the pedal, and the wheel stops, and you sit for a moment and look at what you made."
+    ]
+  },
+  {
+    "id": "library-afternoon",
+    "title": "An Afternoon in the Library",
+    "description": "Tall windows, old books, and a seat nobody else wants",
+    "category": "mindfulness",
+    "voice": "Ava Lindqvist",
+    "soundscape": "rain",
+    "imageAlt": "A quiet reading room with tall windows, wooden tables and green lamps",
+    "paragraphs": [
+      "It is raining, so you came to the library. The reading room is long and high, with tall windows down one side and green lamps on every table.",
+      "You choose the seat at the far end, by the radiator. Nobody else ever sits here. The chair is wooden and has worn smooth where a thousand people have leaned back.",
+      "You take a book from the shelf without looking too hard at which one. It does not matter. That is not why you are here.",
+      "The rain runs down the tall windows in slow lines. The light through them is grey and even. The lamp makes a small warm circle on the table, just big enough for the open page.",
+      "Somewhere a page turns. Somewhere a chair scrapes, softly, and stops. Someone coughs once. Then the quiet comes back, and it is a deeper quiet than before.",
+      "You read a sentence. Then you read it again, slower. You notice the weight of the paper under your fingers, the faint smell of dust and glue.",
+      "Nobody here wants anything from you. The librarian at the desk is reading too. The clock above the door moves, but nobody looks at it.",
+      "The rain keeps on. The radiator ticks. You turn the page, and there is another one after it, and the afternoon is long enough for all of them."
+    ]
+  }
+]

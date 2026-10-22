@@ -1,0 +1,652 @@
+[
+  {
+    "id": "hip-opener",
+    "title": "Gentle Hip Opener",
+    "subtitle": "Make room where you hold the most",
+    "focus": "Hips",
+    "level": "Beginner",
+    "soundscape": "forest",
+    "imageAlt": "A quiet meadow with long grass at golden hour",
+    "description": "Slow floor poses for hips that feel tight from sitting. Stay well inside what feels comfortable; the hips open in their own time.",
+    "poses": [
+      {
+        "name": "Seated breath",
+        "seconds": 45,
+        "cue": "Sit cross-legged on a cushion. Let your knees be heavy and breathe slowly into your belly."
+      },
+      {
+        "name": "Cat–cow",
+        "seconds": 45,
+        "cue": "On hands and knees, arch your back as you breathe in and round it as you breathe out."
+      },
+      {
+        "name": "Low lunge",
+        "seconds": 45,
+        "cue": "Step one foot forward between your hands, lower the back knee and let your hips sink forward.",
+        "side": "left"
+      },
+      {
+        "name": "Low lunge",
+        "seconds": 45,
+        "cue": "Step one foot forward between your hands, lower the back knee and let your hips sink forward.",
+        "side": "right"
+      },
+      {
+        "name": "Wide-knee child’s pose",
+        "seconds": 60,
+        "cue": "Bring your big toes together, knees wide, and walk your hands forward. Rest your forehead down."
+      },
+      {
+        "name": "Butterfly",
+        "seconds": 60,
+        "cue": "Sit with the soles of your feet together and let your knees fall open. Fold forward only a little."
+      },
+      {
+        "name": "Figure-four on your back",
+        "seconds": 60,
+        "cue": "Lying down, cross one ankle over the opposite knee and draw both legs gently toward you.",
+        "side": "left"
+      },
+      {
+        "name": "Figure-four on your back",
+        "seconds": 60,
+        "cue": "Lying down, cross one ankle over the opposite knee and draw both legs gently toward you.",
+        "side": "right"
+      },
+      {
+        "name": "Happy baby",
+        "seconds": 45,
+        "cue": "Hold the outsides of your feet, knees wide, and rock slowly from side to side."
+      },
+      {
+        "name": "Rest",
+        "seconds": 60,
+        "cue": "Stretch your legs out long and let the floor hold you. Breathe naturally."
+      }
+    ]
+  },
+  {
+    "id": "posture-reset",
+    "title": "Posture Reset",
+    "subtitle": "Open the chest, lift the upper back",
+    "focus": "Posture",
+    "level": "Beginner",
+    "soundscape": "chimes",
+    "imageAlt": "Tall pine trees reaching into a clear morning sky",
+    "description": "For rounded shoulders and a chest that has folded in over a screen. Small, careful backbends and lots of breath.",
+    "poses": [
+      {
+        "name": "Mountain pose",
+        "seconds": 45,
+        "cue": "Stand tall with feet hip-width apart. Let the crown of your head lift and your shoulders soften."
+      },
+      {
+        "name": "Shoulder rolls",
+        "seconds": 30,
+        "cue": "Roll your shoulders up, back and down, slowly. Let them settle a little lower each time."
+      },
+      {
+        "name": "Clasped-hands chest opener",
+        "seconds": 45,
+        "cue": "Interlace your hands behind you and draw them gently down. Lift your chest, not your chin."
+      },
+      {
+        "name": "Doorway stretch",
+        "seconds": 30,
+        "cue": "Rest one forearm on a doorframe at shoulder height and turn your body softly away.",
+        "side": "left"
+      },
+      {
+        "name": "Doorway stretch",
+        "seconds": 30,
+        "cue": "Rest one forearm on a doorframe at shoulder height and turn your body softly away.",
+        "side": "right"
+      },
+      {
+        "name": "Cat–cow",
+        "seconds": 45,
+        "cue": "On hands and knees, arch your back as you breathe in and round it as you breathe out."
+      },
+      {
+        "name": "Thread the needle",
+        "seconds": 45,
+        "cue": "From hands and knees, slide one arm under the other and rest your shoulder and ear down.",
+        "side": "left"
+      },
+      {
+        "name": "Thread the needle",
+        "seconds": 45,
+        "cue": "From hands and knees, slide one arm under the other and rest your shoulder and ear down.",
+        "side": "right"
+      },
+      {
+        "name": "Sphinx",
+        "seconds": 45,
+        "cue": "Lie on your front, forearms under your shoulders. Lift your chest gently and keep your neck long."
+      },
+      {
+        "name": "Child’s pose",
+        "seconds": 45,
+        "cue": "Sit back toward your heels and rest your forehead down. Arms forward or by your sides."
+      },
+      {
+        "name": "Closing breath",
+        "seconds": 45,
+        "cue": "Sit or stand tall. Notice the space across your collarbones as you breathe."
+      }
+    ]
+  },
+  {
+    "id": "tired-legs",
+    "title": "Tired Legs",
+    "subtitle": "After a long walk or a long day standing",
+    "focus": "Legs",
+    "level": "Gentle",
+    "soundscape": "rain",
+    "imageAlt": "A winding footpath through soft green hills after rain",
+    "description": "Easy stretches for calves, hamstrings and feet that have done a lot of work. Ends with your legs up to rest.",
+    "poses": [
+      {
+        "name": "Seated breath",
+        "seconds": 45,
+        "cue": "Sit with your legs out in front of you. Lean back on your hands and breathe."
+      },
+      {
+        "name": "Ankle circles",
+        "seconds": 45,
+        "cue": "Circle both ankles slowly one way, then the other. Spread your toes as you go."
+      },
+      {
+        "name": "Reclined hamstring stretch",
+        "seconds": 60,
+        "cue": "Lying down, lift one leg and hold behind the thigh or use a strap. Keep the knee soft.",
+        "side": "left"
+      },
+      {
+        "name": "Reclined hamstring stretch",
+        "seconds": 60,
+        "cue": "Lying down, lift one leg and hold behind the thigh or use a strap. Keep the knee soft.",
+        "side": "right"
+      },
+      {
+        "name": "Lying quad stretch",
+        "seconds": 45,
+        "cue": "On your side, hold your top foot and draw it gently toward your seat. Knees stay together.",
+        "side": "left"
+      },
+      {
+        "name": "Lying quad stretch",
+        "seconds": 45,
+        "cue": "On your side, hold your top foot and draw it gently toward your seat. Knees stay together.",
+        "side": "right"
+      },
+      {
+        "name": "Calf stretch at the wall",
+        "seconds": 45,
+        "cue": "Hands on a wall, step one foot back and press the heel down. Swap halfway through."
+      },
+      {
+        "name": "Legs up the wall",
+        "seconds": 90,
+        "cue": "Lie with your seat near a wall and rest your legs up it. Let them be completely heavy."
+      },
+      {
+        "name": "Rest",
+        "seconds": 45,
+        "cue": "Bring your knees in, roll to one side, and pause before you sit up."
+      }
+    ]
+  },
+  {
+    "id": "hands-and-wrists",
+    "title": "Hands & Wrists",
+    "subtitle": "For a day of typing",
+    "focus": "Wrists and hands",
+    "level": "Gentle",
+    "soundscape": "pad",
+    "imageAlt": "A cup of tea on a wooden desk beside a window",
+    "description": "Five quiet minutes for hands, wrists and forearms. Done sitting, anywhere. Move only as far as feels comfortable.",
+    "poses": [
+      {
+        "name": "Seated breath",
+        "seconds": 30,
+        "cue": "Sit tall with your hands resting on your thighs. Let your fingers soften."
+      },
+      {
+        "name": "Finger spreads",
+        "seconds": 30,
+        "cue": "Make a soft fist, then spread your fingers as wide as they go. Repeat slowly."
+      },
+      {
+        "name": "Wrist circles",
+        "seconds": 30,
+        "cue": "Circle both wrists slowly one way, then the other. Keep your shoulders relaxed."
+      },
+      {
+        "name": "Forearm stretch, palm up",
+        "seconds": 30,
+        "cue": "Extend one arm, palm up, and gently draw the fingers back with your other hand.",
+        "side": "left"
+      },
+      {
+        "name": "Forearm stretch, palm up",
+        "seconds": 30,
+        "cue": "Extend one arm, palm up, and gently draw the fingers back with your other hand.",
+        "side": "right"
+      },
+      {
+        "name": "Forearm stretch, palm down",
+        "seconds": 30,
+        "cue": "Extend one arm, palm down, and gently press the back of the hand toward you.",
+        "side": "left"
+      },
+      {
+        "name": "Forearm stretch, palm down",
+        "seconds": 30,
+        "cue": "Extend one arm, palm down, and gently press the back of the hand toward you.",
+        "side": "right"
+      },
+      {
+        "name": "Prayer stretch",
+        "seconds": 30,
+        "cue": "Press your palms together in front of your chest and lower them slowly until you feel a stretch."
+      },
+      {
+        "name": "Shake it out",
+        "seconds": 30,
+        "cue": "Let your hands hang and shake them loosely, like flicking off water."
+      },
+      {
+        "name": "Closing breath",
+        "seconds": 30,
+        "cue": "Rest your hands, palms up, on your lap. Notice the warmth in them."
+      }
+    ]
+  },
+  {
+    "id": "steady-balance",
+    "title": "Steady Balance",
+    "subtitle": "Standing still, on purpose",
+    "focus": "Balance",
+    "level": "All levels",
+    "soundscape": "bowl",
+    "imageAlt": "A single flat stone balanced on a calm shoreline",
+    "description": "Standing poses that train balance and attention together. Keep a wall or chair close by and use it whenever you want.",
+    "poses": [
+      {
+        "name": "Mountain pose",
+        "seconds": 45,
+        "cue": "Stand tall and feel your weight spread evenly through both feet. Find one still point to look at."
+      },
+      {
+        "name": "Weight shifts",
+        "seconds": 30,
+        "cue": "Sway slowly forward, back and side to side, then come to rest in the middle."
+      },
+      {
+        "name": "Standing knee lift",
+        "seconds": 30,
+        "cue": "Lift one knee to hip height and hold it with your hands, or let it float.",
+        "side": "left"
+      },
+      {
+        "name": "Standing knee lift",
+        "seconds": 30,
+        "cue": "Lift one knee to hip height and hold it with your hands, or let it float.",
+        "side": "right"
+      },
+      {
+        "name": "Tree pose",
+        "seconds": 45,
+        "cue": "Rest one foot on the opposite ankle or calf — never the knee. Hands at your chest.",
+        "side": "left"
+      },
+      {
+        "name": "Tree pose",
+        "seconds": 45,
+        "cue": "Rest one foot on the opposite ankle or calf — never the knee. Hands at your chest.",
+        "side": "right"
+      },
+      {
+        "name": "Warrior three at the wall",
+        "seconds": 30,
+        "cue": "Hands on a wall, hinge forward and lift one leg behind you. Keep your hips level.",
+        "side": "left"
+      },
+      {
+        "name": "Warrior three at the wall",
+        "seconds": 30,
+        "cue": "Hands on a wall, hinge forward and lift one leg behind you. Keep your hips level.",
+        "side": "right"
+      },
+      {
+        "name": "Chair pose",
+        "seconds": 30,
+        "cue": "Bend your knees as if sitting back into a chair, arms reaching forward."
+      },
+      {
+        "name": "Closing breath",
+        "seconds": 45,
+        "cue": "Stand still with your eyes closed if that feels safe. Notice how steady you already are."
+      }
+    ]
+  },
+  {
+    "id": "afternoon-energy",
+    "title": "Afternoon Lift",
+    "subtitle": "Wake up without more coffee",
+    "focus": "Energy",
+    "level": "Beginner",
+    "soundscape": "forest",
+    "imageAlt": "Bright sunlight streaming through green leaves",
+    "description": "A short, brisk standing sequence for the afternoon slump. Gets the blood moving and the breath deeper.",
+    "poses": [
+      {
+        "name": "Mountain pose",
+        "seconds": 30,
+        "cue": "Stand tall, feet hip-width apart. Take three full breaths, a little bigger each time."
+      },
+      {
+        "name": "Arm sweeps",
+        "seconds": 45,
+        "cue": "Sweep your arms up as you breathe in and down as you breathe out. Find a steady rhythm."
+      },
+      {
+        "name": "Standing side stretch",
+        "seconds": 30,
+        "cue": "Reach both arms up, then lean gently to one side. Keep breathing into your ribs.",
+        "side": "left"
+      },
+      {
+        "name": "Standing side stretch",
+        "seconds": 30,
+        "cue": "Reach both arms up, then lean gently to one side. Keep breathing into your ribs.",
+        "side": "right"
+      },
+      {
+        "name": "Forward fold",
+        "seconds": 30,
+        "cue": "Hinge at the hips and let your upper body hang. Soft knees, heavy head."
+      },
+      {
+        "name": "Half lift",
+        "seconds": 30,
+        "cue": "Hands to your shins, lengthen your back forward, then fold again. Repeat with the breath."
+      },
+      {
+        "name": "Crescent lunge",
+        "seconds": 30,
+        "cue": "Step one foot back, bend the front knee and reach your arms up. Back heel can lift.",
+        "side": "left"
+      },
+      {
+        "name": "Crescent lunge",
+        "seconds": 30,
+        "cue": "Step one foot back, bend the front knee and reach your arms up. Back heel can lift.",
+        "side": "right"
+      },
+      {
+        "name": "Chair pose",
+        "seconds": 30,
+        "cue": "Bend your knees as if sitting back into a chair, arms reaching forward."
+      },
+      {
+        "name": "Standing twist",
+        "seconds": 30,
+        "cue": "Let your arms swing loosely around your body as you turn from side to side."
+      },
+      {
+        "name": "Closing breath",
+        "seconds": 30,
+        "cue": "Stand still and feel your heart and breath settle back down."
+      }
+    ]
+  },
+  {
+    "id": "restorative-rest",
+    "title": "Restorative Rest",
+    "subtitle": "Long holds, fully supported",
+    "focus": "Calm",
+    "level": "Gentle",
+    "soundscape": "drone",
+    "imageAlt": "Soft cushions and a folded blanket in warm evening light",
+    "description": "Very little movement, a lot of support. Have a pillow or two and a blanket nearby, and let each pose do the work.",
+    "poses": [
+      {
+        "name": "Settling breath",
+        "seconds": 45,
+        "cue": "Lie on your back with your knees bent. Gather your pillows and blanket within reach."
+      },
+      {
+        "name": "Supported child’s pose",
+        "seconds": 90,
+        "cue": "Kneel with a pillow lengthways between your knees and rest your chest and cheek on it."
+      },
+      {
+        "name": "Supported twist",
+        "seconds": 75,
+        "cue": "Sit beside the pillow, turn toward it and lay your chest down. Swap your cheek if you like.",
+        "side": "left"
+      },
+      {
+        "name": "Supported twist",
+        "seconds": 75,
+        "cue": "Sit beside the pillow, turn toward it and lay your chest down. Swap your cheek if you like.",
+        "side": "right"
+      },
+      {
+        "name": "Supported bridge",
+        "seconds": 90,
+        "cue": "Lying down, slide a firm cushion under your lower back. Let your arms rest wide."
+      },
+      {
+        "name": "Reclined butterfly",
+        "seconds": 90,
+        "cue": "Soles of the feet together, knees falling open onto pillows. Hands on your belly."
+      },
+      {
+        "name": "Legs on a chair",
+        "seconds": 90,
+        "cue": "Lie on your back with your calves resting on a chair seat. Cover yourself with a blanket."
+      },
+      {
+        "name": "Rest",
+        "seconds": 90,
+        "cue": "Stretch out, close your eyes and let the breath move on its own."
+      }
+    ]
+  },
+  {
+    "id": "travel-stretch",
+    "title": "Travel Stretch",
+    "subtitle": "For trains, planes and long drives",
+    "focus": "On the go",
+    "level": "Gentle",
+    "soundscape": "drone",
+    "imageAlt": "Clouds seen from an aeroplane window at dusk",
+    "description": "Small movements you can do in a seat without bothering anyone. Helps stiffness and keeps the blood moving on a long journey.",
+    "poses": [
+      {
+        "name": "Seated breath",
+        "seconds": 30,
+        "cue": "Sit back in your seat with both feet on the floor. Breathe slowly through your nose."
+      },
+      {
+        "name": "Ankle pumps",
+        "seconds": 45,
+        "cue": "Lift your toes, then your heels, in a slow rhythm. Keep going a little longer than you want to."
+      },
+      {
+        "name": "Knee lifts",
+        "seconds": 30,
+        "cue": "Lift one knee a few centimetres, lower it, then the other. Like walking in your seat."
+      },
+      {
+        "name": "Shoulder rolls",
+        "seconds": 30,
+        "cue": "Roll your shoulders up, back and down, slowly. Let them settle a little lower each time."
+      },
+      {
+        "name": "Seated neck stretch",
+        "seconds": 30,
+        "cue": "Tilt one ear toward your shoulder. Let the opposite shoulder stay heavy.",
+        "side": "left"
+      },
+      {
+        "name": "Seated neck stretch",
+        "seconds": 30,
+        "cue": "Tilt one ear toward your shoulder. Let the opposite shoulder stay heavy.",
+        "side": "right"
+      },
+      {
+        "name": "Seated twist",
+        "seconds": 30,
+        "cue": "Hold the armrest and turn gently from your belly, then your chest. Never force it.",
+        "side": "left"
+      },
+      {
+        "name": "Seated twist",
+        "seconds": 30,
+        "cue": "Hold the armrest and turn gently from your belly, then your chest. Never force it.",
+        "side": "right"
+      },
+      {
+        "name": "Seated cat–cow",
+        "seconds": 45,
+        "cue": "Hands on your knees: arch forward as you breathe in, round your back as you breathe out."
+      },
+      {
+        "name": "Closing breath",
+        "seconds": 30,
+        "cue": "Close your eyes for a few breaths and let your body settle into the seat."
+      }
+    ]
+  },
+  {
+    "id": "wall-yoga",
+    "title": "Yoga at the Wall",
+    "subtitle": "A little extra support",
+    "focus": "Supported",
+    "level": "Beginner",
+    "soundscape": "pad",
+    "imageAlt": "A sunlit white wall with the shadow of a plant",
+    "description": "Familiar poses with a wall to lean on, so you can feel the shape without worrying about balance. Good on stiff days.",
+    "poses": [
+      {
+        "name": "Mountain at the wall",
+        "seconds": 45,
+        "cue": "Stand with your back against the wall, heels a little away. Feel the back of your head touch it."
+      },
+      {
+        "name": "Wall push-away",
+        "seconds": 30,
+        "cue": "Hands on the wall at chest height. Bend your elbows slowly, then press away."
+      },
+      {
+        "name": "Wall downward dog",
+        "seconds": 45,
+        "cue": "Hands on the wall, walk your feet back and hinge until your back is long. Soft knees."
+      },
+      {
+        "name": "Wall calf stretch",
+        "seconds": 30,
+        "cue": "Step one foot back and press the heel down. Keep your hips facing the wall.",
+        "side": "left"
+      },
+      {
+        "name": "Wall calf stretch",
+        "seconds": 30,
+        "cue": "Step one foot back and press the heel down. Keep your hips facing the wall.",
+        "side": "right"
+      },
+      {
+        "name": "Wall tree pose",
+        "seconds": 30,
+        "cue": "One hand on the wall, rest the other foot on your ankle or calf — never the knee.",
+        "side": "left"
+      },
+      {
+        "name": "Wall tree pose",
+        "seconds": 30,
+        "cue": "One hand on the wall, rest the other foot on your ankle or calf — never the knee.",
+        "side": "right"
+      },
+      {
+        "name": "Wall quad stretch",
+        "seconds": 30,
+        "cue": "One hand on the wall, hold your other foot and draw it gently toward your seat.",
+        "side": "left"
+      },
+      {
+        "name": "Wall quad stretch",
+        "seconds": 30,
+        "cue": "One hand on the wall, hold your other foot and draw it gently toward your seat.",
+        "side": "right"
+      },
+      {
+        "name": "Legs up the wall",
+        "seconds": 90,
+        "cue": "Lie with your seat near the wall and rest your legs up it. Let them be completely heavy."
+      },
+      {
+        "name": "Rest",
+        "seconds": 45,
+        "cue": "Bring your knees in, roll to one side, and stay there for a few breaths."
+      }
+    ]
+  },
+  {
+    "id": "calm-the-nerves",
+    "title": "Calm the Nerves",
+    "subtitle": "Slow down a racing body",
+    "focus": "Calm",
+    "level": "All levels",
+    "soundscape": "ocean",
+    "imageAlt": "Gentle waves meeting a quiet beach under a pale sky",
+    "description": "For when you feel wired or on edge. Long out-breaths, forward folds and grounding poses to help the body settle.",
+    "poses": [
+      {
+        "name": "Grounding breath",
+        "seconds": 60,
+        "cue": "Sit or lie down. Breathe in for four, out for six. Let the out-breath be the longer one."
+      },
+      {
+        "name": "Child’s pose",
+        "seconds": 60,
+        "cue": "Sit back toward your heels and rest your forehead down. Feel your back rise as you breathe."
+      },
+      {
+        "name": "Cat–cow",
+        "seconds": 45,
+        "cue": "On hands and knees, move slowly with the breath. There is no rush."
+      },
+      {
+        "name": "Seated forward fold",
+        "seconds": 60,
+        "cue": "Sit with your legs out and fold forward over a pillow. Let your head rest."
+      },
+      {
+        "name": "Reclined twist",
+        "seconds": 45,
+        "cue": "Lying down, let both knees fall to one side and turn your head the other way.",
+        "side": "left"
+      },
+      {
+        "name": "Reclined twist",
+        "seconds": 45,
+        "cue": "Lying down, let both knees fall to one side and turn your head the other way.",
+        "side": "right"
+      },
+      {
+        "name": "Knees to chest",
+        "seconds": 45,
+        "cue": "Hug your knees in and rock gently side to side."
+      },
+      {
+        "name": "Rest with a hand on your heart",
+        "seconds": 90,
+        "cue": "Lie still with one hand on your chest and one on your belly. Feel them slow down."
+      }
+    ]
+  }
+]

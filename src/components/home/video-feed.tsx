@@ -149,7 +149,7 @@ export function VideoFeed({
           type="button"
           onClick={onClose}
           aria-label="Close videos"
-          className="pointer-events-auto flex h-10 w-10 items-center justify-center text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="pointer-events-auto flex h-10 w-10 items-center justify-center text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           <X className="h-6 w-6" strokeWidth={2} />
         </button>
@@ -272,7 +272,7 @@ function FeedSlide({
       {held && active ? (
         <Play
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 fill-white/80 text-white/80 drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 fill-white text-white"
         />
       ) : null}
 
@@ -280,7 +280,7 @@ function FeedSlide({
         <Heart
           key={heart.id}
           aria-hidden="true"
-          className="heart-pop pointer-events-none absolute h-24 w-24 drop-shadow-[0_4px_12px_rgba(0,0,0,0.35)]"
+          className="heart-pop pointer-events-none absolute h-24 w-24"
           style={{ left: heart.x, top: heart.y, color: LIKE_RED, fill: LIKE_RED }}
         />
       ))}
@@ -297,7 +297,7 @@ function FeedSlide({
           onClick={() => onToggleLike()}
           aria-pressed={liked}
           aria-label={liked ? `Unlike ${video.title}` : `Like ${video.title}`}
-          className="flex w-14 flex-col items-center gap-1 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="flex w-14 flex-col items-center gap-1 text-white transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           <Heart
             className="h-8 w-8"
@@ -312,7 +312,7 @@ function FeedSlide({
           onClick={onToggleMute}
           aria-pressed={!muted}
           aria-label={muted ? 'Turn on sound' : 'Mute'}
-          className="flex w-14 flex-col items-center gap-1 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="flex w-14 flex-col items-center gap-1 text-white transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           {muted ? (
             <VolumeX className="h-7 w-7" strokeWidth={1.8} />

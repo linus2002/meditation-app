@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { PersonStanding, Sparkles, Users, type LucideIcon } from 'lucide-react';
 
 import { AuroraSweep } from '@/components/onboarding/aurora-sweep';
-import { SerenityMark, SerenityRing } from '@/components/onboarding/serenity-mark';
+import { SerenityMark, SerenityLogo } from '@/components/onboarding/serenity-mark';
 import { DiagonalSlashes, WaveLines } from '@/components/shared/decor';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { photos } from '@/data/images';
@@ -225,7 +225,7 @@ export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface">
                 {Icon === 'ring' ? (
-                  <SerenityRing className="h-6 w-6" />
+                  <SerenityLogo className="h-6 w-6" />
                 ) : (
                   <Icon className="h-5 w-5 text-ink-soft" strokeWidth={1.7} />
                 )}

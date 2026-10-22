@@ -17,7 +17,9 @@
     "test:watch": "vitest",
     "content:import": "vite-node --config vitest.config.ts scripts/sanity/import.ts",
     "studio": "npm --prefix studio run dev",
-    "content:pull": "node scripts/sanity/pull.mjs"
+    "content:pull": "node scripts/sanity/pull.mjs",
+    "content:narrate": "node scripts/sanity/narrate.mjs",
+    "music:compose": "node scripts/music/compose.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
@@ -47,6 +49,7 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@breezystack/lamejs": "^1.2.7",
     "@capacitor/cli": "^8.5.1",
     "@sanity/client": "^8.10.0",
     "@types/node": "^20.17.19",
@@ -56,6 +59,7 @@
     "cross-env": "^10.1.0",
     "eslint": "^8.57.1",
     "eslint-config-next": "^15.5.25",
+    "kokoro-js": "^1.2.1",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",

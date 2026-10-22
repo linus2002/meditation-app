@@ -19,19 +19,24 @@ export interface Program {
   href: string;
   /** Tint laid over the photograph so the overlaid title stays readable. */
   scrim: string;
+  /** Shown in the home screen rail. */
+  featured: boolean;
 }
 
 /** Edited in Sanity (Studio → Programmes); sessions are picked there, in order. */
-const PROGRAMS: (Omit<Program, 'sessions' | 'href'> & { sessionIds: string[] })[] =
-  content.programs.map(({ image, ...program }) => ({ ...program, image: toImage(image) }));
+const PROGRAMS: (Omit<Program, 'sessions' | 'href' | 'featured'> & {
+  sessionIds: string[];
+  featured?: boolean;
+})[] = content.programs.map(({ image, ...program }) => ({ ...program, image: toImage(image) }));
 
 /**
- * Multi-session programmes offered free on the home screen. The artwork carries
- * the title, so each one is picked for a calm, uncluttered centre. Each opens a
- * page of its own listing the sessions inside it.
+ * Every free multi-session programme, listed in the library. The artwork
+ * carries the title, so each one is picked for a calm, uncluttered centre.
+ * Each opens a page of its own listing the sessions inside it.
  */
-export const freePrograms: Program[] = PROGRAMS.map(({ sessionIds, ...program }) => ({
+export const programs: Program[] = PROGRAMS.map(({ sessionIds, featured, ...program }) => ({
   ...program,
+  featured: Boolean(featured),
   href: `/programs/${program.id}`,
   sessions: sessionIds.flatMap((id) => {
     const session = getMeditation(id);
@@ -39,6 +44,9 @@ export const freePrograms: Program[] = PROGRAMS.map(({ sessionIds, ...program })
   }),
 }));
 
+/** The few ticked "Featured on home" in Sanity, for the home screen rail. */
+export const featuredPrograms: Program[] = programs.filter((program) => program.featured);
+
 export function getProgram(id: string): Program | undefined {
-  return freePrograms.find((program) => program.id === id);
+  return programs.find((program) => program.id === id);
 }

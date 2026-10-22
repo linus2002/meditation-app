@@ -6,8 +6,11 @@ import { ProgramRail } from '@/components/home/program-rail';
 import { RecommendedRail } from '@/components/home/recommended-rail';
 import { TodayRail } from '@/components/home/today-rail';
 import { VideoRail } from '@/components/home/video-rail';
+import { StoryRail } from '@/components/stories/story-rail';
 import { YogaRail } from '@/components/yoga/yoga-rail';
 import { deckCards } from '@/data/categories';
+import { featuredPrograms } from '@/data/programs';
+import { featuredStories } from '@/data/stories';
 
 export default function HomePage() {
   return (
@@ -32,9 +35,23 @@ export default function HomePage() {
         <YogaRail />
       </HomeSection>
 
-      <HomeSection title="Free programs for you">
-        <ProgramRail />
+      <HomeSection
+        title="Free programs for you"
+        actionHref="/meditations?tab=programs"
+        actionLabel="See all"
+      >
+        <ProgramRail programs={featuredPrograms} />
       </HomeSection>
+
+      {featuredStories.length > 0 ? (
+        <HomeSection
+          title="Featured stories"
+          actionHref="/meditations?tab=stories"
+          actionLabel="See all"
+        >
+          <StoryRail stories={featuredStories} />
+        </HomeSection>
+      ) : null}
 
       {/* Full width: the panel runs edge to edge. */}
       <div className="mt-7">

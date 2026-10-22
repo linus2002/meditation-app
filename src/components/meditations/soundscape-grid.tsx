@@ -3,7 +3,6 @@
 import { AudioWaveform, Bell, CloudMoon, CloudRain, Disc3, Trees, Waves, Wind } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
-import { VolumeControl } from '@/components/player/volume-control';
 import { soundscapeList, type SoundscapeId } from '@/lib/audio/soundscapes';
 import { cn } from '@/lib/utils';
 import { useAudio } from '@/providers/audio-provider';
@@ -80,7 +79,6 @@ export function SoundscapeGrid({ limit }: { limit?: number }) {
         })}
       </div>
 
-      {limit ? null : <VolumeControl className="mt-4" />}
     </div>
   );
 }

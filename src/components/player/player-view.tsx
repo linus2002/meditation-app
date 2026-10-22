@@ -8,7 +8,6 @@ import { BreathingOrb } from '@/components/player/breathing-orb';
 import { PlaybackControls } from '@/components/player/playback-controls';
 import { SessionComplete } from '@/components/session/session-complete';
 import { SessionScrubber } from '@/components/player/session-scrubber';
-import { VolumeControl } from '@/components/player/volume-control';
 import { DownloadButton } from '@/components/shared/download-button';
 import { FavoriteButton } from '@/components/shared/favorite-button';
 import { useBack } from '@/hooks/use-back';
@@ -347,8 +346,6 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
           duration={meditation.durationSeconds}
           onSeek={player.seek}
         />
-
-        <VolumeControl className="mt-4" />
 
         <PlaybackControls
           isPlaying={player.isPlaying}

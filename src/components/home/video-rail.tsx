@@ -77,7 +77,7 @@ export function VideoRail() {
   );
 }
 
-/** Icon-only control: small, no backing, shadowed so it reads over any frame. */
+/** Icon-only control: small, plain white, no backing or shadow. */
 function ControlButton({
   label,
   onClick,
@@ -95,7 +95,7 @@ function ControlButton({
       onClick={onClick}
       aria-label={label}
       aria-pressed={pressed}
-      className="flex h-8 w-8 items-center justify-center text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.55)] transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
     >
       {children}
     </button>

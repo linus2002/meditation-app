@@ -39,17 +39,19 @@ async function collectRoutes(dir, base = '') {
 
 const found = await collectRoutes(appDir);
 
-// `/player/[id]` and `/yoga/[id]` are expanded from the content pulled from
+// `/player/[id]`, `/yoga/[id]` and `/programs/[id]` are expanded from the content pulled from
 // Sanity (src/content/content.json), the same list generateStaticParams uses.
 // This runs after `content:pull`, so it sees what the build will render.
 const content = JSON.parse(await readFile(path.join(root, 'src/content/content.json'), 'utf8'));
 const ids = content.meditations.map((item) => item.id);
 const yogaIds = content.yoga.map((item) => item.id);
+const programIds = content.programs.map((item) => item.id);
 
 const routes = [
   ...found.filter((route) => !route.includes('[')),
   ...ids.map((id) => `/player/${id}`),
   ...yogaIds.map((id) => `/yoga/${id}`),
+  ...programIds.map((id) => `/programs/${id}`),
 ].sort();
 
 /*
@@ -89,5 +91,5 @@ if (stamped === sw && !sw.includes(`const BUILD = '${version}';`)) {
 await writeFile(swPath, stamped, 'utf8');
 
 console.log(
-  `[precache] ${routes.length} routes (${ids.length} sessions, ${yogaIds.length} yoga) @ ${version}`,
+  `[precache] ${routes.length} routes (${ids.length} sessions, ${yogaIds.length} yoga, ${programIds.length} programs) @ ${version}`,
 );

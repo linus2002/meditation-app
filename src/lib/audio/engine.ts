@@ -22,6 +22,12 @@ export class AudioEngine {
   private analyser: AnalyserNode | null = null;
   private buffers: Record<NoiseColor, AudioBuffer> | null = null;
   private current: { id: SoundscapeId; handle: SoundscapeHandle } | null = null;
+  private music: {
+    src: string;
+    element: HTMLAudioElement;
+    gain: GainNode;
+    pauseTimer: number;
+  } | null = null;
 
   private volume = 0.7;
   private muted = false;
@@ -144,6 +150,66 @@ export class AudioEngine {
     this.master.gain.exponentialRampToValueAtTime(0.0001, at + seconds);
   }
 
+  /**
+   * Loops a music file under whatever else is playing, faded in to `level`.
+   * Routed through the bus so the app's volume and limiter apply to it too,
+   * and so its level can be ramped — iOS ignores an audio element's own
+   * volume. Calling it again with the same file just brings it back up.
+   */
+  playMusic(src: string, level = 0.5, fadeSeconds = 3): void {
+    const ctx = this.ensure();
+    if (!ctx || !this.bus) return;
+
+    if (this.music?.src !== src) {
+      this.stopMusic(0.6);
+      const element = new Audio(src);
+      element.loop = true;
+      element.preload = 'auto';
+      const gain = ctx.createGain();
+      gain.gain.value = 0;
+      ctx.createMediaElementSource(element).connect(gain).connect(this.bus);
+      this.music = { src, element, gain, pauseTimer: 0 };
+    }
+
+    const { element, gain } = this.music;
+    window.clearTimeout(this.music.pauseTimer);
+    void element.play().catch(() => undefined);
+    const at = ctx.currentTime;
+    gain.gain.cancelScheduledValues(at);
+    gain.gain.setValueAtTime(gain.gain.value, at);
+    gain.gain.linearRampToValueAtTime(level, at + fadeSeconds);
+  }
+
+  /** Fades the music out and holds its place, for a pause. */
+  pauseMusic(fadeSeconds = 0.8): void {
+    if (!this.music || !this.ctx) return;
+    const music = this.music;
+    const at = this.ctx.currentTime;
+    music.gain.gain.cancelScheduledValues(at);
+    music.gain.gain.setValueAtTime(music.gain.gain.value, at);
+    music.gain.gain.linearRampToValueAtTime(0, at + fadeSeconds);
+    window.clearTimeout(music.pauseTimer);
+    music.pauseTimer = window.setTimeout(() => music.element.pause(), fadeSeconds * 1000 + 50);
+  }
+
+  /** Fades the music out and lets it go. */
+  stopMusic(fadeSeconds = 2): void {
+    if (!this.music || !this.ctx) return;
+    const music = this.music;
+    this.music = null;
+    const at = this.ctx.currentTime;
+    music.gain.gain.cancelScheduledValues(at);
+    music.gain.gain.setValueAtTime(music.gain.gain.value, at);
+    music.gain.gain.linearRampToValueAtTime(0, at + fadeSeconds);
+    window.clearTimeout(music.pauseTimer);
+    window.setTimeout(() => {
+      music.element.pause();
+      music.element.removeAttribute('src');
+      music.element.load();
+      music.gain.disconnect();
+    }, fadeSeconds * 1000 + 50);
+  }
+
   /** A single struck bell — session complete, or the end of a wind-down. */
   bell(frequency = 523.25): void {
     const ctx = this.ensure();
@@ -169,6 +235,7 @@ export class AudioEngine {
 
   dispose(): void {
     this.stop(0.05);
+    this.stopMusic(0.05);
     window.setTimeout(() => {
       void this.ctx?.close();
       this.ctx = null;

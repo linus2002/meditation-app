@@ -24,6 +24,11 @@ interface AudioContextValue {
   prime: () => Promise<void>;
   stop: (fadeSeconds?: number) => void;
   fadeOut: (seconds: number) => void;
+  /** Loops a music file under everything else, faded in to `level`. */
+  playMusic: (src: string, level?: number) => void;
+  /** Fades the music down and holds its place. */
+  pauseMusic: (fadeSeconds?: number) => void;
+  stopMusic: (fadeSeconds?: number) => void;
   /** A struck bell. The timer uses distinct pitches for start, interval and end. */
   bell: (frequency?: number) => void;
   breathCue: (direction: 'in' | 'out') => void;
@@ -62,7 +67,13 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   // Audio must never outlive the page.
-  React.useEffect(() => () => audioEngine.stop(0.2), []);
+  React.useEffect(
+    () => () => {
+      audioEngine.stop(0.2);
+      audioEngine.stopMusic(0.2);
+    },
+    [],
+  );
 
   const persist = React.useCallback((next: { volume: number; muted: boolean }) => {
     try {
@@ -113,6 +124,18 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     audioEngine.setVolume(volumeRef.current);
   }, []);
 
+  const playMusic = React.useCallback(
+    (src: string, level?: number) => audioEngine.playMusic(src, level),
+    [],
+  );
+  const pauseMusic = React.useCallback(
+    (fadeSeconds?: number) => audioEngine.pauseMusic(fadeSeconds),
+    [],
+  );
+  const stopMusic = React.useCallback(
+    (fadeSeconds?: number) => audioEngine.stopMusic(fadeSeconds),
+    [],
+  );
   const fadeOut = React.useCallback((seconds: number) => audioEngine.fadeOut(seconds), []);
   const bell = React.useCallback((frequency?: number) => audioEngine.bell(frequency), []);
   const breathCue = React.useCallback(
@@ -131,6 +154,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       play,
       prime,
       stop,
+      playMusic,
+      pauseMusic,
+      stopMusic,
       fadeOut,
       bell,
       breathCue,
@@ -145,6 +171,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       play,
       prime,
       stop,
+      playMusic,
+      pauseMusic,
+      stopMusic,
       fadeOut,
       bell,
       breathCue,

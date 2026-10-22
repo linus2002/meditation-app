@@ -12,9 +12,10 @@ import type { Story, StoryCategory } from '@/types';
  * for the ear as much as the eye — short sentences, few clauses, and full
  * stops where a voice would naturally rest.
  */
-export const stories: Story[] = content.stories.map(({ image, ...story }) => ({
+export const stories: Story[] = content.stories.map(({ image, cover, ...story }) => ({
   ...story,
   image: toImage(image),
+  ...(cover ? { cover: toImage(cover) } : {}),
 }));
 
 export const storyCategories: { value: StoryCategory | 'all'; label: string }[] = [
@@ -28,4 +29,7 @@ export function getStory(id: string): Story | undefined {
   return stories.find((story) => story.id === id);
 }
 
-export const sleepStories = stories.filter((story) => story.category === 'sleep');
+/** The few ticked "Featured on home" in Sanity, for the home screen rail. */
+export const featuredStories = stories.filter((story) => story.featured);
+
+export const sleepStories =stories.filter((story) => story.category === 'sleep');

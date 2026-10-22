@@ -1,28 +1,29 @@
+import Image from 'next/image';
+
+// Cleaned and squared from `logoapp.png` (the original, with its cut-out halo).
+// Regenerate both together if the logo changes; the app icons come from it too.
+import logo from '@/assets/images/logoapp-512.png';
 import { cn } from '@/lib/utils';
 
 /**
- * The breathing ring from the app icon, on its own. Shared so the wordmark and
- * anywhere else the mark appears draw the exact same shape and gradient.
+ * The app's logo mark on its own: the blue and green leaves. Shared so the
+ * wordmark and anywhere else the mark appears draw the same artwork.
  */
-export function SerenityRing({ className }: { className?: string }) {
+export function SerenityLogo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 40 40" aria-hidden="true" className={cn('shrink-0', className)}>
-      <defs>
-        <linearGradient id="mark-ring" x1="18%" y1="8%" x2="82%" y2="92%">
-          <stop offset="0%" stopColor="#1D9FDA" />
-          <stop offset="38%" stopColor="#61A644" />
-          <stop offset="66%" stopColor="#61A644" />
-          <stop offset="100%" stopColor="#2FE0CB" />
-        </linearGradient>
-      </defs>
-      <circle cx="20" cy="20" r="14" fill="none" stroke="url(#mark-ring)" strokeWidth="5" strokeLinecap="round" />
-    </svg>
+    <Image
+      src={logo}
+      alt=""
+      aria-hidden="true"
+      sizes="128px"
+      className={cn('shrink-0 object-contain', className)}
+    />
   );
 }
 
 /**
- * The Serenity wordmark: the breathing ring from the app icon, set beside the
- * name. Occupies the same slot as the logo in the reference layout.
+ * The Serenity wordmark: the logo set beside the name. Occupies the same slot
+ * as the logo in the reference layout.
  */
 export function SerenityMark({ className }: { className?: string }) {
   return (
@@ -30,7 +31,7 @@ export function SerenityMark({ className }: { className?: string }) {
       <span className="text-[clamp(1.625rem,8.2vw,2.0625rem)] font-semibold leading-none tracking-[-0.02em] text-ink">
         Serenity
       </span>
-      <SerenityRing className="h-[clamp(20px,6.2vw,26px)] w-[clamp(20px,6.2vw,26px)]" />
+      <SerenityLogo className="h-[clamp(22px,6.8vw,28px)] w-[clamp(22px,6.8vw,28px)]" />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import type { StaticImageData } from 'next/image';
 
-import type { BreathPhase, CategorySlug, DeckTone, StoryCategory } from '@/types';
+import type { BreathPhase, CategorySlug, DeckTone, StoryCategory, StoryNarration } from '@/types';
 import type { SoundscapeId } from '@/lib/audio/soundscapes';
 import type { YogaPose } from '@/lib/yoga';
 
@@ -50,6 +50,8 @@ export interface ContentProgram {
   level: string;
   description: string;
   scrim: string;
+  /** Shown in the home screen rail; every programme is listed in the library. */
+  featured?: boolean;
   sessionIds: string[];
   image: ContentImage;
 }
@@ -60,10 +62,16 @@ export interface ContentStory {
   description: string;
   category: StoryCategory;
   voice: string;
+  /** Shown in the home screen rail; every story is listed in the library. */
+  featured?: boolean;
   image: ContentImage;
+  /** Square poster for the home screen rail, when it differs from the artwork. */
+  cover?: ContentImage;
   imageAlt: string;
   soundscape: SoundscapeId;
   paragraphs: string[];
+  /** Streamed from Sanity's CDN; recorded by `npm run content:narrate`. */
+  narration?: StoryNarration;
 }
 
 export interface ContentYoga {
