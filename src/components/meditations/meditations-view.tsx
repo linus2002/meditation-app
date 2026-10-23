@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
 
 import { ProgramRail } from '@/components/home/program-rail';
+import { MeditationSections } from '@/components/meditations/meditation-sections';
 import { LibraryHeader } from '@/components/meditations/library-header';
 import { RatedTile } from '@/components/meditations/rated-tile';
 import { SoundscapeGrid } from '@/components/meditations/soundscape-grid';
@@ -20,7 +21,10 @@ import { StorySections } from '@/components/stories/story-sections';
 import { categories } from '@/data/categories';
 import { meditations } from '@/data/meditations';
 import { programs } from '@/data/programs';
+import { soundscapeList } from '@/lib/audio/soundscapes';
 import { stories } from '@/data/stories';
+import { useAssessmentRanking } from '@/hooks/use-assessment-picks';
+import { prioritise } from '@/lib/assessment';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
@@ -32,14 +36,8 @@ const TABS: { id: TabId; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'meditation', label: 'Meditation' },
   { id: 'programs', label: 'Programs' },
-  { id: 'soundscape', label: 'Soundscape' },
   { id: 'stories', label: 'Stories' },
-];
-
-/** The mood chips in the Meditation tab, "All" first. */
-const categoryFilters: { slug: CategorySlug | 'all'; name: string }[] = [
-  { slug: 'all', name: 'All' },
-  ...categories,
+  { id: 'soundscape', label: 'Soundscape' },
 ];
 
 function isTabId(value: string | null): value is TabId {
@@ -112,8 +110,11 @@ export function MeditationsView() {
     : [];
   const savedCount = savedMeditations.length + savedStories.length;
 
-  const shownMeditations =
-    category === 'all' ? meditations : meditations.filter((item) => item.category === category);
+  // The assessment's suggestions lead each list, ahead of the catalogue order.
+  const ranking = useAssessmentRanking();
+  const orderedPrograms = prioritise(programs, ranking?.programs);
+  const orderedStories = prioritise(stories, ranking?.stories);
+
 
   return (
     <div className="pb-4">
@@ -221,7 +222,7 @@ export function MeditationsView() {
           <section className="mt-8">
             <SectionTitle className="px-5">Programs</SectionTitle>
             <div className="mt-3">
-              <ProgramRail programs={programs} />
+              <ProgramRail programs={orderedPrograms} />
             </div>
             <button
               type="button"
@@ -286,14 +287,14 @@ export function MeditationsView() {
               onClick={() => setTab('soundscape')}
               className="mt-3 text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
-              All eight soundscapes
+              All {soundscapeList.length} soundscapes
             </button>
           </section>
 
           <section className="mt-8 px-5">
             <SectionTitle>Stories</SectionTitle>
             <ul className="mt-3 space-y-2.5">
-              {stories.slice(0, 3).map((story) => (
+              {orderedStories.slice(0, 3).map((story) => (
                 <StoryCard key={story.id} story={story} />
               ))}
             </ul>
@@ -308,56 +309,7 @@ export function MeditationsView() {
         </>
       ) : null}
 
-      {tab === 'meditation' ? (
-        <>
-          <div
-            role="radiogroup"
-            aria-label="Filter by category"
-            className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1"
-          >
-            {categoryFilters.map((item, index) => {
-              const selected = category === item.slug;
-              return (
-                <button
-                  key={item.slug}
-                  type="button"
-                  role="radio"
-                  aria-checked={selected}
-                  tabIndex={selected ? 0 : -1}
-                  onClick={() => setCategory(item.slug)}
-                  onKeyDown={(event) =>
-                    handleRovingKey(event, index, categoryFilters.length, (next) =>
-                      setCategory(categoryFilters[next].slug),
-                    )
-                  }
-                  className={cn(
-                    'shrink-0 rounded-full px-4 py-2 text-caption font-medium transition-colors',
-                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
-                    selected
-                      ? 'bg-action-pill text-white'
-                      : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
-                  )}
-                >
-                  {item.name}
-                </button>
-              );
-            })}
-          </div>
-
-          <section className="mt-5 px-5">
-            <SectionTitle>
-              {category === 'all'
-                ? `All ${meditations.length} sessions`
-                : `${categories.find((item) => item.slug === category)?.name ?? 'Sessions'} · ${shownMeditations.length}`}
-            </SectionTitle>
-            <ul className="mt-3 space-y-2.5">
-              {shownMeditations.map((meditation) => (
-                <MeditationCard key={meditation.id} meditation={meditation} />
-              ))}
-            </ul>
-          </section>
-        </>
-      ) : null}
+      {tab === 'meditation' ? <MeditationSections focus={category} className="mt-5" /> : null}
 
       {tab === 'programs' ? (
         <section className="mt-5 px-5">
@@ -365,7 +317,7 @@ export function MeditationsView() {
             Short courses of sessions on one theme, meant to be taken in order, one a day.
           </p>
           <ul className="mt-4 space-y-6">
-            {programs.map((program) => (
+            {orderedPrograms.map((program) => (
               <li key={program.id}>
                 <ProgramCard program={program} sizes="(max-width: 430px) 100vw, 390px" />
               </li>
@@ -387,11 +339,6 @@ export function MeditationsView() {
       ) : null}
 
       {tab === 'stories' ? <StorySections className="mt-5" /> : null}
-
-      <p className="mt-8 px-5 text-center text-label leading-relaxed text-ink-faint">
-        {meditations.length} sessions · {programs.length} programs · {stories.length} stories · 8
-        soundscapes
-      </p>
     </div>
   );
 }

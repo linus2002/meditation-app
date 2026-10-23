@@ -1,5 +1,9 @@
+'use client';
+
 import { YogaGlassTile } from '@/components/yoga/yoga-glass-tile';
 import type { YogaSession } from '@/data/yoga';
+import { useAssessmentRanking } from '@/hooks/use-assessment-picks';
+import { prioritise } from '@/lib/assessment';
 
 /*
  * Tile heights, cycled through in order. Sessions are dealt into two columns
@@ -10,11 +14,13 @@ const HEIGHTS = [232, 232, 184, 280, 264, 200, 248, 216];
 
 /**
  * The Yoga screen's sessions as a two-column mosaic of glass tiles of uneven
- * heights, so the screen reads as a collection rather than a list.
+ * heights, so the screen reads as a collection rather than a list. Whatever the
+ * assessment suggested comes first.
  */
 export function YogaMosaic({ sessions }: { sessions: YogaSession[] }) {
+  const suggested = useAssessmentRanking()?.yoga;
   const columns: [YogaSession, number][][] = [[], []];
-  sessions.forEach((session, index) => {
+  prioritise(sessions, suggested).forEach((session, index) => {
     columns[index % 2].push([session, HEIGHTS[index % HEIGHTS.length]]);
   });
 

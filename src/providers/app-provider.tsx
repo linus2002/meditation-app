@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import { settingToggles } from '@/data/settings';
+import type { AssessmentAnswers } from '@/lib/assessment';
 import type { Reflection, SessionRecord, SleepLog } from '@/types';
 
 const STORAGE_KEY = 'serenity.state.v1';
@@ -24,6 +25,8 @@ interface PersistedState {
   ratings: Record<string, number>;
   /** What the home greeting calls the reader. Empty until they give one. */
   name: string;
+  /** The first-run assessment, once finished. Drives the home suggestions. */
+  assessment: { answers: AssessmentAnswers; completedAt: string } | null;
 }
 
 interface AppContextValue extends PersistedState {
@@ -51,6 +54,7 @@ interface AppContextValue extends PersistedState {
   getRating: (id: string) => number | undefined;
   /** Trimmed on save; an empty string clears it. */
   setName: (name: string) => void;
+  completeAssessment: (answers: AssessmentAnswers) => void;
 }
 
 const defaultSettings = settingToggles.reduce<Record<string, boolean>>((acc, toggle) => {
@@ -71,6 +75,7 @@ const initialState: PersistedState = {
   sleepLogs: [],
   ratings: {},
   name: '',
+  assessment: null,
 };
 
 const AppContext = React.createContext<AppContextValue | null>(null);
@@ -96,6 +101,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           sleepLogs: parsed.sleepLogs ?? current.sleepLogs,
           ratings: parsed.ratings ?? current.ratings,
           name: parsed.name ?? current.name,
+          assessment: parsed.assessment ?? current.assessment,
         }));
       }
     } catch {
@@ -199,6 +205,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState((current) => ({ ...current, name: name.trim().slice(0, 40) }));
   }, []);
 
+  const completeAssessment = React.useCallback((answers: AssessmentAnswers) => {
+    setState((current) => ({
+      ...current,
+      assessment: { answers, completedAt: new Date().toISOString() },
+    }));
+  }, []);
+
   const removeReflection = React.useCallback((date: string) => {
     setState((current) => ({
       ...current,
@@ -245,6 +258,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       removeSleepLog,
       rateMeditation,
       setName,
+      completeAssessment,
     }),
     [
       state,
@@ -261,6 +275,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       removeSleepLog,
       rateMeditation,
       setName,
+      completeAssessment,
     ],
   );
 

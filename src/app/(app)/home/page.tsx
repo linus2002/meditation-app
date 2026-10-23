@@ -1,3 +1,4 @@
+import { AssessmentCard } from '@/components/home/assessment-card';
 import { CategoryDeck } from '@/components/home/category-deck';
 import { GreetingHeader } from '@/components/home/greeting-header';
 import { GroupBanner } from '@/components/home/group-banner';
@@ -22,6 +23,9 @@ export default function HomePage() {
       </HomeSection>
 
       <CategoryDeck cards={deckCards} />
+
+      {/* Until it's taken; afterwards its suggestions lead the library's own lists. */}
+      <AssessmentCard />
 
       <HomeSection title="Your meditations for today">
         <TodayRail />

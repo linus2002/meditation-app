@@ -18,6 +18,16 @@ const GLOWS: Record<string, string> = {
   'gentle-core': '#F5C26B',
   'chair-yoga': '#7FD0E8',
   'sun-salutation': '#FFB38A',
+  'hip-opener': '#F49AC1',
+  'posture-reset': '#5FC7B0',
+  'tired-legs': '#A5C8FF',
+  'hands-and-wrists': '#F7D774',
+  'steady-balance': '#B6E07A',
+  'afternoon-energy': '#FF9F5A',
+  'restorative-rest': '#D9A6E0',
+  'travel-stretch': '#E0C49A',
+  'wall-yoga': '#69A8C4',
+  'calm-the-nerves': '#8FB8A0',
 };
 
 /** For a session added later without a colour of its own. */

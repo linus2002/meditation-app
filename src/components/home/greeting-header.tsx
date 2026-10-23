@@ -12,7 +12,7 @@ import { timeOfDayGreeting } from '@/lib/greeting';
 import { useApp } from '@/providers/app-provider';
 
 /**
- * The top of the home screen: the menu on the left, the Reflect pill, the
+ * The top of the home screen: the menu on the left, the Reflect button, the
  * notification bell and the profile avatar on the right (Profile's only way in now that the bottom bar holds
  * Yoga instead), a large greeting, and a search bar beneath it. Serenity has no accounts, so the
  * greeting uses the name the reader gave on Profile, kept on this phone, and
@@ -40,7 +40,7 @@ export function GreetingHeader() {
           {/* The day's reflection, one tap from the top of the app. */}
           <Link
             href="/reflections"
-            className="mr-1 flex h-8 items-center rounded-full bg-aurora-blue px-3.5 text-caption font-semibold leading-none text-white transition-transform duration-150 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mr-1 flex h-8 items-center rounded-md bg-aurora-blue px-3.5 text-caption font-semibold leading-none text-white transition-transform duration-150 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             Reflect
           </Link>

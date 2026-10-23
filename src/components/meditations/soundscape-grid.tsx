@@ -1,22 +1,9 @@
 'use client';
 
-import { AudioWaveform, Bell, CloudMoon, CloudRain, Disc3, Trees, Waves, Wind } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
-
-import { soundscapeList, type SoundscapeId } from '@/lib/audio/soundscapes';
+import { SOUNDSCAPE_ICONS } from '@/components/shared/soundscape-card';
+import { soundscapeList } from '@/lib/audio/soundscapes';
 import { cn } from '@/lib/utils';
 import { useAudio } from '@/providers/audio-provider';
-
-const ICONS: Record<SoundscapeId, LucideIcon> = {
-  rain: CloudRain,
-  ocean: Waves,
-  forest: Trees,
-  night: CloudMoon,
-  bowl: Disc3,
-  pad: AudioWaveform,
-  drone: Wind,
-  chimes: Bell,
-};
 
 /**
  * Every synthesised bed the app can make, playable on their own. Selecting one
@@ -42,7 +29,7 @@ export function SoundscapeGrid({ limit }: { limit?: number }) {
     <div>
       <div className="grid grid-cols-2 gap-2.5">
         {shown.map((meta) => {
-          const Icon = ICONS[meta.id];
+          const Icon = SOUNDSCAPE_ICONS[meta.id];
           const active = playing === meta.id;
 
           return (

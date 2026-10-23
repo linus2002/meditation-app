@@ -31,6 +31,14 @@ export const SOUNDSCAPES = [
   { title: 'Warm Pad', value: 'pad' },
   { title: 'Deep Drone', value: 'drone' },
   { title: 'Chimes', value: 'chimes' },
+  { title: 'Thunderstorm', value: 'thunder' },
+  { title: 'Brook', value: 'stream' },
+  { title: 'Fireplace', value: 'fireplace' },
+  { title: 'Mountain Wind', value: 'wind' },
+  { title: 'Brown Noise', value: 'brown' },
+  { title: 'Heartbeat', value: 'heartbeat' },
+  { title: 'Om Drone', value: 'om' },
+  { title: 'Theta Waves', value: 'theta' },
 ];
 
 /** `StoryCategory` in src/types. */

@@ -1,5 +1,9 @@
+'use client';
+
 import { YogaGlassTile } from '@/components/yoga/yoga-glass-tile';
 import { yogaSessions } from '@/data/yoga';
+import { useAssessmentRanking } from '@/hooks/use-assessment-picks';
+import { prioritise } from '@/lib/assessment';
 
 /** How many sessions the home overview shows; the rest live in the Yoga tab. */
 const HOME_COUNT = 6;
@@ -10,9 +14,10 @@ const HOME_COUNT = 6;
  * which is what tells you the row scrolls.
  */
 export function YogaRail() {
+  const suggested = useAssessmentRanking()?.yoga;
   return (
     <ul className="rail flex snap-x snap-mandatory scroll-px-5 gap-2.5 overflow-x-auto px-5 pb-4 pt-1">
-      {yogaSessions.slice(0, HOME_COUNT).map((session) => (
+      {prioritise(yogaSessions, suggested).slice(0, HOME_COUNT).map((session) => (
         <li key={session.id} className="h-[220px] w-[44vw] max-w-[180px] shrink-0 snap-start">
           <YogaGlassTile session={session} className="h-full" />
         </li>

@@ -1,6 +1,23 @@
 'use client';
 
-import { AudioWaveform, Bell, CloudMoon, CloudRain, Disc3, Trees, Waves, Wind } from 'lucide-react';
+import {
+  AudioLines,
+  AudioWaveform,
+  Bell,
+  CloudLightning,
+  CloudMoon,
+  CloudRain,
+  Disc3,
+  Droplets,
+  Flame,
+  Flower2,
+  Headphones,
+  HeartPulse,
+  Radio,
+  Trees,
+  Waves,
+  Wind,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 
 import { soundscapes, type SoundscapeId, type SoundscapeMeta } from '@/lib/audio/soundscapes';
@@ -14,8 +31,16 @@ export const SOUNDSCAPE_ICONS: Record<SoundscapeId, LucideIcon> = {
   night: CloudMoon,
   bowl: Disc3,
   pad: AudioWaveform,
-  drone: Wind,
+  drone: AudioLines,
   chimes: Bell,
+  thunder: CloudLightning,
+  stream: Droplets,
+  fireplace: Flame,
+  wind: Wind,
+  brown: Radio,
+  heartbeat: HeartPulse,
+  om: Flower2,
+  theta: Headphones,
 };
 
 /**
