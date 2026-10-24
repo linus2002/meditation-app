@@ -28,8 +28,10 @@ export interface DownloadsStatus {
 }
 
 /**
- * `bundled` is the native case: a Capacitor build ships every file inside the
- * app, so there is nothing to save and nothing that could be missing.
+ * `bundled` is the native case: a Capacitor build ships its pages and code
+ * inside the app, so there is nothing to save. Artwork streams from Sanity and
+ * is kept by the WebView's HTTP cache once seen; offline before that, each
+ * image shows its blur preview.
  */
 export type DownloadsSupport = 'available' | 'bundled' | 'unavailable';
 

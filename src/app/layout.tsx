@@ -75,6 +75,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     // loads, so that one attribute is expected to differ from the server's.
     <html lang="en" className={poppins.variable} data-theme="dark" suppressHydrationWarning>
       <head>
+        {/* Artwork streams from Sanity: open that connection before the first image asks. */}
+        <link rel="preconnect" href="https://cdn.sanity.io" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: inputScript }} />
       </head>

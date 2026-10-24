@@ -3,18 +3,17 @@
  *
  * Run with: npm run content:pull (the build scripts run it first).
  *
- * Writes `src/content/content.json`, which every module under src/data reads,
- * and downloads each image into `public/content/images/`, so the website and
- * the APK carry their pictures with them and keep working offline. Videos are
- * left on Sanity's CDN and streamed, which is what keeps them out of the APK;
- * so is each story's recorded narration.
+ * Writes `src/content/content.json`, which every module under src/data reads.
+ * Images, videos and each story's recorded narration all stay on Sanity's CDN
+ * and load over the network, which is what keeps them out of the APK. Images
+ * are requested resized and re-encoded (see `cdnImage`), and each carries a
+ * tiny inline blur preview that still shows while offline.
  *
  * The dataset is public, so no token is needed. If Sanity cannot be reached the
  * build carries on with the content.json already in the repo, so a network
  * blip never breaks a deploy; it just ships the last content pulled.
  */
-import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const PROJECT_ID = 'jn0rojao';
@@ -23,8 +22,18 @@ const API = `https://${PROJECT_ID}.apicdn.sanity.io/v2024-01-01/data/query/${DAT
 
 const ROOT = process.cwd();
 const OUT_JSON = path.join(ROOT, 'src/content/content.json');
-const IMAGE_DIR = path.join(ROOT, 'public/content/images');
-const IMAGE_URL = '/content/images';
+/** Where images used to be downloaded to; removed on every pull so none ship. */
+const LEGACY_IMAGE_DIR = path.join(ROOT, 'public/content/images');
+
+/**
+ * Sanity's image pipeline: capped at 1080px, the widest a 430px phone screen
+ * draws at 2.5x density, as WebP. The format is fixed rather than `auto`
+ * because Next's optimiser fetches without an Accept header, and `auto` then
+ * hands it the original (often a multi-megabyte PNG) that times out under load.
+ * The mobile loader swaps this for `auto` per width, since a WebView does send
+ * Accept.
+ */
+const IMAGE_PARAMS = 'w=1080&fit=max&fm=webp&q=80';
 
 /** Every image comes back with what next/image needs: size and a blur preview. */
 const IMG = `{ "url": asset->url, "width": asset->metadata.dimensions.width, "height": asset->metadata.dimensions.height, "lqip": asset->metadata.lqip, "hotspot": hotspot }`;
@@ -66,20 +75,12 @@ const QUERY = `{
   }
 }`;
 
-/** Downloads one image once, named by its content, and returns what the app needs. */
-async function localImage(image, used) {
+/** Points one image at Sanity's CDN and returns what the app needs. */
+function cdnImage(image, used) {
   if (!image?.url) return undefined;
-  const ext = path.extname(new URL(image.url).pathname) || '.jpg';
-  const name = createHash('sha1').update(image.url).digest('hex').slice(0, 16) + ext;
-  const file = path.join(IMAGE_DIR, name);
-  used.add(name);
-  if (!existsSync(file)) {
-    const response = await fetch(image.url);
-    if (!response.ok) throw new Error(`Image download failed (${response.status}): ${image.url}`);
-    writeFileSync(file, Buffer.from(await response.arrayBuffer()));
-  }
+  used.add(image.url);
   return {
-    src: `${IMAGE_URL}/${name}`,
+    src: `${image.url}?${IMAGE_PARAMS}`,
     width: image.width,
     height: image.height,
     ...(image.lqip ? { blurDataURL: image.lqip } : {}),
@@ -107,16 +108,13 @@ async function main() {
   const { result } = await response.json();
   if (!result?.meditations?.length) throw new Error('Sanity returned no meditations; is the import done?');
 
-  mkdirSync(IMAGE_DIR, { recursive: true });
   const used = new Set();
   const withImages = async (items, keys) =>
-    Promise.all(
-      (items ?? []).map(async (item) => {
-        const next = { ...item };
-        for (const key of keys) next[key] = await localImage(item[key], used);
-        return next;
-      }),
-    );
+    (items ?? []).map((item) => {
+      const next = { ...item };
+      for (const key of keys) next[key] = cdnImage(item[key], used);
+      return next;
+    });
 
   const content = {
     meditations: await withImages(result.meditations, ['image', 'cover']),
@@ -137,10 +135,8 @@ async function main() {
   mkdirSync(path.dirname(OUT_JSON), { recursive: true });
   writeFileSync(OUT_JSON, JSON.stringify(compact(content), null, 2) + '\n');
 
-  // Images no longer used by any document are removed, so the bundle never grows stale.
-  for (const name of readdirSync(IMAGE_DIR)) {
-    if (!used.has(name)) rmSync(path.join(IMAGE_DIR, name));
-  }
+  // Images now load from the CDN, so any left from older pulls would only bloat the APK.
+  rmSync(LEGACY_IMAGE_DIR, { recursive: true, force: true });
 
   const summary = Object.entries(content)
     .map(([key, value]) => `${key} ${Array.isArray(value) ? value.length : `${value.recommended.length}+${value.today.length}`}`)

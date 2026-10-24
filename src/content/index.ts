@@ -12,7 +12,7 @@ import raw from './content.json';
  * overwrites this file. The modules under src/data shape it for the screens.
  */
 
-/** A picture downloaded into public/content/images, with what next/image needs. */
+/** A picture on Sanity's image CDN, with what next/image needs. */
 export interface ContentImage {
   src: string;
   width: number;
@@ -93,7 +93,7 @@ export interface ContentVideo {
   eyebrow: string;
   /** Streamed from Sanity's CDN. */
   src: string;
-  /** A downloaded still, under /content/images. */
+  /** A still on Sanity's image CDN. */
   poster: string;
 }
 

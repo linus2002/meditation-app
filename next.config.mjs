@@ -10,7 +10,14 @@ const nextConfig = {
   reactStrictMode: true,
 
   // Static export has no image optimisation server, so images ship as-is.
-  images: isMobileBuild ? { unoptimized: true } : { formats: ['image/avif', 'image/webp'] },
+  // Content images come from Sanity's CDN. A static export has no optimiser,
+  // so the mobile build asks Sanity for each srcset width instead.
+  images: isMobileBuild
+    ? { loader: 'custom', loaderFile: './src/lib/sanity-image-loader.ts' }
+    : {
+        formats: ['image/avif', 'image/webp'],
+        remotePatterns: [{ protocol: 'https', hostname: 'cdn.sanity.io' }],
+      },
 
   ...(isMobileBuild
     ? {
