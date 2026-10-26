@@ -226,6 +226,13 @@ README). A Circles account is anonymous and lives on the device unless the
 member adds an email under the circle's settings; deleting it is available
 in-app, which both stores require.
 
+### Artwork streams on first view
+
+To keep the native bundle small (~15MB instead of 60MB+), session photography
+streams from Sanity's CDN on first view instead of being bundled into the app
+package. The WebView caches each image locally once loaded; if opened offline
+before that, the session displays its blur preview and sounds as normal.
+
 ---
 
 ## Quick comparison

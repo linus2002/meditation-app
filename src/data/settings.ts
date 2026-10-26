@@ -66,4 +66,11 @@ export const settingToggles: SettingToggle[] = [
     icon: Volume2,
     defaultOn: true,
   },
+  {
+    id: 'yogaVoice',
+    label: 'Yoga voice guide',
+    description: 'Spoken pose names and cues during guided yoga',
+    icon: Volume2,
+    defaultOn: true,
+  },
 ];

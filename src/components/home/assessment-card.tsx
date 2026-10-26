@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import assessmentImage from '@/assets/images/assessment.png';
+import assessmentImage from '@/assets/images/assessment.jpg';
 import { useApp } from '@/providers/app-provider';
 
 /**

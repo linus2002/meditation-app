@@ -3,6 +3,7 @@
 import * as React from 'react';
 
 import { settingToggles } from '@/data/settings';
+import { DAILY_GOAL_MINUTES, DAILY_GOAL_OPTIONS } from '@/data/stats';
 import type { AssessmentAnswers } from '@/lib/assessment';
 import type { Reflection, SessionRecord, SleepLog } from '@/types';
 
@@ -27,6 +28,15 @@ interface PersistedState {
   name: string;
   /** The first-run assessment, once finished. Drives the home suggestions. */
   assessment: { answers: AssessmentAnswers; completedAt: string } | null;
+  /** The reader's daily mindful-minutes goal, one of DAILY_GOAL_OPTIONS. */
+  goalMinutes: number;
+}
+
+/** Only an offered goal is kept, so a stale or hand-edited value can't stick. */
+function validGoal(value: unknown): number | null {
+  return typeof value === 'number' && (DAILY_GOAL_OPTIONS as readonly number[]).includes(value)
+    ? value
+    : null;
 }
 
 interface AppContextValue extends PersistedState {
@@ -55,6 +65,7 @@ interface AppContextValue extends PersistedState {
   /** Trimmed on save; an empty string clears it. */
   setName: (name: string) => void;
   completeAssessment: (answers: AssessmentAnswers) => void;
+  setGoalMinutes: (minutes: number) => void;
 }
 
 const defaultSettings = settingToggles.reduce<Record<string, boolean>>((acc, toggle) => {
@@ -76,6 +87,7 @@ const initialState: PersistedState = {
   ratings: {},
   name: '',
   assessment: null,
+  goalMinutes: DAILY_GOAL_MINUTES,
 };
 
 const AppContext = React.createContext<AppContextValue | null>(null);
@@ -102,6 +114,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           ratings: parsed.ratings ?? current.ratings,
           name: parsed.name ?? current.name,
           assessment: parsed.assessment ?? current.assessment,
+          goalMinutes: validGoal(parsed.goalMinutes) ?? current.goalMinutes,
         }));
       }
     } catch {
@@ -212,6 +225,12 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
+  const setGoalMinutes = React.useCallback((minutes: number) => {
+    const goal = validGoal(minutes);
+    if (goal === null) return;
+    setState((current) => ({ ...current, goalMinutes: goal }));
+  }, []);
+
   const removeReflection = React.useCallback((date: string) => {
     setState((current) => ({
       ...current,
@@ -259,6 +278,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       rateMeditation,
       setName,
       completeAssessment,
+      setGoalMinutes,
     }),
     [
       state,
@@ -276,6 +296,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       rateMeditation,
       setName,
       completeAssessment,
+      setGoalMinutes,
     ],
   );
 

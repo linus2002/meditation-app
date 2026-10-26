@@ -9,7 +9,6 @@ import { ReflectionCard } from '@/components/reflections/reflection-card';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { toDateKey } from '@/lib/date';
-import { DAILY_GOAL_MINUTES } from '@/data/stats';
 import { formatMinutesLabel } from '@/lib/format';
 import { currentStreak, summariseDay } from '@/lib/session-stats';
 import { cn } from '@/lib/utils';
@@ -44,15 +43,15 @@ export function SessionComplete({
   rated,
   className,
 }: SessionCompleteProps) {
-  const { sessions, reflections, ratings, rateMeditation, hydrated } = useApp();
+  const { sessions, reflections, ratings, rateMeditation, hydrated, goalMinutes } = useApp();
 
   // The local date is resolved on the client; these pages are prerendered.
   const [today, setToday] = React.useState<string | null>(null);
   React.useEffect(() => setToday(toDateKey(new Date())), []);
 
   const day = React.useMemo(
-    () => (today ? summariseDay(sessions, today, DAILY_GOAL_MINUTES) : null),
-    [sessions, today],
+    () => (today ? summariseDay(sessions, today, goalMinutes) : null),
+    [sessions, today, goalMinutes],
   );
   const streak = React.useMemo(
     () => (today ? currentStreak(sessions, new Date()) : 0),
@@ -60,7 +59,7 @@ export function SessionComplete({
   );
 
   const reflectionWritten = today ? reflections.some((entry) => entry.date === today) : true;
-  const goalMet = (day?.minutes ?? 0) >= DAILY_GOAL_MINUTES;
+  const goalMet = (day?.minutes ?? 0) >= goalMinutes;
   const percent = day ? Math.min(100, Math.round((day.minutes / day.goalMinutes) * 100)) : 0;
 
   return (

@@ -3,8 +3,14 @@
  * derived from recorded sessions; only the targets live here.
  */
 
-/** Daily mindful-minutes target, used for the ring and the hero figure. */
+/**
+ * The daily mindful-minutes target until the reader picks their own, which
+ * drives the activities ring, the library's target card and the end of a sit.
+ */
 export const DAILY_GOAL_MINUTES = 30;
+
+/** The goals offered on Profile: from a few minutes a day up to an hour. */
+export const DAILY_GOAL_OPTIONS = [5, 10, 15, 20, 30, 45, 60] as const;
 
 /** How many days the date strip offers. */
 export const ACTIVITY_DAY_COUNT = 7;

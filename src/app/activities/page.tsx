@@ -40,7 +40,7 @@ const EMPTY_DAY: DaySummary = {
  * Every figure is derived from sessions actually recorded on the device.
  */
 export default function ActivitiesPage() {
-  const { sessions, hydrated } = useApp();
+  const { sessions, hydrated, goalMinutes } = useApp();
 
   // The local date is resolved on the client: these pages are prerendered at
   // build time, so reading the clock during render would bake in the build day.
@@ -54,8 +54,8 @@ export default function ActivitiesPage() {
   }, []);
 
   const days = React.useMemo(
-    () => (today ? recentDays(sessions, today, ACTIVITY_DAY_COUNT, DAILY_GOAL_MINUTES) : []),
-    [sessions, today],
+    () => (today ? recentDays(sessions, today, ACTIVITY_DAY_COUNT, goalMinutes) : []),
+    [sessions, today, goalMinutes],
   );
 
   const ready = hydrated && today !== null && selectedDate !== '';
@@ -63,9 +63,9 @@ export default function ActivitiesPage() {
   const day = React.useMemo(
     () =>
       selectedDate && hydrated
-        ? summariseDay(sessions, selectedDate, DAILY_GOAL_MINUTES)
+        ? summariseDay(sessions, selectedDate, goalMinutes)
         : EMPTY_DAY,
-    [sessions, selectedDate, hydrated],
+    [sessions, selectedDate, hydrated, goalMinutes],
   );
 
   return (

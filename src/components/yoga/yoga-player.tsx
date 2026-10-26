@@ -1,11 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { ChevronsLeft, Pause, Play, SkipForward, X } from 'lucide-react';
+import { ChevronsLeft, Pause, Play, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
 
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
 import { SessionComplete } from '@/components/session/session-complete';
 import { TimerRing } from '@/components/timer/timer-ring';
+import { Switch } from '@/components/ui/switch';
 import { yogaColor } from '@/components/yoga/yoga-glass-tile';
 import { YOGA_SAFETY, type YogaSession } from '@/data/yoga';
 import { useBack } from '@/hooks/use-back';
@@ -36,7 +37,8 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   // The session's own colour, as on its tile, tints the top of this page.
   const color = yogaColor(session.id);
   const goBack = useBack();
-  const { settings } = useApp();
+  const { settings, setSetting } = useApp();
+  const voiceGuide = settings.yogaVoice ?? true;
   const { bell, play, stop, prime } = useAudio();
 
   const [phase, setPhase] = React.useState<Phase>('intro');
@@ -53,6 +55,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     onPoseStart: (index) => {
       // A clear bell to begin, a lighter one for each change of pose.
       bell(index === 0 ? 523.25 : 659.25);
+      if (!voiceGuide) return;
       const recorded = session.poses[index].voice;
       const lines = linesFor(index);
       const cue = { src: recorded?.cue, text: lines.cue };
@@ -60,6 +63,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
       else voice.say({ src: recorded?.name, text: lines.name }, cue);
     },
     onPoseEnding: (index) => {
+      if (!voiceGuide) return;
       const upcoming = index + 1;
       if (upcoming >= session.poses.length) return;
       announcedRef.current = upcoming;
@@ -131,7 +135,21 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
           <p className="text-caption leading-none text-ink-muted">
             Pose {clock.index + 1} of {session.poses.length}
           </p>
-          <span className="h-9 w-9" />
+          <button
+            type="button"
+            onClick={() => {
+              if (voiceGuide) voice.stop();
+              setSetting('yogaVoice', !voiceGuide);
+            }}
+            aria-label={voiceGuide ? 'Mute voice guide' : 'Unmute voice guide'}
+            className={iconButton}
+          >
+            {voiceGuide ? (
+              <Volume2 className="h-5 w-5" strokeWidth={1.75} />
+            ) : (
+              <VolumeX className="h-5 w-5 text-ink-muted" strokeWidth={1.75} />
+            )}
+          </button>
         </header>
 
         <div
@@ -271,10 +289,39 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
       <div className="relative px-5">
         <p className="mt-3 text-body-sm leading-relaxed text-ink-muted">{session.description}</p>
 
+        <div className="mt-5 flex items-center justify-between gap-3.5 rounded-tile bg-surface px-4 py-3.5">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
+              {voiceGuide ? (
+                <Volume2 className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.7} />
+              ) : (
+                <VolumeX className="h-[17px] w-[17px] text-ink-muted" strokeWidth={1.7} />
+              )}
+            </span>
+            <div className="min-w-0 flex-1">
+              <label
+                htmlFor="yoga-voice-guide"
+                className="block text-body-sm font-medium leading-tight text-ink cursor-pointer"
+              >
+                Voice guide
+              </label>
+              <p className="mt-0.5 text-label leading-snug text-ink-muted">
+                {voiceGuide ? 'Spoken pose cues and transitions' : 'Silent · Transition bells only'}
+              </p>
+            </div>
+          </div>
+          <Switch
+            id="yoga-voice-guide"
+            checked={voiceGuide}
+            onCheckedChange={(checked) => setSetting('yogaVoice', checked)}
+            aria-label="Voice guide"
+          />
+        </div>
+
         <button
           type="button"
           onClick={() => void begin()}
-          className="mt-5 h-12 w-full rounded-full border border-black/10 bg-white text-body-sm font-medium text-black transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="mt-4 h-12 w-full rounded-full border border-black/10 bg-white text-body-sm font-medium text-black transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           Start
         </button>

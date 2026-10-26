@@ -4,7 +4,6 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ChevronRight, Sprout } from 'lucide-react';
 
-import { DAILY_GOAL_MINUTES } from '@/data/stats';
 import { toDateKey } from '@/lib/date';
 import { currentStreak, summariseDay } from '@/lib/session-stats';
 import { useApp } from '@/providers/app-provider';
@@ -18,20 +17,20 @@ const RING_LENGTH = 2 * Math.PI * RING_RADIUS;
  * It opens the activities screen, where the full record lives.
  */
 export function TargetCard() {
-  const { sessions, hydrated } = useApp();
+  const { sessions, hydrated, goalMinutes } = useApp();
 
   // The date is read on the client: the page is prerendered at build time.
   const [today, setToday] = React.useState<Date | null>(null);
   React.useEffect(() => setToday(new Date()), []);
 
   const ready = hydrated && today !== null;
-  const day = ready ? summariseDay(sessions, toDateKey(today), DAILY_GOAL_MINUTES) : null;
+  const day = ready ? summariseDay(sessions, toDateKey(today), goalMinutes) : null;
   const streak = ready ? currentStreak(sessions, today) : 0;
   const reached = day !== null && day.completion >= 1;
 
   const title = reached ? 'Daily goal reached' : 'Today’s mindful minutes';
   const detail = !day
-    ? `Your daily goal is ${DAILY_GOAL_MINUTES} min`
+    ? `Your daily goal is ${goalMinutes} min`
     : [
         `${day.minutes} of ${day.goalMinutes} min`,
         streak >= 2 ? `${streak}-day streak` : day.minutes === 0 ? 'Start with a short sit' : null,

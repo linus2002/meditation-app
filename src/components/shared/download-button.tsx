@@ -16,9 +16,10 @@ interface DownloadButtonProps {
  * Saves a session to the device, or gives it back.
  *
  * Hidden entirely where saving means nothing: a native build already carries
- * every file, and a browser with no service worker has nowhere to put them. An
- * always-visible control that silently does nothing on half the platforms is
- * the sort of thing that teaches people not to trust the rest of the app.
+ * the session code and synthesises its audio locally, and a browser with no
+ * service worker has nowhere to put them. An always-visible control that
+ * silently does nothing on half the platforms is the sort of thing that
+ * teaches people not to trust the rest of the app.
  */
 export function DownloadButton({
   meditationId,

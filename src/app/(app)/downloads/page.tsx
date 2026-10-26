@@ -50,15 +50,16 @@ export default function DownloadsPage() {
 
       <div className="mt-6 px-5">
         {/*
-         * The native case needs no list at all: the app already carries every
-         * file it will ever need, so there is nothing to save and nothing that
-         * could go missing on a flight.
+         * The native case: the app ships its pages, code, and audio generation
+         * locally, so sessions always open and sound with no connection.
+         * Artwork streams from Sanity on first view and is cached once seen;
+         * offline before that, each image displays a blur preview.
          */}
         {support === 'bundled' ? (
           <EmptyState
             icon={<Smartphone className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />}
-            title="Already on your device"
-            body="You installed Serenity as an app, so every session is stored locally. Nothing here needs downloading."
+            title="Ready offline"
+            body="Sessions and audio are built into the app, so they always play without a connection. Artwork streams the first time you view a session and stays saved on your device."
           />
         ) : support === 'unavailable' ? (
           <EmptyState
@@ -139,7 +140,21 @@ export default function DownloadsPage() {
         ) : null}
       </div>
 
-      {support === 'available' ? (
+      {support === 'bundled' ? (
+        <div className="mt-7 px-5">
+          <SectionTitle>How offline works</SectionTitle>
+          <p className="mt-3 rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
+            Serenity synthesises its soundscapes and voices directly on your device, so audio
+            works anywhere with no signal. Session pages and code are built into the app and never
+            need downloading.
+          </p>
+          <p className="mt-2.5 px-1 text-label leading-relaxed text-ink-faint">
+            To keep the app size small, artwork streams from the network the first time you open a
+            session and is kept in your device cache for offline use. If you open a new session with
+            no connection, it shows a soft blur preview and plays completely normally.
+          </p>
+        </div>
+      ) : support === 'available' ? (
         <div className="mt-7 px-5">
           <SectionTitle>What a download holds</SectionTitle>
           {/*

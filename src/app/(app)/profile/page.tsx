@@ -13,10 +13,13 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { settingToggles } from '@/data/settings';
 import { appShortcuts } from '@/data/shortcuts';
+import { DAILY_GOAL_OPTIONS } from '@/data/stats';
 import { useReminders } from '@/hooks/use-reminders';
 import { formatDuration } from '@/lib/format';
 import { reminderDefinitions } from '@/lib/reminders';
+import { handleRovingKey } from '@/lib/roving';
 import { currentStreak, firstSessionDate, lifetimeTotals, weeklyMinutes } from '@/lib/session-stats';
+import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
 /** The toggles that need notification permission behind them. */
@@ -24,7 +27,8 @@ const reminderIds = new Set(reminderDefinitions.map((entry) => entry.id));
 
 
 export default function ProfilePage() {
-  const { settings, setSetting, sessions, hydrated, name, setName } = useApp();
+  const { settings, setSetting, sessions, hydrated, name, setName, goalMinutes, setGoalMinutes } =
+    useApp();
 
   // Edited locally and saved on blur or Enter, so the greeting does not flicker
   // through every keystroke.
@@ -144,6 +148,49 @@ export default function ProfilePage() {
             <p className="mt-1.5 text-label leading-none text-ink-muted">{stat.label}</p>
           </div>
         ))}
+      </section>
+
+      {/* The target behind the activities ring, the library card and the end of a sit. */}
+      <section className="mt-6 px-5">
+        <SectionTitle>Daily Goal</SectionTitle>
+        <div className="mt-3 rounded-tile bg-surface p-4">
+          <p id="daily-goal-label" className="text-label leading-snug text-ink-muted">
+            Mindful minutes a day
+          </p>
+          <div
+            role="radiogroup"
+            aria-labelledby="daily-goal-label"
+            className="mt-2.5 flex flex-wrap gap-2"
+          >
+            {DAILY_GOAL_OPTIONS.map((minutes, index) => {
+              const selected = hydrated && goalMinutes === minutes;
+              return (
+                <button
+                  key={minutes}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setGoalMinutes(minutes)}
+                  onKeyDown={(event) =>
+                    handleRovingKey(event, index, DAILY_GOAL_OPTIONS.length, (next) =>
+                      setGoalMinutes(DAILY_GOAL_OPTIONS[next]),
+                    )
+                  }
+                  className={cn(
+                    'rounded-full px-3.5 py-2 text-caption font-medium transition-colors duration-150',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+                    selected
+                      ? 'bg-action-pill text-white'
+                      : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
+                  )}
+                >
+                  {minutes} min
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </section>
 
       <section className="mt-6 px-5">
