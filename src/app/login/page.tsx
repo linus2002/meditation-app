@@ -13,7 +13,7 @@ import { useApp } from '@/providers/app-provider';
 type OpenSheet = 'email' | 'create' | null;
 
 /**
- * Sign in, straight after the onboarding tour: the mark over a slow glow of the
+ * Sign in, straight after the onboarding tour or from Profile: the mark over a slow glow of the
  * app's blue and green, with Continue with Email, Create Account and a way to
  * skip. Each of the two opens as a sheet sliding up over this screen, and each
  * can hand over to the other.
@@ -93,7 +93,7 @@ export default function LoginPage() {
           Skip for now
         </button>
         <p className="mt-1.5 text-center text-label text-ink-muted">
-          Sign in to keep your practice on every device
+          An account keeps your name and Circles when you change phones
         </p>
       </div>
 

@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import { elapsedAt, poseTitle, totalSeconds, type YogaPose } from '@/lib/yoga';
+import { elapsedAt, poseLines, poseTitle, totalSeconds, type YogaPose } from '@/lib/yoga';
 
 const poses: YogaPose[] = [
   { name: 'Seated breath', seconds: 60, cue: '…' },
@@ -61,5 +61,23 @@ describe('the yoga library', () => {
     const scapes = yoga.map((session) => session.soundscape);
     const known = ['rain', 'ocean', 'forest', 'night', 'bowl', 'pad', 'drone', 'chimes'];
     for (const scape of scapes) expect(known).toContain(scape);
+  });
+});
+
+describe('poseLines', () => {
+  const lunge: YogaPose = { name: 'Low lunge', seconds: 45, cue: 'Step one foot forward.', side: 'left' };
+
+  it('names the pose, with its side, the way the instructor says it', () => {
+    expect(poseLines(lunge, false)).toEqual({
+      name: 'Low lunge, left side.',
+      cue: 'Step one foot forward.',
+      next: 'Next, Low lunge, left side.',
+    });
+  });
+
+  it('announces the last pose as the last', () => {
+    expect(poseLines({ name: 'Rest', seconds: 60, cue: 'Lie back.' }, true).next).toBe(
+      'And finally, Rest.',
+    );
   });
 });

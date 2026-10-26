@@ -140,6 +140,28 @@ export async function verifyEmailCode(email: string, code: string): Promise<void
 }
 
 /**
+ * The email of the account signed in on this device, or null. An anonymous
+ * Circles account has no email and counts as signed out here.
+ */
+export async function accountEmail(): Promise<string | null> {
+  if (TEST_ACCOUNT && testSignedIn) return TEST_ACCOUNT.email;
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const { data } = await supabase.auth.getSession();
+  return data.session?.user.email ?? null;
+}
+
+/** Signs this device out. The practice recorded on the phone stays. */
+export async function signOut(): Promise<void> {
+  if (TEST_ACCOUNT && testSignedIn) {
+    testSignedIn = false;
+    return;
+  }
+  const { error } = await client().auth.signOut();
+  if (error) throw toError(error);
+}
+
+/**
  * The first name given at sign-up, for the home greeting. Read from the
  * account itself, so it follows the reader to a new phone.
  */

@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { ChevronRight, User } from 'lucide-react';
 
+import { AccountCard } from '@/components/auth/account-card';
 import { InstallPrompt } from '@/components/layout/install-prompt';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { SectionTitle } from '@/components/shared/section-title';
@@ -82,9 +83,10 @@ export default function ProfilePage() {
   return (
     <div className="pb-4">
       {/*
-       * There are no accounts: everything here is this phone's own record. The
-       * reference showed a made-up member's name and join date, which every
-       * reader saw as their own, so this states what is actually known.
+       * The practice shown here is this phone's own record; an account only
+       * carries the name and Circles. The reference showed a made-up member's
+       * name and join date, which every reader saw as their own, so this states
+       * what is actually known.
        */}
       <ScreenHeader eyebrow="On this phone" title="Profile" />
 
@@ -127,6 +129,10 @@ export default function ProfilePage() {
           }}
           className="mt-2 h-12 w-full rounded-full border border-overlay/[0.12] bg-overlay/[0.04] px-4 text-body-sm text-ink outline-none placeholder:text-ink-faint focus:border-overlay/30"
         />
+      </section>
+
+      <section className="mt-5 px-5">
+        <AccountCard />
       </section>
 
       <section className="mt-5 grid grid-cols-3 gap-2.5 px-5">

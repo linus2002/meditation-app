@@ -15,7 +15,10 @@ import { cn } from '@/lib/utils';
 import { useAudio } from '@/providers/audio-provider';
 import type { Story } from '@/types';
 
-/** Wind-down lengths offered while a story is playing. */
+/**
+ * Wind-down lengths offered while a story is playing. Stories run a minute or
+ * two, so a timer keeps the music going after the last line until it is up.
+ */
 const SLEEP_TIMER_OPTIONS = [
   { value: 0, label: 'Off' },
   { value: 10, label: '10 min' },
@@ -26,8 +29,11 @@ const SLEEP_TIMER_OPTIONS = [
 /** Composed for the app by scripts/music/compose.mjs, one per story mood. */
 const musicFor = (story: Story) => `/audio/music/${story.category}.mp3`;
 
-/** Under the voice, not beside it: about 10 dB quieter than the narration. */
-const MUSIC_LEVEL = 0.55;
+/**
+ * Under the voice but present enough to carry it. With the default master
+ * volume (0.7) this sits about 5 dB below the narration, which plays at full.
+ */
+const MUSIC_LEVEL = 0.8;
 
 export function StoryReader({ story }: { story: Story }) {
   const goBack = useBack('/stories');
@@ -38,45 +44,60 @@ export function StoryReader({ story }: { story: Story }) {
   const [music, setMusic] = React.useState(true);
   const [timerMinutes, setTimerMinutes] = React.useState(0);
   const [timerEndsAt, setTimerEndsAt] = React.useState<number | null>(null);
+  const [now, setNow] = React.useState(() => Date.now());
+  // How long the music takes to leave next time it stops: a slow fade when the
+  // sleep timer runs out, a short one when the story simply ends.
+  const fadeOutRef = React.useRef(4);
 
   const activeParagraph = narration.activeParagraph;
 
   const { speaking, paused, stop: stopNarration } = narration;
   const musicSrc = musicFor(story);
+  const timerRunning = timerEndsAt !== null;
 
-  // The sleep timer stops the reading and lets the bed fall away.
+  // The sleep timer: ticks the countdown, and when it runs out stops the
+  // reading and lets the music fall away slowly.
   React.useEffect(() => {
     if (!timerEndsAt) return undefined;
-    const id = window.setInterval(() => {
-      if (Date.now() < timerEndsAt) return;
-      window.clearInterval(id);
+    const tick = () => {
+      const at = Date.now();
+      setNow(at);
+      if (at < timerEndsAt) return;
+      fadeOutRef.current = 12;
       setTimerEndsAt(null);
       stopNarration();
-      stopMusic(12);
-    }, 1000);
+    };
+    tick();
+    const id = window.setInterval(tick, 1000);
     return () => window.clearInterval(id);
-  }, [timerEndsAt, stopNarration, stopMusic]);
+  }, [timerEndsAt, stopNarration]);
 
-  // The music follows the voice: in as it starts, down for a pause, and out
-  // gently once the last line has been read.
+  // The music follows the voice: in as it starts, down for a pause. Once the
+  // last line has been read it carries on while a sleep timer is running, and
+  // otherwise leaves gently.
   React.useEffect(() => {
     if (!music) return;
     if (speaking && !paused) playMusic(musicSrc, MUSIC_LEVEL);
     else if (speaking) pauseMusic(0.8);
-    else stopMusic(4);
-  }, [music, speaking, paused, musicSrc, playMusic, pauseMusic, stopMusic]);
+    else if (!timerRunning) {
+      stopMusic(fadeOutRef.current);
+      fadeOutRef.current = 4;
+    }
+  }, [music, speaking, paused, timerRunning, musicSrc, playMusic, pauseMusic, stopMusic]);
 
-  // Arm the timer when narration starts, clear it when the reading stops.
+  // Arm the timer when narration starts. With the music off there is nothing
+  // left to wind down once the story ends, so the timer goes with it.
   React.useEffect(() => {
     if (speaking && timerMinutes > 0) {
       setTimerEndsAt((current) => current ?? Date.now() + timerMinutes * 60_000);
     }
-    if (!speaking) setTimerEndsAt(null);
-  }, [speaking, timerMinutes]);
+    if (!speaking && !music) setTimerEndsAt(null);
+  }, [speaking, timerMinutes, music]);
 
   const chooseTimer = (minutes: number) => {
     setTimerMinutes(minutes);
-    setTimerEndsAt(minutes > 0 && narration.speaking ? Date.now() + minutes * 60_000 : null);
+    const listening = narration.speaking || timerRunning;
+    setTimerEndsAt(minutes > 0 && listening ? Date.now() + minutes * 60_000 : null);
   };
 
   // Nothing keeps sounding once the screen is gone.
@@ -100,7 +121,7 @@ export function StoryReader({ story }: { story: Story }) {
     if (narration.speaking && !narration.paused) playMusic(musicSrc, MUSIC_LEVEL);
   };
 
-  const minutesLeft = timerEndsAt ? Math.ceil((timerEndsAt - Date.now()) / 60_000) : 0;
+  const minutesLeft = timerEndsAt ? Math.max(1, Math.ceil((timerEndsAt - now) / 60_000)) : 0;
 
   return (
     <div className="relative flex min-h-full flex-col">
@@ -246,7 +267,9 @@ export function StoryReader({ story }: { story: Story }) {
               {timerEndsAt ? (
                 <p className="mt-3 flex items-center gap-1.5 text-label leading-none text-ink-soft">
                   <Moon className="h-3.5 w-3.5 text-aurora-violet" strokeWidth={1.9} />
-                  Stopping in about {minutesLeft} min
+                  {speaking
+                    ? `Stopping in about ${minutesLeft} min`
+                    : `Story finished. Music fades out in about ${minutesLeft} min`}
                 </p>
               ) : null}
             </div>

@@ -3608,78 +3608,148 @@
         {
           "cue": "Sit tall, cross-legged or on a chair. Close your eyes and breathe slowly through your nose.",
           "name": "Easy seated breath",
-          "seconds": 60
+          "seconds": 60,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/cfe156dc9872353c1fe1ee9693e0706f21c67e19.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/2b2442438968c0ee5ca1693ba245005a8c5f9e12.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/d32dfbf27d4e99d57a15aace91915dc06fd7b221.mp3"
+          }
         },
         {
           "cue": "Let your chin drop toward your chest, then roll one ear toward each shoulder. Slow and easy.",
           "name": "Neck rolls",
-          "seconds": 45
+          "seconds": 45,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/cea4b807d4ce4e35ff2e154da56896534001a870.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/01119be73bbfe31952e09a15e286be418bb284e3.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/85764f3ca2d5cc2cdb632ecf3aa8f13f57afac98.mp3"
+          }
         },
         {
           "cue": "On hands and knees, arch your back as you breathe in and round it as you breathe out.",
           "name": "Cat–cow",
-          "seconds": 60
+          "seconds": 60,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/c2c41cccc42ca2cd33af889c60455906e4ac6853.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/db65014e056239d3c4597d7877be287c6bb19734.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/60d9d510ef5e12d1f7761aa1691e9994eb4bf625.mp3"
+          }
         },
         {
           "cue": "Tuck your toes and lift your hips up and back. Keep your knees as bent as you like.",
           "name": "Downward dog",
-          "seconds": 45
+          "seconds": 45,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/2712a96229ee71a6bb82ddb13edf06356d900916.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/109418e8cd0ccb3848b410acb071dd2b553aa2bc.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/dab00908220f83b39a342002516f428b3865135d.mp3"
+          }
         },
         {
           "cue": "Step one foot forward between your hands, lower the back knee and lift your chest.",
           "name": "Low lunge",
           "seconds": 45,
-          "side": "left"
+          "side": "left",
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/0c34372ec92ba69947f4f14eaf3f4f07c61671ad.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/0f750f9b9327c365368e9d9973edfdb8e8f6d903.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/5a6bbea97694cae1cb48bd2128cecf29dbdf9282.mp3"
+          }
         },
         {
           "cue": "Step one foot forward between your hands, lower the back knee and lift your chest.",
           "name": "Low lunge",
           "seconds": 45,
-          "side": "right"
+          "side": "right",
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/0c34372ec92ba69947f4f14eaf3f4f07c61671ad.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/14fb227c84c6cb23d227722b6fab3cab85b58bbb.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/d3ce3034b8c8955d494efe57b37cad03b7554c3d.mp3"
+          }
         },
         {
           "cue": "Stand tall with feet hip-width apart. Feel the floor under your feet and soften your shoulders.",
           "name": "Mountain pose",
-          "seconds": 45
+          "seconds": 45,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/78336f581fccb3192b45d2a103b9a6e33a85ec45.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/e2fbb788db14caf8f72dd6555cd8e1eed54497e3.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/4eaa5bc59298639db069c2a4387c12b0a3ceaa38.mp3"
+          }
         },
         {
           "cue": "Reach both arms up, then lean gently to one side. Keep breathing into your ribs.",
           "name": "Standing side stretch",
           "seconds": 30,
-          "side": "left"
+          "side": "left",
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/7321ed89077350e533a1f007c38bed2d84958f0e.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/8d20fd2aa6d2b9234d12c934a066a8fd72cea858.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/485fabd58d477c0c52805c4d39dd27af1591bfba.mp3"
+          }
         },
         {
           "cue": "Reach both arms up, then lean gently to one side. Keep breathing into your ribs.",
           "name": "Standing side stretch",
           "seconds": 30,
-          "side": "right"
+          "side": "right",
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/7321ed89077350e533a1f007c38bed2d84958f0e.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/b40674d1079e0842649fd68210871077027c21e8.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/d5dfff19a12bef971c831944d6f715212c484c0d.mp3"
+          }
         },
         {
           "cue": "Hinge at the hips and let your upper body hang. Soft knees, heavy head.",
           "name": "Forward fold",
-          "seconds": 45
+          "seconds": 45,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/6a1303d520112afe6ace08cd4712ffbfcdcb9a34.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/6b7955f8721cae522a15c6ffd6a674c75f66b017.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/08d6d25485f5d3e88142bc37bb6c8ddedff114ec.mp3"
+          }
         },
         {
           "cue": "Bend your knees as if sitting back into a chair, arms reaching forward.",
           "name": "Chair pose",
-          "seconds": 30
+          "seconds": 30,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/da4666738d8a547d5e2192a5b831f677f580a6da.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/1946d14a7bcdc36507e6398b2a50ded0a306326e.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/885ac4b6104f18de3d36dc86c550855a7d01897e.mp3"
+          }
         },
         {
           "cue": "Rest one foot on the opposite ankle or calf — never the knee. Use a wall if you like.",
           "name": "Tree pose",
           "seconds": 30,
-          "side": "left"
+          "side": "left",
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/cfcb795b73896e55d650d9514e87a3b8df8a5363.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/e230eb83624a362da59e7f5756e4e9fab63adf66.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/7e775e508da8074c8937203440443bfa023ef0d7.mp3"
+          }
         },
         {
           "cue": "Rest one foot on the opposite ankle or calf — never the knee. Use a wall if you like.",
           "name": "Tree pose",
           "seconds": 30,
-          "side": "right"
+          "side": "right",
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/cfcb795b73896e55d650d9514e87a3b8df8a5363.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/012b60d6384501e1bc92312b51de584c8a16ea86.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/a7f99a6cde4aefa36fe078888de84567c4771dab.mp3"
+          }
         },
         {
           "cue": "Hands on your belly. Take a few slow breaths and notice how you feel now.",
           "name": "Closing breath",
-          "seconds": 60
+          "seconds": 60,
+          "voice": {
+            "cue": "https://cdn.sanity.io/files/jn0rojao/production/cda35779ae97853d253f06d893f708b489d19e8a.mp3",
+            "name": "https://cdn.sanity.io/files/jn0rojao/production/a1298738f4c59d14d06a1f5f417653a80043f232.mp3",
+            "next": "https://cdn.sanity.io/files/jn0rojao/production/cd47a9c7e170018094b5e5dc162348a0fd6466bf.mp3"
+          }
         }
       ],
       "soundscape": "forest",

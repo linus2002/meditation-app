@@ -167,6 +167,20 @@ export const yogaSession = defineType({
               description: 'Only for poses done once on each side.',
               options: { list: [{ title: 'Left', value: 'left' }, { title: 'Right', value: 'right' }] },
             }),
+            defineField({
+              name: 'voice',
+              title: 'Voice guide',
+              type: 'object',
+              description: 'Recorded by `npm run content:narrate` from the pose and its instruction. Edit those, then re-run it.',
+              readOnly: true,
+              options: { collapsible: true, collapsed: true },
+              fields: [
+                defineField({ name: 'name', title: 'Pose name', type: 'file', options: { accept: 'audio/*' } }),
+                defineField({ name: 'cue', title: 'Instruction', type: 'file', options: { accept: 'audio/*' } }),
+                defineField({ name: 'next', title: '“Next, …” announcement', type: 'file', options: { accept: 'audio/*' } }),
+                defineField({ name: 'hash', title: 'Recorded from', type: 'string', hidden: true }),
+              ],
+            }),
           ],
           preview: {
             select: { name: 'name', seconds: 'seconds', side: 'side' },

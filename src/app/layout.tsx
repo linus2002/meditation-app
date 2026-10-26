@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Poppins } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import { CircleSync } from '@/components/layout/circle-sync';
 import { DeviceStage } from '@/components/layout/device-stage';
@@ -15,9 +15,19 @@ import { CirclesProvider } from '@/providers/circles-provider';
 
 import './globals.css';
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+/*
+ * Poppins, shipped in the repo (src/assets/fonts, SIL Open Font License)
+ * rather than fetched from Google Fonts at build time, so a build or the dev
+ * server never fails on a network that cannot reach fonts.gstatic.com.
+ */
+const poppins = localFont({
+  src: [
+    { path: '../assets/fonts/poppins-latin-300-normal.woff2', weight: '300', style: 'normal' },
+    { path: '../assets/fonts/poppins-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: '../assets/fonts/poppins-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: '../assets/fonts/poppins-latin-600-normal.woff2', weight: '600', style: 'normal' },
+    { path: '../assets/fonts/poppins-latin-700-normal.woff2', weight: '700', style: 'normal' },
+  ],
   variable: '--font-poppins',
   display: 'swap',
 });

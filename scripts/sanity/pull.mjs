@@ -56,7 +56,9 @@ const QUERY = `{
   },
   "yoga": *[_type == "yogaSession" && defined(slug.current)] | order(order asc) {
     "id": slug.current, title, subtitle, focus, level, "image": image${IMG}, imageAlt,
-    soundscape, description, "poses": poses[]{ name, seconds, cue, side }
+    soundscape, description,
+    "poses": poses[]{ name, seconds, cue, side,
+      "voice": voice{ "name": name.asset->url, "cue": cue.asset->url, "next": next.asset->url } }
   },
   "videos": *[_type == "homeVideo" && defined(slug.current)] | order(order asc) {
     "id": slug.current, title, eyebrow, "src": video.asset->url, "poster": poster${IMG}

@@ -12,8 +12,9 @@ import { useBack } from '@/hooks/use-back';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { useWakeLock } from '@/hooks/use-wake-lock';
 import { useYogaSession } from '@/hooks/use-yoga-session';
+import { useYogaVoice } from '@/hooks/use-yoga-voice';
 import { formatClock, formatMinutesLabel } from '@/lib/format';
-import { elapsedAt, poseSideLabel, poseTitle, totalSeconds } from '@/lib/yoga';
+import { elapsedAt, poseLines, poseSideLabel, poseTitle, totalSeconds } from '@/lib/yoga';
 import { useApp } from '@/providers/app-provider';
 import { useAudio } from '@/providers/audio-provider';
 
@@ -26,6 +27,10 @@ const iconButton =
  * A guided yoga session: an overview to decide, then one pose at a time — its
  * name, one instruction, a countdown ring and what comes next — with a soft
  * bell as each pose begins. Time spent counts toward the day like any sit.
+ *
+ * An instructor's voice guides it for eyes that are closed: just before a pose
+ * ends it says what is next, and as each pose begins it reads the instruction.
+ * A pose that was not announced (the first, or one skipped to) is named first.
  */
 export function YogaPlayer({ session }: { session: YogaSession }) {
   // The session's own colour, as on its tile, tints the top of this page.
@@ -38,9 +43,28 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   const recorder = useSessionRecorder(session.id);
   const total = totalSeconds(session.poses);
 
+  const voice = useYogaVoice();
+  // The pose the instructor has just said "Next, …" for.
+  const announcedRef = React.useRef(-1);
+  const linesFor = (index: number) =>
+    poseLines(session.poses[index], index === session.poses.length - 1);
+
   const clock = useYogaSession(session.poses, {
-    // A clear bell to begin, a lighter one for each change of pose.
-    onPoseStart: (index) => bell(index === 0 ? 523.25 : 659.25),
+    onPoseStart: (index) => {
+      // A clear bell to begin, a lighter one for each change of pose.
+      bell(index === 0 ? 523.25 : 659.25);
+      const recorded = session.poses[index].voice;
+      const lines = linesFor(index);
+      const cue = { src: recorded?.cue, text: lines.cue };
+      if (announcedRef.current === index) voice.say(cue);
+      else voice.say({ src: recorded?.name, text: lines.name }, cue);
+    },
+    onPoseEnding: (index) => {
+      const upcoming = index + 1;
+      if (upcoming >= session.poses.length) return;
+      announcedRef.current = upcoming;
+      voice.say({ src: session.poses[upcoming].voice?.next, text: linesFor(upcoming).next });
+    },
     onFinish: () => {
       recorder.elapsedRef.current = total;
       recorder.markFinished();
@@ -65,6 +89,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     await prime();
     if (settings.ambient ?? true) void play(session.soundscape);
     recorder.restart();
+    announcedRef.current = -1;
     setPhase('running');
     clock.begin();
   };
@@ -73,8 +98,14 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     setConfirmingEnd(false);
     recorder.commit(false);
     clock.stop();
+    voice.stop();
     stop(1.2);
     setPhase('intro');
+  };
+
+  const pause = () => {
+    voice.stop();
+    clock.pause();
   };
 
   // Ending is asked, not done: the corner button sits where Back usually is.
@@ -82,7 +113,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   const wasRunningRef = React.useRef(false);
   const askToEnd = () => {
     wasRunningRef.current = clock.running;
-    clock.pause();
+    pause();
     setConfirmingEnd(true);
   };
   const keepGoing = () => {
@@ -148,7 +179,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
           <div className="mt-[clamp(20px,4vh,36px)] flex items-center gap-4">
             <button
               type="button"
-              onClick={() => (clock.running ? clock.pause() : clock.resume())}
+              onClick={() => (clock.running ? pause() : clock.resume())}
               aria-label={clock.running ? 'Pause' : 'Resume'}
               className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >

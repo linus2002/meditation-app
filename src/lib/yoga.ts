@@ -15,6 +15,31 @@ export interface YogaPose {
   cue: string;
   /** Set when the pose is done once on each side. */
   side?: YogaSide;
+  /** The instructor's recorded lines, streamed from Sanity where recorded. */
+  voice?: YogaPoseVoice;
+}
+
+/** Recorded by scripts/sanity/narrate.mjs; each line has a spoken fallback. */
+export interface YogaPoseVoice {
+  /** "Low lunge, left side." */
+  name?: string;
+  /** The pose's instruction, read as it begins. */
+  cue?: string;
+  /** "Next, low lunge, left side.", read just before it begins. */
+  next?: string;
+}
+
+/** What the instructor says, so recordings and the device's own voice agree. */
+export function spokenTitle(pose: YogaPose): string {
+  return pose.side ? `${pose.name}, ${pose.side} side` : pose.name;
+}
+
+export function poseLines(pose: YogaPose, isLast: boolean) {
+  return {
+    name: `${spokenTitle(pose)}.`,
+    cue: pose.cue,
+    next: `${isLast ? 'And finally' : 'Next'}, ${spokenTitle(pose)}.`,
+  };
 }
 
 export function totalSeconds(poses: YogaPose[]): number {
