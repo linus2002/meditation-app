@@ -25,7 +25,8 @@ import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { useWakeLock } from '@/hooks/use-wake-lock';
 import { soundscapes, type SoundscapeId } from '@/lib/audio/soundscapes';
 import { formatClock } from '@/lib/format';
-import { useAudio } from '@/providers/audio-provider';
+import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 
 type Phase = 'setup' | 'warmup' | 'running' | 'done';
 
@@ -106,6 +107,19 @@ export default function TimerPage() {
 
   // The screen stays lit while a sit is under way.
   useWakeLock(phase === 'warmup' || phase === 'running');
+  useBackgroundHold(countdown.running);
+
+  // Sound cut off by a call or the like: hold the sit rather than run on in silence.
+  useOnAudioInterrupted(() => {
+    if (countdown.running) countdown.pause();
+  });
+
+  // Inside the tap, so the bed comes back if it was cut off while paused.
+  const resumeSit = () => {
+    void prime();
+    if (scape) void play(scape);
+    countdown.resume();
+  };
 
   const begin = async () => {
     // Audio has to be unlocked by the gesture that starts the sit.
@@ -132,7 +146,7 @@ export default function TimerPage() {
   };
   const keepGoing = () => {
     setConfirmingEnd(false);
-    if (wasRunningRef.current) countdown.resume();
+    if (wasRunningRef.current) resumeSit();
   };
 
   const isSitting = phase === 'warmup' || phase === 'running';
@@ -177,7 +191,7 @@ export default function TimerPage() {
           <div className="mt-[clamp(24px,5vh,44px)] flex items-center gap-4">
             <button
               type="button"
-              onClick={() => (countdown.running ? countdown.pause() : countdown.resume())}
+              onClick={() => (countdown.running ? countdown.pause() : resumeSit())}
               aria-label={countdown.running ? 'Pause sit' : 'Resume sit'}
               className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >

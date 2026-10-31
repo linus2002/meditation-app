@@ -11,6 +11,7 @@ import {
   isDue,
   reminderBody,
   reminderDefinitions,
+  tappedUrl,
   upcomingDaily,
   type ReminderDefinition,
 } from '@/lib/reminders';
@@ -57,6 +58,16 @@ interface NativeNotifications {
   requestPermissions(): Promise<NativePermission>;
   schedule(options: { notifications: unknown[] }): Promise<unknown>;
   cancel(options: { notifications: { id: number }[] }): Promise<unknown>;
+  // The bridge hands back the handle itself where the plugin's own wrapper
+  // would hand back a promise of it.
+  addListener(
+    event: 'localNotificationActionPerformed',
+    handler: (action: unknown) => void,
+  ): NativeListener | Promise<NativeListener>;
+}
+
+interface NativeListener {
+  remove(): Promise<void>;
 }
 
 interface CapacitorBridge {
@@ -64,18 +75,29 @@ interface CapacitorBridge {
   Plugins?: { LocalNotifications?: NativeNotifications };
 }
 
-function nativePlugin(): NativeNotifications | null {
-  if (typeof window === 'undefined') return null;
-
-  const bridge = (window as unknown as { Capacitor?: CapacitorBridge }).Capacitor;
-  if (!bridge?.isNativePlatform?.()) return null;
-
-  return bridge.Plugins?.LocalNotifications ?? null;
+function capacitorBridge(): CapacitorBridge | undefined {
+  if (typeof window === 'undefined') return undefined;
+  return (window as unknown as { Capacitor?: CapacitorBridge }).Capacitor;
 }
 
+/** True inside the installed Android or iOS app, with or without the plugin. */
+export function isNativeShell(): boolean {
+  return Boolean(capacitorBridge()?.isNativePlatform?.());
+}
+
+function nativePlugin(): NativeNotifications | null {
+  if (!isNativeShell()) return null;
+  return capacitorBridge()?.Plugins?.LocalNotifications ?? null;
+}
+
+// Never the web route inside the native shell: nothing there can keep the
+// promise of a reminder, so a shell without the plugin counts as unsupported.
 function webNotificationsAvailable(): boolean {
   return (
-    typeof window !== 'undefined' && 'Notification' in window && 'serviceWorker' in navigator
+    typeof window !== 'undefined' &&
+    !isNativeShell() &&
+    'Notification' in window &&
+    'serviceWorker' in navigator
   );
 }
 
@@ -217,6 +239,14 @@ function showWebNotification(reminder: ReminderDefinition, body: string): Promis
   });
 }
 
+/*
+ * Inexact on purpose. The plugin wants exact alarms unless told otherwise, and
+ * on a phone that hasn't granted them it opens the system's "Alarms & reminders"
+ * screen from every schedule() call, which here means on every launch. A nudge
+ * that lands a few minutes late is fine; Android still wakes for it when idle.
+ */
+const NATIVE_TIMING = { isExactNotification: false };
+
 /**
  * Native id for the one-off test notification. Kept well clear of the
  * reminders' `nativeId`s so a test can never cancel or replace a real one.
@@ -244,8 +274,7 @@ export async function sendTestNotification(): Promise<TestResult> {
             id: TEST_NATIVE_ID,
             title,
             body,
-            // A moment ahead rather than "now", which some OS versions drop.
-            schedule: { at: new Date(Date.now() + 1000), allowWhileIdle: true },
+            // No schedule: an inexact alarm could hold a test back for minutes.
             extra: { url: '/notifications' },
           },
         ],
@@ -319,6 +348,7 @@ async function syncNative(enabledIds: string[], bodyOf: BodyResolver): Promise<v
           body: bodyOf(entry, dayKey(at)),
           schedule: { at, allowWhileIdle: true },
           extra: { url: entry.url },
+          ...NATIVE_TIMING,
         }));
       }
 
@@ -331,6 +361,7 @@ async function syncNative(enabledIds: string[], bodyOf: BodyResolver): Promise<v
           // `on` with only hour and minute set repeats every day at that time.
           schedule: { on: { hour, minute }, allowWhileIdle: true },
           extra: { url: entry.url },
+          ...NATIVE_TIMING,
         },
       ];
     });
@@ -393,6 +424,24 @@ export function startReminders(enabledIds: string[], resolveBody?: BodyResolver)
     stopped = true;
     window.clearInterval(timer);
     document.removeEventListener('visibilitychange', onVisible);
+  };
+}
+
+/**
+ * Calls `open` with the screen a tapped native notification points at, and
+ * returns the teardown. A tap that launched the app is held by the plugin until
+ * this listens. The web's equivalent lives in `sw.js`.
+ */
+export function onNotificationTap(open: (url: string) => void): () => void {
+  const native = nativePlugin();
+  if (!native) return () => {};
+
+  const subscription = native.addListener('localNotificationActionPerformed', (action) => {
+    const url = tappedUrl(action);
+    if (url) open(url);
+  });
+  return () => {
+    void Promise.resolve(subscription).then((handle) => handle.remove());
   };
 }
 
@@ -485,6 +534,7 @@ async function syncCircleNative(slots: CircleReminderSlot[]): Promise<void> {
             allowWhileIdle: true,
           },
           extra: { url: copy.url },
+          ...NATIVE_TIMING,
         };
       });
 

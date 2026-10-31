@@ -17,7 +17,8 @@ import { useYogaVoice } from '@/hooks/use-yoga-voice';
 import { formatClock, formatMinutesLabel } from '@/lib/format';
 import { elapsedAt, poseLines, poseSideLabel, poseTitle, totalSeconds } from '@/lib/yoga';
 import { useApp } from '@/providers/app-provider';
-import { useAudio } from '@/providers/audio-provider';
+import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 
 type Phase = 'intro' | 'running' | 'done';
 
@@ -77,6 +78,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
       stop(4);
       setPhase('done');
     },
+    onFrozen: () => voice.stop(),
   });
 
   const pose = session.poses[clock.index];
@@ -86,6 +88,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   if (phase === 'running') recorder.elapsedRef.current = elapsed;
 
   useWakeLock(phase === 'running');
+  useBackgroundHold(phase === 'running' && clock.running);
   React.useEffect(() => () => stop(0.4), [stop]);
 
   const begin = async () => {
@@ -112,6 +115,18 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     clock.pause();
   };
 
+  // Sound cut off by a call or the like: hold the pose rather than run on in silence.
+  useOnAudioInterrupted(() => {
+    if (clock.running) pause();
+  });
+
+  // Inside the tap, so the bed comes back if it was cut off while paused.
+  const resume = () => {
+    void prime();
+    if (settings.ambient ?? true) void play(session.soundscape);
+    clock.resume();
+  };
+
   // Ending is asked, not done: the corner button sits where Back usually is.
   const [confirmingEnd, setConfirmingEnd] = React.useState(false);
   const wasRunningRef = React.useRef(false);
@@ -122,7 +137,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   };
   const keepGoing = () => {
     setConfirmingEnd(false);
-    if (wasRunningRef.current) clock.resume();
+    if (wasRunningRef.current) resume();
   };
 
   if (phase === 'running' && pose) {
@@ -197,7 +212,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
           <div className="mt-[clamp(20px,4vh,36px)] flex items-center gap-4">
             <button
               type="button"
-              onClick={() => (clock.running ? pause() : clock.resume())}
+              onClick={() => (clock.running ? pause() : resume())}
               aria-label={clock.running ? 'Pause' : 'Resume'}
               className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >

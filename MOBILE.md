@@ -121,18 +121,16 @@ bug: waking a closed web app needs a push server, and this app has none. The
 profile screen says as much under the toggles.
 
 In a **native build** the OS holds the schedule and the nudge arrives whether or
-not the app has been opened for a week. That needs one plugin, installed once
-per platform you have added:
+not the app has been opened for a week, including after the phone restarts.
+Tapping one opens the screen it is about. This comes from
+`@capacitor/local-notifications`, which is already installed; a new native
+build picks it up through `npm run sync:mobile`.
 
-```bash
-npm install @capacitor/local-notifications
-npx cap sync
-```
-
-Nothing else changes. The app reaches the plugin through the Capacitor bridge at
-runtime ([`src/lib/notifications.ts`](src/lib/notifications.ts)), so the web
-build never imports it, and a native build without it simply falls back to the
-in‑app behaviour instead of erroring.
+The app reaches the plugin through the Capacitor bridge at runtime
+([`src/lib/notifications.ts`](src/lib/notifications.ts)), so the web build never
+imports it. Reminders are deliberately inexact, so they can land a few minutes
+after their time: asking for exact alarms would send people to a system settings
+screen on launch.
 
 On Android 13+ the OS asks for notification permission the first time a toggle is
 switched on. On iOS, permission is requested the same way; a reader who declines
@@ -186,7 +184,19 @@ the app is backgrounded or the screen locks, iOS suspends the WebView and the
 sound stops.** For a sleep‑sounds feature that is a genuine problem, and it
 applies to the PWA route too.
 
-Options, cheapest first:
+**Android is handled.** Capacitor leaves the WebView running in the background,
+so the sound carries on by itself. While a session, soundscape or sleep story is
+under way, a small foreground service (`BackgroundSoundService.java`) stops
+Android reclaiming the app and holds the CPU awake for silent stretches, with a
+quiet notification showing. Swiping the app away ends it. Google Play will ask you
+to declare this `mediaPlayback` foreground service when you submit the app.
+
+iOS and the PWA are not handled: there the sound does stop. Wherever it stops, a
+session pauses at that point rather than counting on in silence, and picks up with
+a tap. A live circle can't wait, so its sound comes back on return.
+
+The options below apply to iOS, which also needs the `audio` background mode:
+
 
 1. Keep the screen on during a session with
    [`@capacitor-community/keep-awake`](https://github.com/capacitor-community/keep-awake).
@@ -209,10 +219,10 @@ no equivalent rule.
 
 ### The tablet gate
 
-`DeviceStage` hides the app above **1024px** wide. An iPad in landscape is
-1366pt, so it would show the "Made for phones and tablets" screen. If you want a
-proper iPad app, raise or remove the `desktop` breakpoint in
-`tailwind.config.ts`.
+`DeviceStage` hides the app above **1024px** wide on mouse-driven screens, which
+shows the "Made for phones and tablets" screen on laptops and desktops. Touch
+screens are exempt, so a tablet in landscape gets the app at handset width. To
+change this, edit the `desktop` breakpoint in `tailwind.config.ts`.
 
 ### Data lives on the device
 
@@ -245,4 +255,4 @@ before that, the session displays its blur preview and sounds as normal.
 | Home‑screen icon | No | Yes | Yes |
 | Works offline | No | Yes | Yes |
 | In the app stores | No | No | Yes |
-| Audio with screen locked | No | No | Only with native audio |
+| Audio with screen locked | No | No | Android yes; iOS needs native audio |

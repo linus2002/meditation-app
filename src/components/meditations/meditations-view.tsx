@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
 
@@ -17,6 +16,7 @@ import { SectionTitle } from '@/components/shared/section-title';
 import { ProgramCard } from '@/components/programs/program-card';
 import { Skeleton, SkeletonList } from '@/components/shared/skeleton';
 import { StoryCard } from '@/components/stories/story-card';
+import { StoryGrid } from '@/components/stories/story-rail';
 import { StorySections } from '@/components/stories/story-sections';
 import { categories } from '@/data/categories';
 import { meditations } from '@/data/meditations';
@@ -43,6 +43,19 @@ const TABS: { id: TabId; label: string }[] = [
 function isTabId(value: string | null): value is TabId {
   return TABS.some((tab) => tab.id === value);
 }
+
+/**
+ * Category tile backgrounds, one gradient from the brand palette per mood,
+ * each stop mixed 45% toward white for a lighter pastel tile.
+ */
+const CATEGORY_GRADIENTS: Record<CategorySlug, string> = {
+  focus: 'linear-gradient(90deg, #73eaec 0%, #eafbb8 100%)',
+  sleep: 'linear-gradient(90deg, #ffb4f3 0%, #73b6ff 100%)',
+  anxiety: 'linear-gradient(90deg, #d2ffeb 0%, #b8e0ff 100%)',
+  happiness: 'linear-gradient(90deg, #ffe596 0%, #ffb8cb 100%)',
+  relaxation: 'linear-gradient(90deg, #ffbbbc 0%, #ccb8ff 100%)',
+  breathing: 'linear-gradient(90deg, #c4a9ff 0%, #ffaaaa 100%)',
+};
 
 
 /**
@@ -246,29 +259,18 @@ export function MeditationsView() {
                       setCategory(item.slug);
                       setTab('meditation');
                     }}
-                    className="group relative flex h-[88px] flex-col justify-end overflow-hidden rounded-tile p-3 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                    style={{ backgroundImage: CATEGORY_GRADIENTS[item.slug] }}
+                    className="group relative flex h-[88px] flex-col justify-end overflow-hidden rounded-[10px] p-3 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                   >
-                    <Image
-                      src={item.image}
-                      alt=""
-                      fill
-                      sizes="(max-width: 430px) 50vw, 200px"
-                      placeholder="blur"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-[linear-gradient(180deg,rgba(10,12,36,0.25)_0%,rgba(10,12,36,0.55)_45%,rgba(10,12,36,0.88)_100%)]"
-                    />
                     <Icon
                       aria-hidden="true"
-                      className="absolute right-3 top-3 h-4 w-4 text-white/85"
+                      className="absolute right-3 top-3 h-4 w-4 text-[#14102b]/80"
                       strokeWidth={1.8}
                     />
-                    <span className="relative text-body-sm font-semibold leading-none text-white">
+                    <span className="relative text-body-sm font-semibold leading-none text-[#14102b]">
                       {item.name}
                     </span>
-                    <span className="relative mt-1 text-label leading-none text-white/85">
+                    <span className="relative mt-1 text-label leading-none text-[#14102b]/75">
                       {item.sessionCount} sessions
                     </span>
                   </button>
@@ -293,11 +295,9 @@ export function MeditationsView() {
 
           <section className="mt-8 px-5">
             <SectionTitle>Stories</SectionTitle>
-            <ul className="mt-3 space-y-2.5">
-              {orderedStories.slice(0, 3).map((story) => (
-                <StoryCard key={story.id} story={story} />
-              ))}
-            </ul>
+            <div className="mt-3">
+              <StoryGrid stories={orderedStories.slice(0, 6)} />
+            </div>
             <button
               type="button"
               onClick={() => setTab('stories')}

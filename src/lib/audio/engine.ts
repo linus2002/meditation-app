@@ -31,6 +31,7 @@ export class AudioEngine {
 
   private volume = 0.7;
   private muted = false;
+  private interruptionListeners = new Set<() => void>();
 
   /** Creates the context and master chain. Safe to call repeatedly. */
   private ensure(): AudioContext | null {
@@ -52,6 +53,13 @@ export class AudioEngine {
     }
 
     const ctx = new Ctor();
+
+    // Nothing in the app suspends the context, so leaving `running` with sound
+    // on means something else took it: a call, Siri, or the OS freezing the app.
+    ctx.onstatechange = () => {
+      if (ctx.state === 'running' || ctx.state === 'closed' || !this.isSounding) return;
+      this.interruptionListeners.forEach((listener) => listener());
+    };
 
     // Soft limiting, so a bell landing on a full scape stays clean.
     const limiter = ctx.createDynamicsCompressor();
@@ -108,6 +116,28 @@ export class AudioEngine {
 
   get playingId(): SoundscapeId | null {
     return this.current?.id ?? null;
+  }
+
+  /** True while a soundscape or music is meant to be audible. */
+  get isSounding(): boolean {
+    return this.current !== null || this.music !== null;
+  }
+
+  /**
+   * Seconds on the audio hardware's clock while something is meant to be
+   * audible, or null. It only moves when sound is really going out, which is how
+   * a frozen app can be told from one whose timers were merely throttled.
+   */
+  get soundClock(): number | null {
+    return this.isSounding && this.ctx ? this.ctx.currentTime : null;
+  }
+
+  /** Calls `listener` when sound is cut off from outside. Returns the teardown. */
+  onInterrupted(listener: () => void): () => void {
+    this.interruptionListeners.add(listener);
+    return () => {
+      this.interruptionListeners.delete(listener);
+    };
   }
 
   /** Crossfades to `id`. Calling it with the scape already playing is a no-op. */

@@ -17,7 +17,8 @@ import { formatMinutesSeconds } from '@/lib/circles/format';
 import { formatMinutesLabel } from '@/lib/format';
 import type { SupportListen } from '@/lib/support-history';
 import { cn } from '@/lib/utils';
-import { useAudio } from '@/providers/audio-provider';
+import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 
 type Stage = 'intro' | 'playing' | 'done';
 
@@ -79,6 +80,12 @@ export function SupportPlayer({
   const breath = useBreath(session.breathPattern, player.elapsed);
 
   useWakeLock(player.isPlaying && session.keepScreenOn);
+  useBackgroundHold(player.isPlaying);
+
+  // Sound cut off by a call or the like: hold the place rather than sit on in silence.
+  useOnAudioInterrupted(() => {
+    if (player.isPlaying) player.pause();
+  });
 
   React.useEffect(() => {
     if (player.isPlaying) void playBed(session.soundscape);

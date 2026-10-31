@@ -2,11 +2,12 @@ import type { ReactNode } from 'react';
 import { Smartphone, Tablet } from 'lucide-react';
 
 /**
- * Serenity is a handheld app. Up to the `desktop` breakpoint (1025px) the app
- * renders at handset width, centred, filling the viewport height — which covers
- * phones and tablets in portrait as well as a 1024pt iPad in landscape.
+ * Serenity is a handheld app. It renders at handset width, centred, filling the
+ * viewport height, on every touch screen whatever its size, and on any screen up
+ * to the `desktop` breakpoint (1025px).
  *
- * Beyond that width the app is not offered at all: the gate is a plain CSS
+ * Beyond that width on a mouse-driven screen the app is not offered at all: the
+ * gate is a plain CSS
  * `display: none`, so the app is never painted on a laptop or desktop and is
  * removed from the accessibility tree along with it. No JS, no measuring, and
  * no flash of the wrong layout on first paint.

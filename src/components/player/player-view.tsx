@@ -20,7 +20,8 @@ import { MIN_RECORDED_SECONDS } from '@/data/stats';
 import { formatClock, formatMinutesLabel } from '@/lib/format';
 import { clearResume, readResume, saveResume } from '@/lib/resume';
 import { useApp } from '@/providers/app-provider';
-import { useAudio } from '@/providers/audio-provider';
+import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 import type { Meditation } from '@/types';
 
 export function PlayerView({ meditation }: { meditation: Meditation }) {
@@ -65,6 +66,14 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
 
   const { isPlaying, toggle: toggleTransport } = player;
   const { prime } = audio;
+
+  // Sound cut off by a call or the like: hold the place rather than sit on in silence.
+  useOnAudioInterrupted(() => {
+    if (isPlaying) player.pause();
+  });
+
+  // A session keeps going with the screen off, even a silent one, and ends with its bell.
+  useBackgroundHold(isPlaying);
 
   // Browsers — iOS and installed PWAs above all — only let audio start inside
   // the tap itself. The bed is started later, from an effect, so the context

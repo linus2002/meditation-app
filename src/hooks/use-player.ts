@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import { audioEngine } from '@/lib/audio/engine';
+import { watchForFreeze } from '@/lib/audio/freeze';
 import { clamp } from '@/lib/format';
 
 interface UsePlayerOptions {
@@ -27,6 +29,9 @@ export interface PlayerState {
  * Drives the session clock. There is no audio file behind the mock catalogue,
  * so playback is simulated with a wall-clock timer that survives tab throttling
  * by measuring elapsed time rather than counting ticks.
+ *
+ * A frozen app pauses where the sound stopped, rather than finishing a session
+ * nobody heard (see `watchForFreeze`).
  */
 export function usePlayer({ durationSeconds, onComplete }: UsePlayerOptions): PlayerState {
   const [elapsed, setElapsed] = React.useState(0);
@@ -44,8 +49,19 @@ export function usePlayer({ durationSeconds, onComplete }: UsePlayerOptions): Pl
     if (!isPlaying) return undefined;
 
     startedAtRef.current = Date.now();
+    const watch = watchForFreeze(() => audioEngine.soundClock);
+
     const id = window.setInterval(() => {
-      const seconds = baseElapsedRef.current + (Date.now() - startedAtRef.current) / 1000;
+      const now = Date.now();
+      if (watch.frozen(now)) {
+        const kept = baseElapsedRef.current + Math.max(0, watch.lastTick - startedAtRef.current) / 1000;
+        baseElapsedRef.current = kept;
+        setElapsed(kept);
+        setIsPlaying(false);
+        return;
+      }
+
+      const seconds = baseElapsedRef.current + (now - startedAtRef.current) / 1000;
       if (seconds >= durationSeconds) {
         baseElapsedRef.current = durationSeconds;
         setElapsed(durationSeconds);
@@ -85,7 +101,7 @@ export function usePlayer({ durationSeconds, onComplete }: UsePlayerOptions): Pl
     [durationSeconds],
   );
 
-  const skip = React.useCallback((delta: number) => seek(baseElapsedRef.current + delta), [seek]);
+  const skip = React.useCallback((delta: number) => seek(elapsed + delta), [elapsed, seek]);
 
   const restart = React.useCallback(() => seek(0), [seek]);
 

@@ -2,6 +2,9 @@
 
 import * as React from 'react';
 
+import { audioEngine } from '@/lib/audio/engine';
+import { watchForFreeze } from '@/lib/audio/freeze';
+
 interface UseCountdownOptions {
   /** Total length of the countdown. */
   seconds: number;
@@ -26,7 +29,8 @@ export interface CountdownState {
  *
  * It ticks four times a second: fast enough for the ring to move smoothly with
  * a short CSS transition between updates, slow enough to stay off the main
- * thread's back.
+ * thread's back. A frozen app pauses at the last time it was seen running,
+ * rather than finishing a sit nobody heard (see `watchForFreeze`).
  */
 export function useCountdown({ seconds, onComplete }: UseCountdownOptions): CountdownState {
   const [remaining, setRemaining] = React.useState(seconds);
@@ -55,8 +59,16 @@ export function useCountdown({ seconds, onComplete }: UseCountdownOptions): Coun
     if (!running) return undefined;
 
     deadlineRef.current = Date.now() + remaining * 1000;
+    const watch = watchForFreeze(() => audioEngine.soundClock);
+
     const id = window.setInterval(() => {
-      const left = (deadlineRef.current - Date.now()) / 1000;
+      const now = Date.now();
+      if (watch.frozen(now)) {
+        setRunning(false);
+        return;
+      }
+
+      const left = (deadlineRef.current - now) / 1000;
       if (left <= 0) {
         setRemaining(0);
         setRunning(false);

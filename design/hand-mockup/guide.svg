@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-40 0 200 260" width="1520" height="1976"><rect x="-40" y="0" width="200" height="260" fill="#FFFFFF"/>
+<rect x="-40" y="0" width="200" height="260" fill="none" stroke="#E05252" stroke-width="0.6" stroke-dasharray="3 2"/>
+<rect x="3.3" y="3.3" width="93.4" height="202.1" rx="11.2" fill="#1EA0DA" fill-opacity="0.10"/>
+
+<rect x="0" y="0" width="100" height="208.7" rx="15" fill="none" stroke="#0B1B2B" stroke-width="0.5"/>
+<rect x="3.3" y="3.3" width="93.4" height="202.1" rx="11.2" fill="none" stroke="#1EA0DA" stroke-width="0.5" stroke-dasharray="2 1.5"/>
+<rect x="36.5" y="4.2" width="27" height="7.6" rx="3.8" fill="none" stroke="#0B1B2B" stroke-width="0.4"/>
+<path d="M 5 96.4 L -7.4 96.4 Q -15 96.4 -15 104 Q -15 111.6 -7.4 111.6 L 5 111.6 Q 7 104 5 96.4 Z" fill="#F2B79A" fill-opacity="0.75" stroke="#B9775F" stroke-width="0.3"/>
+<path d="M 5 113.5 L -9 113.5 Q -17 113.5 -17 121.5 Q -17 129.5 -9 129.5 L 5 129.5 Q 7 121.5 5 113.5 Z" fill="#F2B79A" fill-opacity="0.75" stroke="#B9775F" stroke-width="0.3"/>
+<path d="M 5 130.8 L -6.3 130.8 Q -13.5 130.8 -13.5 138 Q -13.5 145.2 -6.3 145.2 L 5 145.2 Q 7 138 5 130.8 Z" fill="#F2B79A" fill-opacity="0.75" stroke="#B9775F" stroke-width="0.3"/>
+<path d="M 95.5 260 L 95 146 Q 94.6 112 95.6 102 Q 97 89 103.5 88.6 Q 110 89 111.2 102 Q 112.6 122 115 160 Q 118 210 126 260 Z" fill="#F2B79A" fill-opacity="0.75" stroke="#B9775F" stroke-width="0.3"/>
+<path d="M 99 104 Q 99 92.5 103.5 92.2 Q 108 92.5 108 104 Q 108 112.5 103.5 113 Q 99 112.5 99 104 Z" fill="#FBE6DE" stroke="#D89C86" stroke-width="0.3"/>
+<text x="50" y="40" font-size="3.2" fill="#1EA0DA" text-anchor="middle" font-weight="600" font-family="Poppins, Arial, sans-serif">Screen area — must stay transparent</text>
+<text x="50" y="45" font-size="2.6" fill="#1EA0DA" text-anchor="middle" font-weight="500" font-family="Poppins, Arial, sans-serif">710 × 1536 px · at x 329, y 25 · corner radius 85 px</text>
+<text x="50" y="150" font-size="3.2" fill="#0B1B2B" text-anchor="middle" font-weight="600" font-family="Poppins, Arial, sans-serif">Phone frame</text>
+<text x="50" y="155" font-size="2.6" fill="#4A5B6B" text-anchor="middle" font-weight="500" font-family="Poppins, Arial, sans-serif">760 × 1586 px · at x 304, y 0 · corner radius 114 px</text>
+<text x="50" y="160" font-size="2.6" fill="#4A5B6B" text-anchor="middle" font-weight="500" font-family="Poppins, Arial, sans-serif">Island: 205 × 58 px at x 581, y 32</text>
+<text x="-38" y="92" font-size="3" fill="#B9775F" text-anchor="start" font-weight="600" font-family="Poppins, Arial, sans-serif">Fingertips</text>
+<text x="-38" y="151" font-size="2.4" fill="#B9775F" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">x 175–342</text>
+<text x="-38" y="155" font-size="2.4" fill="#B9775F" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">y 733–1110</text>
+<text x="128" y="84" font-size="3" fill="#B9775F" text-anchor="start" font-weight="600" font-family="Poppins, Arial, sans-serif">Thumb</text>
+<text x="128" y="88.5" font-size="2.4" fill="#B9775F" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">x 1023–1262</text>
+<text x="128" y="92.5" font-size="2.4" fill="#B9775F" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">y 673–1976 (runs off</text>
+<text x="128" y="96.5" font-size="2.4" fill="#B9775F" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">the bottom edge)</text>
+<text x="-38" y="222" font-size="3.2" fill="#E05252" text-anchor="start" font-weight="600" font-family="Poppins, Arial, sans-serif">Canvas 1520 × 1976 px (@2x) · 760 × 988 px (@1x)</text>
+<text x="-38" y="227" font-size="2.4" fill="#4A5B6B" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">Transparent PNG. The bottom of the canvas is the bottom of the screen in the page,</text>
+<text x="-38" y="231" font-size="2.4" fill="#4A5B6B" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">so the phone is cut off below y 1586 and the hand may run off the edge.</text>
+<text x="-38" y="238" font-size="2.4" fill="#4A5B6B" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">Hand must overlap the frame edge only — never cover the blue screen area</text>
+<text x="-38" y="242" font-size="2.4" fill="#4A5B6B" text-anchor="start" font-weight="500" font-family="Poppins, Arial, sans-serif">beyond the current guide, or it hides the app screens sliding underneath.</text>
+</svg>

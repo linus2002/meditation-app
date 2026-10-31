@@ -52,6 +52,12 @@ const testMessages: Record<TestResult, string> = {
   failed: 'The browser refused the notification. Installing Serenity to your home screen usually fixes this.',
 };
 
+const appTestMessages: Record<TestResult, string> = {
+  ...testMessages,
+  unsupported: 'Notifications aren’t available in this version of the app.',
+  failed: 'Your phone refused the notification. Check that notifications are allowed for Serenity in its settings.',
+};
+
 /**
  * Everything about notifications in one place: whether this device can show
  * them at all, the two scheduled reminders, and a way to prove it works.
@@ -62,7 +68,7 @@ const testMessages: Record<TestResult, string> = {
  */
 export default function NotificationsPage() {
   const { settings, hydrated } = useApp();
-  const { permission, mode, enable, disable, allow } = useReminders();
+  const { permission, mode, inApp, enable, disable, allow } = useReminders();
   const { memberships, reminders: circleReminders, setReminders: setCircleReminders } = useCircles();
 
   const toggleCircleReminders = async (next: boolean) => {
@@ -127,13 +133,17 @@ export default function NotificationsPage() {
       ? {
           icon: BellOff,
           title: 'Not available here',
-          body: 'This browser cannot show notifications. Installing Serenity to your home screen usually enables them.',
+          body: inApp
+            ? 'Notifications aren’t available in this version of the app.'
+            : 'This browser cannot show notifications. Installing Serenity to your home screen usually enables them.',
         }
       : permission === 'denied'
         ? {
             icon: BellOff,
             title: 'Notifications are blocked',
-            body: 'Allow them for Serenity in your browser or system settings, then come back here.',
+            body: inApp
+              ? 'Allow them for Serenity in your phone’s settings, then come back here.'
+              : 'Allow them for Serenity in your browser or system settings, then come back here.',
           }
         : permission === 'prompt'
           ? {
@@ -355,7 +365,7 @@ export default function NotificationsPage() {
           </GradientButton>
           {testResult ? (
             <p role="status" className="mt-3 text-label leading-relaxed text-ink-faint">
-              {testMessages[testResult]}
+              {(inApp ? appTestMessages : testMessages)[testResult]}
             </p>
           ) : !granted && ready ? (
             <p className="mt-3 text-label leading-relaxed text-ink-faint">

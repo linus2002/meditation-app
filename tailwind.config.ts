@@ -16,8 +16,12 @@ const config: Config = {
     },
     extend: {
       screens: {
-        /* Above this width the app is not offered — see DeviceStage. */
-        desktop: '1025px',
+        /*
+         * Above this width the app is not offered on a mouse-driven screen — see
+         * DeviceStage. Touch is exempt: a tablet can be wider and turned sideways,
+         * and Android 16 won't hold a tablet to portrait.
+         */
+        desktop: { raw: '(min-width: 1025px) and (pointer: fine)' },
       },
       /*
        * The small end of the type scale, in rem so the reader's own text-size
@@ -164,6 +168,10 @@ const config: Config = {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
+        float: {
+          '0%, 100%': { transform: 'translate3d(0,0,0)' },
+          '50%': { transform: 'translate3d(0,-12px,0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -173,6 +181,7 @@ const config: Config = {
         'rise-in': 'rise-in 0.5s cubic-bezier(0.22,1,0.36,1) both',
         'fade-in': 'fade-in 0.4s ease-out both',
         shimmer: 'shimmer 2.4s linear infinite',
+        float: 'float 6s ease-in-out infinite',
       },
     },
   },

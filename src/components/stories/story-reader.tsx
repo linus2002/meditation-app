@@ -12,6 +12,7 @@ import { useStoryPlayer } from '@/hooks/use-story-player';
 import { estimatedMinutes } from '@/lib/story';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
+import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useAudio } from '@/providers/audio-provider';
 import type { Story } from '@/types';
 
@@ -54,6 +55,9 @@ export function StoryReader({ story }: { story: Story }) {
   const { speaking, paused, stop: stopNarration } = narration;
   const musicSrc = musicFor(story);
   const timerRunning = timerEndsAt !== null;
+
+  // A sleep story is listened to with the screen off, music fading out or not.
+  useBackgroundHold((speaking && !paused) || timerRunning);
 
   // The sleep timer: ticks the countdown, and when it runs out stops the
   // reading and lets the music fall away slowly.

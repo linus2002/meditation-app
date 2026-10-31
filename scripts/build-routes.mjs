@@ -39,19 +39,22 @@ async function collectRoutes(dir, base = '') {
 
 const found = await collectRoutes(appDir);
 
-// `/player/[id]`, `/yoga/[id]` and `/programs/[id]` are expanded from the content pulled from
+// `/player/[id]`, `/yoga/[id]`, `/programs/[id]` and `/stories/[id]` are expanded from the content pulled from
 // Sanity (src/content/content.json), the same list generateStaticParams uses.
 // This runs after `content:pull`, so it sees what the build will render.
 const content = JSON.parse(await readFile(path.join(root, 'src/content/content.json'), 'utf8'));
 const ids = content.meditations.map((item) => item.id);
 const yogaIds = content.yoga.map((item) => item.id);
 const programIds = content.programs.map((item) => item.id);
+const storyIds = content.stories.map((item) => item.id);
 
 const routes = [
-  ...found.filter((route) => !route.includes('[')),
+  // `/landing` is the public web page, not an app screen; installs need not carry it.
+  ...found.filter((route) => !route.includes('[') && route !== '/landing'),
   ...ids.map((id) => `/player/${id}`),
   ...yogaIds.map((id) => `/yoga/${id}`),
   ...programIds.map((id) => `/programs/${id}`),
+  ...storyIds.map((id) => `/stories/${id}`),
 ].sort();
 
 /*
@@ -91,5 +94,5 @@ if (stamped === sw && !sw.includes(`const BUILD = '${version}';`)) {
 await writeFile(swPath, stamped, 'utf8');
 
 console.log(
-  `[precache] ${routes.length} routes (${ids.length} sessions, ${yogaIds.length} yoga, ${programIds.length} programs) @ ${version}`,
+  `[precache] ${routes.length} routes (${ids.length} sessions, ${yogaIds.length} yoga, ${programIds.length} programs, ${storyIds.length} stories) @ ${version}`,
 );

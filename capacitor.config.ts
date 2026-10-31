@@ -13,6 +13,13 @@ const config: CapacitorConfig = {
     // Serves the bundle from https://localhost, so it runs in a secure context.
     androidScheme: 'https',
   },
+  plugins: {
+    LocalNotifications: {
+      // White on transparent, as the status bar requires; the colour tints it.
+      smallIcon: 'ic_stat_serenity',
+      iconColor: '#1A93D8',
+    },
+  },
   android: {
     backgroundColor: '#000000',
   },

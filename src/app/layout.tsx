@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
 import { CircleSync } from '@/components/layout/circle-sync';
-import { DeviceStage } from '@/components/layout/device-stage';
+import { StageGate } from '@/components/layout/stage-gate';
 import { HardwareBack } from '@/components/layout/hardware-back';
 import { NavigationTracker } from '@/components/layout/navigation-tracker';
 import { UndoProvider } from '@/components/layout/undo-toast';
@@ -95,7 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CirclesProvider>
             <AudioProvider>
               <UndoProvider>
-                <DeviceStage>{children}</DeviceStage>
+                <StageGate>{children}</StageGate>
               </UndoProvider>
               <NavigationTracker />
               <HardwareBack />

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { audioEngine } from '@/lib/audio/engine';
 import type { SoundscapeId } from '@/lib/audio/soundscapes';
 
@@ -42,6 +43,9 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const [muted, setMuted] = React.useState(false);
   const [supported, setSupported] = React.useState(false);
 
+  // A soundscape playing on its own, away from any session.
+  useBackgroundHold(playing !== null);
+
   // Read by `prime`, which must stay stable across volume changes.
   const volumeRef = React.useRef(0.7);
 
@@ -74,6 +78,27 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     },
     [],
   );
+
+  // Bring cut-off sound back where the platform allows it. Where it doesn't,
+  // show it as stopped, rather than a soundscape that looks on and makes no sound.
+  React.useEffect(() => {
+    const recover = async () => {
+      if (!audioEngine.isSounding || (await audioEngine.resume())) return;
+      audioEngine.stop(0);
+      audioEngine.stopMusic(0);
+      setPlaying(null);
+    };
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void recover();
+    };
+
+    const unsubscribe = audioEngine.onInterrupted(() => void recover());
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      unsubscribe();
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
 
   const persist = React.useCallback((next: { volume: number; muted: boolean }) => {
     try {
@@ -181,6 +206,13 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <AudioCtx.Provider value={value}>{children}</AudioCtx.Provider>;
+}
+
+/** Runs `handler` when sound is cut off from outside, such as by a phone call. */
+export function useOnAudioInterrupted(handler: () => void): void {
+  const handlerRef = React.useRef(handler);
+  handlerRef.current = handler;
+  React.useEffect(() => audioEngine.onInterrupted(() => handlerRef.current()), []);
 }
 
 export function useAudio(): AudioContextValue {

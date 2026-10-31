@@ -6,6 +6,7 @@ import { useInspiration } from '@/hooks/use-inspiration';
 import {
   checkPermission,
   deliveryMode,
+  isNativeShell,
   requestPermission,
   startReminders,
   type BodyResolver,
@@ -33,9 +34,12 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
 
   const [permission, setPermission] = React.useState<PermissionState>('prompt');
   const [mode, setMode] = React.useState<DeliveryMode>('unsupported');
+  // Which words fit: the installed app is not "this browser".
+  const [inApp, setInApp] = React.useState(false);
 
   React.useEffect(() => {
     setMode(deliveryMode());
+    setInApp(isNativeShell());
     let cancelled = false;
     const refresh = () => {
       void checkPermission().then((state) => {
@@ -106,5 +110,5 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
     return state;
   }, []);
 
-  return { permission, mode, enable, disable, allow };
+  return { permission, mode, inApp, enable, disable, allow };
 }

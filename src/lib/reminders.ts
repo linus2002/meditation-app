@@ -152,6 +152,16 @@ export function reminderBody(reminder: ReminderDefinition, dateKey: string): str
 }
 
 /**
+ * The in-app path a tapped native notification carries, or null. Only ever a
+ * path on this app, whatever turned up in the payload.
+ */
+export function tappedUrl(action: unknown): string | null {
+  const url = (action as { notification?: { extra?: { url?: unknown } } } | null)?.notification
+    ?.extra?.url;
+  return typeof url === 'string' && url.startsWith('/') && !url.startsWith('//') ? url : null;
+}
+
+/**
  * The next `count` days' occurrences of a wall-clock time: today if it is still
  * ahead, then each following day. Built with `setDate`, so the hour holds
  * across a daylight-saving change.

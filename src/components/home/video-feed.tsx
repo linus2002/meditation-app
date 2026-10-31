@@ -5,11 +5,20 @@ import { Heart, Play, Volume2, VolumeX, X } from 'lucide-react';
 
 import type { HomeVideo } from '@/data/videos';
 import { cn } from '@/lib/utils';
+import {
+  fetchLikeCounts,
+  fetchMyLikes,
+  flushPendingLikes,
+  formatLikeCount,
+  queueLike,
+  withPendingLikes,
+} from '@/lib/video-likes';
 
 /*
- * Liked clips stay on this phone, like everything else the reader does here.
+ * Which clips this person liked is kept on the phone, so the heart shows at
+ * once; the totals everyone sees live in Supabase (src/lib/video-likes.ts).
  * Storage can be unavailable (private mode, blocked site data), in which case a
- * like still shows for the visit and is simply not remembered.
+ * like still shows for the visit and is simply not remembered here.
  */
 const LIKES_KEY = 'serenity.likedVideos.v1';
 
@@ -64,19 +73,60 @@ export function VideoFeed({
   const [active, setActive] = React.useState(startIndex);
   const [muted, setMuted] = React.useState(false);
   const [liked, setLiked] = React.useState<string[]>([]);
+  // Everyone's likes per clip; null until loaded, and for good if they can't be.
+  const [counts, setCounts] = React.useState<Record<string, number> | null>(null);
+  const likedRef = React.useRef<string[]>([]);
+  likedRef.current = liked;
 
-  React.useEffect(() => setLiked(readLikes()), []);
-
-  // A double tap only ever likes; the heart button toggles.
-  const toggleLike = React.useCallback((id: string, likeOnly = false) => {
-    setLiked((current) => {
-      const has = current.includes(id);
-      if (has && likeOnly) return current;
-      const next = has ? current.filter((entry) => entry !== id) : [...current, id];
-      writeLikes(next);
-      return next;
-    });
+  // Corrects a clip to the server's total. Without shared counts there is
+  // nothing to correct, and one known total must not read as 0 for the rest.
+  const applyTotal = React.useCallback((id: string, total: number) => {
+    setCounts((current) => (current ? { ...current, [id]: total } : current));
   }, []);
+
+  React.useEffect(() => {
+    setLiked(readLikes());
+    let cancelled = false;
+    void fetchLikeCounts(videos.map((video) => video.id)).then((loaded) => {
+      if (!cancelled && loaded) setCounts(loaded);
+    });
+    // Someone with an account gets their likes back even after clearing the phone.
+    void fetchMyLikes().then((mine) => {
+      if (cancelled) return;
+      if (mine) {
+        const merged = withPendingLikes(mine);
+        likedRef.current = merged;
+        setLiked(merged);
+        writeLikes(merged);
+      }
+      void flushPendingLikes(applyTotal);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [videos, applyTotal]);
+
+  // A double tap only ever likes; the heart button toggles. The count moves at
+  // once and is then corrected to the server's total.
+  const toggleLike = React.useCallback(
+    (id: string, likeOnly = false) => {
+      const has = likedRef.current.includes(id);
+      if (has && likeOnly) return;
+
+      const next = has
+        ? likedRef.current.filter((entry) => entry !== id)
+        : [...likedRef.current, id];
+      likedRef.current = next;
+      setLiked(next);
+      writeLikes(next);
+      setCounts((current) =>
+        current ? { ...current, [id]: Math.max(0, (current[id] ?? 0) + (has ? -1 : 1)) } : current,
+      );
+
+      void queueLike(id, !has, applyTotal);
+    },
+    [applyTotal],
+  );
 
   // Some browsers refuse sound without a fresh tap; the feed then carries on silent.
   const onSoundBlocked = React.useCallback(() => setMuted(true), []);
@@ -136,6 +186,7 @@ export function VideoFeed({
             startAt={index === startIndex ? startAt : 0}
             muted={muted}
             liked={liked.includes(video.id)}
+            likeCount={counts ? (counts[video.id] ?? 0) : null}
             onToggleLike={(likeOnly) => toggleLike(video.id, likeOnly)}
             onToggleMute={() => setMuted((current) => !current)}
             onSoundBlocked={onSoundBlocked}
@@ -165,6 +216,7 @@ function FeedSlide({
   startAt,
   muted,
   liked,
+  likeCount,
   onToggleLike,
   onToggleMute,
   onSoundBlocked,
@@ -175,6 +227,8 @@ function FeedSlide({
   startAt: number;
   muted: boolean;
   liked: boolean;
+  /** Everyone's likes, or null when the shared count isn't available. */
+  likeCount: number | null;
   onToggleLike: (likeOnly?: boolean) => void;
   onToggleMute: () => void;
   onSoundBlocked: () => void;
@@ -296,7 +350,10 @@ function FeedSlide({
           type="button"
           onClick={() => onToggleLike()}
           aria-pressed={liked}
-          aria-label={liked ? `Unlike ${video.title}` : `Like ${video.title}`}
+          aria-label={
+            (liked ? `Unlike ${video.title}` : `Like ${video.title}`) +
+            (likeCount !== null ? `, ${likeCount} ${likeCount === 1 ? 'like' : 'likes'}` : '')
+          }
           className="flex w-14 flex-col items-center gap-1 text-white transition-transform active:scale-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           <Heart
@@ -304,7 +361,9 @@ function FeedSlide({
             strokeWidth={liked ? 0 : 1.8}
             style={liked ? { color: LIKE_RED, fill: LIKE_RED } : undefined}
           />
-          <span className="text-label font-medium leading-none">{liked ? 'Liked' : 'Like'}</span>
+          <span className="text-label font-medium leading-none">
+            {likeCount !== null ? formatLikeCount(likeCount) : liked ? 'Liked' : 'Like'}
+          </span>
         </button>
 
         <button

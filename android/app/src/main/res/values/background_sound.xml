@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="background_sound_channel">Sessions and sounds</string>
+    <string name="background_sound_text">Keeps going while your screen is off.</string>
+    <color name="background_sound_tint">#1A93D8</color>
+</resources>

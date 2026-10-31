@@ -1,6 +1,7 @@
 import { Brain, CloudMoon, HeartPulse, Sparkles, Waves, Wind, type LucideIcon } from 'lucide-react';
 
 import { content, toImage } from '@/content';
+import { getMeditationsByCategory } from '@/data/meditations';
 import type { Category, DeckCard } from '@/types';
 
 /** Lucide icons a category can use; the Studio offers exactly these names. */
@@ -12,9 +13,14 @@ export const deckCards: DeckCard[] = content.deckCards.map(({ image, ...card }) 
   image: toImage(image),
 }));
 
-/** The mood categories (Studio → Categories). The set of slugs is fixed by the app. */
+/**
+ * The mood categories (Studio → Categories). The set of slugs is fixed by the app.
+ * The session count is worked out from the library rather than taken from the
+ * Studio, so it always matches what the Meditation tab shows for the category.
+ */
 export const categories: Category[] = content.categories.map(({ image, icon, ...category }) => ({
   ...category,
+  sessionCount: getMeditationsByCategory(category.slug).length,
   icon: ICONS[icon] ?? Sparkles,
   image: toImage(image),
 }));

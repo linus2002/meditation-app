@@ -68,21 +68,23 @@ export default async function ProgramPage({ params }: { params: Promise<{ id: st
         {first ? (
           <Link
             href={`/player/${first.id}`}
-            className="mt-5 flex h-12 w-full items-center justify-center rounded-full bg-action-pill text-body-sm font-semibold text-white transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-5 flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white text-body-sm font-medium text-black transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
-            Start session 1
+            Start Session 1
           </Link>
         ) : null}
       </div>
 
       <section className="mt-8 px-5">
         <SectionTitle>Sessions</SectionTitle>
-        <ul className="mt-3 grid grid-cols-2 gap-x-3 gap-y-5">
+        <ul className="mt-3 grid grid-cols-2 gap-3">
           {program.sessions.map((session, index) => (
             <ProgramSessionCard
               key={session.id}
               session={session}
               position={index + 1}
+              image={program.image}
+              scrim={program.scrim}
             />
           ))}
         </ul>

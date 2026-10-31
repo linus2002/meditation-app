@@ -8,9 +8,26 @@ import {
   parseTime,
   reminderBody,
   reminderDefinitions,
+  tappedUrl,
   upcomingDaily,
   type ReminderDefinition,
 } from '@/lib/reminders';
+
+describe('tappedUrl', () => {
+  it('reads the screen out of a tapped notification', () => {
+    expect(tappedUrl({ notification: { extra: { url: '/circles/view?id=abc' } } })).toBe(
+      '/circles/view?id=abc',
+    );
+  });
+
+  it('refuses anything that is not a path on this app', () => {
+    expect(tappedUrl(null)).toBeNull();
+    expect(tappedUrl({ notification: {} })).toBeNull();
+    expect(tappedUrl({ notification: { extra: { url: 7 } } })).toBeNull();
+    expect(tappedUrl({ notification: { extra: { url: 'https://example.com' } } })).toBeNull();
+    expect(tappedUrl({ notification: { extra: { url: '//example.com' } } })).toBeNull();
+  });
+});
 
 const daily: ReminderDefinition = {
   id: 'reminders',

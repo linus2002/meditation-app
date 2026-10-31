@@ -23,6 +23,7 @@ import * as api from '@/lib/circles/api';
 import { formatClock, formatCountdown, formatMinutesSeconds } from '@/lib/circles/format';
 import { canJoin, LOBBY_OPENS_MS } from '@/lib/circles/schedule';
 import { useApp } from '@/providers/app-provider';
+import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useAudio } from '@/providers/audio-provider';
 import { useCircles } from '@/providers/circles-provider';
 
@@ -74,6 +75,7 @@ export function LiveRoom() {
   });
 
   useWakeLock(joined && !completed);
+  useBackgroundHold(joined && !completed);
 
   // Seconds this person was actually here — not how far into the session it is.
   const presentSeconds =
@@ -104,6 +106,21 @@ export function LiveRoom() {
   }, [sounding, ambientOn, scape, play, stop]);
 
   React.useEffect(() => () => stop(0.4), [stop]);
+
+  // The session runs on for everyone, so it can't wait for one person's sound.
+  // Bring the bed back on return, or on the next tap if the phone insists on one.
+  React.useEffect(() => {
+    if (!sounding || !ambientOn || !scape) return undefined;
+    const rejoin = () => {
+      if (document.visibilityState === 'visible') void play(scape);
+    };
+    document.addEventListener('visibilitychange', rejoin);
+    window.addEventListener('pointerdown', rejoin);
+    return () => {
+      document.removeEventListener('visibilitychange', rejoin);
+      window.removeEventListener('pointerdown', rejoin);
+    };
+  }, [sounding, ambientOn, scape, play]);
 
   // Those waiting in the room hear a bell as the session begins.
   const previousPhase = React.useRef(phase);

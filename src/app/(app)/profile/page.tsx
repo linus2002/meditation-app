@@ -34,7 +34,7 @@ export default function ProfilePage() {
   // through every keystroke.
   const [draftName, setDraftName] = React.useState('');
   React.useEffect(() => setDraftName(name), [name]);
-  const { permission, mode: reminderMode, enable, disable } = useReminders();
+  const { permission, mode: reminderMode, inApp, enable, disable } = useReminders();
 
   /*
    * One line under the list saying what the reminders can and cannot do here.
@@ -46,9 +46,13 @@ export default function ProfilePage() {
    */
   const reminderNote =
     reminderMode === 'unsupported'
-      ? 'This browser cannot show reminders, so the notifications above are unavailable.'
+      ? inApp
+        ? 'Reminders aren’t available in this version of the app.'
+        : 'This browser cannot show reminders, so the notifications above are unavailable.'
       : permission === 'denied'
-        ? 'Notifications are blocked for Serenity. Allow them in your browser or system settings to switch the reminders back on.'
+        ? inApp
+          ? 'Notifications are blocked for Serenity. Allow them in your phone’s settings to switch the reminders back on.'
+          : 'Notifications are blocked for Serenity. Allow them in your browser or system settings to switch the reminders back on.'
         : reminderMode === 'web'
           ? 'In a browser tab, reminders arrive while Serenity is open. Install it to your home screen for nudges that reach you with the app closed.'
           : null;
