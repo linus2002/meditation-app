@@ -1,4 +1,5 @@
 import Image, { type StaticImageData } from 'next/image';
+import { Check } from 'lucide-react';
 import Link from 'next/link';
 
 import type { Meditation } from '@/types';
@@ -11,6 +12,8 @@ interface ProgramSessionCardProps {
   image: StaticImageData;
   /** The banner's tint over that picture, keeping white text readable. */
   scrim: string;
+  /** Sat to the end at least once; shows a tick in the corner. */
+  done?: boolean;
 }
 
 /**
@@ -18,7 +21,7 @@ interface ProgramSessionCardProps {
  * title at the foot with its place in the programme beneath it. Same picture and tint as the banner above, so the
  * grid reads as one set.
  */
-export function ProgramSessionCard({ session, position, image, scrim }: ProgramSessionCardProps) {
+export function ProgramSessionCard({ session, position, image, scrim, done = false }: ProgramSessionCardProps) {
   return (
     <li className="relative flex h-[88px] flex-col overflow-hidden rounded-[10px] p-3 transition-transform duration-200 hover:-translate-y-0.5">
       <Image
@@ -36,6 +39,12 @@ export function ProgramSessionCard({ session, position, image, scrim }: ProgramS
         className="absolute inset-0 bg-[linear-gradient(180deg,rgba(0,0,0,0)_40%,rgba(0,0,0,0.35)_100%)]"
       />
 
+      {done ? (
+        <span className="absolute right-2.5 top-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-white text-black">
+          <Check className="h-3 w-3" strokeWidth={3} aria-hidden="true" />
+        </span>
+      ) : null}
+
       <Link
         href={`/player/${session.id}`}
         className="mt-auto before:absolute before:inset-0 before:rounded-[10px] before:content-[''] focus-visible:outline-none focus-visible:before:ring-2 focus-visible:before:ring-inset focus-visible:before:ring-focus/70"
@@ -45,6 +54,7 @@ export function ProgramSessionCard({ session, position, image, scrim }: ProgramS
         </span>
         <span className="relative mt-1 block text-label leading-none text-white/80">
           {`Session ${position}`}
+          {done ? <span className="sr-only"> (done)</span> : null}
         </span>
       </Link>
     </li>

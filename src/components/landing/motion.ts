@@ -82,4 +82,4 @@ export function useReveal<T extends HTMLElement>() {
 
 /** Hidden until `useReveal` marks it shown, then rises into place. */
 export const REVEAL =
-  'translate-y-8 opacity-0 transition-[opacity,transform] duration-[900ms] ease-[cubic-bezier(0.22,1,0.36,1)] data-[shown]:translate-y-0 data-[shown]:opacity-100';
+  'translate-y-8 opacity-0 transition-[opacity,transform] [transition-duration:900ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] data-[shown]:translate-y-0 data-[shown]:opacity-100';

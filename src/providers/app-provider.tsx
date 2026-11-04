@@ -5,6 +5,7 @@ import * as React from 'react';
 import { settingToggles } from '@/data/settings';
 import { DAILY_GOAL_MINUTES, DAILY_GOAL_OPTIONS } from '@/data/stats';
 import type { AssessmentAnswers } from '@/lib/assessment';
+import { fetchMyRatings, syncRating } from '@/lib/ratings';
 import type { Reflection, SessionRecord, SleepLog } from '@/types';
 
 const STORAGE_KEY = 'serenity.state.v1';
@@ -132,6 +133,23 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state, hydrated]);
 
+  /*
+   * After local hydration, fetch the reader's ratings from Supabase (if they
+   * are signed in) and merge them in. Server ratings win over local ones so
+   * ratings from another device are always picked up. The local store is then
+   * overwritten with the merged result, so future cold-starts start with it.
+   */
+  React.useEffect(() => {
+    if (!hydrated) return;
+    fetchMyRatings().then((serverRatings) => {
+      if (!serverRatings) return;
+      setState((current) => ({
+        ...current,
+        ratings: { ...current.ratings, ...serverRatings },
+      }));
+    });
+  }, [hydrated]);
+
   // Writers use functional updates, so they never need `state` as a dependency
   // and keep a stable identity for the life of the provider.
   const toggleFavorite = React.useCallback((id: string) => {
@@ -204,12 +222,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
-  /** Tapping the score already given takes it back, so a rating is undoable. */
+  /**
+   * Tapping the score already given takes it back (toggle-to-clear).
+   * The change is applied locally immediately, then synced to Supabase in the
+   * background — the UI never waits for the network.
+   */
   const rateMeditation = React.useCallback((id: string, score: number) => {
     setState((current) => {
       const next = { ...current.ratings };
-      if (next[id] === score) delete next[id];
+      const clearing = next[id] === score;
+      if (clearing) delete next[id];
       else next[id] = score;
+      // Fire-and-forget: failures are silent; the local copy is authoritative.
+      void syncRating(id, clearing ? null : score);
       return { ...current, ratings: next };
     });
   }, []);

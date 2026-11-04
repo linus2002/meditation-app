@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import Image from 'next/image';
+import Image, { type StaticImageData } from 'next/image';
 import { ChevronsLeft } from 'lucide-react';
 
 import { BreathingOrb } from '@/components/player/breathing-orb';
@@ -24,7 +24,17 @@ import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 import type { Meditation } from '@/types';
 
-export function PlayerView({ meditation }: { meditation: Meditation }) {
+export function PlayerView({
+  meditation,
+  backdrop,
+  programNext,
+}: {
+  meditation: Meditation;
+  /** Replaces the session's own art, e.g. a programme's cover for its sessions. */
+  backdrop?: StaticImageData;
+  /** The next session in this session's programme, offered ahead of any suggestion. */
+  programNext?: Meditation;
+}) {
   const goBack = useBack();
   const { markPlayed, settings } = useApp();
   const audio = useAudio();
@@ -218,8 +228,8 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
   const collection = recommended.find((item) => item.meditation.id === meditation.id)?.collection;
 
   const nextUp = React.useMemo(
-    () => suggestNext(meditation.id, meditation.category),
-    [meditation.id, meditation.category],
+    () => programNext ?? suggestNext(meditation.id, meditation.category),
+    [programNext, meditation.id, meditation.category],
   );
 
   // Starting over from the completion panel opens a fresh record and rewinds.
@@ -243,14 +253,14 @@ export function PlayerView({ meditation }: { meditation: Meditation }) {
        */}
       <div className="absolute inset-x-0 top-0 h-[min(66vh,580px)] overflow-hidden">
         <Image
-          src={meditation.cover ?? meditation.image}
+          src={backdrop ?? meditation.cover ?? meditation.image}
           alt={meditation.imageAlt}
           fill
           sizes="430px"
           placeholder="blur"
           priority
           className="object-cover"
-          style={{ objectPosition: meditation.coverFocus ?? '50% 50%' }}
+          style={{ objectPosition: backdrop ? '50% 50%' : (meditation.coverFocus ?? '50% 50%') }}
         />
         {/* Shade under the header controls, so they read over bright art. */}
         <div

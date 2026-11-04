@@ -57,7 +57,7 @@ export function DeckCard({ card, slot, isFront, onBringToFront }: DeckCardProps)
     <article
       className={cn(
         'absolute inset-x-0 top-0 h-[var(--deck-h)] overflow-hidden rounded-card shadow-deck',
-        'transition-transform duration-[520ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
+        'transition-transform [transition-duration:520ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
         toneBackground[card.tone],
       )}
       style={{ transform: `translateY(calc(var(--deck-step) * ${slot}))`, zIndex: slot + 1 }}

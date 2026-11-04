@@ -1,10 +1,8 @@
 import Image from 'next/image';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
-import { ProgramSessionCard } from '@/components/programs/program-session-card';
-import { SectionTitle } from '@/components/shared/section-title';
+import { ProgramProgress } from '@/components/programs/program-progress';
 import { getProgram, programs } from '@/data/programs';
 import { formatDuration } from '@/lib/format';
 
@@ -28,7 +26,6 @@ export default async function ProgramPage({ params }: { params: Promise<{ id: st
   const totalMinutes = Math.round(
     program.sessions.reduce((total, session) => total + session.durationSeconds, 0) / 60,
   );
-  const first = program.sessions[0];
 
   return (
     <div className="pb-6">
@@ -65,30 +62,9 @@ export default async function ProgramPage({ params }: { params: Promise<{ id: st
         </p>
         <p className="mt-2.5 text-body-sm leading-relaxed text-ink-muted">{program.description}</p>
 
-        {first ? (
-          <Link
-            href={`/player/${first.id}`}
-            className="mt-5 flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white text-body-sm font-medium text-black transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-          >
-            Start Session 1
-          </Link>
-        ) : null}
       </div>
 
-      <section className="mt-8 px-5">
-        <SectionTitle>Sessions</SectionTitle>
-        <ul className="mt-3 grid grid-cols-2 gap-3">
-          {program.sessions.map((session, index) => (
-            <ProgramSessionCard
-              key={session.id}
-              session={session}
-              position={index + 1}
-              image={program.image}
-              scrim={program.scrim}
-            />
-          ))}
-        </ul>
-      </section>
+      <ProgramProgress program={program} />
     </div>
   );
 }
