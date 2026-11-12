@@ -118,7 +118,7 @@ function SubmitButton({ busy, children }: { busy: boolean; children: React.React
 
 /**
  * The second half of both flows: the code from the email. It checks itself as
- * soon as the sixth digit lands, and offers a fresh code once the wait is over.
+ * soon as the last digit lands, and offers a fresh code once the wait is over.
  */
 function CodeStep({
   email,

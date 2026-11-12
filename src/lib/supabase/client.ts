@@ -8,8 +8,8 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
  * security (supabase/migrations) is what decides what each person may see.
  *
  * Returns null when the keys are not set, or during prerendering. Everything
- * that uses Circles checks for that and shows "not available" rather than
- * failing, so a build without keys is still a complete app.
+ * that uses it checks for that rather than failing, so a build without keys is
+ * still a complete app.
  */
 
 // Written out in full so Next inlines them at build time. The publishable key
@@ -20,10 +20,6 @@ const anonKey =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 let client: SupabaseClient | null = null;
-
-export function isCirclesConfigured(): boolean {
-  return Boolean(url && anonKey);
-}
 
 export function getSupabase(): SupabaseClient | null {
   if (typeof window === 'undefined' || !url || !anonKey) return null;

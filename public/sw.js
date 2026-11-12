@@ -164,7 +164,7 @@ async function fresh(request, { fallbackToOffline = false, noStore = false } = {
     }
     return response;
   } catch {
-    // A page reached by query string — `/circles/view?id=…` — is the same
+    // A page reached by query string — `/program?id=…` — is the same
     // document for every id, so offline it can be served from any cached copy.
     const cached =
       (await caches.match(request)) ||

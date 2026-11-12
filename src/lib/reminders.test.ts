@@ -15,8 +15,8 @@ import {
 
 describe('tappedUrl', () => {
   it('reads the screen out of a tapped notification', () => {
-    expect(tappedUrl({ notification: { extra: { url: '/circles/view?id=abc' } } })).toBe(
-      '/circles/view?id=abc',
+    expect(tappedUrl({ notification: { extra: { url: '/program?id=abc' } } })).toBe(
+      '/program?id=abc',
     );
   });
 

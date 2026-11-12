@@ -1,4 +1,4 @@
-import { addDaysToKey } from '@/lib/circles/tz';
+import { addDaysToKey } from '@/lib/tz';
 import type { InspirationReason } from '@/lib/inspiration';
 
 /**

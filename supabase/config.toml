@@ -1,0 +1,6 @@
+# Read by the Supabase CLI when deploying functions.
+#
+# kapwa-chat does its own auth: it accepts signed-out readers (quota per IP)
+# and signed-in ones (quota per account), so the gateway's JWT check is off.
+[functions.kapwa-chat]
+verify_jwt = false

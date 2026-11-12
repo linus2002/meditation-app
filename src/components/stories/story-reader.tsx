@@ -6,9 +6,13 @@ import { ChevronsLeft, Moon } from 'lucide-react';
 
 import { NarrationControls } from '@/components/stories/narration-controls';
 import { StoryFavoriteButton } from '@/components/stories/story-favorite-button';
+import { ResumeNote } from '@/components/session/resume-note';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
 import { useBack } from '@/hooks/use-back';
+import { useKeepPlace } from '@/hooks/use-keep-place';
 import { useStoryPlayer } from '@/hooks/use-story-player';
+import { formatClock } from '@/lib/format';
+import { clearResume, FINISHED_FRACTION, readResume, resumeKey } from '@/lib/resume';
 import { estimatedMinutes } from '@/lib/story';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
@@ -51,6 +55,47 @@ export function StoryReader({ story }: { story: Story }) {
   const fadeOutRef = React.useRef(4);
 
   const activeParagraph = narration.activeParagraph;
+
+  /*
+   * Where the story was left. A recording keeps its place in seconds, the
+   * device's voice in sentences, so each has its own key: a place kept by one
+   * never sends the other to the wrong spot.
+   */
+  const unit = narration.exact ? 'seconds' : 'sentence';
+  const placeKey = resumeKey('story', story.id, unit);
+  const seekMax = narration.seek.max;
+  const [resumeAt, setResumeAt] = React.useState<number | null>(null);
+  const { seekTo } = narration;
+  React.useEffect(() => {
+    if (seekMax <= 0) return;
+    const point = readResume(placeKey, seekMax, unit === 'seconds' ? undefined : 2);
+    setResumeAt(point);
+    if (point !== null) seekTo(point);
+    // Read once per kind of reader; seekTo changes identity as it plays.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placeKey, seekMax]);
+
+  const startOver = () => {
+    clearResume(placeKey);
+    seekTo(0);
+    setResumeAt(null);
+  };
+
+  const listening = narration.speaking && !narration.paused;
+  useKeepPlace(placeKey, narration.seek.value, listening, narration.speaking);
+
+  // A story heard to the end starts from the top next time.
+  const furthestRef = React.useRef(0);
+  if (narration.speaking) furthestRef.current = narration.seek.value;
+  const wasSpeakingRef = React.useRef(false);
+  React.useEffect(() => {
+    if (narration.speaking) {
+      setResumeAt(null);
+    } else if (wasSpeakingRef.current && furthestRef.current >= seekMax * FINISHED_FRACTION - 1) {
+      clearResume(placeKey);
+    }
+    wasSpeakingRef.current = narration.speaking;
+  }, [narration.speaking, seekMax, placeKey]);
 
   const { speaking, paused, stop: stopNarration } = narration;
   const musicSrc = musicFor(story);
@@ -188,6 +233,13 @@ export function StoryReader({ story }: { story: Story }) {
       <div className="relative mt-6 px-6">
         {narration.supported ? (
           <>
+            {resumeAt !== null ? (
+              <ResumeNote
+                label={unit === 'seconds' ? formatClock(resumeAt) : `sentence ${resumeAt + 1}`}
+                onStartOver={startOver}
+                className="mb-3"
+              />
+            ) : null}
             <NarrationControls player={narration} onStart={startNarration} />
           </>
         ) : (

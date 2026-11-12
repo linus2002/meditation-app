@@ -4,7 +4,13 @@ import * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
-export const CODE_LENGTH = 6;
+/**
+ * Digits in the emailed code. Must match Supabase → Authentication → Sign In /
+ * Providers → Email → "Email OTP Length" (6 to 10). Defaults to 6.
+ */
+const configured = Number(process.env.NEXT_PUBLIC_AUTH_CODE_LENGTH);
+export const CODE_LENGTH =
+  Number.isInteger(configured) && configured >= 6 && configured <= 10 ? configured : 6;
 
 interface CodeInputProps {
   value: string;
@@ -16,7 +22,7 @@ interface CodeInputProps {
 }
 
 /**
- * The six-digit code from the email, drawn as six boxes.
+ * The code from the email, drawn as one box per digit.
  *
  * Underneath it is one ordinary input rather than six, which is what lets a
  * phone offer the code straight from the email (`one-time-code`) and lets a
@@ -27,14 +33,18 @@ export function CodeInput({ value, onChange, onComplete, disabled, invalid }: Co
 
   return (
     <div className="relative">
-      <div aria-hidden="true" className="grid grid-cols-6 gap-2">
+      <div
+        aria-hidden="true"
+        className={cn('grid', CODE_LENGTH > 6 ? 'gap-1.5' : 'gap-2')}
+        style={{ gridTemplateColumns: `repeat(${CODE_LENGTH}, minmax(0, 1fr))` }}
+      >
         {Array.from({ length: CODE_LENGTH }, (_, index) => {
           const current = focused && index === Math.min(value.length, CODE_LENGTH - 1);
           return (
             <span
               key={index}
               className={cn(
-                'flex h-14 items-center justify-center rounded-2xl border bg-overlay/[0.05] text-[1.375rem] font-semibold text-ink transition-colors',
+                'flex h-14 items-center justify-center rounded-xl border bg-overlay/[0.05] text-[1.25rem] font-semibold text-ink transition-colors',
                 invalid
                   ? 'border-destructive/70'
                   : current

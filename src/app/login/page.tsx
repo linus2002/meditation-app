@@ -18,8 +18,10 @@ type OpenSheet = 'email' | 'create' | null;
  * skip. Each of the two opens as a sheet sliding up over this screen, and each
  * can hand over to the other.
  *
- * Signing in is optional — everything in Serenity works on the phone without
- * an account — so Skip goes straight to the home screen.
+ * A guest may browse, but starting a session, the timer, yoga, a story or any
+ * personal tool needs an account (see AccountGate). Skip goes to the home
+ * screen to browse. Arriving with `?next=/player/x`, as a guest who tried to
+ * start something does, comes back to it once signed in.
  *
  * Pinned to the dark palette, like the tour before it.
  */
@@ -29,7 +31,16 @@ export default function LoginPage() {
   const [sheet, setSheet] = React.useState<OpenSheet>(null);
   const [prefill, setPrefill] = React.useState('');
 
+  // Where to return after signing in. Read once on mount; only an in-app path
+  // is accepted, never another site.
+  const [next, setNext] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    const value = new URLSearchParams(window.location.search).get('next');
+    if (value && value.startsWith('/') && !value.startsWith('//')) setNext(value);
+  }, []);
+
   const goHome = React.useCallback(() => router.replace('/home'), [router]);
+  const goOn = React.useCallback(() => router.replace(next ?? '/home'), [router, next]);
 
   // Opening one sheet closes the other; the short pause lets the first slide
   // away before the next one slides up.
@@ -45,12 +56,12 @@ export default function LoginPage() {
       const first = await accountFirstName().catch(() => null);
       if (first) setName(first);
     }
-    goHome();
+    goOn();
   };
 
   const created = (firstName: string) => {
     if (firstName) setName(firstName);
-    goHome();
+    goOn();
   };
 
   return (
@@ -67,7 +78,9 @@ export default function LoginPage() {
       </div>
 
       <div className="relative px-7 pb-7">
-        <p className="text-center text-body-sm font-medium text-ink-soft">Quiet, wherever you are.</p>
+        <p className="text-center text-body-sm font-medium text-ink-soft">
+          {next ? 'Sign in to start your session.' : 'Quiet, wherever you are.'}
+        </p>
 
         <GradientButton onClick={() => setSheet('email')} className="mt-5 h-[54px] w-full gap-2.5">
           <Mail className="h-[18px] w-[18px]" strokeWidth={1.8} aria-hidden="true" />
@@ -90,10 +103,10 @@ export default function LoginPage() {
           onClick={goHome}
           className="mx-auto mt-6 block rounded-full px-3 py-1 text-body-sm font-medium text-ink transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          Skip for now
+          Browse as a guest
         </button>
         <p className="mt-1.5 text-center text-label text-ink-muted">
-          An account keeps your name and Circles when you change phones
+          Guests can look around. Sign in to start sessions.
         </p>
       </div>
 

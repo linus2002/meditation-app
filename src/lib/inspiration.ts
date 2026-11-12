@@ -5,7 +5,7 @@ import {
   type Inspiration,
   type InspirationTag,
 } from '@/data/inspirations';
-import { addDaysToKey } from '@/lib/circles/tz';
+import { addDaysToKey } from '@/lib/tz';
 import { hoursAsleep } from '@/lib/sleep-stats';
 import type { Reflection, SessionRecord, SleepLog } from '@/types';
 
@@ -27,7 +27,7 @@ export const inspirationThemes: { id: InspirationTheme; label: string }[] = [
   { id: 'self-kindness', label: 'Self-kindness' },
 ];
 
-/** The goal from the Circles questions, when the reader has answered them. */
+/** A goal the reader has stated, when there is one. */
 export type InspirationGoal = 'calm' | 'sleep' | 'focus' | 'habit';
 
 /** Why a message was chosen, shown as one quiet line under it. */

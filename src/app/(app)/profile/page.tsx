@@ -92,7 +92,7 @@ export default function ProfilePage() {
     <div className="pb-4">
       {/*
        * The practice shown here is this phone's own record; an account only
-       * carries the name and Circles. The reference showed a made-up member's
+       * carries the name. The reference showed a made-up member's
        * name and join date, which every reader saw as their own, so this states
        * what is actually known.
        */}

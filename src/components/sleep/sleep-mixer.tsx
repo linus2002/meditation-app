@@ -5,6 +5,7 @@ import type { LucideIcon } from 'lucide-react';
 
 import { sleepSoundscapeIds, soundscapes, type SoundscapeId } from '@/lib/audio/soundscapes';
 import { cn } from '@/lib/utils';
+import { useRequireAccount } from '@/hooks/use-account';
 import { useAudio } from '@/providers/audio-provider';
 
 /** Only the scapes offered in the mixer need an icon. */
@@ -22,6 +23,8 @@ const ICONS: Partial<Record<SoundscapeId, LucideIcon>> = {
  */
 export function SleepMixer() {
   const { playing, play, stop, supported } = useAudio();
+  // Guests can see the soundscapes; playing one asks them to sign in.
+  const requireAccount = useRequireAccount();
 
   if (!supported) {
     return (
@@ -45,7 +48,7 @@ export function SleepMixer() {
             <button
               key={id}
               type="button"
-              onClick={() => (active ? stop(1.5) : void play(id))}
+              onClick={() => (active ? stop(1.5) : requireAccount() && void play(id))}
               aria-pressed={active}
               className={cn(
                 'flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',

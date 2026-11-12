@@ -351,10 +351,27 @@ private cancer-support and caregiver Circles once invite-only circles exist.
 
 The raised button in the middle of the bottom bar, drawn with the app's own
 logo ring, opens a chat with **Kapwa** (`/kapwa`), named for the Filipino idea
-of shared humanity. Kapwa is deliberately static: no AI, no API key, no
-network. It matches keywords in what the reader types
-(`src/lib/kapwa.ts`) to replies written for Serenity (`src/data/kapwa.ts`) and
-offers tap-to-start sessions and screens.
+of shared humanity. On the device it matches keywords in what the reader
+types (`src/lib/kapwa.ts`) to replies written for Serenity
+(`src/data/kapwa.ts`) and offers tap-to-start sessions and screens.
+
+With `NEXT_PUBLIC_KAPWA_AI=1`, replies are written by an AI on Ollama Cloud
+instead (`src/lib/kapwa-ai.ts`). The app never holds the Ollama key: it calls
+the `kapwa-chat` Supabase edge function (`supabase/functions/kapwa-chat`),
+which adds Kapwa's system prompt, enforces an hourly quota per account or IP
+(`kapwa_take_quota`), and streams the reply back. Crisis and medical messages
+never reach the AI, the keyword match still picks the buttons under each
+reply, and if the AI is off, offline or over quota the keyword reply is used.
+
+To set it up:
+
+1. Create a key at ollama.com (Settings → Keys).
+2. `npx supabase login`, then `npx supabase link --project-ref <ref>`.
+3. `npx supabase db push` (adds the quota table and function).
+4. `npx supabase secrets set OLLAMA_API_KEY=<key>` (optionally `KAPWA_MODEL`,
+   default `gpt-oss:20b`, and `KAPWA_HOURLY_LIMIT`, default 30).
+5. `npx supabase functions deploy kapwa-chat --no-verify-jwt`.
+6. Set `NEXT_PUBLIC_KAPWA_AI=1` in `.env.local` and rebuild.
 
 - Covers stress, sleep, focus, low moods, anger, body tension, short on time,
   getting started, and the way to Circles, the timer, stories, reminders and
@@ -362,9 +379,10 @@ offers tap-to-start sessions and screens.
 - Anything about suicide or self-harm is checked first, and answered with care
   and a pointer to local emergency services, a crisis line or someone
   trusted — never a meditation.
-- Kapwa says plainly that it is not a person or an AI, and not a substitute for
-  professional care. The conversation is kept on the phone only, with a Clear
-  button.
+- Kapwa says plainly what it is (a keyword guide, or an AI when switched on),
+  that it is not a person, and not a substitute for professional care. The
+  chat history is kept on the phone only, with a Clear button; with the AI on,
+  each message is sent to Supabase and Ollama Cloud to be answered.
 
 ## Yoga
 

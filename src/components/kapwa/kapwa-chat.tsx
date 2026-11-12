@@ -7,13 +7,27 @@ import { Phone, Send, Trash2 } from 'lucide-react';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { useUndo } from '@/components/layout/undo-toast';
 import { KapwaIcon } from '@/components/kapwa/kapwa-icon';
-import { getMeditation } from '@/data/meditations';
-import { kapwaQuickReplies, kapwaWelcome, type KapwaAction } from '@/data/kapwa';
+import { allSessions, getMeditation, meditations } from '@/data/meditations';
+import { programs } from '@/data/programs';
+import { stories } from '@/data/stories';
+import { yogaSessions } from '@/data/yoga';
+import {
+  kapwaQuickReplies,
+  kapwaWelcome,
+  type KapwaAction,
+  type KapwaReply,
+} from '@/data/kapwa';
 import { emergencyLine } from '@/data/safety-lines';
+import { settingToggles } from '@/data/settings';
+import { appShortcuts } from '@/data/shortcuts';
 import { formatMinutesLabel } from '@/lib/format';
 import { replyTo } from '@/lib/kapwa';
+import { buildHistory, kapwaAiEnabled, streamKapwaReply, warmUpKapwaAi } from '@/lib/kapwa-ai';
+import { buildKapwaContext, findSessionTitles, parseSessionLine } from '@/lib/kapwa-context';
+import { currentStreak } from '@/lib/session-stats';
 import { supportTrackEnabled } from '@/lib/support-track';
 import { cn } from '@/lib/utils';
+import { useApp } from '@/providers/app-provider';
 
 interface ChatMessage {
   id: string;
@@ -28,23 +42,47 @@ const MAX_MESSAGES = 100;
 const MAX_LENGTH = 300;
 /** A short pause before Kapwa answers, so the reply reads as a reply. */
 const TYPING_MS = 700;
+/** Answered on the device with fixed replies, never by the AI. */
+const SAFETY_INTENTS = new Set(['crisis', 'medical-urgent']);
 
 function welcome(): ChatMessage {
   return { id: 'welcome', from: 'kapwa', text: kapwaWelcome.text, actions: kapwaWelcome.actions };
 }
 
 /**
- * Chat with Kapwa, Serenity's built-in guide. No AI and no network: replies
- * come from `lib/kapwa`, and the conversation stays on the device.
+ * Chat with Kapwa, Serenity's guide. With NEXT_PUBLIC_KAPWA_AI=1, replies
+ * come from the AI via `lib/kapwa-ai`; otherwise (and as the fallback, and
+ * always for crisis or medical messages) from `lib/kapwa` on the device.
+ * The conversation history is stored on the device only.
  */
 export function KapwaChat() {
   const offerUndo = useUndo();
+  const { sessions, favorites } = useApp();
+  /** What the AI knows about the app and this reader's progress. */
+  const appContext = React.useMemo(
+    () =>
+      buildKapwaContext({
+        meditations,
+        programs,
+        stories,
+        yoga: yogaSessions,
+        sessions,
+        favorites,
+        streakDays: currentStreak(sessions, new Date()),
+        settings: settingToggles,
+        shortcuts: appShortcuts,
+      }),
+    [sessions, favorites],
+  );
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [hydrated, setHydrated] = React.useState(false);
   const [draft, setDraft] = React.useState('');
   const [typing, setTyping] = React.useState(false);
   const endRef = React.useRef<HTMLDivElement>(null);
   const timer = React.useRef<number | undefined>(undefined);
+  const aiRequest = React.useRef<AbortController | null>(null);
+  /** The AI reply being written; the typing dots give way to it. */
+  const [streamingId, setStreamingId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     try {
@@ -56,6 +94,14 @@ export function KapwaChat() {
     }
     setHydrated(true);
   }, []);
+
+  // A local model can take minutes to load, so start before the first message.
+  const warmedUp = React.useRef(false);
+  React.useEffect(() => {
+    if (!hydrated || warmedUp.current) return;
+    warmedUp.current = true;
+    warmUpKapwaAi(appContext);
+  }, [hydrated, appContext]);
 
   React.useEffect(() => {
     if (!hydrated) return;
@@ -70,7 +116,13 @@ export function KapwaChat() {
     endRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
   }, [messages.length, typing]);
 
-  React.useEffect(() => () => window.clearTimeout(timer.current), []);
+  React.useEffect(
+    () => () => {
+      window.clearTimeout(timer.current);
+      aiRequest.current?.abort();
+    },
+    [],
+  );
 
   const send = (value: string) => {
     const text = value.trim().slice(0, MAX_LENGTH);
@@ -85,6 +137,12 @@ export function KapwaChat() {
     setDraft('');
     setTyping(true);
 
+    // Crisis and medical replies are fixed and never go to the AI.
+    if (kapwaAiEnabled && !SAFETY_INTENTS.has(reply.intentId)) {
+      void sendToAi(text, reply);
+      return;
+    }
+
     timer.current = window.setTimeout(() => {
       setMessages((current) =>
         [
@@ -96,8 +154,70 @@ export function KapwaChat() {
     }, TYPING_MS);
   };
 
+  /**
+   * Streams the AI's reply into a new bubble. The keyword match still decides
+   * which sessions and screens to offer underneath it, and is the whole reply
+   * if the AI can't answer (offline, over quota, or any error).
+   */
+  const sendToAi = async (text: string, fallback: KapwaReply) => {
+    const controller = new AbortController();
+    aiRequest.current?.abort();
+    aiRequest.current = controller;
+    const id = `kapwa-${Date.now()}`;
+    const actions = fallback.intentId === 'fallback' ? [] : fallback.actions;
+    let started = false;
+
+    const show = (replyText: string, withActions?: KapwaAction[]) =>
+      setMessages((current) => {
+        const bubble: ChatMessage = { id, from: 'kapwa', text: replyText, actions: withActions };
+        const exists = current.some((message) => message.id === id);
+        return (exists
+          ? current.map((message) => (message.id === id ? bubble : message))
+          : [...current, bubble]
+        ).slice(-MAX_MESSAGES);
+      });
+
+    try {
+      const full = await streamKapwaReply(
+        buildHistory(messages, text),
+        appContext,
+        (soFar) => {
+          if (controller.signal.aborted) return;
+          const visible = parseSessionLine(soFar).text;
+          if (!visible) return;
+          if (!started) {
+            started = true;
+            setStreamingId(id);
+          }
+          show(visible);
+        },
+        controller.signal,
+      );
+      if (!controller.signal.aborted) {
+        const parsed = parseSessionLine(full);
+        const named = parsed.ids.filter((sessionId) => getMeditation(sessionId));
+        const ids = named.length > 0 ? named : findSessionTitles(parsed.text, allSessions);
+        const picked: KapwaAction[] = ids
+          .slice(0, 4)
+          .map((sessionId) => ({ type: 'session', id: sessionId }));
+        if (!parsed.text) throw new Error('empty reply');
+        show(parsed.text, picked.length > 0 ? picked : actions);
+      }
+    } catch {
+      if (!controller.signal.aborted) show(fallback.text, fallback.actions);
+    } finally {
+      if (aiRequest.current === controller) aiRequest.current = null;
+      if (!controller.signal.aborted) {
+        setStreamingId(null);
+        setTyping(false);
+      }
+    }
+  };
+
   const clear = () => {
     window.clearTimeout(timer.current);
+    aiRequest.current?.abort();
+    setStreamingId(null);
     setTyping(false);
     const previous = messages;
     setMessages([welcome()]);
@@ -138,7 +258,9 @@ export function KapwaChat() {
           <KapwaIcon className="h-10 w-10" />
         </span>
         <p className="mt-2 text-label leading-relaxed text-ink-faint">
-          A simple built-in guide — not a person or an AI. Your chat stays on this phone.
+          {kapwaAiEnabled
+            ? 'An AI guide — not a person or a therapist. Messages are sent to our AI service to reply, and the chat history is kept on this phone.'
+            : 'A simple built-in guide — not a person or an AI. Your chat stays on this phone.'}
         </p>
       </div>
 
@@ -150,7 +272,7 @@ export function KapwaChat() {
                 <KapwaIcon className="h-[18px] w-[18px]" />
               </span>
               <div className="min-w-0">
-                <p className="rounded-2xl rounded-bl-md bg-surface px-3.5 py-2.5 text-body-sm leading-relaxed text-ink">
+                <p className="whitespace-pre-line rounded-2xl rounded-bl-md bg-surface px-3.5 py-2.5 text-body-sm leading-relaxed text-ink">
                   <span className="sr-only">Kapwa: </span>
                   {message.text}
                 </p>
@@ -173,7 +295,7 @@ export function KapwaChat() {
           ),
         )}
 
-        {typing ? (
+        {typing && !streamingId ? (
           <li className="flex items-end gap-2">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface">
               <KapwaIcon className="h-[18px] w-[18px]" />

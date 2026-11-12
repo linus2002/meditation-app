@@ -3,6 +3,7 @@
 import { SOUNDSCAPE_ICONS } from '@/components/shared/soundscape-card';
 import { soundscapeList } from '@/lib/audio/soundscapes';
 import { cn } from '@/lib/utils';
+import { useRequireAccount } from '@/hooks/use-account';
 import { useAudio } from '@/providers/audio-provider';
 
 /**
@@ -12,6 +13,8 @@ import { useAudio } from '@/providers/audio-provider';
  */
 export function SoundscapeGrid({ limit }: { limit?: number }) {
   const { playing, play, stop, supported } = useAudio();
+  // Guests can see the soundscapes; playing one asks them to sign in.
+  const requireAccount = useRequireAccount();
 
   if (!supported) {
     return (
@@ -36,7 +39,7 @@ export function SoundscapeGrid({ limit }: { limit?: number }) {
             <button
               key={meta.id}
               type="button"
-              onClick={() => (active ? stop(1.5) : void play(meta.id))}
+              onClick={() => (active ? stop(1.5) : requireAccount() && void play(meta.id))}
               aria-pressed={active}
               className={cn(
                 'flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-colors',

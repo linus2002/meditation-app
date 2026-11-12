@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { Flower2, Home, Moon, PersonStanding, type LucideIcon } from 'lucide-react';
 
 import { KapwaIcon } from '@/components/kapwa/kapwa-icon';
+import { isTabRoot, normalizePath } from '@/hooks/use-back';
 import { cn } from '@/lib/utils';
 
 interface NavItem {
@@ -39,7 +40,12 @@ export function BottomNav() {
   const [tapped, setTapped] = React.useState<string | null>(null);
   React.useEffect(() => setTapped(null), [pathname]);
 
-  const activePath = tapped ?? pathname;
+  const activePath = normalizePath(tapped ?? pathname);
+
+  // Hopping between tabs swaps the screen instead of stacking it, so Back
+  // doesn't replay every tab visited. Leaving a deeper screen (a program, say)
+  // via the bar still pushes, so Back can return to it.
+  const onTabRoot = isTabRoot(pathname);
 
   return (
     <nav
@@ -65,7 +71,8 @@ export function BottomNav() {
               <Link
                 href={href}
                 prefetch
-                aria-current={pathname === href ? 'page' : undefined}
+                replace={onTabRoot}
+                aria-current={normalizePath(pathname) === href ? 'page' : undefined}
                 onClick={() => setTapped(href)}
                 className={cn(
                   'flex w-full flex-col items-center gap-1 rounded-2xl px-0.5 py-1.5',

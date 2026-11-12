@@ -3,6 +3,7 @@ import { structureTool, type StructureBuilder } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
 
 import { schemaTypes } from './schemaTypes';
+import { analyticsTool } from './tools/analytics';
 
 /** The home screen's curated rows live in one fixed document. */
 const HOME_PAGE_ID = 'homePage';
@@ -45,6 +46,9 @@ export default defineConfig({
     }),
     visionTool(),
   ],
+
+  // An Analytics tab beside the content, showing a shared PostHog dashboard.
+  tools: (prev) => [...prev, analyticsTool],
 
   schema: {
     types: schemaTypes,

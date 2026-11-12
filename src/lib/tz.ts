@@ -1,13 +1,11 @@
 import { parseTime } from '@/lib/reminders';
 
 /**
- * Time-zone arithmetic for circles, with no dependency beyond `Intl`.
+ * Time-zone and date-key arithmetic, with no dependency beyond `Intl`.
  *
- * A circle meets at a wall-clock time in its own zone — 07:00 in London — and
- * its members may be anywhere. Everything the rest of the app needs reduces to
- * two questions: "what instant is 07:00 in London on this date?" and "what
- * date and time is this instant in that zone?". Both are answered here, and
- * both hold across daylight-saving changes.
+ * Answers "what instant is 07:00 in London on this date?" and "what date and
+ * time is this instant in that zone?", both across daylight-saving changes,
+ * plus plain calendar arithmetic on `YYYY-MM-DD` keys.
  *
  * `lib/date.ts` and `nextOccurrence` in `lib/reminders.ts` deliberately work in
  * the device's own zone; they cannot answer either question.

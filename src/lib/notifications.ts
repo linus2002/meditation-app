@@ -1,12 +1,6 @@
 'use client';
 
 import {
-  CIRCLE_REMINDER_LEAD_MS,
-  circleReminderDue,
-  reminderKey,
-} from '@/lib/circles/schedule';
-import type { Occurrence } from '@/lib/circles/types';
-import {
   dayKey,
   isDue,
   reminderBody,
@@ -446,153 +440,38 @@ export function onNotificationTap(open: (url: string) => void): () => void {
 }
 
 /* ------------------------------------------------------------------ *
- * Circle reminders
+ * Leftovers from Circles
  *
- * One nudge, ten minutes before each session of a circle the reader belongs
- * to. Never after it has started, never about anyone else's activity, and
- * never about a streak.
+ * Circles (small groups that sat together) has been removed. Phones that ran
+ * an earlier build may still hold OS-scheduled nudges for its sessions, in the
+ * id range it reserved, and their tap would open a page that no longer exists.
  * ------------------------------------------------------------------ */
 
-/**
- * Native ids reserved for circle reminders. The whole range is cancelled on
- * every sync, so slots can be reassigned freely without ever touching the
- * daily and bedtime reminders (ids 1 and 2) or the test (99).
- */
-const CIRCLE_NATIVE_FIRST_ID = 1000;
-const CIRCLE_NATIVE_SLOTS = 100;
+const LEGACY_CIRCLE_NATIVE_FIRST_ID = 1000;
+const LEGACY_CIRCLE_NATIVE_SLOTS = 100;
+const LEGACY_CIRCLE_KEYS = ['serenity.circles.v1', 'serenity.circles.reminded.v1'];
 
-const CIRCLE_REMINDED_KEY = 'serenity.circles.reminded.v1';
+/** Cancels any circle reminders an earlier build scheduled, and forgets its local state. */
+export function clearLegacyCircleReminders(): void {
+  if (typeof window === 'undefined') return;
 
-export interface CircleReminderSlot {
-  circleId: string;
-  circleName: string;
-  occurrence: Occurrence;
-}
-
-function circleReminderCopy(slot: CircleReminderSlot) {
-  const time = new Date(slot.occurrence.startsAt).toLocaleTimeString(undefined, {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-  return {
-    title: `${slot.circleName} sits at ${time}`,
-    body: 'The room opens in five minutes. Come as you are.',
-    url: `/circles/view?id=${slot.circleId}`,
-  };
-}
-
-function readReminded(): Record<string, number> {
-  try {
-    const raw = window.localStorage.getItem(CIRCLE_REMINDED_KEY);
-    return raw ? (JSON.parse(raw) as Record<string, number>) : {};
-  } catch {
-    return {};
+  for (const key of LEGACY_CIRCLE_KEYS) {
+    try {
+      window.localStorage.removeItem(key);
+    } catch {
+      // Nothing to clear.
+    }
   }
-}
 
-function markReminded(key: string, now: number): void {
-  // Stamps older than two days can never match a future session; drop them.
-  const kept = Object.fromEntries(
-    Object.entries(readReminded()).filter(([, at]) => now - at < 2 * 86_400_000),
-  );
-  try {
-    window.localStorage.setItem(CIRCLE_REMINDED_KEY, JSON.stringify({ ...kept, [key]: now }));
-  } catch {
-    // At worst a repeated nudge.
-  }
-}
-
-/**
- * Rewrites the OS schedule: every circle slot cancelled, then one explicit
- * notification per upcoming session. Explicit dates rather than a repeating
- * rule, because the circle's zone may change its clocks on a different day
- * from the reader's.
- */
-async function syncCircleNative(slots: CircleReminderSlot[]): Promise<void> {
   const native = nativePlugin();
   if (!native) return;
-
-  try {
-    await native.cancel({
-      notifications: Array.from({ length: CIRCLE_NATIVE_SLOTS }, (_, index) => ({
-        id: CIRCLE_NATIVE_FIRST_ID + index,
+  void native
+    .cancel({
+      notifications: Array.from({ length: LEGACY_CIRCLE_NATIVE_SLOTS }, (_, index) => ({
+        id: LEGACY_CIRCLE_NATIVE_FIRST_ID + index,
       })),
+    })
+    .catch(() => {
+      // Without the plugin there is nothing scheduled to cancel.
     });
-
-    const now = Date.now();
-    const notifications = slots
-      .filter((slot) => slot.occurrence.startsAt - CIRCLE_REMINDER_LEAD_MS > now)
-      .slice(0, CIRCLE_NATIVE_SLOTS)
-      .map((slot, index) => {
-        const copy = circleReminderCopy(slot);
-        return {
-          id: CIRCLE_NATIVE_FIRST_ID + index,
-          title: copy.title,
-          body: copy.body,
-          schedule: {
-            at: new Date(slot.occurrence.startsAt - CIRCLE_REMINDER_LEAD_MS),
-            allowWhileIdle: true,
-          },
-          extra: { url: copy.url },
-          ...NATIVE_TIMING,
-        };
-      });
-
-    if (notifications.length > 0) await native.schedule({ notifications });
-  } catch {
-    // Without the plugin there are simply no circle reminders.
-  }
-}
-
-/**
- * Starts circle reminders and returns the teardown. `getSlots` is called fresh
- * on every check, so it always reflects the reader's current circles.
- *
- * Pass a function returning nothing to clear them.
- */
-export function startCircleReminders(getSlots: () => CircleReminderSlot[]): () => void {
-  if (typeof window === 'undefined') return () => {};
-
-  if (nativePlugin()) {
-    void syncCircleNative(getSlots());
-    return () => {};
-  }
-
-  if (!webNotificationsAvailable()) return () => {};
-
-  let stopped = false;
-
-  const tick = () => {
-    if (stopped || Notification.permission !== 'granted') return;
-
-    const now = Date.now();
-    const reminded = readReminded();
-
-    for (const slot of getSlots()) {
-      const key = reminderKey(slot.circleId, slot.occurrence);
-      if (!circleReminderDue(slot.occurrence, now, key in reminded)) continue;
-
-      markReminded(key, now);
-      const copy = circleReminderCopy(slot);
-      void displayWebNotification(copy.title, {
-        body: copy.body,
-        tag: `serenity-circle-${slot.circleId}`,
-        url: copy.url,
-      });
-    }
-  };
-
-  const onVisible = () => {
-    if (document.visibilityState === 'visible') tick();
-  };
-
-  tick();
-  const timer = window.setInterval(tick, TICK_MS);
-  document.addEventListener('visibilitychange', onVisible);
-
-  return () => {
-    stopped = true;
-    window.clearInterval(timer);
-    document.removeEventListener('visibilitychange', onVisible);
-  };
 }

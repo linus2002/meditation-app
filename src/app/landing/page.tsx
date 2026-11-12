@@ -7,7 +7,7 @@ import { programs } from '@/data/programs';
 export const metadata: Metadata = {
   title: 'Getmeds Meditation — Quiet your restless mind',
   description:
-    'Guided meditations, breathing, sleep sounds, stories read aloud, yoga, Circles and Kapwa: a calm companion for your phone.',
+    'Guided meditations, breathing, sleep sounds, stories read aloud, yoga and Kapwa: a calm companion for your phone.',
 };
 
 /**

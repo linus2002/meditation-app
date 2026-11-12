@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { BellOff, BellRing, Loader2, Moon, Send, Sparkles, Sun, Users } from 'lucide-react';
+import { BellOff, BellRing, Loader2, Moon, Send, Sparkles, Sun } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { GradientButton } from '@/components/shared/gradient-button';
@@ -18,7 +18,6 @@ import { markInspirationSeen } from '@/lib/inspiration-seen';
 import { deliveredLog, sendTestNotification, type TestResult } from '@/lib/notifications';
 import { dayKey, nextOccurrence, reminderDefinitions } from '@/lib/reminders';
 import { useApp } from '@/providers/app-provider';
-import { useCircles } from '@/providers/circles-provider';
 
 const reminderIcons: Record<string, typeof Sun> = {
   reminders: Sun,
@@ -69,17 +68,6 @@ const appTestMessages: Record<TestResult, string> = {
 export default function NotificationsPage() {
   const { settings, hydrated } = useApp();
   const { permission, mode, inApp, enable, disable, allow } = useReminders();
-  const { memberships, reminders: circleReminders, setReminders: setCircleReminders } = useCircles();
-
-  const toggleCircleReminders = async (next: boolean) => {
-    if (!next) {
-      setCircleReminders(false);
-      return;
-    }
-    const state = permission === 'granted' ? 'granted' : await allow();
-    if (state === 'granted') setCircleReminders(true);
-  };
-
   // Resolved on the client: the page is prerendered, so the build time must
   // not leak into "next at" or "last delivered".
   const [now, setNow] = React.useState<Date | null>(null);
@@ -314,34 +302,6 @@ export default function NotificationsPage() {
           })}
         </ul>
       </section>
-
-      {memberships.length > 0 ? (
-        <section className="mt-6 px-5">
-          <SectionTitle>Circles</SectionTitle>
-          <div className="mt-3 flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
-              <Users className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.7} />
-            </span>
-            <div className="min-w-0 flex-1">
-              <label
-                htmlFor="notification-circles"
-                className="block text-body-sm font-medium leading-tight text-ink"
-              >
-                Before circle sessions
-              </label>
-              <p className="mt-0.5 text-label leading-snug text-ink-muted">
-                {`Ten minutes before ${memberships.map((entry) => entry.circle.name).join(' and ')} sits.`}
-              </p>
-            </div>
-            <Switch
-              id="notification-circles"
-              checked={circleReminders && granted}
-              disabled={mode === 'unsupported'}
-              onCheckedChange={(next) => void toggleCircleReminders(next)}
-            />
-          </div>
-        </section>
-      ) : null}
 
       <section className="mt-6 px-5">
         <SectionTitle>Try it</SectionTitle>

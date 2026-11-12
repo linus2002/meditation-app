@@ -4,7 +4,7 @@ import { getSupabase } from '@/lib/supabase/client';
  * Shared like counts for the home videos (supabase/migrations/…_video_likes.sql).
  *
  * Reading counts needs no account. Liking needs one, so the first like signs
- * the person in anonymously, as joining a circle does; nobody who only watches
+ * the person in anonymously; nobody who only watches
  * gets an account. Every call here fails quietly: without keys, offline or on
  * any server error the feed falls back to likes kept on this phone alone.
  *

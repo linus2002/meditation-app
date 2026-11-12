@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import { elapsedAt, poseLines, poseTitle, totalSeconds, type YogaPose } from '@/lib/yoga';
+import { elapsedAt, poseLines, poseTitle, positionAt, totalSeconds, type YogaPose } from '@/lib/yoga';
 
 const poses: YogaPose[] = [
   { name: 'Seated breath', seconds: 60, cue: '…' },
@@ -79,5 +79,22 @@ describe('poseLines', () => {
     expect(poseLines({ name: 'Rest', seconds: 60, cue: 'Lie back.' }, true).next).toBe(
       'And finally, Rest.',
     );
+  });
+});
+
+describe('positionAt', () => {
+  const poses = [
+    { name: 'A', cue: '', seconds: 30 },
+    { name: 'B', cue: '', seconds: 60 },
+  ] as unknown as Parameters<typeof positionAt>[0];
+
+  it('finds the pose and the time left in it', () => {
+    expect(positionAt(poses, 0)).toEqual({ index: 0, remaining: 30 });
+    expect(positionAt(poses, 45)).toEqual({ index: 1, remaining: 45 });
+  });
+
+  it('is the inverse of elapsedAt', () => {
+    const { index, remaining } = positionAt(poses, 70);
+    expect(elapsedAt(poses, index, remaining)).toBe(70);
   });
 });

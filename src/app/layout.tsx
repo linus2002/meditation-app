@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from 'next';
 import localFont from 'next/font/local';
 
-import { CircleSync } from '@/components/layout/circle-sync';
+import { AccountGate } from '@/components/layout/account-gate';
+import { Analytics } from '@/components/layout/analytics';
+import { CloudSync } from '@/components/layout/cloud-sync';
 import { StageGate } from '@/components/layout/stage-gate';
 import { HardwareBack } from '@/components/layout/hardware-back';
 import { NavigationTracker } from '@/components/layout/navigation-tracker';
@@ -11,7 +13,6 @@ import { ServiceWorkerRegistrar } from '@/components/layout/service-worker';
 import { SystemBars } from '@/components/layout/system-bars';
 import { AppProvider } from '@/providers/app-provider';
 import { AudioProvider } from '@/providers/audio-provider';
-import { CirclesProvider } from '@/providers/circles-provider';
 
 import './globals.css';
 
@@ -77,7 +78,7 @@ const themeScript = `try{var s=JSON.parse(localStorage.getItem('serenity.state.v
  * keyboard and switch users but never linger on something that was tapped.
  * Tab or an arrow turns the rings on; any pointer press turns them off.
  */
-const inputScript = `(function(){var d=document.documentElement;document.addEventListener('keydown',function(e){if(e.key==='Tab'||e.key.indexOf('Arrow')===0)d.setAttribute('data-keyboard','');},true);document.addEventListener('pointerdown',function(){d.removeAttribute('data-keyboard');},true);})()`;
+const inputScript = `(function(){var d=document.documentElement;document.addEventListener('keydown',function(e){var k=typeof e.key==='string'?e.key:'';if(k==='Tab'||k.indexOf('Arrow')===0)d.setAttribute('data-keyboard','');},true);document.addEventListener('pointerdown',function(){d.removeAttribute('data-keyboard');},true);})()`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -92,19 +93,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-canvas font-sans text-ink antialiased">
         <AppProvider>
-          <CirclesProvider>
-            <AudioProvider>
-              <UndoProvider>
-                <StageGate>{children}</StageGate>
-              </UndoProvider>
-              <NavigationTracker />
-              <HardwareBack />
-              <SystemBars />
-              <ServiceWorkerRegistrar />
-              <ReminderScheduler />
-              <CircleSync />
-            </AudioProvider>
-          </CirclesProvider>
+          <AudioProvider>
+            <UndoProvider>
+              <StageGate>
+                <AccountGate>{children}</AccountGate>
+              </StageGate>
+            </UndoProvider>
+            <NavigationTracker />
+            <HardwareBack />
+            <SystemBars />
+            <ServiceWorkerRegistrar />
+            <ReminderScheduler />
+            <Analytics />
+            <CloudSync />
+          </AudioProvider>
         </AppProvider>
       </body>
     </html>

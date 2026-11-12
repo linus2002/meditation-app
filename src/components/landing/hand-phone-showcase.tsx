@@ -22,7 +22,6 @@ const SCREENS: { key: ScreenKey; title: string; text: string }[] = [
   { key: 'timer', title: 'Unguided timer', text: 'Pick a length, interval bells and an ambient bed.' },
   { key: 'program', title: 'Programs', text: 'Multi-session journeys like Sleep Mastery, in order.' },
   { key: 'reflections', title: 'Daily reflection', text: 'One prompt a day and a sentence in reply, kept on the phone.' },
-  { key: 'circles', title: 'Circles', text: 'Small groups that sit together at the same time each day.' },
   { key: 'discover', title: 'Discover', text: 'Search and filter every session by how you feel.' },
 ];
 

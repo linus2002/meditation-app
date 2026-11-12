@@ -24,7 +24,7 @@ import { programs } from '@/data/programs';
 import { recommended } from '@/data/recommended';
 import { reflectionPrompts } from '@/data/reflections';
 import { stories } from '@/data/stories';
-import { todaysPicks } from '@/data/today';
+import { content } from '@/content';
 import { homeVideos } from '@/data/videos';
 import { yogaSessions } from '@/data/yoga';
 
@@ -293,9 +293,9 @@ async function buildDocuments() {
     _type: 'homePage',
     recommended: keyed(recommendedItems),
     today: keyed(
-      todaysPicks.map((pick) => ({
+      content.home.today.map((pick) => ({
         _type: 'todayItem',
-        meditation: ref(meditationDocId(pick.meditation.id)),
+        meditation: ref(meditationDocId(pick.id)),
         rating: pick.rating,
       })),
     ),

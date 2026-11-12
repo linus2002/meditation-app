@@ -4,18 +4,28 @@ import * as React from 'react';
 import { ChevronsLeft, Pause, Play, SkipForward, Volume2, VolumeX, X } from 'lucide-react';
 
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
+import { ResumeNote } from '@/components/session/resume-note';
 import { SessionComplete } from '@/components/session/session-complete';
 import { TimerRing } from '@/components/timer/timer-ring';
 import { Switch } from '@/components/ui/switch';
 import { yogaColor } from '@/components/yoga/yoga-glass-tile';
 import { YOGA_SAFETY, type YogaSession } from '@/data/yoga';
 import { useBack } from '@/hooks/use-back';
+import { useKeepPlace } from '@/hooks/use-keep-place';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { useWakeLock } from '@/hooks/use-wake-lock';
 import { useYogaSession } from '@/hooks/use-yoga-session';
 import { useYogaVoice } from '@/hooks/use-yoga-voice';
 import { formatClock, formatMinutesLabel } from '@/lib/format';
-import { elapsedAt, poseLines, poseSideLabel, poseTitle, totalSeconds } from '@/lib/yoga';
+import { clearResume, readResume, resumeKey } from '@/lib/resume';
+import {
+  elapsedAt,
+  poseLines,
+  poseSideLabel,
+  poseTitle,
+  positionAt,
+  totalSeconds,
+} from '@/lib/yoga';
 import { useApp } from '@/providers/app-provider';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
@@ -46,6 +56,15 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   const recorder = useSessionRecorder(session.id);
   const total = totalSeconds(session.poses);
 
+  // Where this session was left last time, if part-way. Time before it was
+  // logged on that visit, so only what is done from here on counts now.
+  const placeKey = resumeKey('yoga', session.id);
+  const [resumeFrom, setResumeFrom] = React.useState<number | null>(null);
+  React.useEffect(() => {
+    setResumeFrom(readResume(placeKey, total));
+  }, [placeKey, total]);
+  const offsetRef = React.useRef(0);
+
   const voice = useYogaVoice();
   // The pose the instructor has just said "Next, …" for.
   const announcedRef = React.useRef(-1);
@@ -71,7 +90,9 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
       voice.say({ src: session.poses[upcoming].voice?.next, text: linesFor(upcoming).next });
     },
     onFinish: () => {
-      recorder.elapsedRef.current = total;
+      clearResume(placeKey);
+      setResumeFrom(null);
+      recorder.elapsedRef.current = total - offsetRef.current;
       recorder.markFinished();
       recorder.commit(true);
       bell(392);
@@ -85,20 +106,35 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   const next = session.poses[clock.index + 1];
   const elapsed =
     phase === 'running' ? elapsedAt(session.poses, clock.index, clock.remaining) : 0;
-  if (phase === 'running') recorder.elapsedRef.current = elapsed;
+  if (phase === 'running') recorder.elapsedRef.current = Math.max(0, elapsed - offsetRef.current);
+  useKeepPlace(placeKey, elapsed, clock.running, phase === 'running');
 
   useWakeLock(phase === 'running');
   useBackgroundHold(phase === 'running' && clock.running);
   React.useEffect(() => () => stop(0.4), [stop]);
 
-  const begin = async () => {
+  const begin = async (fromStart = false) => {
     // Audio may only start inside the tap that begins the session.
     await prime();
     if (settings.ambient ?? true) void play(session.soundscape);
     recorder.restart();
     announcedRef.current = -1;
     setPhase('running');
-    clock.begin();
+    const from = fromStart ? null : resumeFrom;
+    setResumeFrom(null);
+    offsetRef.current = from ?? 0;
+    if (from === null) {
+      clearResume(placeKey);
+      clock.begin();
+      return;
+    }
+    const { index, remaining } = positionAt(session.poses, from);
+    clock.beginAt(index, remaining);
+  };
+
+  const startOver = () => {
+    clearResume(placeKey);
+    setResumeFrom(null);
   };
 
   const endEarly = () => {
@@ -108,6 +144,8 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     voice.stop();
     stop(1.2);
     setPhase('intro');
+    // The place was kept as it paused; offer it straight away.
+    setResumeFrom(readResume(placeKey, total));
   };
 
   const pause = () => {
@@ -255,7 +293,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
           <SessionComplete
             minutes={Math.max(1, Math.round(total / 60))}
             againLabel="Flow again"
-            onAgain={() => void begin()}
+            onAgain={() => void begin(true)}
           />
         </div>
       </div>
@@ -333,12 +371,20 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
           />
         </div>
 
+        {resumeFrom !== null ? (
+          <ResumeNote
+            label={formatClock(resumeFrom)}
+            onStartOver={startOver}
+            className="mt-4"
+          />
+        ) : null}
+
         <button
           type="button"
           onClick={() => void begin()}
           className="mt-4 h-12 w-full rounded-full border border-black/10 bg-white text-body-sm font-medium text-black transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          Start
+          {resumeFrom !== null ? 'Continue' : 'Start'}
         </button>
 
         <h2 className="mt-7 text-[0.9375rem] font-medium leading-none text-ink-soft">The poses</h2>

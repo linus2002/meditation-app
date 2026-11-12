@@ -3,7 +3,8 @@
 import * as React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
-import { canGoBackInApp } from '@/hooks/use-back';
+import { canGoBackInApp, isTabRoot, normalizePath } from '@/hooks/use-back';
+import { useApp } from '@/providers/app-provider';
 
 /*
  * The App plugin is reached through the Capacitor bridge rather than an import,
@@ -40,8 +41,12 @@ export function HardwareBack() {
   const pathname = usePathname();
 
   // Read inside the listener, which is registered once.
+  const { onboarded } = useApp();
+
   const pathnameRef = React.useRef(pathname);
   pathnameRef.current = pathname;
+  const onboardedRef = React.useRef(onboarded);
+  onboardedRef.current = onboarded;
 
   React.useEffect(() => {
     const app = nativeApp();
@@ -54,17 +59,34 @@ export function HardwareBack() {
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
         return;
       }
+      const path = normalizePath(pathnameRef.current);
+
+      // Home is the bottom of the app. Back here leaves, whatever came before
+      // it, rather than replaying old screens behind the home screen.
+      if (path === '/home') {
+        void app.minimizeApp();
+        return;
+      }
+      // Before onboarding is done there is no home to fall back to: going there
+      // would skip the tour. Step back inside it, or leave.
+      if (!onboardedRef.current) {
+        if (canGoBackInApp()) router.back();
+        else void app.minimizeApp();
+        return;
+      }
+      // The other tabs are siblings of home, not children of whatever was open
+      // before them, so Back goes home (Android's own tab-bar convention).
+      if (isTabRoot(path)) {
+        router.replace('/home');
+        return;
+      }
       if (canGoBackInApp()) {
         router.back();
         return;
       }
-      if (pathnameRef.current !== '/home') {
-        // Opened cold on an inner screen (a tapped reminder, say): home is the
-        // way back, and replacing keeps Back from bouncing between the two.
-        router.replace('/home');
-        return;
-      }
-      void app.minimizeApp();
+      // Opened cold on an inner screen (a tapped reminder, say): home is the
+      // way back, and replacing keeps Back from bouncing between the two.
+      router.replace('/home');
     };
 
     const subscription = app.addListener('backButton', onBack);

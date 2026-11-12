@@ -69,3 +69,9 @@ export function describeArc(
 
   return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArc} 1 ${end.x} ${end.y}`;
 }
+
+/** 65 -> "1:05" — a short countdown, without padding the minutes. */
+export function formatMinutesSeconds(seconds: number): string {
+  const whole = Math.max(0, Math.round(seconds));
+  return `${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`;
+}

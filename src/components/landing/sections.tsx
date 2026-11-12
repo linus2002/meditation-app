@@ -22,7 +22,6 @@ import {
   Route,
   Sparkles,
   Timer,
-  Users,
   Waves,
   WifiOff,
   Wind,
@@ -197,7 +196,7 @@ export function Hero() {
             className="inline-flex animate-rise-in items-center gap-2 rounded-full border border-[#1EA0DA]/25 bg-white/70 py-1.5 pl-1.5 pr-4 text-caption text-[#0B1B2B] backdrop-blur"
           >
             <span className="rounded-full bg-[#1EA0DA] px-2.5 py-0.5 text-label font-medium text-white">New</span>
-            Kapwa, Circles and Yoga are here
+            Kapwa and Yoga are here
             <ArrowUpRight className="h-3.5 w-3.5 text-[#1EA0DA]" />
           </a>
           <h1 className="mt-7 animate-rise-in text-[clamp(2.4rem,4.6vw,4rem)] font-semibold leading-[1.05] tracking-[-0.04em] text-[#0B1B2B] [animation-delay:80ms]">
@@ -209,7 +208,7 @@ export function Hero() {
           </h1>
           <p className="mt-7 max-w-[34rem] animate-rise-in text-[1.05rem] leading-[1.75] text-[#4A5B6B] [animation-delay:160ms]">
             Getmeds Meditation is a calm companion for your phone. Guided sessions, breathing,
-            sleep sounds, stories, yoga and small Circles that sit together, with your progress
+            sleep sounds, stories and yoga, with your progress
             kept honestly on your own device.
           </p>
           <div className="mt-9 flex animate-rise-in flex-wrap items-center gap-3 [animation-delay:240ms]">
@@ -405,7 +404,6 @@ const FEATURES = [
   { icon: BookOpen, title: 'Stories read aloud', text: 'Original sleep stories narrated by the device voice, with skip, scrub and a sleep timer.' },
   { icon: PersonStanding, title: 'Yoga', text: 'Gentle guided flows, one pose at a time, with a voice guide and a bell to move.' },
   { icon: Timer, title: 'Unguided timer', text: 'Sit for 3 to 60 minutes with interval bells, a settling pause and optional ambience.' },
-  { icon: Users, title: 'Circles', text: 'Groups of up to twenty that sit at the same time each day and share one streak.' },
   { icon: MessageCircleHeart, title: 'Kapwa', text: 'A built-in guide that suggests a session for how you feel. Not a person, not an AI.' },
   { icon: PenLine, title: 'Daily reflection', text: 'One prompt a day, a sentence in reply and a note of how it sat. A record, not a score.' },
   { icon: Sparkles, title: 'Daily inspiration', text: 'One short line each morning, chosen for how your week has been going.' },
@@ -749,12 +747,11 @@ export function ProgramsPath({ programs }: { programs: LandingProgram[] }) {
 }
 
 /* ------------------------------------------------------------------ */
-/* Circles and Kapwa                                                   */
+/* Kapwa                                                               */
 /* ------------------------------------------------------------------ */
 
 export function Together() {
   const ref = useReveal<HTMLElement>();
-  const members = ['MA', 'JR', 'LS', 'KT', 'AB'];
   return (
     <section ref={ref} id="together" className="bg-white px-5 py-12 sm:px-10 sm:py-16">
       <div className="mx-auto max-w-6xl">
@@ -763,56 +760,11 @@ export function Together() {
           <SectionTitle>Never on your own.</SectionTitle>
         </div>
 
-        <div className="mt-10 grid gap-5 lg:grid-cols-2">
-          {/* Circles */}
-          <article
-            data-reveal
-            className={cn(REVEAL, 'relative isolate overflow-hidden rounded-[32px] bg-[linear-gradient(150deg,#1EA0DA_0%,#178CC0_100%)] p-8 text-white sm:p-10')}
-          >
-            <Constellation rgb="255 255 255" density={0.6} />
-            <div className="relative">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 backdrop-blur">
-                <Users className="h-5 w-5" strokeWidth={1.7} />
-              </span>
-              <h3 className="mt-6 text-[1.5rem] font-semibold tracking-[-0.02em]">Circles</h3>
-              <p className="mt-3 max-w-md text-body-sm leading-[1.75] text-white/85">
-                Small groups, never more than twenty, that sit at the same time each day. The
-                streak belongs to the circle, and nobody keeps score of who sat longest.
-              </p>
-
-              <div className="mt-10 rounded-[24px] border border-white/25 bg-white/10 p-5 backdrop-blur-md">
-                <div className="flex items-center justify-between">
-                  <div className="flex -space-x-2.5">
-                    {members.map((initials, i) => (
-                      <span
-                        key={initials}
-                        className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-[#1A93CA] text-label font-medium"
-                        style={{ background: ['#61A644', '#0E7FB3', '#3CC3E8', '#23A392', '#8FA0EC'][i] }}
-                      >
-                        {initials}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-label font-medium text-[#0E7FB3]">
-                    <span className="relative flex h-2 w-2">
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#61A644] opacity-70" />
-                      <span className="relative inline-flex h-2 w-2 rounded-full bg-[#61A644]" />
-                    </span>
-                    Sitting together at 7:00
-                  </span>
-                </div>
-                <p className="mt-4 text-caption text-white/80">
-                  A day counts toward the group streak once three members have sat.
-                </p>
-              </div>
-            </div>
-          </article>
-
+        <div className="mt-10">
           {/* Kapwa */}
           <article
             data-reveal
             className={cn(REVEAL, 'relative overflow-hidden rounded-[32px] border border-[#0B1B2B]/[0.07] bg-[#F7FBFE] p-8 sm:p-10')}
-            style={{ transitionDelay: '120ms' }}
           >
             <Image src={kapwaIcon} alt="" className="h-12 w-12 rounded-2xl" />
             <h3 className="mt-6 text-[1.5rem] font-semibold tracking-[-0.02em] text-[#0B1B2B]">Kapwa</h3>
@@ -875,7 +827,7 @@ const PROMISES = [
   {
     icon: Lock,
     title: 'Your words stay yours',
-    text: 'Reflections, sleep notes and Kapwa chats are kept on the phone. Circles is the one feature that uses a server.',
+    text: 'Reflections, sleep notes and Kapwa chats are kept on the phone.',
   },
 ];
 

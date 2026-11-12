@@ -48,7 +48,7 @@ export function AccountCard() {
         <span className="min-w-0 flex-1">
           <span className="block text-body-sm font-medium leading-tight text-ink">Sign in or create an account</span>
           <span className="mt-0.5 block text-label leading-snug text-ink-muted">
-            Keeps your name and Circles when you change phones
+            Needed to start sessions, and keeps your name across phones
           </span>
         </span>
         <ChevronRight className="h-4 w-4 text-ink-faint" strokeWidth={1.8} />
@@ -91,7 +91,7 @@ export function AccountCard() {
       {state.confirming ? (
         <div className="mt-3 border-t border-overlay/[0.08] pt-3">
           <p className="text-label leading-relaxed text-ink-muted">
-            Your sessions, streak and favorites stay on this phone. Circles will need you to sign in again.
+            Your sessions, streak and favorites stay on this phone.
           </p>
           <div className="mt-3 flex gap-2">
             <button

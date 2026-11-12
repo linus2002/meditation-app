@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import { Smartphone, Tablet } from 'lucide-react';
 
+import { ScrollFrame } from '@/components/layout/scroll-frame';
+
 /**
  * Serenity is a handheld app. It renders at handset width, centred, filling the
  * viewport height, on every touch screen whatever its size, and on any screen up
@@ -17,9 +19,9 @@ export function DeviceStage({ children }: { children: ReactNode }) {
     <>
       {/* The bands behind the system bars take the app's own canvas on a phone. */}
       <div className="min-h-stage stage-insets flex w-full justify-center bg-canvas sm:bg-canvas-deep desktop:hidden">
-        <div className="rail h-stage relative flex w-full max-w-[430px] flex-col overflow-y-auto overflow-x-hidden overscroll-contain bg-canvas sm:border-x sm:border-overlay/[0.06]">
+        <ScrollFrame className="rail h-stage relative flex w-full max-w-[430px] flex-col overflow-y-auto overflow-x-hidden overscroll-contain bg-canvas sm:border-x sm:border-overlay/[0.06]">
           {children}
-        </div>
+        </ScrollFrame>
       </div>
 
       <div className="min-h-stage hidden w-full items-center justify-center bg-[radial-gradient(125%_95%_at_50%_-5%,#6FE6B4_0%,#2BB086_24%,#0C5B4A_50%,#052721_74%,#010B09_100%)] px-8 desktop:flex">

@@ -13,7 +13,6 @@ import {
 } from '@/lib/inspiration';
 import { planDay, prunePlan, readPlan, writePlan } from '@/lib/inspiration-plan';
 import { useApp } from '@/providers/app-provider';
-import { useCircles } from '@/providers/circles-provider';
 
 /** Chosen themes live in the ordinary settings map, one flag each. */
 export function themeSettingId(theme: InspirationTheme): string {
@@ -46,13 +45,11 @@ function resolved(dateKey: string, id: string, reason: InspirationReason | null)
  */
 export function useInspiration() {
   const { sessions, reflections, sleepLogs, settings, setSetting, hydrated } = useApp();
-  const { intake } = useCircles();
 
   const themes = inspirationThemes
     .filter((theme) => settings[themeSettingId(theme.id)])
     .map((theme) => theme.id);
   const themesKey = themes.join(',');
-  const goal = intake?.goal;
 
   const resolve = React.useCallback(
     (dateKey: string): ResolvedInspiration => {
@@ -61,14 +58,14 @@ export function useInspiration() {
       const chosenThemes = themesKey ? (themesKey.split(',') as InspirationTheme[]) : [];
 
       const { entry, plan } = planDay(prunePlan(readPlan(), todayKey), dateKey, todayKey, () => {
-        const pick = pickInspiration({ dateKey, todayKey, signals, themes: chosenThemes, goal });
+        const pick = pickInspiration({ dateKey, todayKey, signals, themes: chosenThemes });
         return { id: pick.inspiration.id, reason: pick.reason };
       });
       writePlan(plan);
 
       return resolved(dateKey, entry.id, entry.reason);
     },
-    [sessions, reflections, sleepLogs, themesKey, goal],
+    [sessions, reflections, sleepLogs, themesKey],
   );
 
   /** Messages already settled for the given days, newest first; days with none are skipped. */

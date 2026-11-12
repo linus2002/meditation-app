@@ -5,7 +5,7 @@ import {
   isNativeShell,
   onNotificationTap,
   sendTestNotification,
-  startCircleReminders,
+  clearLegacyCircleReminders,
   startReminders,
 } from '@/lib/notifications';
 
@@ -20,7 +20,7 @@ function fakePlugin() {
     checkPermissions: vi.fn(async () => ({ display: 'granted' as const })),
     requestPermissions: vi.fn(async () => ({ display: 'granted' as const })),
     schedule: vi.fn(async (_options: { notifications: Scheduled[] }) => ({})),
-    cancel: vi.fn(async () => ({})),
+    cancel: vi.fn(async (_options: { notifications: { id: number }[] }) => ({})),
     addListener: vi.fn(),
   };
 }
@@ -62,18 +62,24 @@ describe('in the native shell', () => {
     installShell(plugin);
 
     startReminders(['reminders', 'bedtime', 'inspiration']);
-    startCircleReminders(() => [
-      {
-        circleId: 'c1',
-        circleName: 'Morning',
-        occurrence: { startsAt: Date.now() + 3_600_000 } as never,
-      },
-    ]);
     await settled();
 
     const scheduled = plugin.schedule.mock.calls.flatMap(([options]) => options.notifications);
-    expect(scheduled.length).toBeGreaterThan(3);
+    expect(scheduled.length).toBeGreaterThan(0);
     expect(scheduled.every((entry) => entry.isExactNotification === false)).toBe(true);
+  });
+
+  it('cancels circle reminders left scheduled by an earlier build', async () => {
+    const plugin = fakePlugin();
+    installShell(plugin);
+
+    clearLegacyCircleReminders();
+    await settled();
+
+    const cancelled = plugin.cancel.mock.calls.flatMap(([options]) => options.notifications);
+    expect(cancelled.map((entry) => entry.id)).toEqual(
+      Array.from({ length: 100 }, (_, index) => 1000 + index),
+    );
   });
 
   it('shows the test notification straight away', async () => {

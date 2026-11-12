@@ -1,7 +1,7 @@
 import { getSupabase } from '@/lib/supabase/client';
 
 /**
- * Email sign-in with a one-time code, on the same Supabase project as Circles.
+ * Email sign-in with a one-time code, on the app's Supabase project.
  *
  * There are no passwords: both signing in and creating an account send a code
  * to the email, and typing it back is what proves the address. Signing in
@@ -19,6 +19,7 @@ export type AuthErrorCode =
   | 'no_account'
   | 'invalid_code'
   | 'rate_limited'
+  | 'email_failed'
   | 'unknown';
 
 export class AuthError extends Error {
@@ -44,9 +45,12 @@ export function authErrorText(error: unknown): string {
     case 'no_account':
       return 'There’s no account with that email yet.';
     case 'invalid_code':
-      return 'That code is wrong or has expired. Check the email, or send a new one.';
+      // Each new code replaces the last, so an older email's code no longer works.
+      return 'That code didn’t work. Use the code from the newest email, or send a new one.';
     case 'rate_limited':
       return 'Too many codes asked for. Wait a minute, then try again.';
+    case 'email_failed':
+      return 'We couldn’t send the email just now. Please try again in a few minutes.';
     default:
       return 'Something went wrong. Please try again.';
   }
@@ -66,6 +70,9 @@ function toError(error: { message?: string; code?: string; status?: number }): A
   if (error.code === 'email_address_invalid' || /email.*invalid|invalid.*email/i.test(message)) {
     return new AuthError('invalid_email', message);
   }
+  // The account service could not hand the email to the mail provider (see
+  // the SMTP settings in Supabase): nothing the reader can fix by retyping.
+  if (/error sending .*email/i.test(message)) return new AuthError('email_failed', message);
   if (/fetch|network/i.test(message)) return new AuthError('offline', message);
   return new AuthError('unknown', message);
 }
@@ -84,8 +91,47 @@ function isTestAccount(email: string): boolean {
   return TEST_ACCOUNT !== null && normaliseEmail(email) === TEST_ACCOUNT.email;
 }
 
-/** Set once the test account has signed in on this page load. */
-let testSignedIn = false;
+/*
+ * Whether the test account is signed in. Kept in sessionStorage so a reload in
+ * `npm run dev` stays signed in, the way a real Supabase session does.
+ */
+const TEST_SESSION_KEY = 'serenity.test-auth';
+
+function readTestSession(): boolean {
+  try {
+    return TEST_ACCOUNT !== null && window.sessionStorage.getItem(TEST_SESSION_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+let testSignedIn = typeof window !== 'undefined' && readTestSession();
+
+function setTestSignedIn(value: boolean): void {
+  testSignedIn = value;
+  try {
+    if (value) window.sessionStorage.setItem(TEST_SESSION_KEY, '1');
+    else window.sessionStorage.removeItem(TEST_SESSION_KEY);
+  } catch {
+    // A blocked store only means a reload signs the test account out.
+  }
+  notifyAuthChange();
+}
+
+/**
+ * Fired on this window whenever the signed-in account may have changed in a
+ * way Supabase does not announce itself (the test account).
+ */
+export const AUTH_CHANGE_EVENT = 'serenity:auth-change';
+
+function notifyAuthChange(): void {
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(AUTH_CHANGE_EVENT));
+}
+
+/** Whether accounts exist in this build at all: Supabase keys, or the dev test account. */
+export function accountsAvailable(): boolean {
+  return getSupabase() !== null || TEST_ACCOUNT !== null;
+}
 
 function client() {
   const supabase = getSupabase();
@@ -128,7 +174,7 @@ export async function sendSignUpCode(email: string, firstName: string, lastName:
 export async function verifyEmailCode(email: string, code: string): Promise<void> {
   if (TEST_ACCOUNT && isTestAccount(email)) {
     if (code.trim() !== TEST_ACCOUNT.code) throw new AuthError('invalid_code');
-    testSignedIn = true;
+    setTestSignedIn(true);
     return;
   }
   const { error } = await client().auth.verifyOtp({
@@ -141,7 +187,7 @@ export async function verifyEmailCode(email: string, code: string): Promise<void
 
 /**
  * The email of the account signed in on this device, or null. An anonymous
- * Circles account has no email and counts as signed out here.
+ * account (as video likes create) has no email and counts as signed out here.
  */
 export async function accountEmail(): Promise<string | null> {
   if (TEST_ACCOUNT && testSignedIn) return TEST_ACCOUNT.email;
@@ -154,7 +200,7 @@ export async function accountEmail(): Promise<string | null> {
 /** Signs this device out. The practice recorded on the phone stays. */
 export async function signOut(): Promise<void> {
   if (TEST_ACCOUNT && testSignedIn) {
-    testSignedIn = false;
+    setTestSignedIn(false);
     return;
   }
   const { error } = await client().auth.signOut();

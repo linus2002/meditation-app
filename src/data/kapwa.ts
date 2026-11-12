@@ -1,10 +1,12 @@
 /**
  * Kapwa: Serenity's built-in guide.
  *
- * Deliberately simple and honest about it. Kapwa is not a person and not an
- * AI — there is no API behind it. Kapwa matches keywords in what the reader
- * types to replies written for Serenity, and offers real sessions and screens
- * to tap into. Everything runs on the phone; nothing typed leaves it.
+ * The on-device half of Kapwa. Keywords in what the reader types are matched
+ * to replies written for Serenity, with real sessions and screens to tap
+ * into. This runs on the phone and is always used for crisis and medical
+ * messages, for the actions under every reply, and as the whole reply when
+ * the AI (`lib/kapwa-ai`, switched on by NEXT_PUBLIC_KAPWA_AI) is off or
+ * unreachable. These replies describe the keyword guide, not the AI.
  *
  * Session ids must exist in `src/data/meditations.ts` (a test checks).
  */
@@ -254,14 +256,6 @@ export const kapwaIntents: KapwaIntent[] = [
     ],
   },
   {
-    id: 'circles',
-    keywords: ['circle', 'circles', 'group', 'community', 'together', 'friends', 'people'],
-    replies: [
-      'Circles are small groups who sit at the same time each day — no leaderboards, just company. You can find one here:',
-    ],
-    actions: [{ type: 'page', href: '/circles', label: 'Find a circle' }],
-  },
-  {
     id: 'timer',
     keywords: ['timer', 'silent', 'silence', 'unguided', 'bells', 'bell'],
     replies: ['For a quiet sit with just gentle bells, use the timer:'],
@@ -310,7 +304,7 @@ export const kapwaIntents: KapwaIntent[] = [
     id: 'help',
     keywords: ['help', 'what can you do', 'options', 'menu', 'features'],
     replies: [
-      'I can suggest a session for stress, sleep, focus, low moods, anger or body tension, help you get started, and point you to Circles, the timer, stories, reminders or your progress. Just tell me how you feel.',
+      'I can suggest a session for stress, sleep, focus, low moods, anger or body tension, help you get started, and point you to the timer, stories, reminders or your progress. Just tell me how you feel.',
     ],
   },
   {

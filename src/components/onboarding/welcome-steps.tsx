@@ -2,7 +2,7 @@
 
 import type * as React from 'react';
 import Image from 'next/image';
-import { PersonStanding, Sparkles, Users, type LucideIcon } from 'lucide-react';
+import { PersonStanding, Sparkles, type LucideIcon } from 'lucide-react';
 
 import { AuroraSweep } from '@/components/onboarding/aurora-sweep';
 import { SerenityMark, SerenityLogo } from '@/components/onboarding/serenity-mark';
@@ -169,11 +169,6 @@ const NEW_FEATURES: { title: string; body: string; icon: LucideIcon | 'ring' }[]
     icon: PersonStanding,
   },
   {
-    title: 'Circles',
-    body: 'Sit with a small group at the same time each day. No scores, just company.',
-    icon: Users,
-  },
-  {
     title: 'Kapwa',
     body: 'Your built-in guide, in the middle of the menu. Tell it how you feel.',
     icon: 'ring',
@@ -186,7 +181,7 @@ const NEW_FEATURES: { title: string; body: string; icon: LucideIcon | 'ring' }[]
 ];
 
 /**
- * Step three: what's new. Four features, each an icon and one line, on the same
+ * Step three: what's new. Three features, each an icon and one line, on the same
  * dark ground as the rest of the tour with a soft blue and green glow behind.
  */
 export function WelcomeFeatures({ onNext }: { onNext: () => void }) {

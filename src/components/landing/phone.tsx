@@ -14,7 +14,6 @@ export type ScreenKey =
   | 'timer'
   | 'program'
   | 'reflections'
-  | 'circles'
   | 'discover';
 
 /** Captured from the app itself in dark mode at 390x804, saved at 660x1361. */

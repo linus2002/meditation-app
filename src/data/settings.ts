@@ -1,4 +1,4 @@
-import { Bell, Moon, Music, Sparkles, Sun, Vibrate, Volume2 } from 'lucide-react';
+import { BarChart3, Bell, Moon, Music, Sparkles, Sun, Vibrate, Volume2 } from 'lucide-react';
 
 import { getReminder } from '@/lib/reminders';
 import type { SettingToggle } from '@/types';
@@ -72,5 +72,14 @@ export const settingToggles: SettingToggle[] = [
     description: 'Spoken pose names and cues during guided yoga',
     icon: Volume2,
     defaultOn: true,
+  },
+  // Off until the reader says yes: nothing about how they use the app leaves the
+  // phone without their consent. See lib/analytics.
+  {
+    id: 'analytics',
+    label: 'Share usage',
+    description: 'Help improve Serenity by sharing how you use the app. Never what you write',
+    icon: BarChart3,
+    defaultOn: false,
   },
 ];

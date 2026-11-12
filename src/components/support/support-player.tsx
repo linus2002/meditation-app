@@ -7,13 +7,16 @@ import { ChevronsLeft, Pause, Play, X } from 'lucide-react';
 
 import { BreathingOrb } from '@/components/player/breathing-orb';
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
+import { ResumeNote } from '@/components/session/resume-note';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { DraftNotice, LargeTextToggle } from '@/components/support/support-parts';
 import { EXTEND_SECONDS, supportDisclaimer, type SupportSession } from '@/data/support-track';
 import { useBreath } from '@/hooks/use-breath';
+import { useKeepPlace } from '@/hooks/use-keep-place';
 import { usePlayer } from '@/hooks/use-player';
 import { useWakeLock } from '@/hooks/use-wake-lock';
-import { formatMinutesSeconds } from '@/lib/circles/format';
+import { formatClock, formatMinutesSeconds } from '@/lib/format';
+import { clearResume, readResume, resumeKey } from '@/lib/resume';
 import { formatMinutesLabel } from '@/lib/format';
 import type { SupportListen } from '@/lib/support-history';
 import { cn } from '@/lib/utils';
@@ -32,7 +35,7 @@ type Stage = 'intro' | 'playing' | 'done';
  * cue tones or vibrations, which can be unwelcome through nausea.
  *
  * Listening is recorded only in the track's private history, never in the
- * app's own sessions, so it cannot touch a streak, a goal or a Circle.
+ * app's own sessions, so it cannot touch a streak or a goal.
  */
 export function SupportPlayer({
   session,
@@ -67,17 +70,36 @@ export function SupportPlayer({
     [onListened, session.id],
   );
 
+  /*
+   * Where this session was left, if part-way. Kept on this phone only, like
+   * the rest of the track's history (see lib/resume).
+   */
+  const placeKey = resumeKey('support', session.id);
+  const [resumeFrom, setResumeFrom] = React.useState<number | null>(null);
+  React.useEffect(() => {
+    setResumeFrom(readResume(placeKey, session.durationSeconds));
+  }, [placeKey, session.durationSeconds]);
+
   const handleComplete = React.useCallback(() => {
+    clearResume(placeKey);
     listenedRef.current += stretch;
     record(0);
     setStage('done');
     // A sleep session fades away with no bell, so it never wakes anyone.
     if (session.endBell) bell();
     stop(session.endBell ? 4 : 10);
-  }, [stretch, record, session.endBell, bell, stop]);
+  }, [placeKey, stretch, record, session.endBell, bell, stop]);
 
   const player = usePlayer({ durationSeconds: stretch, onComplete: handleComplete });
   const breath = useBreath(session.breathPattern, player.elapsed);
+
+  // Only the first stretch has a place to come back to; "keep going" is extra.
+  useKeepPlace(
+    placeKey,
+    player.elapsed,
+    player.isPlaying,
+    stage === 'playing' && stretch === session.durationSeconds,
+  );
 
   useWakeLock(player.isPlaying && session.keepScreenOn);
   useBackgroundHold(player.isPlaying);
@@ -109,10 +131,22 @@ export function SupportPlayer({
     // Audio may only begin inside the tap itself.
     void prime();
     startedAtRef.current = Date.now();
-    listenedRef.current = 0;
+    // Picking up part-way: the time before was counted on that visit, so it
+    // is taken off what this one records.
+    const from = resumeFrom ?? 0;
+    listenedRef.current = -from;
+    setResumeFrom(null);
     setStretch(session.durationSeconds);
     setStage('playing');
+    // In this order: play() starts from the position it last rendered, so the
+    // seek has to come after it.
     player.play();
+    if (from > 0) player.seek(from);
+  };
+
+  const startOver = () => {
+    clearResume(placeKey);
+    setResumeFrom(null);
   };
 
   const togglePause = () => {
@@ -204,13 +238,20 @@ export function SupportPlayer({
           </div>
 
           <div className="mt-auto pt-8">
+            {resumeFrom !== null ? (
+              <ResumeNote
+                label={formatClock(resumeFrom)}
+                onStartOver={startOver}
+                className="mb-3"
+              />
+            ) : null}
             <GradientButton
               type="button"
               onClick={start}
               className={cn('w-full gap-2', size('h-14 text-[1rem]', 'h-16 text-[1.1875rem]'))}
             >
               <Play className="h-5 w-5" strokeWidth={2} />
-              Start
+              {resumeFrom !== null ? 'Continue' : 'Start'}
             </GradientButton>
             <p className="mt-4 text-center text-label leading-relaxed text-ink-faint">
               {supportDisclaimer.short}

@@ -47,18 +47,20 @@ export function useYogaSession(
   const handlers = React.useRef({ onPoseStart, onPoseEnding, onFinish, onFrozen });
   handlers.current = { onPoseStart, onPoseEnding, onFinish, onFrozen };
 
+  /** Starts pose `next`, from its top or with only `remainingOverride` left. */
   const goTo = React.useCallback(
-    (next: number) => {
+    (next: number, remainingOverride?: number) => {
       if (next >= poses.length) {
         setRunning(false);
         handlers.current.onFinish?.();
         return;
       }
       if (next === 0) endingFiredRef.current = -1;
+      const left = Math.min(remainingOverride ?? poses[next].seconds, poses[next].seconds);
       indexRef.current = next;
-      remainingRef.current = poses[next].seconds;
+      remainingRef.current = left;
       setIndex(next);
-      setRemaining(poses[next].seconds);
+      setRemaining(left);
       setRunning(true);
       setArmed((value) => value + 1);
       handlers.current.onPoseStart?.(next);
@@ -97,9 +99,17 @@ export function useYogaSession(
   }, [running, armed, goTo]);
 
   const begin = React.useCallback(() => goTo(0), [goTo]);
+  /** Picks a session up part-way through a pose, as it was left. */
+  const beginAt = React.useCallback(
+    (index: number, remainingSeconds: number) => {
+      endingFiredRef.current = -1;
+      goTo(index, remainingSeconds);
+    },
+    [goTo],
+  );
   const skip = React.useCallback(() => goTo(indexRef.current + 1), [goTo]);
   const pause = React.useCallback(() => setRunning(false), []);
   const resume = React.useCallback(() => setRunning(true), []);
 
-  return { index, remaining, running, begin, skip, pause, resume, stop: pause };
+  return { index, remaining, running, begin, beginAt, skip, pause, resume, stop: pause };
 }

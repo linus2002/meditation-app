@@ -4,6 +4,7 @@ import * as React from 'react';
 import Image, { type StaticImageData } from 'next/image';
 import { ChevronsLeft } from 'lucide-react';
 
+import { ResumeNote } from '@/components/session/resume-note';
 import { BreathingOrb } from '@/components/player/breathing-orb';
 import { PlaybackControls } from '@/components/player/playback-controls';
 import { SessionComplete } from '@/components/session/session-complete';
@@ -346,18 +347,11 @@ export function PlayerView({
 
       <div className="relative px-7 pb-[clamp(18px,3.8vh,32px)]">
         {resumedAt !== null ? (
-          <div className="mb-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-2xl bg-overlay/[0.06] py-1 pl-4 pr-1">
-            <p className="text-body-sm text-ink-soft">
-              Picking up at {formatClock(resumedAt)}
-            </p>
-            <button
-              type="button"
-              onClick={startFromBeginning}
-              className="h-11 rounded-xl px-3 text-body-sm font-medium text-ink transition-colors hover:bg-overlay/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-            >
-              Start from the beginning
-            </button>
-          </div>
+          <ResumeNote
+            label={formatClock(resumedAt)}
+            onStartOver={startFromBeginning}
+            className="mb-3"
+          />
         ) : null}
 
         <SessionScrubber

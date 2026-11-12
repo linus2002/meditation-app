@@ -5,7 +5,7 @@ import type { SupportAppointment } from '@/lib/support-appointments';
  * shown larger, and any appointment dates the reader added.
  *
  * Kept apart from the app's own session history on purpose. Nothing here
- * feeds the streak, the activity screen, the daily goal or a Circle — the
+ * feeds the streak, the activity screen or the daily goal — the
  * track tracks nothing that could read as falling behind during a hospital
  * week. It is for the reader's own reference only, and never leaves the phone.
  */

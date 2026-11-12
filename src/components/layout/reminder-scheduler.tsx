@@ -4,7 +4,7 @@ import * as React from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useReminders } from '@/hooks/use-reminders';
-import { onNotificationTap } from '@/lib/notifications';
+import { clearLegacyCircleReminders, onNotificationTap } from '@/lib/notifications';
 
 /**
  * The single mount that keeps the reminder schedule live.
@@ -19,6 +19,7 @@ export function ReminderScheduler() {
 
   const router = useRouter();
   React.useEffect(() => onNotificationTap((url) => router.push(url)), [router]);
+  React.useEffect(() => clearLegacyCircleReminders(), []);
 
   return null;
 }

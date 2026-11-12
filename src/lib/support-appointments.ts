@@ -1,5 +1,5 @@
 import { appointmentSession, type AppointmentKind } from '@/data/support-track';
-import { addDaysToKey } from '@/lib/circles/tz';
+import { addDaysToKey } from '@/lib/tz';
 
 /**
  * "My appointments" for the support track: the dates a reader chose to add,

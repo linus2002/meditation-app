@@ -4,7 +4,9 @@ import * as React from 'react';
 
 import { settingToggles } from '@/data/settings';
 import { DAILY_GOAL_MINUTES, DAILY_GOAL_OPTIONS } from '@/data/stats';
+import { track } from '@/lib/analytics';
 import type { AssessmentAnswers } from '@/lib/assessment';
+import { pushSession } from '@/lib/cloud-sync';
 import { fetchMyRatings, syncRating } from '@/lib/ratings';
 import type { Reflection, SessionRecord, SleepLog } from '@/types';
 
@@ -50,6 +52,8 @@ interface AppContextValue extends PersistedState {
   completeOnboarding: () => void;
   /** Appends a completed or part-finished sitting. */
   recordSession: (record: SessionRecord) => void;
+  /** Swaps in the history merged with the reader's account (lib/cloud-sync). */
+  replaceSessions: (records: SessionRecord[]) => void;
   toggleFavoriteStory: (id: string) => void;
   isFavoriteStory: (id: string) => boolean;
   /** Writes or replaces the entry for that day. */
@@ -150,9 +154,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, [hydrated]);
 
+  /*
+   * The latest state, for the analytics events below. They are sent from the
+   * writers rather than from inside the state updaters, which React may run
+   * twice, so each event goes out once.
+   */
+  const stateRef = React.useRef(state);
+  stateRef.current = state;
+
   // Writers use functional updates, so they never need `state` as a dependency
   // and keep a stable identity for the life of the provider.
   const toggleFavorite = React.useCallback((id: string) => {
+    track(stateRef.current.favorites.includes(id) ? 'favorite_removed' : 'favorite_added', { id });
     setState((current) => ({
       ...current,
       favorites: current.favorites.includes(id)
@@ -173,6 +186,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const completeOnboarding = React.useCallback(() => {
+    if (!stateRef.current.onboarded) track('onboarding_completed');
     setState((current) => ({ ...current, onboarded: true }));
   }, []);
 
@@ -182,13 +196,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
    * record simply replaces the earlier one instead of double-counting.
    */
   const recordSession = React.useCallback((record: SessionRecord) => {
+    // One event when a sitting first counts, and one when it runs to the end.
+    const previous = stateRef.current.sessions.find((item) => item.id === record.id);
+    const properties = { meditation_id: record.meditationId, seconds: record.seconds };
+    if (!previous) track('session_recorded', properties);
+    if (record.completed && !previous?.completed) track('session_completed', properties);
+    // To the reader's account too, when signed in. Repeat sends are harmless.
+    void pushSession(record);
     setState((current) => ({
       ...current,
       sessions: [record, ...current.sessions.filter((item) => item.id !== record.id)].slice(0, 2000),
     }));
   }, []);
 
+  const replaceSessions = React.useCallback((records: SessionRecord[]) => {
+    setState((current) => ({ ...current, sessions: records.slice(0, 2000) }));
+  }, []);
+
   const toggleFavoriteStory = React.useCallback((id: string) => {
+    track(stateRef.current.favoriteStories.includes(id) ? 'story_unsaved' : 'story_saved', { id });
     setState((current) => ({
       ...current,
       favoriteStories: current.favoriteStories.includes(id)
@@ -198,6 +224,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const saveReflection = React.useCallback((entry: Reflection) => {
+    // Only that an entry was written, never what it says.
+    track('reflection_saved');
     setState((current) => ({
       ...current,
       reflections: [entry, ...current.reflections.filter((item) => item.date !== entry.date)].sort(
@@ -207,6 +235,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const saveSleepLog = React.useCallback((entry: SleepLog) => {
+    track('sleep_logged');
     setState((current) => ({
       ...current,
       sleepLogs: [entry, ...current.sleepLogs.filter((item) => item.date !== entry.date)].sort(
@@ -228,6 +257,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
    * background — the UI never waits for the network.
    */
   const rateMeditation = React.useCallback((id: string, score: number) => {
+    if (stateRef.current.ratings[id] !== score) track('meditation_rated', { meditation_id: id, score });
     setState((current) => {
       const next = { ...current.ratings };
       const clearing = next[id] === score;
@@ -244,6 +274,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const completeAssessment = React.useCallback((answers: AssessmentAnswers) => {
+    // The answers themselves stay on the phone.
+    track('assessment_completed');
     setState((current) => ({
       ...current,
       assessment: { answers, completedAt: new Date().toISOString() },
@@ -295,6 +327,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setSetting,
       completeOnboarding,
       recordSession,
+      replaceSessions,
       toggleFavoriteStory,
       saveReflection,
       removeReflection,
@@ -313,6 +346,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setSetting,
       completeOnboarding,
       recordSession,
+      replaceSessions,
       toggleFavoriteStory,
       saveReflection,
       removeReflection,

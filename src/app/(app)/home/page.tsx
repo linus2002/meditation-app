@@ -1,7 +1,6 @@
 import { AssessmentCard } from '@/components/home/assessment-card';
 import { CategoryDeck } from '@/components/home/category-deck';
 import { GreetingHeader } from '@/components/home/greeting-header';
-import { GroupBanner } from '@/components/home/group-banner';
 import { HomeSection } from '@/components/home/home-section';
 import { ProgramRail } from '@/components/home/program-rail';
 import { RecommendedRail } from '@/components/home/recommended-rail';
@@ -60,10 +59,6 @@ export default function HomePage() {
       {/* Full width: the panel runs edge to edge. */}
       <div className="mt-7">
         <VideoRail />
-      </div>
-
-      <div className="mt-7 px-5">
-        <GroupBanner />
       </div>
     </div>
   );

@@ -8,7 +8,7 @@ import {
   offsetMinutes,
   wallTimeInZone,
   zonedTimeToUtc,
-} from '@/lib/circles/tz';
+} from '@/lib/tz';
 
 describe('zonedTimeToUtc', () => {
   it('follows London through summer and winter time', () => {

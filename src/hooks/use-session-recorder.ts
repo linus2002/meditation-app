@@ -27,10 +27,7 @@ export interface SessionRecorder {
  * store upserts on the sitting's id, and a later flush can never downgrade one
  * that already ran to the end.
  */
-export function useSessionRecorder(
-  meditationId: string,
-  { circleId }: { circleId?: string } = {},
-): SessionRecorder {
+export function useSessionRecorder(meditationId: string): SessionRecorder {
   const { recordSession } = useApp();
 
   const elapsedRef = React.useRef(0);
@@ -49,11 +46,9 @@ export function useSessionRecorder(
         seconds,
         completed: completed || finishedRef.current,
         startedAt: startedAtRef.current,
-        // A live circle sit; `CircleSync` tells the circle about it.
-        ...(circleId ? { circleId } : {}),
       });
     },
-    [recordSession, meditationId, circleId],
+    [recordSession, meditationId],
   );
 
   const markFinished = React.useCallback(() => {

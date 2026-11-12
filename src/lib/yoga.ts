@@ -58,6 +58,21 @@ export function elapsedAt(poses: YogaPose[], index: number, remaining: number): 
   return Math.min(totalSeconds(poses), before + into);
 }
 
+/**
+ * The pose and the time left in it, `seconds` into the session: the inverse of
+ * `elapsedAt`, used to pick a session up where it was left.
+ */
+export function positionAt(poses: YogaPose[], seconds: number): { index: number; remaining: number } {
+  let start = 0;
+  for (let index = 0; index < poses.length; index += 1) {
+    const end = start + poses[index].seconds;
+    if (seconds < end) return { index, remaining: end - Math.max(seconds, start) };
+    start = end;
+  }
+  const last = Math.max(0, poses.length - 1);
+  return { index: last, remaining: 0 };
+}
+
 export function poseSideLabel(side: YogaSide): string {
   return side === 'left' ? 'Left side' : 'Right side';
 }

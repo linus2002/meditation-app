@@ -5,7 +5,6 @@ import ancientTree from '@/assets/images/ancient-tree.jpg';
 import duskRidge from '@/assets/images/dusk-ridge.jpg';
 import forestBridge from '@/assets/images/forest-bridge.jpg';
 import forestLight from '@/assets/images/forest-light.jpg';
-import groupBanner from '@/assets/images/groupbanner.jpg';
 import meditationSunrise from '@/assets/images/meditation-sunrise.jpg';
 import milkyWay from '@/assets/images/milky-way.jpg';
 import morningField from '@/assets/images/morning-field.jpg';
@@ -18,8 +17,7 @@ import starfield from '@/assets/images/starfield.jpg';
 import sunriseHills from '@/assets/images/sunrise-hills.jpg';
 
 /**
- * The few photographs the app draws itself: the onboarding collage and the group
- * banner. Everything else (session, story, programme and card artwork) is
+ * The few photographs the app draws itself: the onboarding collage. Everything else (session, story, programme and card artwork) is
  * edited in Sanity and arrives through src/content.
  *
  * Photography is imported statically rather than referenced by path so Next can
@@ -32,7 +30,6 @@ export const photos = {
   duskRidge,
   forestBridge,
   forestLight,
-  groupBanner,
   meditationSunrise,
   milkyWay,
   morningField,

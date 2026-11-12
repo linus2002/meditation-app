@@ -8,7 +8,6 @@ import {
   NotebookPen,
   Timer,
   TimerReset,
-  Users,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -62,12 +61,6 @@ export const appShortcuts: Shortcut[] = [
     label: 'Reflections',
     description: 'Each day’s prompt and what you wrote',
     icon: NotebookPen,
-  },
-  {
-    href: '/circles',
-    label: 'Circles',
-    description: 'Sit with a small group at the same time each day',
-    icon: Users,
   },
   {
     href: '/sleep',

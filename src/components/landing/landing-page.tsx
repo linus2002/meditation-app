@@ -26,7 +26,7 @@ const LINKS = [
   { href: '#sleep', label: 'Sleep' },
   { href: '#breathing', label: 'Breathing' },
   { href: '#programs', label: 'Programs' },
-  { href: '#together', label: 'Circles' },
+  { href: '#together', label: 'Kapwa' },
 ];
 
 /**

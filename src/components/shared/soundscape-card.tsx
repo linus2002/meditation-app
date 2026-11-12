@@ -22,6 +22,7 @@ import type { LucideIcon } from 'lucide-react';
 
 import { soundscapes, type SoundscapeId, type SoundscapeMeta } from '@/lib/audio/soundscapes';
 import { cn } from '@/lib/utils';
+import { useRequireAccount } from '@/hooks/use-account';
 import { useAudio } from '@/providers/audio-provider';
 
 export const SOUNDSCAPE_ICONS: Record<SoundscapeId, LucideIcon> = {
@@ -52,6 +53,8 @@ export const SOUNDSCAPE_ICONS: Record<SoundscapeId, LucideIcon> = {
  */
 export function SoundscapeCard({ meta }: { meta: SoundscapeMeta }) {
   const { playing, play, stop, supported } = useAudio();
+  // Guests can see the soundscapes; playing one asks them to sign in.
+  const requireAccount = useRequireAccount();
   const Icon = SOUNDSCAPE_ICONS[meta.id];
   const active = playing === meta.id;
 
@@ -60,7 +63,7 @@ export function SoundscapeCard({ meta }: { meta: SoundscapeMeta }) {
       <button
         type="button"
         disabled={!supported}
-        onClick={() => (active ? stop(1.5) : void play(meta.id))}
+        onClick={() => (active ? stop(1.5) : requireAccount() && void play(meta.id))}
         aria-pressed={active}
         className={cn(
           'flex w-full items-center gap-3.5 rounded-tile p-3 text-left transition-transform duration-200',

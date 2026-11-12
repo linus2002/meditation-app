@@ -1,63 +1,80 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 
 import { todaysPicks } from '@/data/today';
 import { formatShortMinutes } from '@/lib/format';
+import { useApp } from '@/providers/app-provider';
 
 /**
  * Rail of short sessions for the current day.
  *
  * Narrower cards than the recommended rail, so two sit on screen at once and
  * the row reads as a list of quick options rather than a set of features.
+ *
+ * The star shows the reader's own score from the session-complete screen.
+ * Unrated sessions show no score at all rather than an invented average.
  */
 export function TodayRail() {
+  const { ratings, hydrated } = useApp();
+
   return (
     <ul className="rail flex snap-x snap-mandatory scroll-px-5 gap-3.5 overflow-x-auto px-5 pb-1">
-      {todaysPicks.map(({ meditation, rating }) => (
-        <li key={meditation.id} className="w-[45vw] max-w-[180px] shrink-0 snap-start">
-          <Link
-            href={`/player/${meditation.id}`}
-            className="group block focus-visible:outline-none"
-          >
-            <span className="relative block aspect-square overflow-hidden rounded-[15px]">
-              <Image
-                src={meditation.image}
-                alt=""
-                fill
-                sizes="(max-width: 430px) 45vw, 180px"
-                placeholder="blur"
-                className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
-              />
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 rounded-[15px] ring-1 ring-inset ring-focus/10 transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-focus"
-              />
-            </span>
+      {todaysPicks.map((meditation) => {
+        // Wait for hydration so the server render and first client render match.
+        const rating = hydrated ? ratings[meditation.id] : undefined;
+        return (
+          <li key={meditation.id} className="w-[45vw] max-w-[180px] shrink-0 snap-start">
+            <Link
+              href={`/player/${meditation.id}`}
+              className="group block focus-visible:outline-none"
+            >
+              <span className="relative block aspect-square overflow-hidden rounded-[15px]">
+                <Image
+                  src={meditation.image}
+                  alt=""
+                  fill
+                  sizes="(max-width: 430px) 45vw, 180px"
+                  placeholder="blur"
+                  className="object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+                />
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 rounded-[15px] ring-1 ring-inset ring-focus/10 transition-shadow group-focus-visible:ring-2 group-focus-visible:ring-focus"
+                />
+              </span>
 
-            <span className="mt-2.5 line-clamp-2 text-body-sm font-semibold leading-snug text-ink">
-              {meditation.title}
-            </span>
-          </Link>
+              <span className="mt-2.5 line-clamp-2 text-body-sm font-semibold leading-snug text-ink">
+                {meditation.title}
+              </span>
+            </Link>
 
-          <p className="mt-1 truncate text-caption leading-tight text-ink-muted">
-            {meditation.narrator}
-          </p>
-          <p className="mt-1.5 flex items-center gap-1 text-caption leading-none text-ink-muted">
-            {rating.toFixed(1)}
-            <Star
-              aria-hidden="true"
-              className="h-3 w-3 fill-aurora-lime text-aurora-lime"
-              strokeWidth={0}
-            />
-            <span className="sr-only">out of 5,</span>
-            <span aria-hidden="true" className="px-0.5">
-              ·
-            </span>
-            {formatShortMinutes(meditation.durationSeconds)}
-          </p>
-        </li>
-      ))}
+            <p className="mt-1 truncate text-caption leading-tight text-ink-muted">
+              {meditation.narrator}
+            </p>
+            <p className="mt-1.5 flex items-center gap-1 text-caption leading-none text-ink-muted">
+              {rating ? (
+                <>
+                  <span className="sr-only">You rated it</span>
+                  {rating}
+                  <Star
+                    aria-hidden="true"
+                    className="h-3 w-3 fill-aurora-lime text-aurora-lime"
+                    strokeWidth={0}
+                  />
+                  <span className="sr-only">out of 5,</span>
+                  <span aria-hidden="true" className="px-0.5">
+                    ·
+                  </span>
+                </>
+              ) : null}
+              {formatShortMinutes(meditation.durationSeconds)}
+            </p>
+          </li>
+        );
+      })}
     </ul>
   );
 }

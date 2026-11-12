@@ -57,7 +57,7 @@ describe('pickInspiration', () => {
     expect(result.reason).toBe('theme');
   });
 
-  it('leans towards the goal from the Circles questions', () => {
+  it('leans towards a stated goal', () => {
     const result = pickInspiration({ dateKey: today, todayKey: today, signals: quiet, goal: 'sleep' });
     expect(has('sleep')(result)).toBe(true);
     expect(result.reason).toBe('goal');
