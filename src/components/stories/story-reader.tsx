@@ -20,6 +20,7 @@ import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useAudio } from '@/providers/audio-provider';
+import { musicSrc } from '@/lib/audio/music';
 import type { Story } from '@/types';
 
 /**
@@ -34,7 +35,7 @@ const SLEEP_TIMER_OPTIONS = [
 ] as const;
 
 /** Composed for the app by scripts/music/compose.mjs, one per story mood. */
-const musicFor = (story: Story) => `/audio/music/${story.category}.mp3`;
+const musicFor = (story: Story) => musicSrc(story.category);
 
 /**
  * Under the voice but present enough to carry it. With the default master

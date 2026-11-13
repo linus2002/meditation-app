@@ -31,8 +31,16 @@ import {
 import { useApp } from '@/providers/app-provider';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
+import { yogaMusic } from '@/lib/audio/music';
 
 type Phase = 'intro' | 'running' | 'done';
+
+/**
+ * Yoga music plays fuller than under a story, about level with the voice,
+ * because it carries the session between cues; it ducks whenever the
+ * instructor speaks (see `duckMusic`).
+ */
+const YOGA_MUSIC_LEVEL = 1;
 
 const iconButton =
   'tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
@@ -52,7 +60,9 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   const goBack = useBack();
   const { settings, setSetting } = useApp();
   const voiceGuide = settings.yogaVoice ?? true;
-  const { bell, play, stop, prime } = useAudio();
+  const { bell, stop, prime, playMusic, pauseMusic, stopMusic, duckMusic } = useAudio();
+  const musicOn = settings.ambient ?? true;
+  const music = yogaMusic(session.id);
 
   const [phase, setPhase] = React.useState<Phase>('intro');
   const recorder = useSessionRecorder(session.id);
@@ -67,7 +77,8 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   }, [placeKey, total]);
   const offsetRef = React.useRef(0);
 
-  const voice = useYogaVoice();
+  // The music dips while the instructor speaks, and comes back up between cues.
+  const voice = useYogaVoice({ onSpeakingChange: duckMusic });
   // The pose the instructor has just said "Next, …" for.
   const announcedRef = React.useRef(-1);
   const linesFor = (index: number) =>
@@ -113,6 +124,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
       recorder.commit(true);
       bell(392);
       stop(4);
+      stopMusic(4);
       setPhase('done');
     },
     onFrozen: () => voice.stop(),
@@ -127,12 +139,18 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
 
   useWakeLock(phase === 'running');
   useBackgroundHold(phase === 'running' && clock.running);
-  React.useEffect(() => () => stop(0.4), [stop]);
+  React.useEffect(
+    () => () => {
+      stop(0.4);
+      stopMusic(0.4);
+    },
+    [stop, stopMusic],
+  );
 
   const begin = async (fromStart = false) => {
     // Audio may only start inside the tap that begins the session.
     await prime();
-    if (settings.ambient ?? true) void play(session.soundscape);
+    if (musicOn) playMusic(music, YOGA_MUSIC_LEVEL);
     recorder.restart();
     announcedRef.current = -1;
     setPhase('running');
@@ -159,6 +177,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     clock.stop();
     voice.stop();
     stop(1.2);
+    stopMusic(1.2);
     setPhase('intro');
     // The place was kept as it paused; offer it straight away.
     setResumeFrom(readResume(placeKey, total));
@@ -167,6 +186,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   const pause = () => {
     voice.stop();
     clock.pause();
+    pauseMusic(0.8);
   };
 
   // Sound cut off by a call or the like: hold the pose rather than run on in silence.
@@ -177,7 +197,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   // Inside the tap, so the bed comes back if it was cut off while paused.
   const resume = () => {
     void prime();
-    if (settings.ambient ?? true) void play(session.soundscape);
+    if (musicOn) playMusic(music, YOGA_MUSIC_LEVEL);
     clock.resume();
   };
 

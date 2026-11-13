@@ -7,6 +7,9 @@ import {
 } from '@/lib/audio/soundscapes';
 import { breathTone, strikeBell } from '@/lib/audio/voices';
 
+/** How far music drops while a voice speaks over it: to 30%, about 10 dB down. */
+export const MUSIC_DUCK = 0.3;
+
 /**
  * Owns the single AudioContext for the app and the graph hanging off it.
  *
@@ -27,6 +30,9 @@ export class AudioEngine {
     element: HTMLAudioElement;
     gain: GainNode;
     pauseTimer: number;
+    /** The level it was asked to play at, and whether a voice has it ducked. */
+    level: number;
+    ducked: boolean;
   } | null = null;
 
   private volume = 0.7;
@@ -198,16 +204,35 @@ export class AudioEngine {
       const gain = ctx.createGain();
       gain.gain.value = 0;
       ctx.createMediaElementSource(element).connect(gain).connect(this.bus);
-      this.music = { src, element, gain, pauseTimer: 0 };
+      this.music = { src, element, gain, pauseTimer: 0, level, ducked: false };
     }
 
     const { element, gain } = this.music;
+    this.music.level = level;
     window.clearTimeout(this.music.pauseTimer);
     void element.play().catch(() => undefined);
     const at = ctx.currentTime;
+    const target = this.music.ducked ? level * MUSIC_DUCK : level;
     gain.gain.cancelScheduledValues(at);
     gain.gain.setValueAtTime(gain.gain.value, at);
-    gain.gain.linearRampToValueAtTime(level, at + fadeSeconds);
+    gain.gain.linearRampToValueAtTime(target, at + fadeSeconds);
+  }
+
+  /**
+   * Lowers the music under a voice (`true`) and brings it back (`false`): a
+   * quick dip as the voice starts, a slower return once it has finished, the
+   * way a radio presenter talks over a record.
+   */
+  duckMusic(ducked: boolean): void {
+    if (!this.music || !this.ctx || this.music.ducked === ducked) return;
+    const music = this.music;
+    music.ducked = ducked;
+    if (music.element.paused) return;
+    const at = this.ctx.currentTime;
+    const target = ducked ? music.level * MUSIC_DUCK : music.level;
+    music.gain.gain.cancelScheduledValues(at);
+    music.gain.gain.setValueAtTime(music.gain.gain.value, at);
+    music.gain.gain.linearRampToValueAtTime(target, at + (ducked ? 0.35 : 1.2));
   }
 
   /** Fades the music out and holds its place, for a pause. */

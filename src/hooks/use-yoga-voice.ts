@@ -20,8 +20,21 @@ export interface SpokenLine {
  * A line with no recording, or one that cannot be fetched (offline, say), is
  * spoken by the device's own voice instead, so the guidance never goes quiet.
  */
-export function useYogaVoice() {
+export function useYogaVoice({
+  onSpeakingChange,
+}: {
+  /** True as the instructor starts a run of lines, false once they've finished or been cut off. */
+  onSpeakingChange?: (speaking: boolean) => void;
+} = {}) {
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
+  const speakingRef = React.useRef(false);
+  const changeRef = React.useRef(onSpeakingChange);
+  changeRef.current = onSpeakingChange;
+  const setSpeaking = React.useCallback((speaking: boolean) => {
+    if (speakingRef.current === speaking) return;
+    speakingRef.current = speaking;
+    changeRef.current?.(speaking);
+  }, []);
   const queueRef = React.useRef<SpokenLine[]>([]);
   // Bumped on every `say` and `stop`. Interrupting a line makes its pending
   // play() reject, and that must not be taken for a failed recording.
@@ -31,7 +44,11 @@ export function useYogaVoice() {
     if (turn !== turnRef.current) return;
     const line = queueRef.current.shift();
     const audio = audioRef.current;
-    if (!line || !audio) return;
+    if (!line || !audio) {
+      setSpeaking(false);
+      return;
+    }
+    setSpeaking(true);
 
     const advance = () => playNext(turn);
     const speakWithDevice = () => {
@@ -64,7 +81,7 @@ export function useYogaVoice() {
     audio.onerror = fallBack;
     audio.src = line.src;
     void audio.play().catch(fallBack);
-  }, []);
+  }, [setSpeaking]);
 
   const stop = React.useCallback(() => {
     turnRef.current += 1;
@@ -78,7 +95,8 @@ export function useYogaVoice() {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
     }
-  }, []);
+    setSpeaking(false);
+  }, [setSpeaking]);
 
   const say = React.useCallback(
     (...lines: SpokenLine[]) => {

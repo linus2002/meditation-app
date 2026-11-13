@@ -30,6 +30,8 @@ interface AudioContextValue {
   /** Fades the music down and holds its place. */
   pauseMusic: (fadeSeconds?: number) => void;
   stopMusic: (fadeSeconds?: number) => void;
+  /** Dips the music while a voice speaks over it, and brings it back after. */
+  duckMusic: (ducked: boolean) => void;
   /** A struck bell. The timer uses distinct pitches for start, interval and end. */
   bell: (frequency?: number) => void;
   breathCue: (direction: 'in' | 'out') => void;
@@ -161,6 +163,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     (fadeSeconds?: number) => audioEngine.stopMusic(fadeSeconds),
     [],
   );
+  const duckMusic = React.useCallback((ducked: boolean) => audioEngine.duckMusic(ducked), []);
   const fadeOut = React.useCallback((seconds: number) => audioEngine.fadeOut(seconds), []);
   const bell = React.useCallback((frequency?: number) => audioEngine.bell(frequency), []);
   const breathCue = React.useCallback(
@@ -182,6 +185,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       playMusic,
       pauseMusic,
       stopMusic,
+      duckMusic,
       fadeOut,
       bell,
       breathCue,
@@ -199,6 +203,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       playMusic,
       pauseMusic,
       stopMusic,
+      duckMusic,
       fadeOut,
       bell,
       breathCue,
