@@ -52,7 +52,7 @@ export function SleepMixer() {
               aria-pressed={active}
               className={cn(
                 'flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
-                active ? 'bg-action-pill text-white' : 'bg-overlay/[0.06] text-ink hover:bg-overlay/[0.1]',
+                active ? 'bg-aurora-blue text-white' : 'bg-overlay/[0.06] text-ink hover:bg-overlay/[0.1]',
               )}
             >
               <Icon

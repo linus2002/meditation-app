@@ -23,6 +23,9 @@ const MEMBER_ROUTES = [
   '/reflections',
   '/assessment',
   '/kapwa',
+  '/mixes',
+  '/calendar',
+  '/mix-play',
 ];
 
 export function isMemberRoute(pathname: string): boolean {

@@ -59,9 +59,8 @@ export function DownloadButton({
       <svg aria-hidden="true" width="0" height="0" className="absolute">
         <defs>
           <linearGradient id="download-gradient" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0%" stopColor="#3FD9C9" />
-            <stop offset="52%" stopColor="#7CA9E8" />
-            <stop offset="100%" stopColor="#1D9FDA" />
+            <stop offset="0%" stopColor="#1D9FDA" />
+            <stop offset="100%" stopColor="#61A644" />
           </linearGradient>
         </defs>
       </svg>

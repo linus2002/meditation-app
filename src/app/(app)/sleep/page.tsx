@@ -140,7 +140,7 @@ export default function SleepPage() {
         </SectionTitle>
         <ul className="mt-3 space-y-2.5">
           {sleepSessions.map((meditation) => (
-            <MeditationCard key={meditation.id} meditation={meditation} />
+            <MeditationCard key={meditation.id} meditation={meditation} plain />
           ))}
         </ul>
       </div>

@@ -9,9 +9,11 @@ import { BreathingOrb } from '@/components/player/breathing-orb';
 import { PlaybackControls } from '@/components/player/playback-controls';
 import { SessionComplete } from '@/components/session/session-complete';
 import { SessionScrubber } from '@/components/player/session-scrubber';
+import { AddToMixButton } from '@/components/mixes/add-to-mix-button';
 import { DownloadButton } from '@/components/shared/download-button';
 import { FavoriteButton } from '@/components/shared/favorite-button';
 import { useBack } from '@/hooks/use-back';
+import { useLoop } from '@/hooks/use-loop';
 import { useBreath } from '@/hooks/use-breath';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { usePlayer } from '@/hooks/use-player';
@@ -25,17 +27,29 @@ import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 import type { Meditation } from '@/types';
 
+export interface PlayerMixMode {
+  /** Start as soon as the screen opens (the mix's play tap unlocked audio). */
+  autoStart: boolean;
+  /** The session ran to its end: the mix moves on instead of showing "Sit again". */
+  onFinished: () => void;
+}
+
 export function PlayerView({
   meditation,
   backdrop,
   programNext,
+  mix,
 }: {
   meditation: Meditation;
   /** Replaces the session's own art, e.g. a programme's cover for its sessions. */
   backdrop?: StaticImageData;
   /** The next session in this session's programme, offered ahead of any suggestion. */
   programNext?: Meditation;
+  /** Set when playing as part of a mix. */
+  mix?: PlayerMixMode;
 }) {
+  const mixRef = React.useRef(mix);
+  mixRef.current = mix;
   const goBack = useBack();
   const { markPlayed, settings } = useApp();
   const audio = useAudio();
@@ -55,7 +69,8 @@ export function PlayerView({
   const completedRef = React.useRef(false);
 
   const handleComplete = React.useCallback(() => {
-    setCompleted(true);
+    // In a mix the next item takes over; no "Sit again" panel in between.
+    if (!mixRef.current) setCompleted(true);
     completedRef.current = true;
     clearResume(meditation.id);
     markPlayed(meditation.id);
@@ -67,11 +82,30 @@ export function PlayerView({
     // A single struck bell to close the session, then let the bed fall away.
     bell();
     stopAudio(4);
+    mixRef.current?.onFinished();
   }, [markPlayed, meditation.id, meditation.durationSeconds, recorder, bell, stopAudio]);
+
+  // With loop on, each time round counts as a finished sitting, marked with a
+  // bell, and the next one begins straight away with the sound still playing.
+  const [savedLoop, toggleLoop] = useLoop('meditation');
+  // In a mix, the mix decides what comes next, so a single session never repeats.
+  const loop = mix ? false : savedLoop;
+  const handleLoop = React.useCallback(() => {
+    clearResume(meditation.id);
+    markPlayed(meditation.id);
+    recorder.elapsedRef.current = meditation.durationSeconds - offsetRef.current;
+    recorder.markFinished();
+    recorder.commit(true);
+    recorder.restart();
+    offsetRef.current = 0;
+    bell();
+  }, [markPlayed, meditation.id, meditation.durationSeconds, recorder, bell]);
 
   const player = usePlayer({
     durationSeconds: meditation.durationSeconds,
     onComplete: handleComplete,
+    loop,
+    onLoop: handleLoop,
   });
   const breath = useBreath(meditation.breathPattern, player.elapsed);
 
@@ -137,13 +171,27 @@ export function PlayerView({
   // Open where the reader left off, if they left part-way through.
   const [resumedAt, setResumedAt] = React.useState<number | null>(null);
   const { seek } = player;
+  const inMix = mix !== undefined;
   React.useEffect(() => {
+    // A mix always plays each session from the top.
+    if (inMix) return;
     const point = readResume(meditation.id, meditation.durationSeconds);
     if (point === null) return;
     offsetRef.current = point;
     seek(point);
     setResumedAt(point);
-  }, [meditation.id, meditation.durationSeconds, seek]);
+  }, [meditation.id, meditation.durationSeconds, seek, inMix]);
+
+  // In a mix, the session starts by itself.
+  const autoStartedRef = React.useRef(false);
+  const autoStart = mix?.autoStart ?? false;
+  const { play: playTransport } = player;
+  React.useEffect(() => {
+    if (!autoStart || autoStartedRef.current) return;
+    autoStartedRef.current = true;
+    void prime();
+    playTransport();
+  }, [autoStart, prime, playTransport]);
 
   const startFromBeginning = () => {
     offsetRef.current = 0;
@@ -290,6 +338,9 @@ export function PlayerView({
             <DownloadButton meditationId={meditation.id} title={meditation.title} size="md" />
           </span>
           <span className="flex rounded-full bg-black/25 backdrop-blur-md">
+            <AddToMixButton item={{ kind: 'meditation', id: meditation.id }} title={meditation.title} />
+          </span>
+          <span className="flex rounded-full bg-black/25 backdrop-blur-md">
             <FavoriteButton meditationId={meditation.id} title={meditation.title} size="md" />
           </span>
         </div>
@@ -364,6 +415,8 @@ export function PlayerView({
           isPlaying={player.isPlaying}
           onToggle={toggle}
           onSkip={player.skip}
+          loop={loop}
+          onToggleLoop={mix ? undefined : toggleLoop}
           className="mt-[clamp(16px,2.8vh,24px)]"
         />
 

@@ -28,7 +28,7 @@ export function RecommendedRail() {
               placeholder="blur"
               className="object-cover"
             />
-            <span className="absolute left-3 top-3 rounded-full bg-canvas-deep/85 px-2.5 py-1 text-label font-semibold leading-none text-white backdrop-blur-sm">
+            <span className="absolute left-3 top-3 rounded-full bg-black/80 px-2.5 py-1 text-label font-semibold leading-none text-white backdrop-blur-sm">
               {collection}
             </span>
           </div>
@@ -46,7 +46,7 @@ export function RecommendedRail() {
 
             <Link
               href={`/player/${meditation.id}`}
-              className="flex h-9 shrink-0 items-center rounded-full bg-black px-4 text-[0.8125rem] font-medium text-white [[data-theme=dark]_&]:bg-white [[data-theme=dark]_&]:text-black transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="flex h-9 shrink-0 items-center solid-button rounded-full px-4 text-[0.8125rem] font-medium transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               Start session
             </Link>

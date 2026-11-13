@@ -291,7 +291,7 @@ function AppointmentsSection({
                 'rounded-full px-3.5 py-2 text-caption font-medium transition-colors',
                 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 kind === entry.id
-                  ? 'bg-action-pill text-white'
+                  ? 'bg-aurora-blue text-white'
                   : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
               )}
             >

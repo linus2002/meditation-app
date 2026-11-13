@@ -49,7 +49,15 @@ function pickVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null 
  * Rate and volume apply from the next sentence onward — an utterance already
  * being spoken cannot be changed in flight.
  */
-export function useNarration(segments: StorySegment[]): NarrationState {
+/**
+ * `loop`: start again from the first sentence after the last one.
+ * `onEnded`: called when the last sentence has been read (not when stopped).
+ */
+export function useNarration(
+  segments: StorySegment[],
+  loop = false,
+  onEnded?: () => void,
+): NarrationState {
   const [supported, setSupported] = React.useState(false);
   const [ready, setReady] = React.useState(false);
   const [speaking, setSpeaking] = React.useState(false);
@@ -62,6 +70,10 @@ export function useNarration(segments: StorySegment[]): NarrationState {
   const stoppedRef = React.useRef(true);
   const segmentsRef = React.useRef(segments);
   segmentsRef.current = segments;
+  const loopRef = React.useRef(loop);
+  loopRef.current = loop;
+  const endedRef = React.useRef(onEnded);
+  endedRef.current = onEnded;
   const volumeRef = React.useRef(volume);
   const rateRef = React.useRef(rate);
 
@@ -92,10 +104,15 @@ export function useNarration(segments: StorySegment[]): NarrationState {
   const speakFrom = React.useCallback((start: number) => {
     const list = segmentsRef.current;
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+    if (start >= list.length && loopRef.current && list.length > 0) {
+      speakFrom(0);
+      return;
+    }
     if (start >= list.length) {
       setSpeaking(false);
       setPaused(false);
       stoppedRef.current = true;
+      if (list.length > 0) endedRef.current?.();
       return;
     }
 

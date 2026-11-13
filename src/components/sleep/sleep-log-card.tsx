@@ -163,7 +163,7 @@ export function SleepLogCard() {
               <span
                 className={cn(
                   'h-3.5 w-3.5 rounded-full transition-all duration-150',
-                  selected ? 'scale-110 bg-action-pill' : 'bg-overlay/15 group-hover:bg-overlay/30',
+                  selected ? 'scale-110 bg-aurora-blue' : 'bg-overlay/15 group-hover:bg-overlay/30',
                 )}
               />
               <span

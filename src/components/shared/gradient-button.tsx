@@ -24,7 +24,7 @@ export const GradientButton = React.forwardRef<HTMLButtonElement, GradientButton
           'transition-[transform,filter] duration-200 ease-out hover:brightness-105 active:scale-[0.985]',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas',
           'disabled:pointer-events-none disabled:opacity-60',
-          tone === 'action' ? 'bg-action-pill shadow-pill' : 'bg-analytics-pill',
+          tone === 'action' ? 'bg-aurora-blue shadow-pill' : 'bg-aurora-blue',
           className,
         )}
         {...props}

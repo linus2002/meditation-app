@@ -38,7 +38,7 @@ export function BreathingOrb({ breath, isPlaying, className }: BreathingOrbProps
 
       <span
         aria-hidden="true"
-        className="absolute rounded-full bg-[conic-gradient(from_210deg,#2FE0CB,#61A644,#1D9FDA,#2FE0CB)] opacity-90 transition-transform ease-out [transition-duration:900ms]"
+        className="absolute rounded-full bg-[conic-gradient(from_210deg,#1D9FDA,#61A644,#1D9FDA)] opacity-90 transition-transform ease-out [transition-duration:900ms]"
         style={{ height: '82%', width: '82%', transform: `scale(${scale})` }}
       />
 

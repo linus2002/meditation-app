@@ -24,6 +24,8 @@ export function useYogaSession(
     onPoseEnding,
     onFinish,
     onFrozen,
+    loop = false,
+    onLoop,
   }: {
     /** Called as each pose begins — the player strikes its bell here. */
     onPoseStart?: (index: number) => void;
@@ -32,6 +34,10 @@ export function useYogaSession(
     onFinish?: () => void;
     /** Called when the clock pauses itself because the app was frozen. */
     onFrozen?: () => void;
+    /** After the last pose, begin the first again instead of finishing. */
+    loop?: boolean;
+    /** Called each time a loop completes a full round, in place of `onFinish`. */
+    onLoop?: () => void;
   } = {},
 ) {
   const [index, setIndex] = React.useState(0);
@@ -44,13 +50,17 @@ export function useYogaSession(
   const remainingRef = React.useRef(poses[0]?.seconds ?? 0);
   // The pose whose ending has already been announced, so it fires only once.
   const endingFiredRef = React.useRef(-1);
-  const handlers = React.useRef({ onPoseStart, onPoseEnding, onFinish, onFrozen });
-  handlers.current = { onPoseStart, onPoseEnding, onFinish, onFrozen };
+  const handlers = React.useRef({ onPoseStart, onPoseEnding, onFinish, onFrozen, onLoop, loop });
+  handlers.current = { onPoseStart, onPoseEnding, onFinish, onFrozen, onLoop, loop };
 
   /** Starts pose `next`, from its top or with only `remainingOverride` left. */
   const goTo = React.useCallback(
-    (next: number, remainingOverride?: number) => {
-      if (next >= poses.length) {
+    (requested: number, remainingOverride?: number) => {
+      let next = requested;
+      if (next >= poses.length && handlers.current.loop && poses.length > 0) {
+        handlers.current.onLoop?.();
+        next = 0;
+      } else if (next >= poses.length) {
         setRunning(false);
         handlers.current.onFinish?.();
         return;

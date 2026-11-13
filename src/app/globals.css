@@ -89,6 +89,9 @@
      * base. None on the dark page, where the dark pane is what frames the glow.
      */
     --tile-tint: 0%;
+    /* Play buttons: a soft grey disc with a white glyph, not a white one. */
+    --play-bg: 58 58 62;
+    --play-fg: 255 255 255;
     /* Browser chrome, kept in step by the theme effect in AppProvider. */
     --theme-color: #000000;
   }
@@ -135,6 +138,9 @@
     --nav-idle: 100 104 130;
     /* On white, a white pane vanishes; a pastel of its own colour frames it. */
     --tile-tint: 30%;
+    /* Play buttons stay the dark ink disc on white. */
+    --play-bg: 24 26 46;
+    --play-fg: 255 255 255;
     --theme-color: #ffffff;
   }
 }
@@ -179,6 +185,21 @@
 }
 
 @layer components {
+  /*
+   * The round play / pause button on every player, and the solid main buttons
+   * (Start session, Take assessment…). Colours come from the theme
+   * (--play-bg / --play-fg): grey with white text or glyph on the dark page,
+   * dark ink with white on the light one, never a bright white slab in the
+   * dark. A faint top highlight gives them a little depth.
+   */
+  .play-button,
+  .solid-button {
+    background-color: rgb(var(--play-bg));
+    color: rgb(var(--play-fg));
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.12),
+      0 10px 26px -12px rgb(0 0 0 / 0.6);
+  }
   /* Thin, dark scrollbars so horizontal rails read as part of the surface. */
   .rail {
     scrollbar-width: none;

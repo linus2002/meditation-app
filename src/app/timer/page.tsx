@@ -193,12 +193,12 @@ export default function TimerPage() {
               type="button"
               onClick={() => (countdown.running ? countdown.pause() : resumeSit())}
               aria-label={countdown.running ? 'Pause sit' : 'Resume sit'}
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="flex h-16 w-16 items-center justify-center play-button rounded-full transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               {countdown.running ? (
-                <Pause className="h-6 w-6 fill-canvas-deep" />
+                <Pause className="h-6 w-6 fill-current" />
               ) : (
-                <Play className="h-6 w-6 translate-x-[2px] fill-canvas-deep" />
+                <Play className="h-6 w-6 translate-x-[2px] fill-current" />
               )}
             </button>
 

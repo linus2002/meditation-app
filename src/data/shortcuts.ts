@@ -8,6 +8,8 @@ import {
   NotebookPen,
   Timer,
   TimerReset,
+  CalendarDays,
+  ListMusic,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -37,6 +39,18 @@ export const appShortcuts: Shortcut[] = [
     label: 'Read-aloud stories',
     description: 'Calm stories, read to you or read yourself',
     icon: BookOpen,
+  },
+  {
+    href: '/calendar',
+    label: 'Calendar',
+    description: 'Schedule sessions for a date and time, with a reminder when it’s time',
+    icon: CalendarDays,
+  },
+  {
+    href: '/mixes',
+    label: 'Mixes',
+    description: 'Your own playlists of meditations and stories, played back to back',
+    icon: ListMusic,
   },
   {
     href: '/favorites',

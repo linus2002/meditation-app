@@ -69,7 +69,7 @@ export function SoundscapeCard({ meta }: { meta: SoundscapeMeta }) {
           'flex w-full items-center gap-3.5 rounded-tile p-3 text-left transition-transform duration-200',
           'hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
           'disabled:pointer-events-none disabled:opacity-50',
-          active ? 'bg-action-pill' : 'bg-surface',
+          active ? 'bg-aurora-blue' : 'bg-surface',
         )}
       >
         <span

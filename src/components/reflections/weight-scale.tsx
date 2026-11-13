@@ -58,7 +58,7 @@ export function WeightScale({
                 className={cn(
                   'h-3.5 w-3.5 rounded-full transition-all duration-150',
                   isSelected
-                    ? 'scale-110 bg-action-pill'
+                    ? 'scale-110 bg-aurora-blue'
                     : 'bg-overlay/15 group-hover:bg-overlay/30',
                 )}
               />

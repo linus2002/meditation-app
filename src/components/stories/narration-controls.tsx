@@ -3,12 +3,16 @@
 import * as React from 'react';
 import { Pause, Play, RotateCcw, RotateCw } from 'lucide-react';
 
+import { LoopButton } from '@/components/shared/loop-button';
 import { Slider } from '@/components/ui/slider';
 import type { StoryPlayer } from '@/hooks/use-story-player';
 import { formatClock } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
-const SKIP_SECONDS = 15;
+const SKIP_SECONDS = 10;
+
+const sideButton =
+  'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
 
 interface NarrationControlsProps {
   player: StoryPlayer;
@@ -17,6 +21,9 @@ interface NarrationControlsProps {
    * unlock audio from the gesture and bring in the ambient bed first.
    */
   onStart?: () => void;
+  /** Shown when given: repeat on or off. */
+  loop?: boolean;
+  onToggleLoop?: () => void;
   className?: string;
 }
 
@@ -27,7 +34,13 @@ interface NarrationControlsProps {
  * position is measured in sentences and its clocks are derived from that —
  * which is why they read "about" — since the true pace depends on the voice.
  */
-export function NarrationControls({ player, onStart, className }: NarrationControlsProps) {
+export function NarrationControls({
+  player,
+  onStart,
+  loop,
+  onToggleLoop,
+  className,
+}: NarrationControlsProps) {
   const playing = player.speaking && !player.paused;
   const left = Math.max(0, player.total - player.elapsed);
 
@@ -51,16 +64,7 @@ export function NarrationControls({ player, onStart, className }: NarrationContr
         <span>{player.exact ? `-${formatClock(left)}` : `about ${formatClock(left)} left`}</span>
       </div>
 
-      <div className="mt-6 flex items-center justify-center gap-[clamp(24px,9.2vw,36px)]">
-        <button
-          type="button"
-          onClick={() => player.skip(-SKIP_SECONDS)}
-          aria-label={`Back ${SKIP_SECONDS} seconds`}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-        >
-          <RotateCcw className="h-[22px] w-[22px]" strokeWidth={1.6} />
-        </button>
-
+      <div className="mt-5 flex items-center justify-center gap-[clamp(14px,5vw,22px)]">
         <button
           type="button"
           onClick={() => {
@@ -71,23 +75,34 @@ export function NarrationControls({ player, onStart, className }: NarrationContr
           }}
           disabled={!player.supported}
           aria-label={playing ? 'Pause narration' : 'Play narration'}
-          className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-ink text-canvas shadow-[0_10px_30px_-8px_rgba(255,255,255,0.35)] transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="flex h-[58px] w-[58px] shrink-0 items-center justify-center play-button rounded-full transition-transform duration-150 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           {playing ? (
-            <Pause className="h-7 w-7 fill-canvas-deep" />
+            <Pause className="h-5 w-5 fill-current" />
           ) : (
-            <Play className="h-7 w-7 translate-x-[2px] fill-canvas-deep" />
+            <Play className="h-5 w-5 translate-x-[2px] fill-current" />
           )}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => player.skip(-SKIP_SECONDS)}
+          aria-label={`Back ${SKIP_SECONDS} seconds`}
+          className={sideButton}
+        >
+          <RotateCcw className="h-[20px] w-[20px]" strokeWidth={1.6} />
         </button>
 
         <button
           type="button"
           onClick={() => player.skip(SKIP_SECONDS)}
           aria-label={`Forward ${SKIP_SECONDS} seconds`}
-          className="flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className={sideButton}
         >
-          <RotateCw className="h-[22px] w-[22px]" strokeWidth={1.6} />
+          <RotateCw className="h-[20px] w-[20px]" strokeWidth={1.6} />
         </button>
+
+        {onToggleLoop ? <LoopButton loop={loop ?? false} onToggle={onToggleLoop} /> : null}
       </div>
     </div>
   );

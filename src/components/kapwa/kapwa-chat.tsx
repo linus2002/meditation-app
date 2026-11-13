@@ -360,7 +360,7 @@ export function KapwaChat() {
           type="submit"
           disabled={!draft.trim() || typing}
           aria-label="Send"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-action-pill text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-aurora-blue text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <Send className="h-[18px] w-[18px]" strokeWidth={1.8} />
         </button>

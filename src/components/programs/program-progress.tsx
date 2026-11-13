@@ -41,7 +41,7 @@ export function ProgramProgress({ program }: { program: Program }) {
         <div className="px-5">
           <Link
             href={`/player/${target.id}`}
-            className="mt-5 flex h-12 w-full items-center justify-center rounded-full border border-black/10 bg-white text-body-sm font-medium text-black transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-5 flex h-12 w-full items-center justify-center solid-button rounded-full text-body-sm font-medium transition-transform duration-150 hover:scale-[1.01] active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             {label}
           </Link>

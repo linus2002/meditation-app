@@ -23,7 +23,7 @@ export default function OfflinePage() {
 
       <Link
         href="/home"
-        className="mt-7 rounded-full bg-action-pill px-6 py-3 text-body-sm font-medium text-white transition-[filter] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        className="mt-7 rounded-full bg-aurora-blue px-6 py-3 text-body-sm font-medium text-white transition-[filter] hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         Back to Serenity
       </Link>

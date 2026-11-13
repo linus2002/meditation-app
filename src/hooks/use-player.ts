@@ -10,6 +10,10 @@ interface UsePlayerOptions {
   durationSeconds: number;
   /** Fires once the elapsed time reaches the full duration. */
   onComplete?: () => void;
+  /** On reaching the end, start again from 0 instead of stopping. */
+  loop?: boolean;
+  /** Fires each time a loop goes round, in place of `onComplete`. */
+  onLoop?: () => void;
 }
 
 export interface PlayerState {
@@ -33,17 +37,26 @@ export interface PlayerState {
  * A frozen app pauses where the sound stopped, rather than finishing a session
  * nobody heard (see `watchForFreeze`).
  */
-export function usePlayer({ durationSeconds, onComplete }: UsePlayerOptions): PlayerState {
+export function usePlayer({
+  durationSeconds,
+  onComplete,
+  loop = false,
+  onLoop,
+}: UsePlayerOptions): PlayerState {
   const [elapsed, setElapsed] = React.useState(0);
   const [isPlaying, setIsPlaying] = React.useState(false);
 
   const startedAtRef = React.useRef(0);
   const baseElapsedRef = React.useRef(0);
   const completeRef = React.useRef(onComplete);
+  const loopRef = React.useRef({ loop, onLoop });
 
   React.useEffect(() => {
     completeRef.current = onComplete;
   }, [onComplete]);
+  React.useEffect(() => {
+    loopRef.current = { loop, onLoop };
+  }, [loop, onLoop]);
 
   React.useEffect(() => {
     if (!isPlaying) return undefined;
@@ -62,6 +75,14 @@ export function usePlayer({ durationSeconds, onComplete }: UsePlayerOptions): Pl
       }
 
       const seconds = baseElapsedRef.current + (now - startedAtRef.current) / 1000;
+      if (seconds >= durationSeconds && loopRef.current.loop) {
+        // Round again without stopping: the clock restarts from the top.
+        baseElapsedRef.current = 0;
+        startedAtRef.current = now;
+        setElapsed(0);
+        loopRef.current.onLoop?.();
+        return;
+      }
       if (seconds >= durationSeconds) {
         baseElapsedRef.current = durationSeconds;
         setElapsed(durationSeconds);

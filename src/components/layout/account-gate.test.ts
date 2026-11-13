@@ -14,6 +14,9 @@ describe('isMemberRoute', () => {
       '/reflections',
       '/assessment',
       '/kapwa',
+      '/mixes',
+      '/calendar',
+      '/mix-play',
     ]) {
       expect(isMemberRoute(path), path).toBe(true);
     }

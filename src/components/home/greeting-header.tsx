@@ -40,7 +40,7 @@ export function GreetingHeader() {
           {/* The day's reflection, one tap from the top of the app. */}
           <Link
             href="/reflections"
-            className="mr-1 flex h-8 items-center rounded-md bg-aurora-blue px-3.5 text-caption font-semibold leading-none text-white transition-transform duration-150 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mr-1 flex h-8 items-center rounded-[6px] border border-aurora-blue px-3.5 text-caption font-semibold leading-none text-aurora-blue hover:bg-aurora-blue/10 transition-transform duration-150 hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             Reflect
           </Link>

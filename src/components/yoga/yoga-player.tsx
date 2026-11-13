@@ -5,6 +5,7 @@ import { ChevronsLeft, Pause, Play, SkipForward, Volume2, VolumeX, X } from 'luc
 
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
 import { ResumeNote } from '@/components/session/resume-note';
+import { LoopButton } from '@/components/shared/loop-button';
 import { SessionComplete } from '@/components/session/session-complete';
 import { TimerRing } from '@/components/timer/timer-ring';
 import { Switch } from '@/components/ui/switch';
@@ -12,6 +13,7 @@ import { yogaColor } from '@/components/yoga/yoga-glass-tile';
 import { YOGA_SAFETY, type YogaSession } from '@/data/yoga';
 import { useBack } from '@/hooks/use-back';
 import { useKeepPlace } from '@/hooks/use-keep-place';
+import { useLoop } from '@/hooks/use-loop';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { useWakeLock } from '@/hooks/use-wake-lock';
 import { useYogaSession } from '@/hooks/use-yoga-session';
@@ -69,9 +71,22 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   // The pose the instructor has just said "Next, …" for.
   const announcedRef = React.useRef(-1);
   const linesFor = (index: number) =>
-    poseLines(session.poses[index], index === session.poses.length - 1);
+    poseLines(session.poses[index], index === session.poses.length - 1 && !loop);
+
+  const [loop, toggleLoop] = useLoop('yoga');
 
   const clock = useYogaSession(session.poses, {
+    loop,
+    onLoop: () => {
+      // A full round done: log it as a finished session, then go again.
+      clearResume(placeKey);
+      recorder.elapsedRef.current = total - offsetRef.current;
+      recorder.markFinished();
+      recorder.commit(true);
+      recorder.restart();
+      offsetRef.current = 0;
+      announcedRef.current = -1;
+    },
     onPoseStart: (index) => {
       // A clear bell to begin, a lighter one for each change of pose.
       bell(index === 0 ? 523.25 : 659.25);
@@ -84,8 +99,9 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     },
     onPoseEnding: (index) => {
       if (!voiceGuide) return;
-      const upcoming = index + 1;
-      if (upcoming >= session.poses.length) return;
+      // On loop, the last pose leads back into the first.
+      const upcoming = index + 1 < session.poses.length ? index + 1 : loop ? 0 : -1;
+      if (upcoming < 0) return;
       announcedRef.current = upcoming;
       voice.say({ src: session.poses[upcoming].voice?.next, text: linesFor(upcoming).next });
     },
@@ -103,7 +119,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   });
 
   const pose = session.poses[clock.index];
-  const next = session.poses[clock.index + 1];
+  const next = session.poses[clock.index + 1] ?? (loop ? session.poses[0] : undefined);
   const elapsed =
     phase === 'running' ? elapsedAt(session.poses, clock.index, clock.remaining) : 0;
   if (phase === 'running') recorder.elapsedRef.current = Math.max(0, elapsed - offsetRef.current);
@@ -252,12 +268,12 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
               type="button"
               onClick={() => (clock.running ? pause() : resume())}
               aria-label={clock.running ? 'Pause' : 'Resume'}
-              className="flex h-16 w-16 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="flex h-16 w-16 items-center justify-center play-button rounded-full transition-transform duration-150 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               {clock.running ? (
-                <Pause className="h-6 w-6 fill-canvas-deep" />
+                <Pause className="h-6 w-6 fill-current" />
               ) : (
-                <Play className="h-6 w-6 translate-x-[2px] fill-canvas-deep" />
+                <Play className="h-6 w-6 translate-x-[2px] fill-current" />
               )}
             </button>
             <button
@@ -268,6 +284,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
             >
               <SkipForward className="h-4 w-4" strokeWidth={2} />
             </button>
+            <LoopButton loop={loop} onToggle={toggleLoop} />
           </div>
         </div>
 

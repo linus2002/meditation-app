@@ -65,9 +65,24 @@ const CATEGORY_GRADIENTS: Record<CategorySlug, string> = {
  */
 export function MeditationsView() {
   // `?tab=stories` opens straight onto a tab. Yoga has its own page, /yoga.
-  const requestedTab = useSearchParams().get('tab');
-  const [tab, setTab] = React.useState<TabId>(isTabId(requestedTab) ? requestedTab : 'all');
-  const [category, setCategory] = React.useState<CategorySlug | 'all'>('all');
+  // `?category=happiness` opens the Meditation tab on that mood (the home cards).
+  const params = useSearchParams();
+  const requestedTab = params.get('tab');
+  const requestedCategory = params.get('category');
+  const linkedCategory = categories.some((item) => item.slug === requestedCategory)
+    ? (requestedCategory as CategorySlug)
+    : null;
+  const [tab, setTab] = React.useState<TabId>(
+    linkedCategory ? 'meditation' : isTabId(requestedTab) ? requestedTab : 'all',
+  );
+  const [category, setCategory] = React.useState<CategorySlug | 'all'>(linkedCategory ?? 'all');
+
+  // Following another link while already on this screen still lands on its mood.
+  React.useEffect(() => {
+    if (!linkedCategory) return;
+    setTab('meditation');
+    setCategory(linkedCategory);
+  }, [linkedCategory]);
 
   const { favorites, favoriteStories, ratings, sessions, hydrated } = useApp();
 

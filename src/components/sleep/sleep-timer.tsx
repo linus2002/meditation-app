@@ -75,12 +75,12 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
             onClick={() => setRunning((current) => !current)}
             disabled={remaining === 0}
             aria-label={running ? 'Pause timer' : 'Start timer'}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-ink text-canvas transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="flex h-12 w-12 items-center justify-center play-button rounded-full transition-transform duration-200 hover:scale-105 active:scale-95 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             {running ? (
-              <Pause className="h-[18px] w-[18px] fill-canvas-deep" />
+              <Pause className="h-[18px] w-[18px] fill-current" />
             ) : (
-              <Play className="h-[18px] w-[18px] translate-x-[1px] fill-canvas-deep" />
+              <Play className="h-[18px] w-[18px] translate-x-[1px] fill-current" />
             )}
           </button>
         </div>
@@ -98,7 +98,7 @@ export function SleepTimer({ onComplete }: { onComplete?: () => void }) {
             className={cn(
               'rounded-full px-3.5 py-1.5 text-caption font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
               minutes === preset
-                ? 'bg-action-pill text-white'
+                ? 'bg-aurora-blue text-white'
                 : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
             )}
           >

@@ -58,7 +58,7 @@ export function LargeTextToggle({ on, onToggle }: { on: boolean; onToggle: () =>
       className={cn(
         '-mt-1.5 tap-target flex h-9 w-9 items-center justify-center rounded-full text-body-sm font-semibold transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
-        on ? 'bg-action-pill text-white' : 'text-ink-muted hover:bg-overlay/[0.06] hover:text-ink',
+        on ? 'bg-aurora-blue text-white' : 'text-ink-muted hover:bg-overlay/[0.06] hover:text-ink',
       )}
     >
       Aa

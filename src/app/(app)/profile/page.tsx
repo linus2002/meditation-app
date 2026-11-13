@@ -185,7 +185,7 @@ export default function ProfilePage() {
                     'rounded-full px-3.5 py-2 text-caption font-medium transition-colors duration-150',
                     'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                     selected
-                      ? 'bg-action-pill text-white'
+                      ? 'bg-aurora-blue text-white'
                       : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
                   )}
                 >
@@ -211,7 +211,7 @@ export default function ProfilePage() {
                 <div
                   role="img"
                   aria-label={`${day.label}: ${day.minutes} mindful minutes`}
-                  className="w-full rounded-full bg-[linear-gradient(180deg,#61A644_0%,#61A644_45%,#2FE0CB_100%)]"
+                  className="w-full rounded-full bg-[linear-gradient(180deg,#1D9FDA_0%,#61A644_100%)]"
                   style={{
                     // A hairline for empty days, so the week still reads as seven.
                     height: day.minutes > 0 ? `${Math.round((day.minutes / peakMinutes) * 100)}%` : '3px',

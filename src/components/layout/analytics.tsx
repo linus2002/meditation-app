@@ -108,7 +108,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => answer(true)}
-            className="h-10 rounded-xl bg-action-pill px-4 text-body-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="h-10 rounded-xl bg-aurora-blue px-4 text-body-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             Allow
           </button>

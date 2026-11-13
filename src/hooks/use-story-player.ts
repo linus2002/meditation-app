@@ -43,7 +43,16 @@ interface NowPlaying {
  * Plays a recorded narration through a plain audio element, so the phone's
  * own volume buttons and lock-screen controls work as they do for any audio.
  */
-function useRecording(recording: StoryNarration | undefined, nowPlaying: NowPlaying) {
+function useRecording(
+  recording: StoryNarration | undefined,
+  nowPlaying: NowPlaying,
+  loop = false,
+  onEnded?: () => void,
+) {
+  const loopRef = React.useRef(loop);
+  loopRef.current = loop;
+  const endedRef = React.useRef(onEnded);
+  endedRef.current = onEnded;
   const audioRef = React.useRef<HTMLAudioElement | null>(null);
   const [speaking, setSpeaking] = React.useState(false);
   const [paused, setPaused] = React.useState(false);
@@ -69,10 +78,17 @@ function useRecording(recording: StoryNarration | undefined, nowPlaying: NowPlay
       if (!audio.ended) setPaused(true);
     };
     const onEnded = () => {
+      if (loopRef.current) {
+        // Round again from the top, as one unbroken listen.
+        audio.currentTime = 0;
+        void audio.play().catch(() => setPaused(true));
+        return;
+      }
       setSpeaking(false);
       setPaused(false);
       setElapsed(0);
       audio.currentTime = 0;
+      endedRef.current?.();
     };
     const onError = () => setFailed(true);
 
@@ -135,8 +151,8 @@ function useRecording(recording: StoryNarration | undefined, nowPlaying: NowPlay
     const handlers: [MediaSessionAction, MediaSessionActionHandler][] = [
       ['play', () => play()],
       ['pause', () => pause()],
-      ['seekbackward', () => skip(-15)],
-      ['seekforward', () => skip(15)],
+      ['seekbackward', () => skip(-10)],
+      ['seekforward', () => skip(10)],
     ];
     for (const [action, handler] of handlers) {
       try {
@@ -164,14 +180,18 @@ function useRecording(recording: StoryNarration | undefined, nowPlaying: NowPlay
  * voice otherwise — including when the recording cannot be reached, such as
  * offline, so a story can always be heard.
  */
-export function useStoryPlayer(story: Story): StoryPlayer {
+/**
+ * `loop`: when the story ends, read it again from the beginning.
+ * `onEnded`: called when the story has been heard to its end.
+ */
+export function useStoryPlayer(story: Story, loop = false, onEnded?: () => void): StoryPlayer {
   const segments = React.useMemo(() => segmentStory(story), [story]);
-  const narration = useNarration(segments);
+  const narration = useNarration(segments, loop, onEnded);
   const recording = useRecording(story.narration, {
     title: story.title,
     artist: `Read by ${story.voice}`,
     artwork: (story.cover ?? story.image).src,
-  });
+  }, loop, onEnded);
 
   if (story.narration && !recording.failed) {
     const { paragraphStarts, duration } = story.narration;

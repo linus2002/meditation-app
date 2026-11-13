@@ -64,7 +64,16 @@ function toError(error: { message?: string; code?: string; status?: number }): A
   if (error.code === 'otp_expired' || /token has expired|invalid/i.test(message)) {
     return new AuthError('invalid_code', message);
   }
-  if (error.status === 429 || /rate limit|security purposes/i.test(message)) {
+  // Supabase's built-in mailer only sends to the project team's own
+  // addresses; any other inbox is refused until custom SMTP is set up.
+  if (error.code === 'email_address_not_authorized' || /not authorized/i.test(message)) {
+    return new AuthError('email_failed', message);
+  }
+  if (
+    error.status === 429 ||
+    error.code === 'over_email_send_rate_limit' ||
+    /rate limit|security purposes/i.test(message)
+  ) {
     return new AuthError('rate_limited', message);
   }
   if (error.code === 'email_address_invalid' || /email.*invalid|invalid.*email/i.test(message)) {

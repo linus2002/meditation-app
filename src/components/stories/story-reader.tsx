@@ -4,12 +4,14 @@ import * as React from 'react';
 import Image from 'next/image';
 import { ChevronsLeft, Moon } from 'lucide-react';
 
+import { AddToMixButton } from '@/components/mixes/add-to-mix-button';
 import { NarrationControls } from '@/components/stories/narration-controls';
 import { StoryFavoriteButton } from '@/components/stories/story-favorite-button';
 import { ResumeNote } from '@/components/session/resume-note';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
 import { useBack } from '@/hooks/use-back';
 import { useKeepPlace } from '@/hooks/use-keep-place';
+import { useLoop } from '@/hooks/use-loop';
 import { useStoryPlayer } from '@/hooks/use-story-player';
 import { formatClock } from '@/lib/format';
 import { clearResume, FINISHED_FRACTION, readResume, resumeKey } from '@/lib/resume';
@@ -40,11 +42,24 @@ const musicFor = (story: Story) => `/audio/music/${story.category}.mp3`;
  */
 const MUSIC_LEVEL = 0.8;
 
-export function StoryReader({ story }: { story: Story }) {
+export interface StoryMixMode {
+  /** Start reading as soon as the screen opens (the mix's play tap unlocked audio). */
+  autoStart: boolean;
+  /** The story was heard to its end: the mix moves on. */
+  onFinished: () => void;
+}
+
+export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }) {
   const goBack = useBack('/stories');
   const { playMusic, pauseMusic, stopMusic, prime } = useAudio();
 
-  const narration = useStoryPlayer(story);
+  const [savedLoop, toggleLoop] = useLoop('story');
+  // In a mix, the mix decides what comes next, so a single story never repeats.
+  const loop = mix ? false : savedLoop;
+  const finishedRef = React.useRef(mix?.onFinished);
+  finishedRef.current = mix?.onFinished;
+  const onEnded = React.useCallback(() => finishedRef.current?.(), []);
+  const narration = useStoryPlayer(story, loop, onEnded);
 
   const [music, setMusic] = React.useState(true);
   const [timerMinutes, setTimerMinutes] = React.useState(0);
@@ -66,14 +81,16 @@ export function StoryReader({ story }: { story: Story }) {
   const seekMax = narration.seek.max;
   const [resumeAt, setResumeAt] = React.useState<number | null>(null);
   const { seekTo } = narration;
+  const inMix = mix !== undefined;
   React.useEffect(() => {
-    if (seekMax <= 0) return;
+    // A mix always plays each story from the top.
+    if (seekMax <= 0 || inMix) return;
     const point = readResume(placeKey, seekMax, unit === 'seconds' ? undefined : 2);
     setResumeAt(point);
     if (point !== null) seekTo(point);
     // Read once per kind of reader; seekTo changes identity as it plays.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [placeKey, seekMax]);
+  }, [placeKey, seekMax, inMix]);
 
   const startOver = () => {
     clearResume(placeKey);
@@ -159,6 +176,17 @@ export function StoryReader({ story }: { story: Story }) {
     narration.play();
   };
 
+  // In a mix, the story starts by itself once its reader is ready.
+  const autoStartedRef = React.useRef(false);
+  const autoStart = mix?.autoStart ?? false;
+  React.useEffect(() => {
+    if (!autoStart || autoStartedRef.current || !narration.supported) return;
+    autoStartedRef.current = true;
+    void startNarration();
+    // startNarration is recreated each render; this runs once per story.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, narration.supported]);
+
   const toggleMusic = async () => {
     if (music) {
       setMusic(false);
@@ -205,7 +233,14 @@ export function StoryReader({ story }: { story: Story }) {
         <p className="text-caption leading-none text-ink-muted">
           {estimatedMinutes(story)} Min. {story.narration ? 'listen' : 'read'}
         </p>
-        <StoryFavoriteButton storyId={story.id} title={story.title} size="md" className="-mr-1" />
+        <div className="-mr-1 flex items-center">
+          <AddToMixButton
+            item={{ kind: 'story', id: story.id }}
+            title={story.title}
+            className="text-ink-muted hover:text-ink"
+          />
+          <StoryFavoriteButton storyId={story.id} title={story.title} size="md" />
+        </div>
       </header>
 
       <div className="relative px-6 pt-5 text-center">
@@ -240,7 +275,12 @@ export function StoryReader({ story }: { story: Story }) {
                 className="mb-3"
               />
             ) : null}
-            <NarrationControls player={narration} onStart={startNarration} />
+            <NarrationControls
+              player={narration}
+              onStart={startNarration}
+              loop={loop}
+              onToggleLoop={mix ? undefined : toggleLoop}
+            />
           </>
         ) : (
           <p className="rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
@@ -270,7 +310,7 @@ export function StoryReader({ story }: { story: Story }) {
               <span
                 className={cn(
                   'flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors',
-                  music ? 'bg-action-pill' : 'bg-overlay/12',
+                  music ? 'bg-aurora-blue' : 'bg-overlay/12',
                 )}
               >
                 <span
@@ -310,7 +350,7 @@ export function StoryReader({ story }: { story: Story }) {
                         'rounded-full px-3.5 py-2 text-caption font-medium transition-colors duration-150',
                         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                         selected
-                          ? 'bg-action-pill text-white'
+                          ? 'bg-aurora-blue text-white'
                           : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
                       )}
                     >

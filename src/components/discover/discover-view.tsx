@@ -31,6 +31,13 @@ export function DiscoverView() {
     [activeCategory],
   );
 
+  // A category chosen by a link may sit off the end of the chip row; bring it into view.
+  const railRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    const chip = railRef.current?.querySelector<HTMLElement>('[aria-pressed="true"]');
+    chip?.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+  }, [activeCategory]);
+
   const selectCategory = (slug: string | null) => {
     router.replace(slug ? `/discover?category=${slug}` : '/discover', { scroll: false });
   };
@@ -43,14 +50,14 @@ export function DiscoverView() {
         <SearchBarLink />
       </div>
 
-      <div className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
+      <div ref={railRef} className="rail mt-4 flex gap-2 overflow-x-auto px-5 pb-1">
         <button
           type="button"
           onClick={() => selectCategory(null)}
           aria-pressed={!activeCategory}
           className={cn(
             'shrink-0 rounded-full px-4 py-2 text-caption font-medium transition-colors',
-            !activeCategory ? 'bg-action-pill text-white' : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
+            !activeCategory ? 'bg-aurora-blue text-white' : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
           )}
         >
           All
@@ -65,7 +72,7 @@ export function DiscoverView() {
               aria-pressed={isActive}
               className={cn(
                 'shrink-0 rounded-full px-4 py-2 text-caption font-medium transition-colors',
-                isActive ? 'bg-action-pill text-white' : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
+                isActive ? 'bg-aurora-blue text-white' : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
               )}
             >
               {category.name}
@@ -97,7 +104,7 @@ export function DiscoverView() {
           href="/stories"
           className="group mb-4 flex items-center gap-3.5 rounded-tile bg-surface p-4 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#3FD9C9_0%,#7CA9E8_55%,#1D9FDA_100%)]">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-action-pill">
             <BookOpen className="h-5 w-5 text-white" strokeWidth={1.8} />
           </span>
           <span className="min-w-0 flex-1">

@@ -287,7 +287,7 @@ export function SupportPlayer({
                 type="button"
                 onClick={togglePause}
                 aria-label={player.isPlaying ? 'Pause' : 'Resume'}
-                className="flex h-[76px] w-[76px] items-center justify-center rounded-full bg-action-pill text-white shadow-pill transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                className="flex h-[76px] w-[76px] items-center justify-center play-button rounded-full shadow-pill transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
               >
                 {player.isPlaying ? (
                   <Pause className="h-8 w-8" strokeWidth={1.8} />

@@ -45,7 +45,7 @@ export function AssessmentCard() {
         {/* The same solid pill as Start session in the Recommended rail. */}
         <Link
           href="/assessment"
-          className="mt-4 flex h-10 w-fit items-center rounded-full bg-black px-5 text-[0.8125rem] font-medium text-white [[data-theme=dark]_&]:bg-white [[data-theme=dark]_&]:text-black transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          className="mt-4 flex h-10 w-fit items-center solid-button rounded-full px-5 text-[0.8125rem] font-medium transition-transform duration-150 hover:scale-[1.02] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           Take assessment
         </Link>

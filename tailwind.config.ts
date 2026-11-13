@@ -124,20 +124,20 @@ const config: Config = {
       },
       boxShadow: {
         deck: '0 18px 40px -18px rgba(0,0,0,0.65)',
-        pill: '0 12px 30px -10px rgba(63,162,143,0.5)',
+        pill: '0 12px 30px -10px rgba(29,159,218,0.45)',
         tile: '0 10px 30px -18px rgba(0,0,0,0.8)',
       },
       backgroundImage: {
         'deck-activities':
-          'linear-gradient(118deg,#E8F27A 0%,#B9E683 22%,#63CB9F 48%,#23A392 70%,#0B5E5E 100%)',
+          'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
         'deck-happiness':
-          'linear-gradient(102deg,#D2EDA2 0%,#BFE3F5 34%,#6EC3EA 58%,#1D9FDA 74%,#A9D9F2 100%)',
+          'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
         'deck-relaxation':
-          'linear-gradient(104deg,#EAF3E4 0%,#CBE3BE 40%,#95C77E 70%,#61A644 100%)',
+          'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
         'action-pill': 'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
         'analytics-pill': 'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
-        'nav-active': 'linear-gradient(135deg,#3FD9C9 0%,#7CA9E8 50%,#1D9FDA 100%)',
-        'ring-active': 'linear-gradient(140deg,#61A644 0%,#1D9FDA 100%)',
+        'nav-active': 'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
+        'ring-active': 'linear-gradient(90deg,#1D9FDA 0%,#61A644 100%)',
       },
       keyframes: {
         'accordion-down': {

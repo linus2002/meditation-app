@@ -107,7 +107,7 @@ export function AccountCard() {
               type="button"
               disabled={state.busy}
               onClick={() => void confirmSignOut()}
-              className="h-10 flex-1 rounded-full bg-ink text-caption font-medium text-canvas transition-opacity disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+              className="h-10 flex-1 solid-button rounded-full text-caption font-medium transition-opacity disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
               {state.busy ? 'Signing out…' : 'Sign out'}
             </button>

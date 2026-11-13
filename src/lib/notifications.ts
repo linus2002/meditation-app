@@ -9,6 +9,7 @@ import {
   upcomingDaily,
   type ReminderDefinition,
 } from '@/lib/reminders';
+import { isScheduleDue, upcomingOccurrences, type ScheduledSession } from '@/lib/schedule';
 
 /**
  * Delivering the scheduled reminders, on whichever platform is underneath.
@@ -414,6 +415,120 @@ export function startReminders(enabledIds: string[], resolveBody?: BodyResolver)
   const timer = window.setInterval(tick, TICK_MS);
   document.addEventListener('visibilitychange', onVisible);
 
+  return () => {
+    stopped = true;
+    window.clearInterval(timer);
+    document.removeEventListener('visibilitychange', onVisible);
+  };
+}
+
+/*
+ * Scheduled sessions (see `lib/schedule`): the reader's own dated sessions,
+ * delivered alongside the fixed reminders but kept apart from them, in native
+ * ids 20000 onwards so neither can ever cancel the other.
+ */
+
+/** What a scheduled session's notification says, and where a tap lands. */
+export interface ScheduleNotice {
+  title: string;
+  body: string;
+  url: string;
+}
+
+const SCHEDULE_NATIVE_BASE = 20000;
+/** How far ahead, and how many, are handed to the OS on each launch. */
+const SCHEDULE_DAYS_AHEAD = 30;
+const SCHEDULE_NATIVE_LIMIT = 40;
+/** The native ids handed over last time, so a sync can clear exactly those. */
+const SCHEDULE_IDS_KEY = 'serenity.schedule.native.v1';
+
+function readScheduledIds(): number[] {
+  try {
+    const raw = window.localStorage.getItem(SCHEDULE_IDS_KEY);
+    const ids = raw ? (JSON.parse(raw) as unknown) : [];
+    return Array.isArray(ids) ? ids.filter((id): id is number => typeof id === 'number') : [];
+  } catch {
+    return [];
+  }
+}
+
+async function syncScheduleNative(
+  entries: ScheduledSession[],
+  describe: (entry: ScheduledSession) => ScheduleNotice | null,
+): Promise<void> {
+  const native = nativePlugin();
+  if (!native) return;
+  try {
+    const previous = readScheduledIds();
+    if (previous.length > 0) await native.cancel({ notifications: previous.map((id) => ({ id })) });
+
+    const notifications = upcomingOccurrences(entries, new Date(), SCHEDULE_DAYS_AHEAD, SCHEDULE_NATIVE_LIMIT)
+      .map(({ entry, at }, index) => {
+        const notice = describe(entry);
+        if (!notice) return null;
+        return {
+          id: SCHEDULE_NATIVE_BASE + index,
+          title: notice.title,
+          body: notice.body,
+          schedule: { at, allowWhileIdle: true },
+          extra: { url: notice.url },
+          ...NATIVE_TIMING,
+        };
+      })
+      .filter((entry): entry is NonNullable<typeof entry> => entry !== null);
+
+    if (notifications.length > 0) await native.schedule({ notifications });
+    window.localStorage.setItem(SCHEDULE_IDS_KEY, JSON.stringify(notifications.map((n) => n.id)));
+  } catch {
+    // Without the plugin there are simply no scheduled notifications.
+  }
+}
+
+/**
+ * Keeps notifications for the reader's scheduled sessions live, and returns
+ * the teardown. Native: the next month of them is handed to the OS (refreshed
+ * every launch and every change). Web: a ticker shows each one when due,
+ * while the app is open.
+ */
+export function startScheduledSessions(
+  entries: ScheduledSession[],
+  describe: (entry: ScheduledSession) => ScheduleNotice | null,
+): () => void {
+  if (typeof window === 'undefined') return () => {};
+
+  if (nativePlugin()) {
+    void syncScheduleNative(entries, describe);
+    return () => {};
+  }
+
+  if (!webNotificationsAvailable() || entries.length === 0) return () => {};
+  let stopped = false;
+
+  const tick = () => {
+    if (stopped || Notification.permission !== 'granted') return;
+    const now = new Date();
+    const delivered = readDelivered();
+    for (const entry of entries) {
+      const key = `schedule:${entry.id}`;
+      if (!isScheduleDue(entry, now, delivered[key])) continue;
+      const notice = describe(entry);
+      if (!notice) continue;
+      markDelivered(key, dayKey(now));
+      void displayWebNotification(notice.title, {
+        body: notice.body,
+        tag: `serenity-${key}`,
+        url: notice.url,
+      });
+    }
+  };
+
+  const onVisible = () => {
+    if (document.visibilityState === 'visible') tick();
+  };
+
+  tick();
+  const timer = window.setInterval(tick, TICK_MS);
+  document.addEventListener('visibilitychange', onVisible);
   return () => {
     stopped = true;
     window.clearInterval(timer);

@@ -32,9 +32,7 @@ export function StartGoalCard({ meditation }: { meditation: Meditation }) {
         <defs>
           <linearGradient id="start-goal-play" x1="18%" y1="8%" x2="82%" y2="92%">
             <stop offset="0%" stopColor="#1D9FDA" />
-            <stop offset="38%" stopColor="#61A644" />
-            <stop offset="66%" stopColor="#61A644" />
-            <stop offset="100%" stopColor="#2FE0CB" />
+            <stop offset="100%" stopColor="#61A644" />
           </linearGradient>
         </defs>
         <path

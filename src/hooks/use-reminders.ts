@@ -29,6 +29,9 @@ import { useApp } from '@/providers/app-provider';
  * that - `ReminderScheduler` in the root layout - while the profile screen uses
  * the same hook read-only, for the permission state and the toggle handlers.
  */
+/** Fired when notification permission was just asked for, so every mount re-reads it. */
+const PERMISSION_CHANGED = 'serenity:notification-permission';
+
 export function useReminders({ schedule = false }: { schedule?: boolean } = {}) {
   const { settings, setSetting, hydrated } = useApp();
 
@@ -55,9 +58,12 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
 
     refresh();
     document.addEventListener('visibilitychange', onVisible);
+    // Granted from another screen (Profile, the calendar): every mount re-reads.
+    window.addEventListener(PERMISSION_CHANGED, refresh);
     return () => {
       cancelled = true;
       document.removeEventListener('visibilitychange', onVisible);
+      window.removeEventListener(PERMISSION_CHANGED, refresh);
     };
   }, []);
 
@@ -93,6 +99,7 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
     async (id: string) => {
       const granted = permission === 'granted' ? 'granted' : await requestPermission();
       setPermission(granted);
+      window.dispatchEvent(new Event(PERMISSION_CHANGED));
 
       if (granted !== 'granted') return false;
       setSetting(id, true);
@@ -107,6 +114,7 @@ export function useReminders({ schedule = false }: { schedule?: boolean } = {}) 
   const allow = React.useCallback(async () => {
     const state = await requestPermission();
     setPermission(state);
+    window.dispatchEvent(new Event(PERMISSION_CHANGED));
     return state;
   }, []);
 
