@@ -1,0 +1,852 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Serenity Documentation</title>
+<style>
+  @font-face { font-family: 'Poppins'; src: url('../brand-board/poppins-latin-400-normal.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'Poppins'; src: url('../brand-board/poppins-latin-500-normal.woff2') format('woff2'); font-weight: 500; }
+  @font-face { font-family: 'Poppins'; src: url('../brand-board/poppins-latin-600-normal.woff2') format('woff2'); font-weight: 600; }
+  @font-face { font-family: 'Poppins'; src: url('../brand-board/poppins-latin-700-normal.woff2') format('woff2'); font-weight: 700; }
+
+  :root {
+    --mist: #F4F5F9; --blue: #1D9FDA; --green: #61A644; --lagoon: #10739A;
+    --midnight: #181A2E; --ink-soft: #3A3D58; --ink-muted: #5C607C; --rule: #E2E4EE;
+    --blue-tint: #E8F5FC; --green-tint: #EEF6EA; --amber-tint: #FFF6E5; --amber: #B26A00;
+  }
+
+  @page {
+    size: A4;
+    margin: 15mm 17mm 17mm 17mm;
+    @bottom-left  { content: "Serenity · Product & Technical Documentation · v1.0.0"; font: 400 7.5pt 'Poppins', sans-serif; color: #8A8EA8; }
+    @bottom-right { content: counter(page); font: 600 8pt 'Poppins', sans-serif; color: #1D9FDA; }
+  }
+  @page cover { margin: 0; @bottom-left { content: none; } @bottom-right { content: none; } }
+
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; background: #fff; }
+  body { font: 400 9.1pt/1.56 'Poppins', 'Segoe UI', sans-serif; color: var(--midnight); }
+
+  /* ---------- cover ---------- */
+  .cover { page: cover; position: relative; width: 210mm; height: 297mm; overflow: hidden; break-after: page;
+    background: linear-gradient(180deg, #1D9FDA 0%, #1786BC 34%, #12517A 72%, #181A2E 100%); color: #fff; }
+  .cover .mark { position: absolute; right: -60mm; top: 40mm; width: 190mm; height: 202mm; opacity: .12; }
+  .cover .top { position: absolute; left: 20mm; top: 20mm; display: flex; align-items: center; gap: 10px; }
+  .cover .top span { font: 600 20pt/1 'Poppins'; letter-spacing: -0.02em; }
+  .cover .title { position: absolute; left: 20mm; right: 20mm; bottom: 58mm; }
+  .cover .eyebrow { font: 500 9pt/1 'Poppins'; letter-spacing: .18em; text-transform: uppercase; color: #BFE6F7; margin-bottom: 14px; }
+  .cover h1 { font: 700 40pt/1.05 'Poppins'; letter-spacing: -0.02em; margin: 0; }
+  .cover h1 span { font-weight: 300; display: block; }
+  .cover .sub { margin-top: 18px; font: 400 11pt/1.55 'Poppins'; color: #D9EEF8; max-width: 125mm; }
+  .cover .meta { position: absolute; left: 20mm; right: 20mm; bottom: 20mm; display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,.25); padding-top: 12px; }
+  .cover .meta div { flex: 1; font: 400 8pt/1.5 'Poppins'; color: #CFE7F3; }
+  .cover .meta b { display: block; font: 600 10pt/1.4 'Poppins'; color: #fff; }
+
+  /* ---------- headings ---------- */
+  section.chapter { break-before: page; }
+  .num { font: 600 8.5pt/1 'Poppins'; letter-spacing: .16em; text-transform: uppercase; color: var(--blue); margin: 0 0 8px; }
+  h2 { font: 700 22pt/1.15 'Poppins'; letter-spacing: -0.015em; margin: 0 0 6px; }
+  .lede { font: 400 10.6pt/1.55 'Poppins'; color: var(--ink-soft); margin: 0 0 14px; }
+  h3 { font: 600 12.5pt/1.3 'Poppins'; margin: 16px 0 5px; break-after: avoid; }
+  h4 { font: 600 9.8pt/1.35 'Poppins'; margin: 14px 0 4px; break-after: avoid; color: var(--lagoon); }
+  p { margin: 0 0 9px; }
+  ul { margin: 0 0 10px; padding-left: 16px; }
+  li { margin: 0 0 3px; }
+  li::marker { color: var(--blue); }
+  code { font: 500 8.2pt/1 Consolas, 'Cascadia Mono', monospace; background: var(--mist); padding: 1px 4px; border-radius: 3px; color: #10557A; }
+  .muted { color: var(--ink-muted); }
+  .small { font-size: 8.4pt; }
+
+  /* ---------- tables ---------- */
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 8.5pt; line-height: 1.5; }
+  thead { display: table-header-group; }
+  tr { break-inside: avoid; }
+  th { text-align: left; font: 600 7.8pt/1.3 'Poppins'; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-muted);
+    border-bottom: 1.5px solid var(--midnight); padding: 6px 8px 6px 0; }
+  td { border-bottom: 1px solid var(--rule); padding: 4.5px 8px 4.5px 0; vertical-align: top; }
+  td:first-child { font-weight: 500; }
+
+  /* ---------- blocks ---------- */
+  .callout { border-radius: 10px; padding: 11px 14px; margin: 10px 0 14px; font-size: 8.8pt; break-inside: avoid; }
+  .callout b:first-child { display: block; font-weight: 600; margin-bottom: 2px; }
+  .c-blue { background: var(--blue-tint); border-left: 3px solid var(--blue); }
+  .c-green { background: var(--green-tint); border-left: 3px solid var(--green); }
+  .c-amber { background: var(--amber-tint); border-left: 3px solid #E59A1C; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 14px 0 18px; }
+  .stat { background: var(--mist); border-radius: 12px; padding: 12px 12px 10px; }
+  .stat b { display: block; font: 700 20pt/1.05 'Poppins'; color: var(--blue); letter-spacing: -0.02em; }
+  .stat span { font: 500 8pt/1.35 'Poppins'; color: var(--ink-soft); }
+  .stat:nth-child(4n+2) b { color: var(--green); }
+  .stat:nth-child(4n+3) b { color: var(--lagoon); }
+  .stat:nth-child(4n+4) b { color: var(--midnight); }
+
+  .principles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 8px 0 14px; }
+  .principle { border: 1px solid var(--rule); border-radius: 12px; padding: 11px 13px; break-inside: avoid; }
+  .principle b { display: block; font: 600 9.6pt/1.3 'Poppins'; margin-bottom: 3px; }
+  .principle span { font-size: 8.6pt; color: var(--ink-soft); line-height: 1.5; display: block; }
+
+  .feature { display: grid; grid-template-columns: 40mm 1fr; gap: 7mm; margin: 2px 0 12px; break-inside: avoid; }
+  .feature.noshot { grid-template-columns: 1fr; }
+  .shot { width: 40mm; border-radius: 16px; overflow: hidden; background: #000; box-shadow: 0 0 0 4px #111, 0 0 0 5px #3a3a3e; margin: 5px; }
+  .shot img { display: block; width: 100%; }
+  .feature h3 { margin-top: 0; }
+  .where { font-size: 8pt; color: var(--ink-muted); margin-top: 6px; }
+
+  .strip { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin: 10px 0 6px; }
+  .strip .shot { width: auto; border-radius: 10px; box-shadow: 0 0 0 2.5px #111, 0 0 0 3.5px #3a3a3e; margin: 3px; }
+  .strip figcaption { font: 500 7.4pt/1.2 'Poppins'; text-align: center; color: var(--ink-muted); margin-top: 6px; }
+  figure { margin: 0; }
+
+  .toc { margin-top: 10px; }
+  .toc a { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--rule); color: var(--midnight); text-decoration: none; }
+  .toc .n { font: 600 9pt 'Poppins'; color: var(--blue); width: 24px; }
+  .toc .t { font: 500 11pt 'Poppins'; flex: 1; }
+  .toc .d { font: 400 8.4pt 'Poppins'; color: var(--ink-muted); }
+
+  .diagram { margin: 6px 0 14px; break-inside: avoid; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 0 9mm; }
+  .check { list-style: none; padding-left: 0; }
+  .check li { position: relative; padding-left: 20px; margin-bottom: 4px; break-inside: avoid; }
+  .check li::before { content: ''; position: absolute; left: 0; top: 4px; width: 11px; height: 11px; border: 1.6px solid var(--blue); border-radius: 3px; }
+  .tag { display: inline-block; font: 600 6.8pt/1 'Poppins'; letter-spacing: .08em; text-transform: uppercase; padding: 3px 6px; border-radius: 4px; margin-right: 6px; vertical-align: 1px; }
+  .t-block { background: #FDE7E7; color: #B42318; }
+  .t-high { background: var(--amber-tint); color: var(--amber); }
+  .t-tidy { background: var(--blue-tint); color: var(--lagoon); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="pL" d="M105 10 A296 296 0 0 0 256 500 A296 296 0 0 0 105 10Z"/>
+    <path id="pR" d="M407 10 A296 296 0 0 1 256 500 A296 296 0 0 1 407 10Z"/>
+    <clipPath id="cL"><use href="#pL"/></clipPath>
+    <symbol id="mk-c" viewBox="22 6 468 498"><use href="#pL" fill="#1D9FDA"/><use href="#pR" fill="#61A644"/><use href="#pR" fill="#10739A" clip-path="url(#cL)"/></symbol>
+    <symbol id="mk-w" viewBox="22 6 468 498"><use href="#pL" fill="#F4F5F9"/><use href="#pR" fill="#F4F5F9"/><use href="#pR" fill="#C6D2DC" clip-path="url(#cL)"/></symbol>
+  </defs>
+</svg>
+
+<!-- ======================= COVER ======================= -->
+<div class="cover">
+  <svg class="mark" style="shape-rendering:geometricPrecision"><use href="#mk-w"/></svg>
+  <div class="top">
+    <svg width="34" height="36" style="shape-rendering:geometricPrecision"><use href="#mk-w"/></svg>
+    <span>serenity</span>
+  </div>
+  <div class="title">
+    <div class="eyebrow">Release documentation</div>
+    <h1>How Serenity works<span>Features, system and release guide</span></h1>
+    <p class="sub">A complete reference to the Serenity meditation app: what it does for the people who use it, how it is built, where data lives, and what to finish before it ships.</p>
+  </div>
+  <div class="meta">
+    <div><b>Version 1.0.0</b>App release</div>
+    <div><b>November 2026</b>Document date</div>
+    <div><b>Android · Web</b>Platforms</div>
+    <div><b>com.linus2002.serenity</b>Application ID</div>
+  </div>
+</div>
+
+<!-- ======================= CONTENTS ======================= -->
+<section>
+  <p class="num">Contents</p>
+  <h2>In this document</h2>
+  <nav class="toc">
+    <a><span class="n">01</span><span class="t">Introduction</span><span class="d">What Serenity is, who it is for, the principles behind it</span></a>
+    <a><span class="n">02</span><span class="t">Serenity at a glance</span><span class="d">Content, numbers and the main screens</span></a>
+    <a><span class="n">03</span><span class="t">Getting around</span><span class="d">First run, navigation, guests and accounts</span></a>
+    <a><span class="n">04</span><span class="t">Features</span><span class="d">Every feature, how it behaves and where it lives</span></a>
+    <a><span class="n">05</span><span class="t">System architecture</span><span class="d">How the pieces fit together, and the tech stack</span></a>
+    <a><span class="n">06</span><span class="t">Content and sound</span><span class="d">The CMS, recordings, narration and synthesised sound</span></a>
+    <a><span class="n">07</span><span class="t">Data and privacy</span><span class="d">What stays on the phone, what syncs, analytics consent</span></a>
+    <a><span class="n">08</span><span class="t">Backend reference</span><span class="d">Supabase tables, functions, edge function, settings</span></a>
+    <a><span class="n">09</span><span class="t">Build, deploy and release</span><span class="d">Commands, Android build, environment, setup</span></a>
+    <a><span class="n">10</span><span class="t">Quality and accessibility</span><span class="d">Tests, device support, accessibility</span></a>
+    <a><span class="n">11</span><span class="t">Release checklist</span><span class="d">What must be done before publishing</span></a>
+    <a><span class="n">A</span><span class="t">Appendix: screen map</span><span class="d">Every route in the app</span></a>
+  </nav>
+</section>
+
+<!-- ======================= 1 INTRO ======================= -->
+<section class="chapter">
+  <p class="num">01 · Introduction</p>
+  <h2>A calm place to sit, sleep and recover</h2>
+  <p class="lede">Serenity is a guided meditation and wellbeing app for phones and tablets. It offers guided sessions, multi-day programs, sleep tools, read-aloud stories, gentle yoga, a daily reflection and a built-in guide called Kapwa, all in one quiet, dark-first interface.</p>
+
+  <h3>Who it is for</h3>
+  <ul>
+    <li><b>Beginners</b> who want a short, guided start. A 12-question check-in builds a personal plan, and programs take them through a topic step by step.</li>
+    <li><b>Regular meditators</b> who want an unguided timer, interval bells, ambient sound and an honest record of their practice.</li>
+    <li><b>Poor sleepers</b>, with sleep sessions, bedtime stories, an ambient mixer, a wind-down timer and a private sleep log.</li>
+    <li><b>People living with cancer and their carers</b>, through an optional support track, which is off until it has passed clinical review (see section 4.17).</li>
+  </ul>
+
+  <h3>Design principles</h3>
+  <p>These principles shaped the product, and they explain many of the decisions in this document.</p>
+  <div class="principles">
+    <div class="principle"><b>Honest numbers</b><span>Every progress figure comes from sittings actually recorded on the device. A new install starts empty and nothing is invented.</span></div>
+    <div class="principle"><b>Private by default</b><span>Practice, reflections, sleep logs and moods stay on the phone. Syncing needs an account, and analytics need explicit consent.</span></div>
+    <div class="principle"><b>Works offline</b><span>Installed, the app runs with no connection, including in hospitals. Sound is generated on the device, and the screens are cached when the app is installed.</span></div>
+    <div class="principle"><b>Calm, not compulsive</b><span>There is no confetti, no scores and no "streak lost" warnings. Reflections are a record, not a rating of the person.</span></div>
+    <div class="principle"><b>Made for the hand</b><span>The app is designed for phones and tablets, from a 320px iPhone SE to large Android handsets. Desktop screens get a "made for phones" page.</span></div>
+    <div class="principle"><b>Safe by design</b><span>Kapwa never answers a crisis with a meditation. Cancer-support content can make no medical claims, and tests enforce this.</span></div>
+  </div>
+
+  <h3>Platforms in this release</h3>
+  <table>
+    <thead><tr><th style="width:30%">Platform</th><th>How it is delivered</th></tr></thead>
+    <tbody>
+      <tr><td>Android app</td><td>A Capacitor 8 native shell around a static export of the web app. Package <code>com.linus2002.serenity</code>, minimum Android 7.0 (SDK 24), target SDK 36.</td></tr>
+      <tr><td>Web / installable app (PWA)</td><td>A Next.js 15 deployment that can be installed to the home screen and works fully offline once installed.</td></tr>
+      <tr><td>iOS</td><td>Supported by the codebase (<code>npm run open:ios</code>), but the Xcode project has not been created yet. It needs a Mac (see section 11).</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 2 AT A GLANCE ======================= -->
+<section class="chapter">
+  <p class="num">02 · Serenity at a glance</p>
+  <h2>The library and the screens</h2>
+  <p class="lede">The content is managed in the Sanity CMS and built into the app. The figures below are taken from the content shipped in this release.</p>
+
+  <div class="stats">
+    <div class="stat"><b>74</b><span>guided meditations</span></div>
+    <div class="stat"><b>10</b><span>multi-session programs</span></div>
+    <div class="stat"><b>16</b><span>narrated stories</span></div>
+    <div class="stat"><b>20</b><span>yoga sessions</span></div>
+    <div class="stat"><b>16</b><span>generated soundscapes</span></div>
+    <div class="stat"><b>27</b><span>recorded program sessions</span></div>
+    <div class="stat"><b>55</b><span>daily inspiration messages</span></div>
+    <div class="stat"><b>14</b><span>reflection prompts</span></div>
+  </div>
+
+  <div class="strip">
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/home.webp"></div><figcaption>Home</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/meditations.webp"></div><figcaption>Meditations</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/player.webp"></div><figcaption>Player</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/program.webp"></div><figcaption>Program</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/kapwa.webp"></div><figcaption>Kapwa</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/sleep.webp"></div><figcaption>Sleep</figcaption></figure>
+  </div>
+  <div class="strip">
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/discover.webp"></div><figcaption>Discover</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/stories.webp"></div><figcaption>Stories</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/story.webp"></div><figcaption>Story reader</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/yoga.webp"></div><figcaption>Yoga</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/timer.webp"></div><figcaption>Timer</figcaption></figure>
+    <figure><div class="shot"><img src="../../public/landing/screens/dark/reflections.webp"></div><figcaption>Reflections</figcaption></figure>
+  </div>
+</section>
+
+<!-- ======================= 3 GETTING AROUND ======================= -->
+<section class="chapter">
+  <p class="num">03 · Getting around</p>
+  <h2>First run, navigation and accounts</h2>
+  <p class="lede">A new user sees a short tour, then chooses whether to sign in or browse as a guest. After that the app opens straight to Home.</p>
+
+  <h3>The first run</h3>
+  <ol style="padding-left:16px; margin:0 0 10px">
+    <li><b>Entry gate (<code>/</code>).</b> Waits until the device's saved state has loaded, so the wrong screen never flashes. First-time users go to the tour, everyone else to Home. <code>router.replace</code> keeps the tour out of the back history.</li>
+    <li><b>Welcome tour (<code>/welcome</code>).</b> Four swipeable steps, always shown in dark mode: the brand sweep, a grid of session artwork, "New in Serenity" (Yoga, Kapwa, Daily inspiration), and the intro screen. Finishing or skipping marks the tour as done.</li>
+    <li><b>Sign in (<code>/login</code>).</b> Three options: <i>Continue with Email</i>, <i>Create Account</i> or <i>Browse as a guest</i>. A <code>?next=</code> parameter returns the user to where they were going, and only in-app paths are accepted.</li>
+  </ol>
+
+  <h3>Navigation</h3>
+  <p>The bottom bar has five places: <b>Home</b>, <b>Meditations</b>, <b>Kapwa</b> (the raised centre button, drawn with the app's logo), <b>Yoga</b> and <b>Sleep</b>. Discover, Search, Stories, Programs, Mixes, Reflections, Notifications, Calendar, Downloads and Profile are reached from Home, from the header controls and from Profile. Players open full screen, without the bottom bar.</p>
+  <p>Navigation is designed to feel immediate. Screens have no entry animation, the tab highlight moves on tap, and destinations are prefetched. Transitions measured on a production build took 14–99 ms.</p>
+
+  <h3>Guests and accounts</h3>
+  <p>Accounts use <b>passwordless email sign-in</b>: Supabase sends a one-time code, and the user types it in. There are no passwords and no social logins. Creating an account stores the first and last name.</p>
+  <table>
+    <thead><tr><th style="width:30%"></th><th>Guest</th><th>Signed in</th></tr></thead>
+    <tbody>
+      <tr><td>Browse the library, programs and home</td><td>Yes</td><td>Yes</td></tr>
+      <tr><td>Play sessions, timer, stories and yoga</td><td>No (asked to sign in)</td><td>Yes</td></tr>
+      <tr><td>Activities, reflections, assessment, Kapwa, mixes, calendar</td><td>No (asked to sign in)</td><td>Yes</td></tr>
+      <tr><td>Practice synced across devices</td><td>No</td><td>Yes: sittings, resume points, ratings</td></tr>
+      <tr><td>Like a home video</td><td>Yes, through an anonymous account</td><td>Yes</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">The gate is <code>src/components/layout/account-gate.tsx</code>. If a build has no Supabase keys, every user is treated as a member, so the app still works without a backend. Signing out keeps the user's data on the phone.</p>
+</section>
+
+<!-- ======================= 4 FEATURES ======================= -->
+<section class="chapter">
+  <p class="num">04 · Features</p>
+  <h2>What Serenity does</h2>
+  <p class="lede">Each feature is described as the user meets it, followed by notes on how it works and where its code lives.</p>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/home.webp"></div>
+    <div>
+      <h3>4.1 Home</h3>
+      <p>Home opens with a greeting for the time of day and a search field, followed by a <b>Recommended</b> rail of session cards. The next card peeks in from the side, and the rail snaps as it scrolls. Below that sit shortcut cards (Daily Activities, Happiness, Relaxation), a rail of short videos users can like, the featured programs, <b>Yoga for today</b>, and the day's reflection prompt.</p>
+      <p>Until the user completes the check-in (4.13), Home invites them to take it. After that, their personal picks lead the library lists.</p>
+      <p class="where">Where: <code>src/app/(app)/home</code>, <code>src/components/home/</code>. The content comes from the Sanity <code>homePage</code>, <code>deckCard</code> and <code>homeVideo</code> documents.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/meditations.webp"></div>
+    <div>
+      <h3>4.2 Meditations, Discover and Search</h3>
+      <p><b>Meditations</b> is the library, with tabs for All, Meditation, Programs, Stories, Sounds and Yoga. It shows today's mindful minutes, favourites and a "Start here" set. <b>Discover</b> adds category chips (Focus, Sleep, Anxiety, Happiness and more), the unguided sit, read-aloud stories and the full session list.</p>
+      <p><b>Search</b> (<code>/search</code>) is a full-screen search across sessions, stories and soundscapes, with mood suggestions to tap.</p>
+      <p>Favourites and recently played sessions are saved on the device. Users can also rate sessions, and ratings sync for signed-in users.</p>
+      <p class="where">Where: <code>src/app/(app)/meditations</code>, <code>discover</code>, <code>src/app/search</code>, <code>src/lib/search.ts</code>, <code>src/lib/ratings.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/player.webp"></div>
+    <div>
+      <h3>4.3 The session player</h3>
+      <p>The player has a breathing orb, a scrubber and play, pause and ±15 s controls (<code>Space</code> or <code>K</code> on a keyboard). The orb's breathing phase is calculated from the session clock, so the ring, the phase label and the countdown always agree.</p>
+      <ul>
+        <li><b>Sound.</b> A recorded track when the session has one (4.4), otherwise a generated ambient bed with a level slider and mute. A struck bell ends a completed session, and the bed fades out over four seconds.</li>
+        <li><b>Breath cues and haptics.</b> Optional tones at the top of each inhale and exhale, and optional vibration on the same beat.</li>
+        <li><b>Resume.</b> Leaving part-way saves the user's place.</li>
+        <li><b>Accurate timing.</b> The clock is measured against real time, so a backgrounded tab does not drift.</li>
+      </ul>
+      <p class="where">Where: <code>src/app/player/[id]</code>, <code>src/components/player/</code>, <code>src/hooks/use-player.ts</code>, <code>use-breath.ts</code>, <code>use-session-track.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/program.webp"></div>
+    <div>
+      <h3>4.4 Programs</h3>
+      <p>Programs are short courses of sessions taken in order. Each program page shows a cover, the number of sessions and the total length, a <b>Start Session 1</b> button, and a grid of its sessions.</p>
+      <p>There are ten programs. <b>The Six Phase</b> (6 sessions), <b>Sleep Mastery</b> (7), <b>A Steady Mind</b> (5) and <b>Open Water</b> (4) are featured on Home. Calm Foundations, Focus Reset, Kind to Yourself, Better Mornings, Letting Go of Stress and Breath School appear in the library.</p>
+      <p>27 program sessions play a <b>recorded audio track</b> instead of a generated bed: Six Phase, Sleep Mastery, A Steady Mind, Open Water and Calm Foundations. The recording sets the session's length, and the audio follows the session clock. It is resynced if it drifts by more than 1.5 s, and the session pauses if the phone interrupts the sound.</p>
+      <p class="where">Where: <code>src/app/(app)/programs/[id]</code>, <code>src/lib/audio/session-tracks.ts</code>, recordings in <code>public/&lt;program&gt;/</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/timer.webp"></div>
+    <div>
+      <h3>4.5 Unguided timer</h3>
+      <p>A plain sit of 3 to 60 minutes, with optional interval bells, an optional settling pause before the opening bell, and an optional ambient bed (Silence, Rain, Ocean, Forest, Night). Three bells with different pitches mark the start, each interval and the end.</p>
+      <p>The ring glides smoothly without heavy re-rendering. The countdown follows the wall clock, the digits do not jitter, and the screen stays awake during a sit where the device allows it. Timer sits count toward progress like any other session.</p>
+      <p class="where">Where: <code>src/app/timer</code>, <code>src/hooks/use-countdown.ts</code>, <code>use-wake-lock.ts</code>, <code>use-session-recorder.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/sleep.webp"></div>
+    <div>
+      <h3>4.6 Sleep</h3>
+      <p>The Sleep tab brings together sleep sessions and stories, an <b>ambient sound mixer</b>, a <b>wind-down timer</b> and <b>Sleep Analytics</b>. Each morning the user can log bedtime, wake time and how rested they felt (Rough to Deep). The tab then shows the average sleep and a chart of hours per night.</p>
+      <p>When the wind-down timer ends, the sound fades to silence over 20 seconds, with no bell. The sleep log stays on the phone.</p>
+      <p class="where">Where: <code>src/app/(app)/sleep</code>, <code>src/components/sleep/sleep-mixer.tsx</code>, <code>src/lib/sleep-stats.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/story.webp"></div>
+    <div>
+      <h3>4.7 Read-aloud stories</h3>
+      <p>Sixteen original, slow stories for sleep, relaxation and mindfulness. Each one is read by a <b>recorded narrator</b>, and the paragraph being read is highlighted as it goes. Optional background music, chosen by the story's category, plays under the voice. A stop-after timer (10, 20 or 45 minutes) fades everything out.</p>
+      <p>If a recording is unavailable, the device's own voice reads the story sentence by sentence. Users can skip, scrub and see their progress, and the story can still be read silently.</p>
+      <p class="where">Where: <code>src/app/(app)/stories</code>, <code>src/app/stories/[id]</code>, <code>src/hooks/use-story-player.ts</code>, <code>use-narration.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/yoga.webp"></div>
+    <div>
+      <h3>4.8 Yoga</h3>
+      <p>Twenty short, gentle yoga sessions, from a seated desk stretch to floor stretches before bed. Most need no mat. Each session opens on an overview with its length, level, every pose and a safety note. It then plays <b>one pose at a time</b>: the pose name, one instruction, a countdown ring, what comes next and a soft bell. A recorded instructor voice reads the pose cues and can be turned off.</p>
+      <p>Poses done on both sides run left, then right. A session's length is always the sum of its poses.</p>
+      <p class="where">Where: <code>src/app/(app)/yoga</code>, <code>src/app/yoga/[id]</code>, <code>src/hooks/use-yoga-session.ts</code>, <code>use-yoga-voice.ts</code>, <code>src/lib/yoga.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/reflections.webp"></div>
+    <div>
+      <h3>4.9 Daily reflection</h3>
+      <p>One prompt a day ("What is one thing you would like to leave behind today?"), a sentence in reply, and a five-point note of how the reflection <i>sat</i>, from Heavy to Light. The prompt changes by date rather than at random, so it never changes while the user is writing. Past entries are listed at <code>/reflections</code>.</p>
+      <p>This is deliberately <b>not a self-scoring tool</b>. The scale describes the reflection, never the person, and the history screen says "This is a record, not a score." Entries are kept on this device only.</p>
+      <p class="where">Where: <code>src/app/(app)/reflections</code>, <code>src/components/reflections/</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature">
+    <div class="shot"><img src="../../public/landing/screens/dark/kapwa.webp"></div>
+    <div>
+      <h3>4.10 Kapwa, the built-in guide</h3>
+      <p>Kapwa is named after the Filipino idea of shared humanity. It is a chat guide opened from the centre of the bottom bar. The user says how they feel ("I feel stressed", "I can't sleep") and Kapwa replies with buttons that start a matching session or open a screen.</p>
+      <ul>
+        <li><b>Two modes.</b> By default, replies are written for Serenity and matched on the device by keyword. With the AI switched on, replies are written by a language model through a Supabase edge function, with an hourly quota. If the AI is off, offline or over quota, the keyword replies are used.</li>
+        <li><b>Safety first.</b> Messages about suicide or self-harm are answered on the device, with care and a pointer to emergency services, a crisis line or someone the user trusts, never with a meditation. Medical questions never reach the AI.</li>
+        <li><b>Honest about itself.</b> Kapwa says it is not a person and not a substitute for professional care. The chat history stays on the phone, with a Clear button.</li>
+      </ul>
+      <p class="where">Where: <code>src/app/(app)/kapwa</code>, <code>src/lib/kapwa.ts</code>, <code>src/data/kapwa.ts</code>, <code>src/lib/kapwa-ai.ts</code>, <code>supabase/functions/kapwa-chat</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.11 Daily inspiration, reminders and the calendar</h3>
+      <p><b>Daily inspiration</b> is one short, uplifting line each day, chosen from 55 messages. Without anything leaving the device, the choice leans toward what the user needs. A heavy reflection brings self-kindness, a poor night brings sleep, a long gap brings a welcome back (never guilt), and a streak brings momentum. Each day's message is fixed the first time it is shown, so the notification and the app always agree.</p>
+      <p><b>Reminders</b> are a daily nudge (07:00), a bedtime wind-down (22:30) and the inspiration (08:00). The <b>Notifications</b> screen shows whether permission is granted and lets the user send a test notification. On Android, the phone's system schedules the notifications, so they arrive with the app closed. In a browser, they arrive only while Serenity is open.</p>
+      <p>The <b>Calendar</b> lets users schedule a meditation, story or yoga session once or every week, with a notification when it is due.</p>
+      <p class="where">Where: <code>src/lib/inspiration.ts</code>, <code>inspiration-plan.ts</code>, <code>notifications.ts</code>, <code>reminders.ts</code>, <code>schedule.ts</code>, <code>src/app/(app)/notifications</code>, <code>calendar</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.12 Mixes</h3>
+      <p>Mixes are the user's own playlists of meditations and stories, played back to back full screen, with shuffle and loop.</p>
+      <p class="where">Where: <code>src/app/(app)/mixes</code>, <code>src/app/mix-play</code>, <code>src/lib/mixes.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.13 Personal check-in (assessment)</h3>
+      <p>A 12-question check-in covers what the user wants help with, how much time they have, the formats they like and their experience. Each answer carries tags, and the answers are scored against the library to rank sessions, stories, yoga and programs into a <b>personal plan</b>. Saving the plan removes the invitation from Home and moves the user's picks to the front of the library lists.</p>
+      <p class="where">Where: <code>src/app/assessment</code>, <code>src/lib/assessment.ts</code>, <code>src/hooks/use-assessment-picks.ts</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.14 Progress, activities and the end of a sitting</h3>
+      <p>A sitting is recorded once it passes <b>60 seconds</b>, finished or not. Recording is resilient to how phones behave: the sitting is saved when the app is hidden or closed, and repeated saves update a single record instead of counting it twice. A finished sitting can never be downgraded. The <b>Activities</b> screen shows a ring for the selected day (Mindful Min, First Sit, Total Time), a strip of dates and the week's figures.</p>
+      <p><b>Streaks</b> count consecutive days back from yesterday when nothing has been recorded yet today, so a streak is never lost at midnight.</p>
+      <p>Every session ends on the same calm screen. It says what was just added and where the day now stands, offers the day's reflection if it has not been written yet, and suggests one next step. There is no confetti and no score.</p>
+      <p class="where">Where: <code>src/app/activities</code>, <code>src/lib/session-stats.ts</code>, <code>src/hooks/use-session-recorder.ts</code>, <code>SessionComplete</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.15 Downloads and offline use</h3>
+      <p>The installed app is cached in full on install, not page by page as the user browses, so screens they have never opened still work offline. On the web, the <b>Downloads</b> screen also lets users pin individual sessions (page, code and artwork) for offline use. In the Android app, everything is already bundled. If the user opens a page that is not cached while offline, they see a friendly offline page instead of the browser's error.</p>
+      <p class="where">Where: <code>public/sw.js</code>, <code>scripts/build-routes.mjs</code>, <code>src/lib/offline-downloads.ts</code>, <code>src/app/offline</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.16 Profile and preferences</h3>
+      <p>Profile holds the account card (sign in, or sign out while keeping the phone's data), weekly mindful minutes, an install prompt (the browser's install dialog, or Share → Add to Home Screen instructions on iOS) and shortcuts. It also holds these preference toggles:</p>
+      <table>
+        <thead><tr><th style="width:30%">Toggle</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td>Light mode</td><td>Switches to the light palette. Dark is the default. The tour and sign-in screens are always dark.</td></tr>
+          <tr><td>Reminders · Bedtime · Daily inspiration</td><td>The 07:00, 22:30 and 08:00 notifications.</td></tr>
+          <tr><td>Breathing haptics · Breath cues</td><td>Vibration and tones on each inhale and exhale.</td></tr>
+          <tr><td>Ambient sound</td><td>The generated bed behind guided sessions.</td></tr>
+          <tr><td>Yoga voice</td><td>The recorded instructor in yoga sessions.</td></tr>
+          <tr><td>Share usage</td><td>Anonymous analytics. <b>Off</b> until the user turns it on.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.17 Support during cancer (off by default)</h3>
+      <p>The support track is a separate area for people in and after cancer treatment, and for the people caring for them. It is organised by the <b>moment someone is living through</b>: waiting for scan results, the chemo chair, a no-energy day, a sleepless steroid night, after treatment ends, and caring for someone. There are seven sessions, from 2 minutes up to a 30-minute chemo-chair session that offers to keep going.</p>
+      <ul>
+        <li><b>Built for a hard day.</b> One question, large buttons, a single Start button and a larger-text switch. There are no breath holds, cue tones or vibration.</li>
+        <li><b>No streaks.</b> Listening goes into a private "Just for you" list. It never counts toward the app's streak or goals, and it never syncs.</li>
+        <li><b>Appointments.</b> Users can add the date of a scan, scan results or chemo. On that day and the day before, the matching session is offered first. This is in-app only, with no notifications.</li>
+        <li><b>Scope.</b> Comfort alongside medical care, never a substitute for it. Tests block any wording that claims an effect on cancer or treatment.</li>
+      </ul>
+      <div class="callout c-amber"><b>Turned off for this release</b>The track is enabled with <code>NEXT_PUBLIC_SUPPORT_TRACK=1</code>. Its wording is still marked as draft. It must pass clinical review, then a legal check, then a soft launch with a partner organisation before it is switched on (section 11).</div>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.18 Public landing page</h3>
+      <p><code>/landing</code> is the marketing page. It has a hero, measured counts, a features section, sleep and breath spotlights, a programs path, Serenity's promises (including privacy), and download buttons for the App Store and Google Play.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= 5 ARCHITECTURE ======================= -->
+<section class="chapter">
+  <p class="num">05 · System architecture</p>
+  <h2>How the pieces fit together</h2>
+  <p class="lede">Serenity is a <b>device-first</b> app. The whole interface and almost all of its logic run on the phone. The servers handle three things: content (at build time), accounts and sync (Supabase), and the optional AI guide.</p>
+
+  <div class="diagram">
+    <svg viewBox="0 0 660 360" width="100%" style="font-family:Poppins, sans-serif">
+      <defs>
+        <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10z" fill="#5C607C"/></marker>
+      </defs>
+      <!-- CMS -->
+      <rect x="10" y="20" width="170" height="92" rx="12" fill="#EEF6EA" stroke="#61A644"/>
+      <text x="24" y="44" font-size="12" font-weight="600" fill="#181A2E">Sanity CMS</text>
+      <text x="24" y="62" font-size="9" fill="#3A3D58">Meditations, programs, stories,</text>
+      <text x="24" y="75" font-size="9" fill="#3A3D58">yoga, videos, prompts, home page</text>
+      <text x="24" y="95" font-size="9" fill="#3A3D58">Images, video, narration on CDN</text>
+      <!-- Build -->
+      <rect x="245" y="20" width="170" height="92" rx="12" fill="#F4F5F9" stroke="#C9CCDA"/>
+      <text x="259" y="44" font-size="12" font-weight="600" fill="#181A2E">Build</text>
+      <text x="259" y="62" font-size="9" fill="#3A3D58">content:pull → content.json</text>
+      <text x="259" y="75" font-size="9" fill="#3A3D58">build-routes → precache list</text>
+      <text x="259" y="95" font-size="9" fill="#3A3D58">next build / static export</text>
+      <line x1="180" y1="66" x2="243" y2="66" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)"/>
+      <!-- outputs -->
+      <rect x="480" y="10" width="170" height="52" rx="12" fill="#E8F5FC" stroke="#1D9FDA"/>
+      <text x="494" y="32" font-size="11" font-weight="600" fill="#181A2E">Web / PWA</text>
+      <text x="494" y="48" font-size="9" fill="#3A3D58">Next.js server + service worker</text>
+      <rect x="480" y="72" width="170" height="52" rx="12" fill="#E8F5FC" stroke="#1D9FDA"/>
+      <text x="494" y="94" font-size="11" font-weight="600" fill="#181A2E">Android app</text>
+      <text x="494" y="110" font-size="9" fill="#3A3D58">Static export in Capacitor 8</text>
+      <line x1="415" y1="56" x2="478" y2="38" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)"/>
+      <line x1="415" y1="80" x2="478" y2="96" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)"/>
+      <!-- device -->
+      <rect x="160" y="160" width="340" height="120" rx="16" fill="#181A2E"/>
+      <text x="178" y="186" font-size="12.5" font-weight="600" fill="#fff">On the phone: the Serenity app</text>
+      <text x="178" y="206" font-size="9" fill="#C9CCF3">React 19 interface · players · Web Audio sound engine</text>
+      <text x="178" y="221" font-size="9" fill="#C9CCF3">Progress, reflections, sleep log, settings in local storage</text>
+      <text x="178" y="236" font-size="9" fill="#C9CCF3">Keyword guide · inspiration picker · notifications</text>
+      <text x="178" y="258" font-size="9" fill="#8FD0F0">Works fully offline once installed</text>
+      <line x1="565" y1="124" x2="440" y2="158" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
+      <text x="520" y="148" font-size="8.5" fill="#5C607C">installs</text>
+      <!-- Supabase -->
+      <rect x="10" y="300" width="250" height="52" rx="12" fill="#E8F5FC" stroke="#10739A"/>
+      <text x="24" y="321" font-size="11" font-weight="600" fill="#181A2E">Supabase</text>
+      <text x="24" y="338" font-size="9" fill="#3A3D58">Email code sign-in · sync · ratings · likes</text>
+      <rect x="290" y="300" width="180" height="52" rx="12" fill="#E8F5FC" stroke="#10739A"/>
+      <text x="304" y="321" font-size="11" font-weight="600" fill="#181A2E">kapwa-chat function</text>
+      <text x="304" y="338" font-size="9" fill="#3A3D58">Quota · prompt → Ollama Cloud</text>
+      <rect x="500" y="300" width="150" height="52" rx="12" fill="#FFF6E5" stroke="#E59A1C"/>
+      <text x="514" y="321" font-size="11" font-weight="600" fill="#181A2E">PostHog</text>
+      <text x="514" y="338" font-size="9" fill="#3A3D58">Only after consent</text>
+      <line x1="230" y1="282" x2="150" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" marker-start="url(#ar)"/>
+      <line x1="360" y1="282" x2="375" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)"/>
+      <line x1="470" y1="282" x2="560" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
+      <line x1="95" y1="114" x2="200" y2="158" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
+      <text x="64" y="146" font-size="8.5" fill="#5C607C">media streamed</text>
+    </svg>
+  </div>
+
+  <h3>Main parts</h3>
+  <table>
+    <thead><tr><th style="width:24%">Part</th><th>Role</th></tr></thead>
+    <tbody>
+      <tr><td>App shell</td><td>Next.js 15 App Router with React 19. Two build modes: a normal server build for the web, and a static export (<code>MOBILE_BUILD=1</code>) that Capacitor wraps for Android.</td></tr>
+      <tr><td>Providers</td><td><code>app-provider</code> (favourites, recents, settings, theme), <code>audio-provider</code> (the single sound engine), and the account and cloud-sync providers.</td></tr>
+      <tr><td>Device gate</td><td>Pure CSS at a 1025px breakpoint. Above that, the app is hidden and a "Made for phones and tablets" screen is shown, with no flash of the wrong layout.</td></tr>
+      <tr><td>Service worker</td><td>Caches every route and its code on install, then serves stale-while-revalidate. The cache is named for the build, so a new deploy replaces the old one. It is skipped in the Android app.</td></tr>
+      <tr><td>Sound engine</td><td>One Web Audio context with crossfades, fades and a compressor on the master output. It plays generated beds, bells and cues, alongside <code>&lt;audio&gt;</code> elements for recordings.</td></tr>
+      <tr><td>Supabase</td><td>Passwordless sign-in, practice sync, ratings, video likes, and the Kapwa AI quota and edge function. The app calls it directly from the device.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Technology stack</h3>
+  <table>
+    <thead><tr><th style="width:24%">Layer</th><th>Technology (version)</th></tr></thead>
+    <tbody>
+      <tr><td>Framework</td><td>Next.js 15.1.12 (a patched release; do not go below 15.1.11) · React 19 · TypeScript 5.7 (strict)</td></tr>
+      <tr><td>UI</td><td>Tailwind CSS 3.4 · shadcn/ui on Radix primitives · Lucide icons · Poppins (bundled locally)</td></tr>
+      <tr><td>Native</td><td>Capacitor 8.5 (Android, iOS) · @capacitor/local-notifications 8.3 · @capacitor/app</td></tr>
+      <tr><td>Backend</td><td>Supabase (Postgres, Auth, Edge Functions) · supabase-js 2.116</td></tr>
+      <tr><td>Content</td><td>Sanity (Studio 6, client 8) · Kokoro-82M text-to-speech for narration, run locally</td></tr>
+      <tr><td>AI guide</td><td>Ollama Cloud, default model <code>gpt-oss:20b</code>, through the edge function</td></tr>
+      <tr><td>Analytics</td><td>PostHog (posthog-js 1.447), off until the user consents</td></tr>
+      <tr><td>Testing</td><td>Vitest 2.1 · pgTAP for database security tests</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 6 CONTENT & SOUND ======================= -->
+<section class="chapter">
+  <p class="num">06 · Content and sound</p>
+  <h2>Where the words and sounds come from</h2>
+  <p class="lede">The library is edited in Sanity and built into the app. Sound comes from four sources: program recordings, narrated voice, composed music, and soundscapes generated on the device.</p>
+
+  <h3>Content pipeline (Sanity CMS)</h3>
+  <ul>
+    <li><b>Editing.</b> Editors work in Sanity Studio (<code>npm run studio</code>, project <code>jn0rojao</code>, dataset <code>production</code>). The document types are: home page, meditation, program, yoga session, story (with narration audio), home video, category, deck card, inspiration and reflection prompt. The Studio also has an Analytics tab with the PostHog dashboard.</li>
+    <li><b>Into the app.</b> Before every build, <code>content:pull</code> downloads the content into <code>src/content/content.json</code>. If Sanity cannot be reached, the build uses the copy already committed.</li>
+    <li><b>Media stays on the CDN.</b> Images (WebP, up to 1080px, with blur previews), videos and narration are served from Sanity's CDN. This keeps them out of the Android package and keeps the app small.</li>
+    <li><b>Adding content in bulk.</b> <code>scripts/sanity/add-content.mjs</code> adds new items from JSON files. <code>import.ts</code> was the one-time initial import.</li>
+  </ul>
+
+  <h3>The four kinds of sound</h3>
+  <table>
+    <thead><tr><th style="width:24%">Sound</th><th>How it is made</th><th style="width:30%">Used in</th></tr></thead>
+    <tbody>
+      <tr><td>Program recordings</td><td>MP3 files shipped in <code>public/&lt;program&gt;/</code> and mapped to sessions in <code>session-tracks.ts</code>.</td><td>27 program sessions</td></tr>
+      <tr><td>Narration</td><td>Generated with <b>Kokoro</b>, an open-source text-to-speech model run locally by <code>npm run content:narrate</code>. Story voices are Emma, Isabella and Michael, and the yoga instructor has its own voice. The script uploads the audio to Sanity with paragraph timings and records again only when the text changes.</td><td>Stories, yoga cues. The device voice is the fallback.</td></tr>
+      <tr><td>Background music</td><td>Composed procedurally by <code>npm run music:compose</code> (chords, melody, reverb, a seamless loop), with nothing sampled. There are three beds: sleep, relaxation and mindfulness.</td><td>Under stories and yoga</td></tr>
+      <tr><td>Soundscapes</td><td>Generated live with the Web Audio API, so there are no files and no licences, they work offline and they never audibly loop. There are 16: rain, ocean, forest, night, singing bowl, warm pad, deep drone, chimes, thunder, stream, fireplace, wind, brown noise, heartbeat, om and theta.</td><td>Session beds, timer, sleep mixer</td></tr>
+    </tbody>
+  </table>
+  <p>Bells, breath tones and other short sounds are also generated on the device. Audio starts only after the user taps something, as browsers require. It is released when the user leaves a screen, and a compressor stops a bell from clipping over a loud bed.</p>
+  <div class="callout c-blue"><b>Licensing</b>The stories, sessions, prompts and inspiration lines are original to Serenity. The bundled photographs are from Unsplash under the Unsplash License, with per-file credits in <code>src/assets/images/CREDITS.md</code>. The narration model and the music generator are open source and run locally, so no third-party audio licences apply.</div>
+</section>
+
+<!-- ======================= 7 DATA & PRIVACY ======================= -->
+<section class="chapter">
+  <p class="num">07 · Data and privacy</p>
+  <h2>What stays on the phone, and what leaves it</h2>
+  <p class="lede">The phone always holds the main copy of a user's data. A server copy exists only for signed-in users, and only for practice history. Sensitive personal notes never leave the device.</p>
+
+  <h3>Never leaves the device</h3>
+  <ul>
+    <li>Reflections and how they sat, the sleep log, and the moods and sleep signals used to choose the daily inspiration.</li>
+    <li>Check-in (assessment) answers, mixes, the calendar schedule, settings and favourites.</li>
+    <li>Kapwa chat history (but see the AI note below).</li>
+    <li><b>All support-track data</b>, including listening history and appointment dates. This is excluded from sync on purpose.</li>
+  </ul>
+
+  <h3>Sent to a server</h3>
+  <table>
+    <thead><tr><th style="width:26%">Data</th><th>When</th><th style="width:28%">Where</th></tr></thead>
+    <tbody>
+      <tr><td>Email and first and last name</td><td>When the user creates an account</td><td>Supabase Auth</td></tr>
+      <tr><td>Practice sittings and resume points</td><td>Signed-in users. Fully synced on sign-in and on each launch. The device copy is written first.</td><td><code>practice_sessions</code>, <code>resume_points</code></td></tr>
+      <tr><td>Session ratings</td><td>Signed-in users</td><td><code>meditation_ratings</code></td></tr>
+      <tr><td>Video likes</td><td>When a video is liked (through an anonymous account if needed)</td><td><code>video_likes</code></td></tr>
+      <tr><td>Kapwa messages</td><td>Only when the AI guide is turned on, and never crisis or medical messages</td><td>Edge function → Ollama Cloud</td></tr>
+      <tr><td>Usage analytics</td><td>Only after the user turns on "Share usage"</td><td>PostHog</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Analytics safeguards</h3>
+  <ul>
+    <li>Analytics are <b>off by default</b> and need opt-in consent, either from the consent card or the toggle on Profile.</li>
+    <li>Session replay masks every text input and blocks anything marked <code>data-private</code>. Recording pauses on Reflections, the check-in and the support track.</li>
+    <li>Signed-in users are identified by an internal user ID, never by email.</li>
+  </ul>
+
+  <h3>Device storage keys</h3>
+  <p class="small">The data lives in the browser's local storage under <code>serenity.*</code> keys. The main ones are <code>serenity.state.v1</code> (app state), <code>serenity.audio.v1</code>, <code>serenity.mixes.v1</code>, <code>serenity.schedule.v1</code>, <code>serenity.kapwa.v1</code>, <code>serenity.resume.v1</code>, <code>serenity.support.v1</code>, <code>serenity.inspiration.plan.v1</code> and <code>serenity.auth.v1</code> (the sign-in session). Versioned names allow safe migrations later.</p>
+
+  <h3>Server-side security</h3>
+  <p>Every Supabase table has row-level security switched on, so users can read and write only their own rows. Anonymous accounts are excluded from practice sync. The Kapwa quota table has no public access at all, and only the edge function's service role can use it. The Ollama key is stored only as a server secret and never in the app.</p>
+</section>
+
+<!-- ======================= 8 BACKEND ======================= -->
+<section class="chapter">
+  <p class="num">08 · Backend reference</p>
+  <h2>Supabase in detail</h2>
+  <p class="lede">The schema is defined in migrations in <code>supabase/migrations/</code>, and every table has row-level security switched on. These are the parts the app uses today.</p>
+
+  <table>
+    <thead><tr><th style="width:28%">Migration</th><th>Adds</th></tr></thead>
+    <tbody>
+      <tr><td>practice_sync <span class="muted small">(2026-11-12)</span></td><td>Tables <code>practice_sessions</code> and <code>resume_points</code>, where each user sees only their own rows and anonymous accounts are excluded.</td></tr>
+      <tr><td>kapwa_quota <span class="muted small">(2026-11-12)</span></td><td>Table <code>kapwa_usage</code> and function <code>kapwa_take_quota(subject, limit)</code>, usable only by the service role. The subject is a user ID or a hashed IP address.</td></tr>
+      <tr><td>meditation_ratings <span class="muted small">(2026-11-04)</span></td><td>Table <code>meditation_ratings</code>, and functions <code>set_meditation_rating</code> and <code>my_meditation_ratings</code>.</td></tr>
+      <tr><td>video_likes <span class="muted small">(2026-10-27)</span></td><td>Table <code>video_likes</code>, and functions <code>set_video_like</code> and <code>video_like_counts</code> (public counts).</td></tr>
+      <tr><td>circles_* <span class="muted small">(2026-09)</span></td><td>Schema, functions, security rules and seed data for <b>Circles</b> (small groups that sit together). <b>Circles is not in the app's screens in this release.</b> The tables remain, with a pgTAP test suite (<code>supabase/tests/circles_rls.test.sql</code>).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Edge function: <code>kapwa-chat</code></h3>
+  <p>The function adds Kapwa's system prompt, takes one unit from the hourly quota, and streams the reply from Ollama Cloud. Conversations are limited to 12 turns, 600 characters per message and 16,000 characters of context.</p>
+  <table>
+    <thead><tr><th style="width:34%">Secret</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>OLLAMA_API_KEY</code></td><td>Required. The Ollama Cloud key.</td></tr>
+      <tr><td><code>KAPWA_MODEL</code></td><td>Optional. Defaults to <code>gpt-oss:20b</code>.</td></tr>
+      <tr><td><code>KAPWA_HOURLY_LIMIT</code></td><td>Optional. Messages per account or IP per hour; defaults to 30.</td></tr>
+    </tbody>
+  </table>
+  <p class="small muted">Sign-in emails use the one-time-code template in <code>supabase/templates/email-code.html</code>. The code length must match <code>NEXT_PUBLIC_AUTH_CODE_LENGTH</code> (default 6).</p>
+
+  <h3>App environment variables</h3>
+  <table>
+    <thead><tr><th style="width:40%">Variable</th><th>Purpose</th></tr></thead>
+    <tbody>
+      <tr><td><code>NEXT_PUBLIC_SUPABASE_URL</code><br><code>NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY</code></td><td>Turn on accounts, sync, likes, ratings and the AI guide. Without them, the app runs with all of these features off.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_KAPWA_AI</code></td><td>Empty: keyword replies. <code>1</code>: the edge function. <code>local</code>: Ollama on a development machine.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_SUPPORT_TRACK</code></td><td><code>1</code> turns on the cancer support track. Leave it empty until it has been signed off.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_POSTHOG_KEY</code> / <code>_HOST</code></td><td>Analytics. Nothing is sent without these, or without consent.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_AUTH_CODE_LENGTH</code></td><td>Number of digits in the sign-in code (default 6).</td></tr>
+      <tr><td><code>MOBILE_BUILD</code></td><td>Set by <code>build:mobile</code> to produce the static export.</td></tr>
+      <tr><td><code>SANITY_API_WRITE_TOKEN</code></td><td>Used only by content-authoring scripts; never needed in the app.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ======================= 9 BUILD & RELEASE ======================= -->
+<section class="chapter">
+  <p class="num">09 · Build, deploy and release</p>
+  <h2>From source to the store</h2>
+
+  <h3>Commands</h3>
+  <table>
+    <thead><tr><th style="width:30%">Command</th><th>What it does</th></tr></thead>
+    <tbody>
+      <tr><td><code>npm run dev</code></td><td>Starts the development server at localhost:3000. It is slower on a page's first visit, so judge speed on a production build.</td></tr>
+      <tr><td><code>npm run build</code></td><td>Production web build. It first pulls content from Sanity and generates the offline route list, so the list ships with the deployment. <code>/sw.js</code> and <code>/precache.json</code> are served <code>no-store</code>, so each deploy reaches installed users.</td></tr>
+      <tr><td><code>npm run build:mobile</code></td><td>Static export into <code>out/</code> for the native apps.</td></tr>
+      <tr><td><code>npm run sync:mobile</code></td><td>Runs <code>build:mobile</code>, then <code>cap sync</code>.</td></tr>
+      <tr><td><code>npm run open:android</code> / <code>open:ios</code></td><td>Syncs, then opens Android Studio or Xcode.</td></tr>
+      <tr><td><code>npm test</code> · <code>npm run typecheck</code> · <code>npm run lint</code></td><td>Unit tests, type check and lint.</td></tr>
+      <tr><td><code>npm run studio</code></td><td>Runs Sanity Studio for editors.</td></tr>
+      <tr><td><code>npm run content:narrate</code> · <code>music:compose</code></td><td>Records narration and composes the background music.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Android build</h3>
+  <table>
+    <tbody>
+      <tr><td style="width:30%">Application ID</td><td><code>com.linus2002.serenity</code>, app name "Serenity"</td></tr>
+      <tr><td>Version</td><td>versionCode 1, versionName "1.0"</td></tr>
+      <tr><td>SDK levels</td><td>minimum 24 (Android 7.0); target and compile 36</td></tr>
+      <tr><td>Permissions</td><td>Internet, foreground service (media playback), wake lock</td></tr>
+      <tr><td>Notifications</td><td>Local notifications with the small icon <code>ic_stat_serenity</code> and accent colour <code>#1A93D8</code></td></tr>
+      <tr><td>CI</td><td><code>.github/workflows/android-test-apk.yml</code>, run manually: Node 22 and Java 21, builds a <b>debug</b> APK and publishes it to a test release</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Setting up a production backend</h3>
+  <ol style="padding-left:16px">
+    <li>Create a Supabase project, on the <b>Pro</b> plan for launch (Free projects pause after a week of inactivity and have no backups).</li>
+    <li>Copy <code>.env.example</code> to <code>.env.local</code>, then add the project URL and the publishable key.</li>
+    <li>Link the project and apply the migrations: <code>npx supabase link --project-ref &lt;ref&gt;</code>, then <code>npx supabase db push</code>.</li>
+    <li>Enable email one-time-code sign-in, with the code length matching the app. Enable anonymous sign-ins for video likes.</li>
+    <li>For the AI guide, run <code>npx supabase secrets set OLLAMA_API_KEY=…</code>, then <code>npx supabase functions deploy kapwa-chat --no-verify-jwt</code>, then set <code>NEXT_PUBLIC_KAPWA_AI=1</code> and rebuild.</li>
+    <li>Set the same public variables on the web host (for example Vercel) and redeploy.</li>
+  </ol>
+</section>
+
+<!-- ======================= 10 QUALITY ======================= -->
+<section class="chapter">
+  <p class="num">10 · Quality and accessibility</p>
+  <h2>How it is tested, and who can use it</h2>
+
+  <h3>Automated tests</h3>
+  <p><b>33 Vitest unit-test files</b> cover the app's logic, plus a pgTAP suite for database security. They are run with <code>npm test</code>.</p>
+  <div class="two small">
+    <ul>
+      <li>Session stats, sleep stats, streaks and dates/time zones</li>
+      <li>Audio engine, background audio, freeze handling</li>
+      <li>Cloud sync, resume points, video likes, the account gate</li>
+      <li>Kapwa keyword guide, AI client and context</li>
+    </ul>
+    <ul>
+      <li>Inspiration choice, reminders, notifications, the schedule</li>
+      <li>Assessment scoring, search, mixes, yoga, stories</li>
+      <li>Support track guard rails (no claim words, short tired-day sessions, no breath holds)</li>
+      <li>Service-worker asset list, formatting, categories, settings</li>
+    </ul>
+  </div>
+  <p class="small muted">There are no end-to-end browser tests yet (section 11).</p>
+
+  <h3>Device support</h3>
+  <ul>
+    <li>Phones from 320px to 430px wide, and tablets up to 1024px, including a 1024pt iPad in landscape.</li>
+    <li>The layout uses <code>clamp()</code> sizing pinned to the 390×844 reference. An automated overflow audit passed on nine devices: iPhone SE 1/2/3, iPhone 13 mini, iPhone 14, iPhone 15 Pro, iPhone 14 Pro Max, Galaxy S8/S20 and Pixel 7.</li>
+    <li>Short screens (568–740px tall) use height-aware spacing, so the player controls never collide.</li>
+  </ul>
+
+  <h3>Accessibility</h3>
+  <ul>
+    <li>Every control works from the keyboard, with one consistent focus ring. Icon-only buttons have labels.</li>
+    <li>The date strip is a proper radio group, decorative artwork is hidden from screen readers, and the breathing phase is announced through a live region.</li>
+    <li><code>prefers-reduced-motion</code> turns off animation. The smallest text is 12px, and quiet text meets WCAG AA contrast (4.5:1) in both themes.</li>
+    <li>The support track adds a larger-text switch and extra-large targets for people who are tired or in treatment.</li>
+  </ul>
+</section>
+
+<!-- ======================= 11 CHECKLIST ======================= -->
+<section class="chapter">
+  <p class="num">11 · Release checklist</p>
+  <h2>Before publishing</h2>
+  <p class="lede">These items were found while reviewing the codebase for this document, and each is marked by priority. <span class="tag t-block">Blocker</span> items will stop store approval or break a feature. <span class="tag t-high">High</span> items should be done before launch. <span class="tag t-tidy">Tidy</span> items are good housekeeping.</p>
+
+  <h3>Store and legal</h3>
+  <ul class="check">
+    <li><span class="tag t-block">Blocker</span><b>Publish a privacy policy</b> and link it in the app and the store listing. The app has none yet. Google Play requires one for an app with accounts, analytics and wellbeing data.</li>
+    <li><span class="tag t-block">Blocker</span><b>Add account deletion</b> inside the app and as a web link. Play requires both for apps that create accounts. No such flow exists today.</li>
+    <li><span class="tag t-high">High</span>Add <b>terms of use</b> and a short wellbeing disclaimer (Kapwa and the content are not medical care), and complete the Play <b>Data safety</b> form to match section 7.</li>
+    <li><span class="tag t-block">Blocker</span>Build a <b>signed release bundle</b> (AAB) with an upload key. CI produces only debug APKs. Increase <code>versionCode</code> with each upload.</li>
+    <li><span class="tag t-high">High</span>Check that the merged Android manifest includes <code>POST_NOTIFICATIONS</code>, or reminders will not show on Android 13 and later.</li>
+  </ul>
+
+  <h3>Audio and content</h3>
+  <ul class="check">
+    <li><span class="tag t-block">Blocker</span><b>Commit the new program recordings.</b> The six <code>public/&lt;program&gt;/</code> folders, <code>session-tracks.ts</code> and <code>use-session-track.ts</code> are untracked in git, and the player, data and type changes that use them are not committed.</li>
+    <li><span class="tag t-high">High</span><b>Focus Reset</b> has recordings in <code>public/focus-reset/</code>, but they are not mapped in <code>session-tracks.ts</code>. Map them or remove them.</li>
+    <li><span class="tag t-high">High</span>Program MP3s are not in the offline precache list or in Downloads, so recorded sessions need a connection on the web. Decide whether to cache them. The Downloads copy still says there are "no audio files", which is now wrong.</li>
+  </ul>
+
+  <h3>Backend and operations</h3>
+  <ul class="check">
+    <li><span class="tag t-high">High</span>Move Supabase to the <b>Pro</b> plan, and add CAPTCHA (for example Turnstile) to sign-in and anonymous sign-up before opening to the public.</li>
+    <li><span class="tag t-high">High</span>Set the Kapwa quota and model for launch, and confirm the AI's crisis handling with a final review.</li>
+    <li><span class="tag t-tidy">Tidy</span>Decide what to do with the unused <b>Circles</b> tables. Keep them for a later release, or drop them in a migration.</li>
+  </ul>
+
+  <h3>Optional tracks and platforms</h3>
+  <ul class="check">
+    <li><span class="tag t-high">High</span>Keep the <b>support track</b> off until clinical review, legal review and a partner soft launch are complete, in that order.</li>
+    <li><span class="tag t-tidy">Tidy</span><b>iOS</b>: create the Xcode project on a Mac (<code>npx cap add ios</code>). Note that iOS pauses web audio when the screen locks, so sleep sounds need a native background-audio plugin.</li>
+  </ul>
+
+  <h3>Housekeeping</h3>
+  <ul class="check">
+    <li><span class="tag t-tidy">Tidy</span>Remove <code>.claude/data/healthcare/…/data.sqlite</code> from the repository. It is unrelated to the app.</li>
+    <li><span class="tag t-tidy">Tidy</span>Update <code>README.md</code> and <code>MOBILE.md</code>. They still describe Circles, "no accounts", "no audio files" and a placeholder app ID.</li>
+    <li><span class="tag t-tidy">Tidy</span>Add a small set of end-to-end tests for sign-in, playing a session and working offline.</li>
+  </ul>
+</section>
+
+<!-- ======================= APPENDIX ======================= -->
+<section class="chapter">
+  <p class="num">Appendix A</p>
+  <h2>Screen map</h2>
+  <p class="lede">Every route in the app. <b>🔒</b> means the screen needs an account.</p>
+  <div class="two">
+    <table>
+      <thead><tr><th>Route</th><th>Screen</th></tr></thead>
+      <tbody>
+        <tr><td><code>/</code></td><td>Entry gate</td></tr>
+        <tr><td><code>/welcome</code></td><td>First-run tour</td></tr>
+        <tr><td><code>/login</code></td><td>Sign in / create account</td></tr>
+        <tr><td><code>/landing</code></td><td>Marketing page</td></tr>
+        <tr><td><code>/home</code></td><td>Home</td></tr>
+        <tr><td><code>/discover</code></td><td>Discover</td></tr>
+        <tr><td><code>/meditations</code></td><td>Library (tabs)</td></tr>
+        <tr><td><code>/search</code></td><td>Search</td></tr>
+        <tr><td><code>/programs/[id]</code></td><td>Program</td></tr>
+        <tr><td><code>/player/[id]</code> 🔒</td><td>Session player</td></tr>
+        <tr><td><code>/timer</code> 🔒</td><td>Unguided timer</td></tr>
+        <tr><td><code>/sleep</code></td><td>Sleep</td></tr>
+        <tr><td><code>/stories</code></td><td>Stories</td></tr>
+        <tr><td><code>/stories/[id]</code> 🔒</td><td>Story reader</td></tr>
+        <tr><td><code>/yoga</code></td><td>Yoga</td></tr>
+        <tr><td><code>/yoga/[id]</code> 🔒</td><td>Yoga player</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>Route</th><th>Screen</th></tr></thead>
+      <tbody>
+        <tr><td><code>/kapwa</code> 🔒</td><td>Kapwa guide</td></tr>
+        <tr><td><code>/assessment</code> 🔒</td><td>Personal check-in</td></tr>
+        <tr><td><code>/activities</code> 🔒</td><td>Daily activities</td></tr>
+        <tr><td><code>/reflections</code> 🔒</td><td>Reflections</td></tr>
+        <tr><td><code>/mixes</code> 🔒</td><td>Mixes</td></tr>
+        <tr><td><code>/mix-play</code> 🔒</td><td>Mix player</td></tr>
+        <tr><td><code>/calendar</code> 🔒</td><td>Scheduled sessions</td></tr>
+        <tr><td><code>/favorites</code></td><td>Saved and recent</td></tr>
+        <tr><td><code>/notifications</code></td><td>Inspiration and reminders</td></tr>
+        <tr><td><code>/downloads</code></td><td>Offline downloads</td></tr>
+        <tr><td><code>/profile</code></td><td>Profile and preferences</td></tr>
+        <tr><td><code>/support</code></td><td>Support track hub*</td></tr>
+        <tr><td><code>/support/[id]</code> 🔒</td><td>7 support sessions*</td></tr>
+        <tr><td><code>/offline</code></td><td>Offline fallback</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="small muted">* Only when <code>NEXT_PUBLIC_SUPPORT_TRACK=1</code>.</p>
+</section>
+
+</body>
+</html>

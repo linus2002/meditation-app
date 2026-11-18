@@ -41,6 +41,14 @@ export interface ContentMeditation {
   /** False for sessions that only live inside a programme. */
   inLibrary?: boolean;
   breathPattern: BreathPhase[];
+  /** Guided audio, streamed from Sanity's CDN; uploaded by `npm run content:recordings`. */
+  recording?: ContentRecording;
+}
+
+export interface ContentRecording {
+  src: string;
+  /** Seconds, as measured from the file. */
+  duration: number;
 }
 
 export interface ContentProgram {

@@ -61,6 +61,8 @@ export interface Meditation {
   coverFocus?: string;
   /** The synthesised bed that plays while this session runs. */
   soundscape: SoundscapeId;
+  /** A recorded track on Sanity's CDN, played in place of the soundscape. */
+  track?: string;
   /** Marks the "Daily Goals" entry surfaced on the home screen. */
   isDailyGoal?: boolean;
   /** Sleep-specific sessions surface on the sleep screen. */

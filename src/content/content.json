@@ -514,6 +514,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/ef5a7ba2e9fd1f89895fc6d6de15587c500f35b0.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "Widen the circle",
       "title": "Connection",
@@ -545,6 +549,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/e052c0382fc362a4fa62ab6c2373b51822cecb57.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "Three good things",
       "title": "Gratitude",
@@ -580,6 +588,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/e1d08835937723585cf6f7a9593b941586fb53df.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Setting the weight down",
       "title": "Forgiveness",
@@ -619,6 +631,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/9cc6a9945c8e2afdfbd49df2c0f91aa181180fba.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Three years from now",
       "title": "Future Dream",
@@ -658,6 +674,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/4c01bc4baf7d64b35c35c4c5117f95603fdd94ff.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Rehearse the hours ahead",
       "title": "The Perfect Day",
@@ -689,6 +709,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/2b1b1e423bfde258ef944b5d7383ff8a0fbb4ccf.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "Carried, not alone",
       "title": "The Blessing",
@@ -724,6 +748,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/2fae01b7f6eb3df5af3dd93ad0eb0d190d1f568e.mp3"
+      },
       "soundscape": "night",
       "subtitle": "Let the shoulders drop",
       "title": "Unclench the Day",
@@ -759,6 +787,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/20fc392b9cc760964fc4fa31d5fcfde4dc1820ec.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Sinking into the mattress",
       "title": "The Heavy Body",
@@ -790,6 +822,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/f6ab56cba26bc82afe6c0b107809085ffdb1f0a8.mp3"
+      },
       "soundscape": "night",
       "subtitle": "From fifty to nothing",
       "title": "Counting Down",
@@ -825,6 +861,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/6d3717ca655c333fcbd99554f65e87e828a1c6f8.mp3"
+      },
       "soundscape": "rain",
       "subtitle": "Set tomorrow aside",
       "title": "Worry Parking",
@@ -860,6 +900,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/5844d2fb97f22138e857da0f8a9717643dc9abca.mp3"
+      },
       "soundscape": "night",
       "subtitle": "Four, seven, eight",
       "title": "Breath of the Night",
@@ -895,6 +939,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/ccb6d9ac0dcbcef74cd966e202abff6993dc1aa7.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Let the out-breath lead",
       "title": "The Long Exhale",
@@ -926,6 +974,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/037d5aec8dbcd78729c9b5bd8799eea91cc07db3.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "No need to stay awake for the end",
       "title": "Drifting Off",
@@ -965,6 +1017,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/3ff9707e88ca97f472d14ae0dd4e5a974bb33541.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Noticing without fixing",
       "title": "Name What Is Here",
@@ -1004,6 +1060,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/857acee317b097c3e1a055a6e2e1d638315a83c4.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Ground through the body",
       "title": "Anchor in the Feet",
@@ -1039,6 +1099,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/a475644d86b36ecbc1815e6390ae0b648a180e26.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Let the feeling crest and pass",
       "title": "Riding the Wave",
@@ -1070,6 +1134,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/b847c673582c24da4a4a7fe9a7aba139ba866207.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "Watching thoughts go by",
       "title": "The Calm Observer",
@@ -1109,6 +1177,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/28a3fbd21e7ecae05760c021a2b48e24656df156.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "Carry the calm with you",
       "title": "Steady Ground",
@@ -1140,6 +1212,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/674420ce3566c461792189f32405e79c489dcbbc.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Arriving at the edge",
       "title": "Shoreline",
@@ -1171,6 +1247,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d8a9e899abf408bd84f89d3cc8c5342612f9a350.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Small and still",
       "title": "Tidepool",
@@ -1206,6 +1286,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/bbfe8f39a171d7eaffd2069f66060578bb4a5662.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Spaciousness",
       "title": "Open Sea",
@@ -1237,6 +1321,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/ba8360288ed1373b826d86ce53534d8142be98b2.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "Bringing the calm back",
       "title": "Return to Shore",
@@ -1654,6 +1742,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/66cec4ae84677bd8fce7f657c0ed39b37f6472fe.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "Just sit down",
       "title": "Arriving",
@@ -1685,6 +1777,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/1830adc2d9098387cc0a73d275ba9284d3509899.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Your built-in anchor",
       "title": "The Breath",
@@ -1716,6 +1812,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/6bd37ec29ccec9f31a00267ed9e8192358982d37.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Feeling from the inside",
       "title": "The Body",
@@ -1755,6 +1855,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/69a759fa2d2f81f15daf9f98e35ea2fab40daf4e.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "Letting them pass",
       "title": "Thoughts",
@@ -1786,6 +1890,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/84eca9d8de8f2e526576c8761ac6c47764db3144.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Taking it with you",
       "title": "Everyday Calm",
@@ -1825,6 +1933,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/1d1192e388ec0f8416b21ac57890c0b4590813e0.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "One thing at a time",
       "title": "Single Point",
@@ -1864,6 +1976,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/58917d6aaa22ef10025ce43b6d002b9487ba74ba.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "Every return counts",
       "title": "The Wandering Mind",
@@ -1903,6 +2019,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/2e732c2ee9e99c99d3b8e3aa0e3fd6c76b963eaf.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Clear the desk inside",
       "title": "Before Deep Work",
@@ -1942,6 +2062,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/1c27cda12f907795661809262969dea64e50ee26.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Staying a little longer",
       "title": "The Long Hold",
@@ -1973,6 +2097,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/395ae65e9eef64446e64a96cabb602fb64041713.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "Switch off on purpose",
       "title": "Closing the Day",
@@ -2004,6 +2132,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/5d40b28a822f5ef344440d23a81f89d135ad4290.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "A simple gesture of care",
       "title": "Hand on Heart",
@@ -2035,6 +2167,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/8b5380a6b75e83f4e5e1d8dfd69af429ab8bce3e.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "Softening the critic",
       "title": "The Inner Voice",
@@ -2066,6 +2202,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/b956823f7ee86561b66080faa6901d1ecb7849d7.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "You are not the only one",
       "title": "Common Ground",
@@ -2097,6 +2237,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/8eef79f7f925af54ee62b10dbc61c2c41fab1b6f.mp3"
+      },
       "soundscape": "rain",
       "subtitle": "Asking, and listening",
       "title": "What Do You Need?",
@@ -2128,6 +2272,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/b762ad41a6c5526eba4215f318dcce893749e7eb.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "May I be well",
       "title": "Warm Wishes",
@@ -2159,6 +2307,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/0e2a6e0d6c86efd00ad657f13ca3804e5ff539fa.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Before you reach for the phone",
       "title": "Waking Slowly",
@@ -2198,6 +2350,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/2a55e19e852ac5fb773791f7bc1145213d941642.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "Choose how to meet the day",
       "title": "One Intention",
@@ -2237,6 +2393,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/8d5aa8a2f5ff77300afa49285a90104d195e833c.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "A brighter start",
       "title": "Energising Breath",
@@ -2268,6 +2428,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/3e258bb3e7458296c82f8b0016747303e2a73668.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "Something to look forward to",
       "title": "Morning Gratitude",
@@ -2299,6 +2463,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/850097bff9adc7109ed549430bcc59a02a242a25.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "Carry it through the door",
       "title": "Stepping Out",
@@ -2497,6 +2665,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/3f0639d5f036846c56ab53d098943acfaecc4bec.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "Watching, not changing",
       "title": "The Natural Breath",
@@ -2528,6 +2700,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/419b9c7ad2cad421fa3e53ca7c1e8a1b591e73c3.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Low and slow",
       "title": "Belly Breathing",
@@ -2567,6 +2743,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/43a5b2b140d5832ec2e153f0fbe77f7a49c64d79.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Four even sides",
       "title": "Box Breathing",
@@ -2598,6 +2778,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/74e1e1decde81d957d0c11f52baab32273626de8.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Finding your rhythm",
       "title": "Coherent Breathing",
@@ -2633,6 +2817,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/7a5db96bc5dcfb14726e1a97d19b00b1ddc02cc1.mp3"
+      },
       "soundscape": "night",
       "subtitle": "Four, seven, eight",
       "title": "Breathing for Sleep",

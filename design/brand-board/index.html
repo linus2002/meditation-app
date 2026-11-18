@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Serenity Brand Board</title>
+<style>
+  @font-face { font-family: 'Poppins'; src: url('poppins-latin-400-normal.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'Poppins'; src: url('poppins-latin-500-normal.woff2') format('woff2'); font-weight: 500; }
+  @font-face { font-family: 'Poppins'; src: url('poppins-latin-600-normal.woff2') format('woff2'); font-weight: 600; }
+  @font-face { font-family: 'Poppins'; src: url('poppins-latin-700-normal.woff2') format('woff2'); font-weight: 700; }
+
+  /* Serenity palette (from tailwind.config.ts, globals.css and the leaf logo) */
+  :root {
+    --mist: #F4F5F9;        /* light surface */
+    --blue: #1D9FDA;        /* brand blue, --primary */
+    --green: #61A644;       /* brand green */
+    --lagoon: #10739A;      /* where the two leaves overlap */
+    --midnight: #181A2E;    /* ink */
+    --black: #000000;       /* app canvas */
+    --tag: 'Helvetica Neue', 'Segoe UI', Arial, sans-serif;
+    --ios: -apple-system, 'SF Pro Display', 'Segoe UI', Arial, sans-serif;
+  }
+
+  @page { margin: 0; }
+  @page sq   { size: 1200px 1200px; }
+  @page board{ size: 1080px 1350px; }
+  @page tall { size: 1200px 1500px; }
+  @page prof { size: 1046px 1308px; }
+  @page lock { size: 864px 1080px; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { background: #fff; }
+  .page { position: relative; overflow: hidden; break-after: page; }
+  .page:last-child { break-after: auto; }
+  .p-sq   { page: sq;    width: 1200px; height: 1200px; }
+  .p-board{ page: board; width: 1080px; height: 1350px; }
+  .p-tall { page: tall;  width: 1200px; height: 1500px; }
+  .p-prof { page: prof;  width: 1046px; height: 1308px; }
+  .p-lock { page: lock;  width: 864px;  height: 1080px; }
+
+  .center { display: flex; align-items: center; justify-content: center; }
+  svg.mark { display: block; }
+  svg { shape-rendering: geometricPrecision; }
+
+  .wordmark { font-family: 'Poppins', sans-serif; font-weight: 600; letter-spacing: -0.02em; line-height: 1; color: var(--midnight); }
+  .lockup { display: flex; align-items: center; }
+
+  /* ---------- phone ---------- */
+  .phone { position: absolute; width: 1000px; height: 2060px; border-radius: 168px; transform-origin: 0 0;
+    background: linear-gradient(125deg, #8b8d90 0%, #3a3b3e 6%, #5d5f63 14%, #2b2c2f 30%, #47494d 60%, #232427 100%);
+    padding: 14px; box-shadow: 0 60px 120px rgba(0,0,0,.45); }
+  .phone .btn { position: absolute; left: -9px; width: 12px; border-radius: 6px;
+    background: linear-gradient(90deg, #1e1f22, #6c6e72 50%, #2a2b2e); }
+  .bezel { width: 100%; height: 100%; border-radius: 154px; background: #000; padding: 26px; }
+  .screen { position: relative; width: 100%; height: 100%; border-radius: 128px; overflow: hidden; background: var(--blue); }
+  .screen > svg.wall { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .island { position: absolute; top: 38px; left: 50%; width: 340px; height: 100px; margin-left: -170px; border-radius: 50px; background: #000; }
+  .clock { position: absolute; top: 74px; left: 150px; font: 600 72px/1 var(--ios); color: #fff; letter-spacing: 1px; }
+  .app { position: absolute; width: 210px; text-align: center; }
+  .app .ic { width: 210px; height: 210px; border-radius: 50px; position: relative; overflow: hidden; box-shadow: 0 6px 18px rgba(0,0,0,.12); }
+  .app .lb { margin-top: 20px; font: 400 46px/1 var(--ios); color: #fff; white-space: nowrap; margin-left: -40px; margin-right: -40px; }
+  .ic-serenity { background:
+      radial-gradient(120% 90% at 0% 100%, rgba(255,255,255,.85) 0%, rgba(255,255,255,0) 55%),
+      linear-gradient(160deg, #10739A 0%, #1D9FDA 60%, #63C2EC 100%); }
+  .ic-serenity svg { position: absolute; left: 50%; top: 50%; height: 118px; width: auto; transform: translate(-50%,-50%); }
+  .ic-cal { background: #fff; }
+  .ic-cal .d { position: absolute; top: 22px; width: 100%; text-align: center; font: 600 46px/1 var(--ios); color: #F2382F; letter-spacing: 1px; }
+  .ic-cal .n { position: absolute; top: 66px; width: 100%; text-align: center; font: 300 128px/1 var(--ios); color: #111; }
+  .ic-mail { background: linear-gradient(180deg, #1EC0FF 0%, #1A78F2 100%); }
+  .ic-notes { background: #fff; }
+  .ic-photos { background: #fff; }
+
+  /* ---------- profile card ---------- */
+  .profile { position: absolute; width: 954px; height: 652px; border-radius: 52px; overflow: hidden; background: #fff; transform-origin: 0 0; }
+  .profile .banner { position: absolute; left: 0; top: 0; width: 100%; height: 335px; background: #061424 url('grain-wide.svg') center/cover no-repeat; }
+  .profile .tagline { position: absolute; left: 648px; top: 186px; color: #fff; font-family: var(--tag); font-size: 48px; line-height: 1.12; letter-spacing: -0.3px; }
+  .profile .avatar { position: absolute; left: 67px; top: 253px; width: 214px; height: 214px; border-radius: 50%; border: 8px solid #fff;
+    background: radial-gradient(110% 110% at 5% 105%, #ffffff 0%, rgba(255,255,255,0) 50%), linear-gradient(150deg, #0E5F84 0%, #1D9FDA 55%, #1D9FDA 100%); }
+  .profile .avatar svg { position: absolute; left: 50%; top: 50%; height: 84px; width: auto; transform: translate(-50%,-50%); }
+  .profile .follow { position: absolute; left: 518px; top: 375px; width: 375px; height: 93px; border-radius: 47px; background: #000; color: #fff;
+    font: 700 34px/93px var(--tag); text-align: center; }
+  .profile .name { position: absolute; left: 66px; top: 512px; font: 700 36px/1 var(--tag); color: #000; display: flex; align-items: center; gap: 10px; }
+  .profile .handle { position: absolute; left: 66px; top: 562px; font: 400 34px/1 var(--tag); color: #000; }
+  .tag-b { font-weight: 700; display: block; }
+  .tag-l { font-weight: 300; display: block; }
+
+  /* ---------- brand board ---------- */
+  .board-bg { background: linear-gradient(180deg, var(--blue) 0%, #1786BC 30%, #12517A 70%, var(--midnight) 100%); }
+  .card { position: absolute; border-radius: 44px; overflow: hidden; }
+</style>
+</head>
+<body>
+
+<!-- Shared shapes: the Serenity leaf, rebuilt as two lenses (each an intersection of two circles, r = 296). -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <path id="pL" d="M105 10 A296 296 0 0 0 256 500 A296 296 0 0 0 105 10Z"/>
+    <path id="pR" d="M407 10 A296 296 0 0 1 256 500 A296 296 0 0 1 407 10Z"/>
+    <clipPath id="cL"><use href="#pL"/></clipPath>
+    <symbol id="mk-c" viewBox="22 6 468 498">
+      <use href="#pL" fill="#1D9FDA"/>
+      <use href="#pR" fill="#61A644"/>
+      <use href="#pR" fill="#10739A" clip-path="url(#cL)"/>
+    </symbol>
+    <symbol id="mk-w" viewBox="22 6 468 498">
+      <use href="#pL" fill="#F4F5F9"/>
+      <use href="#pR" fill="#F4F5F9"/>
+      <use href="#pR" fill="#C6D2DC" clip-path="url(#cL)"/>
+    </symbol>
+    <symbol id="mk-wd" viewBox="22 6 468 498">
+      <use href="#pL" fill="#F4F5F9"/>
+      <use href="#pR" fill="#F4F5F9"/>
+      <use href="#pR" fill="#181A2E" clip-path="url(#cL)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================= 1. Mark on Mist ================= -->
+<section class="page p-sq center" style="background: var(--mist);">
+  <svg class="mark" width="320" height="340"><use href="#mk-c"/></svg>
+</section>
+
+<!-- ================= 2. Construction ================= -->
+<section class="page p-sq" style="background: var(--blue);">
+  <svg width="1200" height="1200" viewBox="0 0 1200 1200" style="position:absolute;inset:0">
+    <g transform="translate(600 600) scale(0.6827) translate(-256 -255)" fill="none" stroke="#fff">
+      <!-- the four construction circles -->
+      <g stroke-opacity="0.75" stroke-width="1.6" stroke-dasharray="7 7" vector-effect="non-scaling-stroke">
+        <circle cx="321.8" cy="211.5" r="296" vector-effect="non-scaling-stroke"/>
+        <circle cx="39.2"  cy="298.5" r="296" vector-effect="non-scaling-stroke"/>
+        <circle cx="190.2" cy="211.5" r="296" vector-effect="non-scaling-stroke"/>
+        <circle cx="472.8" cy="298.5" r="296" vector-effect="non-scaling-stroke"/>
+      </g>
+      <!-- vertical guides -->
+      <g stroke-opacity="0.7" stroke-width="1.6" stroke-dasharray="8 6">
+        <line x1="26"  y1="-160" x2="26"  y2="640" vector-effect="non-scaling-stroke"/>
+        <line x1="105" y1="-110" x2="105" y2="600" vector-effect="non-scaling-stroke"/>
+        <line x1="256" y1="-200" x2="256" y2="700" vector-effect="non-scaling-stroke"/>
+        <line x1="407" y1="-110" x2="407" y2="600" vector-effect="non-scaling-stroke"/>
+        <line x1="486" y1="-160" x2="486" y2="640" vector-effect="non-scaling-stroke"/>
+      </g>
+      <!-- the filled leaves -->
+      <use href="#pL" fill="#fff" fill-opacity="0.38" stroke="none"/>
+      <use href="#pR" fill="#fff" fill-opacity="0.38" stroke="none"/>
+      <use href="#pL" stroke-opacity="0.85" stroke-width="1.6" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+      <use href="#pR" stroke-opacity="0.85" stroke-width="1.6" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>
+      <!-- bezier handles -->
+      <g stroke-opacity="0.75" stroke-width="1.4" vector-effect="non-scaling-stroke">
+        <line x1="105" y1="10" x2="30"  y2="90.5"  vector-effect="non-scaling-stroke"/>
+        <line x1="105" y1="10" x2="212" y2="34"    vector-effect="non-scaling-stroke"/>
+        <line x1="256" y1="500" x2="148.8" y2="475.6" vector-effect="non-scaling-stroke"/>
+        <line x1="256" y1="500" x2="330.9" y2="419.5" vector-effect="non-scaling-stroke"/>
+        <line x1="407" y1="10" x2="482" y2="90.5"  vector-effect="non-scaling-stroke"/>
+        <line x1="407" y1="10" x2="300" y2="34"    vector-effect="non-scaling-stroke"/>
+        <line x1="256" y1="500" x2="363.2" y2="475.6" vector-effect="non-scaling-stroke"/>
+        <line x1="256" y1="500" x2="181.1" y2="419.5" vector-effect="non-scaling-stroke"/>
+        <line x1="256" y1="97" x2="214" y2="176" vector-effect="non-scaling-stroke"/>
+        <line x1="256" y1="97" x2="298" y2="176" vector-effect="non-scaling-stroke"/>
+      </g>
+      <g fill="#fff" fill-opacity="0.8" stroke="none">
+        <circle cx="30" cy="90.5" r="6"/><circle cx="212" cy="34" r="6"/>
+        <circle cx="148.8" cy="475.6" r="6"/><circle cx="330.9" cy="419.5" r="6"/>
+        <circle cx="482" cy="90.5" r="6"/><circle cx="300" cy="34" r="6"/>
+        <circle cx="363.2" cy="475.6" r="6"/><circle cx="181.1" cy="419.5" r="6"/>
+        <circle cx="214" cy="176" r="6"/><circle cx="298" cy="176" r="6"/>
+      </g>
+      <!-- anchor points -->
+      <g fill="#fff" stroke="none">
+        <rect x="94" y="-1" width="22" height="22" rx="3"/>
+        <rect x="396" y="-1" width="22" height="22" rx="3"/>
+        <rect x="245" y="489" width="22" height="22" rx="3"/>
+        <rect x="247" y="88" width="18" height="18" rx="3" fill-opacity="0.9"/>
+        <rect x="18"  y="203" width="16" height="16" rx="3" fill-opacity="0.85"/>
+        <rect x="478" y="203" width="16" height="16" rx="3" fill-opacity="0.85"/>
+        <rect x="328" y="291" width="14" height="14" rx="3" fill-opacity="0.75"/>
+        <rect x="170" y="291" width="14" height="14" rx="3" fill-opacity="0.75"/>
+      </g>
+    </g>
+  </svg>
+</section>
+
+<!-- ================= 3. Brand board ================= -->
+<section class="page p-board board-bg">
+
+  <!-- A: logo lockup -->
+  <div class="card center" style="left:50px; top:50px; width:374px; height:362px; background: var(--mist);">
+    <div class="lockup" style="gap:12px; margin-top:-6px;">
+      <svg class="mark" width="68" height="72"><use href="#mk-c"/></svg>
+      <span class="wordmark" style="font-size:58px; margin-top:-4px;">serenity</span>
+    </div>
+  </div>
+
+  <!-- B: phone home screen -->
+  <div class="card" id="cardPhone" style="left:455px; top:50px; width:575px; height:610px; background: var(--blue);"></div>
+
+  <!-- C: browser tab -->
+  <div class="card" style="left:50px; top:442px; width:374px; height:345px;
+      background: radial-gradient(90% 70% at 15% 110%, rgba(150,215,245,.85) 0%, rgba(29,159,218,0) 60%), linear-gradient(170deg, #0F5F86 0%, #10739A 45%, #1584B8 100%);">
+    <svg width="374" height="345" viewBox="0 0 374 345" style="position:absolute;inset:0" fill="none" stroke="#3FB4EA" stroke-width="2.2">
+      <line x1="0" y1="52" x2="374" y2="52" stroke-opacity=".8"/>
+      <line x1="0" y1="77" x2="374" y2="77" stroke-opacity=".9"/>
+      <!-- left (inactive) tab -->
+      <path d="M-20 94 H48 a14 14 0 0 1 14 14 V160" stroke-opacity=".7"/>
+      <path d="M22 118 l8 8 l16 -18" stroke-opacity=".6" stroke-width="3"/>
+      <!-- active tab -->
+      <path d="M86 165 V108 a14 14 0 0 1 14 -14 H374" stroke-opacity=".95"/>
+      <line x1="0" y1="166" x2="374" y2="166" stroke-opacity=".9"/>
+      <!-- nav -->
+      <path d="M38 232 h34 M38 232 l14 -14 M38 232 l14 14" stroke-opacity=".75"/>
+      <path d="M130 232 h34 M164 232 l-14 -14 M164 232 l-14 14" stroke-opacity=".55"/>
+      <path d="M244 220 a16 16 0 1 0 6 18" stroke-opacity=".6"/>
+      <path d="M240 212 l10 8 l-12 6" stroke-opacity=".6"/>
+      <rect x="262" y="198" width="160" height="68" rx="34" stroke-opacity=".9"/>
+      <rect x="288" y="228" width="26" height="22" rx="4" stroke-opacity=".9"/>
+      <path d="M293 228 v-7 a8 8 0 0 1 16 0 v7" stroke-opacity=".9"/>
+      <line x1="0" y1="298" x2="374" y2="298" stroke-opacity=".9"/>
+    </svg>
+    <div style="position:absolute; left:105px; top:111px; display:flex; align-items:center; gap:12px;">
+      <svg class="mark" width="34" height="38"><use href="#mk-w"/></svg>
+      <span style="font: 500 30px/1 var(--tag); color:#fff;">Serenity</span>
+    </div>
+    <div style="position:absolute; left:326px; top:214px; font: 400 34px/1 var(--tag); color:#fff; white-space:nowrap;">ser</div>
+  </div>
+
+  <!-- D: business cards -->
+  <div class="card" style="left:50px; top:818px; width:374px; height:482px;
+      background: radial-gradient(80% 60% at 70% 20%, #2AA9E0 0%, #1D9FDA 45%, #1689BF 100%); perspective: 900px;">
+    <div style="position:absolute; left:150px; top:96px; width:300px; height:176px; border-radius:6px;
+        transform: rotateX(48deg) rotateZ(-32deg); transform-origin: 50% 50%;
+        background: linear-gradient(160deg, #1EA3DE, #158FC8); box-shadow: -18px 30px 40px rgba(6,40,70,.45);">
+      <div style="position:absolute; left:26px; top:26px; display:flex; align-items:center; gap:6px;">
+        <svg class="mark" width="18" height="20"><use href="#mk-wd"/></svg>
+        <span class="wordmark" style="font-size:20px; color:#F4F5F9;">serenity</span>
+      </div>
+      <div style="position:absolute; right:20px; bottom:20px; text-align:right; font: 400 10.5px/1.45 var(--tag); color:#E6F4FB;">
+        Serenity Studio<br>Calm, one breath at a time<br>Meditation · Sleep · Breath
+      </div>
+    </div>
+    <div style="position:absolute; left:-10px; top:228px; width:300px; height:176px; border-radius:6px;
+        transform: rotateX(48deg) rotateZ(-32deg); transform-origin: 50% 50%;
+        background: linear-gradient(160deg, #1EA3DE, #1690CA); box-shadow: -22px 36px 46px rgba(6,40,70,.5);">
+      <div style="position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; align-items:center; gap:10px;">
+        <svg class="mark" width="40" height="45"><use href="#mk-wd"/></svg>
+        <span class="wordmark" style="font-size:40px; color:#F4F5F9;">serenity</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- E: story -->
+  <div class="card" style="left:455px; top:690px; width:342px; height:610px; background:#0A3552 url('grain-tall.svg') center/cover no-repeat;">
+    <div style="position:absolute; left:14px; right:14px; top:13px; display:flex; gap:4px;">
+      <i style="flex:1; height:4px; border-radius:2px; background:#fff;"></i>
+      <i style="flex:1; height:4px; border-radius:2px; background:linear-gradient(90deg,#fff 50%,rgba(255,255,255,.35) 50%);"></i>
+      <i style="flex:1; height:4px; border-radius:2px; background:rgba(255,255,255,.35);"></i>
+      <i style="flex:1; height:4px; border-radius:2px; background:rgba(255,255,255,.35);"></i>
+      <i style="flex:1; height:4px; border-radius:2px; background:rgba(255,255,255,.35);"></i>
+    </div>
+    <div style="position:absolute; left:14px; top:34px; display:flex; align-items:center; gap:9px;">
+      <div style="position:relative; width:34px; height:34px; border-radius:50%; overflow:hidden;
+          background: radial-gradient(110% 110% at 5% 105%, #fff 0%, rgba(255,255,255,0) 55%), linear-gradient(150deg,#0E5F84,#1D9FDA);">
+        <svg class="mark" width="15" height="17" style="position:absolute;left:9.5px;top:8.5px"><use href="#mk-w"/></svg>
+      </div>
+      <span style="font: 400 13px/1 var(--tag); color:#fff;">serenity</span>
+    </div>
+    <div style="position:absolute; left:30px; bottom:36px; color:#fff; font-family: var(--tag); font-size:47px; line-height:1.1; letter-spacing:-0.3px;">
+      <span class="tag-b">Calm</span><span class="tag-l">Starts Here</span>
+    </div>
+  </div>
+
+  <!-- F: profile thumbnail -->
+  <div class="card" id="cardProfile" style="left:828px; top:690px; width:202px; height:285px;
+      background: linear-gradient(180deg, var(--blue) 0%, #1478AA 55%, #12436A 100%);"></div>
+
+  <!-- G: palette -->
+  <div style="position:absolute; left:828px; top:1005px; width:202px; height:295px;">
+    <div class="card center" style="left:0; top:0;   width:202px; height:120px; background: var(--mist); align-items:flex-start; padding-top:30px;">
+      <span style="font: 500 18px/1 var(--tag); color: var(--midnight);">Mist</span></div>
+    <div class="card center" style="left:0; top:60px; width:202px; height:120px; background: var(--green); align-items:flex-start; padding-top:22px; box-shadow:0 -6px 16px rgba(0,0,0,.08);">
+      <span style="font: 500 18px/1 var(--tag); color:#fff;">Leaf Green</span></div>
+    <div class="card center" style="left:0; top:118px; width:202px; height:120px; background: var(--midnight); align-items:flex-start; padding-top:22px; box-shadow:0 -6px 16px rgba(0,0,0,.12);">
+      <span style="font: 500 18px/1 var(--tag); color:#fff;">Midnight</span></div>
+    <div class="card center" style="left:0; top:176px; width:202px; height:119px; background: var(--blue); align-items:flex-start; padding-top:22px; box-shadow:0 -6px 16px rgba(0,0,0,.14);">
+      <span style="font: 500 18px/1 var(--tag); color:#fff;">Serenity Blue</span></div>
+  </div>
+</section>
+
+<!-- ================= 4. Phone close-up ================= -->
+<section class="page p-tall" id="pagePhone" style="background: var(--lagoon);"></section>
+
+<!-- ================= 5. Profile card ================= -->
+<section class="page p-prof" id="pageProfile" style="background: linear-gradient(180deg, var(--blue) 0%, #1786BC 30%, #12517A 68%, var(--midnight) 100%);"></section>
+
+<!-- ================= 6. Lockup ================= -->
+<section class="page p-lock center" style="background: var(--mist);">
+  <div class="lockup" style="gap:16px; margin-top:-10px;">
+    <svg class="mark" width="111" height="118"><use href="#mk-c"/></svg>
+    <span class="wordmark" style="font-size:94px; margin-top:-6px;">serenity</span>
+  </div>
+</section>
+
+<!-- ================= 7. White mark on blue ================= -->
+<section class="page p-sq center" style="background: var(--blue);">
+  <svg class="mark" width="320" height="340"><use href="#mk-w"/></svg>
+</section>
+
+<!-- ---------- templates ---------- -->
+<template id="tplPhone">
+  <div class="phone">
+    <div class="btn" style="top:430px; height:110px;"></div>
+    <div class="btn" style="top:620px; height:190px;"></div>
+    <div class="btn" style="top:840px; height:190px;"></div>
+    <div class="bezel"><div class="screen">
+      <svg class="wall" viewBox="0 0 920 1980" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="wg1" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#3FB2E8"/><stop offset=".5" stop-color="#1D9FDA"/><stop offset="1" stop-color="#4DB8EA"/>
+          </linearGradient>
+          <linearGradient id="wg2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".35" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#fff" stop-opacity=".4"/>
+          </linearGradient>
+          <filter id="wb"><feGaussianBlur stdDeviation="6"/></filter>
+        </defs>
+        <rect width="920" height="1980" fill="url(#wg1)"/>
+        <path d="M0 520 C 300 420, 700 430, 920 560 L920 1980 L0 1980Z" fill="#1A92CF"/>
+        <path d="M250 720 C 420 560, 760 560, 1100 760 C 800 700, 500 700, 250 720Z" fill="#10739A"/>
+        <path d="M-40 560 C 300 440, 600 460, 980 600" stroke="#fff" stroke-opacity=".45" stroke-width="6" fill="none" filter="url(#wb)"/>
+        <path d="M120 0 C 260 380, 600 760, 1000 900" stroke="url(#wg2)" stroke-width="4" fill="none"/>
+        <path d="M160 0 C 330 420, 650 780, 1000 980 L1000 1100 C 620 900, 280 520, 120 0Z" fill="#fff" fill-opacity=".14"/>
+      </svg>
+      <div class="island"></div>
+      <div class="clock">9:41</div>
+
+      <div class="app" style="left:150px; top:330px;">
+        <div class="ic ic-serenity"><svg class="mark" width="104" height="118"><use href="#mk-w"/></svg></div>
+        <div class="lb">Serenity</div>
+      </div>
+      <div class="app" style="left:470px; top:330px;">
+        <div class="ic ic-cal"><div class="d">MON</div><div class="n">6</div></div>
+        <div class="lb">Calendar</div>
+      </div>
+      <div class="app" style="left:790px; top:330px;">
+        <div class="ic ic-photos">
+          <svg viewBox="0 0 210 210" width="210" height="210">
+            <g transform="translate(105 105)" opacity=".92">
+              <ellipse rx="30" ry="52" cy="-44" fill="#F7B500"/>
+              <ellipse rx="30" ry="52" cy="-44" fill="#F57C1F" transform="rotate(45)"/>
+              <ellipse rx="30" ry="52" cy="-44" fill="#E9403C" transform="rotate(90)"/>
+              <ellipse rx="30" ry="52" cy="-44" fill="#C2378E" transform="rotate(135)"/>
+              <ellipse rx="30" ry="52" cy="-44" fill="#7350C6" transform="rotate(180)"/>
+              <ellipse rx="30" ry="52" cy="-44" fill="#2D8CEB" transform="rotate(225)"/>
+              <ellipse rx="30" ry="52" cy="-44" fill="#34B5B0" transform="rotate(270)"/>
+              <ellipse rx="30" ry="52" cy="-44" fill="#8BC53F" transform="rotate(315)"/>
+            </g>
+          </svg>
+        </div>
+        <div class="lb">Photos</div>
+      </div>
+      <div class="app" style="left:150px; top:700px;">
+        <div class="ic ic-mail">
+          <svg viewBox="0 0 210 210" width="210" height="210" fill="none" stroke="#fff" stroke-width="9" stroke-linejoin="round">
+            <rect x="34" y="58" width="142" height="96" rx="8" fill="#fff" stroke="none"/>
+            <path d="M40 64 L105 116 L170 64" stroke="#1A8BF0" stroke-width="7"/>
+            <path d="M40 148 L88 104 M170 148 L122 104" stroke="#1A8BF0" stroke-width="5"/>
+          </svg>
+        </div>
+        <div class="lb">Mail</div>
+      </div>
+      <div class="app" style="left:470px; top:700px;">
+        <div class="ic ic-notes">
+          <svg viewBox="0 0 210 210" width="210" height="210">
+            <defs><linearGradient id="ny" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD94F"/><stop offset="1" stop-color="#F5BE2C"/></linearGradient></defs>
+            <rect width="210" height="62" fill="url(#ny)"/>
+            <line x1="0" y1="72" x2="210" y2="72" stroke="#B9B9BE" stroke-width="3" stroke-dasharray="3 6"/>
+            <g stroke="#DCDCE0" stroke-width="3"><line x1="22" y1="110" x2="210" y2="110"/><line x1="22" y1="146" x2="210" y2="146"/><line x1="22" y1="182" x2="210" y2="182"/></g>
+          </svg>
+        </div>
+        <div class="lb">Notes</div>
+      </div>
+      <div class="app" style="left:790px; top:700px;">
+        <div class="ic" style="background:#1c1c1e;"></div>
+      </div>
+    </div></div>
+  </div>
+</template>
+
+<template id="tplProfile">
+  <div class="profile">
+    <div class="banner"></div>
+    <div class="tagline"><span class="tag-b">Calm</span><span class="tag-l">Starts Here</span></div>
+    <div class="avatar"><svg class="mark" width="74" height="84"><use href="#mk-w"/></svg></div>
+    <div class="follow">Follow</div>
+    <div class="name">Serenity
+      <svg width="34" height="34" viewBox="0 0 24 24"><path fill="#1D9FDA" d="M12 1.5l2.6 1.9 3.2-.1 1 3 2.6 1.9-1 3 1 3-2.6 1.9-1 3-3.2-.1L12 22.5l-2.6-1.9-3.2.1-1-3L2.6 15.8l1-3-1-3 2.6-1.9 1-3 3.2.1z"/><path d="M7.6 12.2l3 3 5.8-6" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div class="handle">@Serenity</div>
+  </div>
+</template>
+
+<script>
+  function place(tplId, host, style) {
+    const el = document.getElementById(tplId).content.firstElementChild.cloneNode(true);
+    Object.assign(el.style, style);
+    host.appendChild(el);
+  }
+  // Brand-board phone (corner view)
+  place('tplPhone', document.getElementById('cardPhone'), { left: '-30px', top: '190px', transform: 'rotate(-16deg) scale(0.6)' });
+  // Close-up phone
+  place('tplPhone', document.getElementById('pagePhone'), { left: '60px', top: '420px', transform: 'rotate(-15deg) scale(1.08)' });
+  // Profile page card + thumbnail
+  place('tplProfile', document.getElementById('pageProfile'), { left: '38px', top: '335px' });
+  place('tplProfile', document.getElementById('cardProfile'), { left: '8px', top: '76px', transform: 'scale(0.195)', borderRadius: '52px' });
+  // Preview helper: index.html?p=3 shows only page 3 (used for PNG previews; ignored when printing the full PDF).
+  const only = new URLSearchParams(location.search).get('p');
+  if (only) document.querySelectorAll('.page').forEach((s, i) => { if (i + 1 !== +only) s.style.display = 'none'; });
+</script>
+</body>
+</html>

@@ -64,6 +64,20 @@ export const meditation = defineType({
       validation: (r) => r.required(),
     }),
     defineField({
+      name: 'recording',
+      title: 'Recording (optional)',
+      type: 'object',
+      description:
+        'Guided audio, played in place of the soundscape; the session then runs for the recording’s length. Uploaded by `npm run content:recordings`.',
+      readOnly: true,
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({ name: 'audio', title: 'Audio', type: 'file', options: { accept: 'audio/*' } }),
+        defineField({ name: 'duration', title: 'Length (seconds)', type: 'number' }),
+        defineField({ name: 'hash', title: 'Uploaded from', type: 'string', hidden: true }),
+      ],
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'text',

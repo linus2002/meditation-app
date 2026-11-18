@@ -4,7 +4,8 @@
  * Run with: npm run content:pull (the build scripts run it first).
  *
  * Writes `src/content/content.json`, which every module under src/data reads.
- * Images, videos and each story's recorded narration all stay on Sanity's CDN
+ * Images, videos, each story's recorded narration and each session's guided
+ * recording all stay on Sanity's CDN
  * and load over the network, which is what keeps them out of the APK. Images
  * are requested resized and re-encoded (see `cdnImage`), and each carries a
  * tiny inline blur preview that still shows while offline.
@@ -43,7 +44,8 @@ const QUERY = `{
     "id": slug.current, title, subtitle, narrator, category, durationMinutes, tone,
     "image": image${IMG}, imageAlt, "cover": cover${IMG}, coverFocus, soundscape,
     description, isSleep, isDailyGoal, inLibrary,
-    "breathPattern": breathPattern[]{ label, seconds }
+    "breathPattern": breathPattern[]{ label, seconds },
+    "recording": recording{ "src": audio.asset->url, duration }
   },
   "programs": *[_type == "program" && defined(slug.current)] | order(order asc) {
     "id": slug.current, title, author, level, description, scrim, featured,

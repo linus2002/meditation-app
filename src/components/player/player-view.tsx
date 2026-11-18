@@ -17,6 +17,7 @@ import { useLoop } from '@/hooks/use-loop';
 import { useBreath } from '@/hooks/use-breath';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { usePlayer } from '@/hooks/use-player';
+import { useSessionTrack } from '@/hooks/use-session-track';
 import { suggestNext } from '@/data/meditations';
 import { recommended } from '@/data/recommended';
 import { MIN_RECORDED_SECONDS } from '@/data/stats';
@@ -117,6 +118,13 @@ export function PlayerView({
     if (isPlaying) player.pause();
   });
 
+  // A session with a recording plays it, following the session clock.
+  const { start: startTrack } = useSessionTrack(meditation.track, {
+    isPlaying,
+    elapsed: player.elapsed,
+    onInterrupted: player.pause,
+  });
+
   // A session keeps going with the screen off, even a silent one, and ends with its bell.
   useBackgroundHold(isPlaying);
 
@@ -124,9 +132,12 @@ export function PlayerView({
   // the tap itself. The bed is started later, from an effect, so the context
   // has to be unlocked here, synchronously, while the gesture is still live.
   const toggle = React.useCallback(() => {
-    if (!isPlaying) void prime();
+    if (!isPlaying) {
+      void prime();
+      startTrack();
+    }
     toggleTransport();
-  }, [isPlaying, prime, toggleTransport]);
+  }, [isPlaying, prime, startTrack, toggleTransport]);
 
   // Space and K start or stop the session from anywhere on the screen.
   React.useEffect(() => {
@@ -155,14 +166,16 @@ export function PlayerView({
   // The ambient bed follows the transport, and never outlives the screen.
   const { play: playAudio } = audio;
   const scape = meditation.soundscape;
+  // A recording carries its own sound, so the synthesised bed stays out of it.
+  const hasTrack = Boolean(meditation.track);
 
   React.useEffect(() => {
-    if (isPlaying && ambientOn) {
+    if (isPlaying && ambientOn && !hasTrack) {
       void playAudio(scape);
     } else {
       stopAudio(1.2);
     }
-  }, [isPlaying, ambientOn, scape, playAudio, stopAudio]);
+  }, [isPlaying, ambientOn, hasTrack, scape, playAudio, stopAudio]);
 
   React.useEffect(() => () => stopAudio(0.4), [stopAudio]);
 
@@ -190,8 +203,9 @@ export function PlayerView({
     if (!autoStart || autoStartedRef.current) return;
     autoStartedRef.current = true;
     void prime();
+    startTrack();
     playTransport();
-  }, [autoStart, prime, playTransport]);
+  }, [autoStart, prime, startTrack, playTransport]);
 
   const startFromBeginning = () => {
     offsetRef.current = 0;
@@ -285,6 +299,7 @@ export function PlayerView({
   // Defined during render so it always holds the current transport handlers.
   const sitAgain = () => {
     void prime();
+    startTrack(0);
     offsetRef.current = 0;
     completedRef.current = false;
     recorder.restart();
@@ -389,8 +404,8 @@ export function PlayerView({
         </ul>
 
         <p className="mt-3 text-center text-label leading-relaxed text-ink-faint">
-          {/* No recorded voice yet: playback is breath cues over ambience. */}
-          Breath-paced, with ambient sound
+          {/* Without a recording, playback is breath cues over ambience. */}
+          {hasTrack ? 'Guided audio, breath-paced' : 'Breath-paced, with ambient sound'}
           <br />
           {cycleLabels.join(' · ')}
         </p>

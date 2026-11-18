@@ -18,3 +18,17 @@ studio/.sanity
 
 # Original video files, kept locally: the app streams them from Sanity.
 media-backup/
+
+# Untouched source recordings for the programmes (processed copies live in public/)
+/audio-originals/
+
+# Programme recordings: uploaded to Sanity (npm run content:recordings) and streamed from its CDN.
+/public/the-six-phase/
+/public/sleep-mastery/
+/public/a-steady-mind/
+/public/open-water/
+/public/calm-foundations/
+/public/kind-to-yourself/
+/public/better-mornings/
+/public/breath-school/
+/public/focus-reset/

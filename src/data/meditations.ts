@@ -6,13 +6,16 @@ import type { BreathPhase, Meditation } from '@/types';
  * src/content. Order follows each document's Order field.
  */
 function toMeditation(item: ContentMeditation): Meditation {
+  const track = item.recording;
   return {
     id: item.id,
     title: item.title,
     subtitle: item.subtitle,
     narrator: item.narrator,
     category: item.category,
-    durationSeconds: item.durationMinutes * 60,
+    // A recording sets its own length; the minutes in Sanity are for the rest.
+    durationSeconds: track ? Math.round(track.duration) : item.durationMinutes * 60,
+    ...(track ? { track: track.src } : {}),
     tone: item.tone,
     image: toImage(item.image),
     imageAlt: item.imageAlt,
