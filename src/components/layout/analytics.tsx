@@ -49,12 +49,23 @@ export function Analytics() {
     if (!hydrated || !allowed) return;
     const supabase = getSupabase();
     if (!supabase) return;
+    // Supabase repeats SIGNED_IN whenever the tab regains focus, so a sign-in
+    // only counts when the account actually changes from what was last seen.
+    let lastUserId: string | null | undefined;
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
       const user = session?.user;
+      if (event === 'INITIAL_SESSION') {
+        // Whoever is already signed in when the app opens: not a new sign-in.
+        lastUserId = user && !user.is_anonymous ? user.id : null;
+      }
       if (user && !user.is_anonymous) {
         identifyUser(user.id);
-        if (event === 'SIGNED_IN') track('signed_in');
+        if (event === 'SIGNED_IN' && lastUserId !== undefined && lastUserId !== user.id) {
+          track('signed_in');
+        }
+        lastUserId = user.id;
       } else if (event === 'SIGNED_OUT') {
+        lastUserId = null;
         track('signed_out');
         resetUser(allowedRef.current);
       }
