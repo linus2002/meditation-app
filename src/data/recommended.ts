@@ -1,6 +1,6 @@
 import type { StaticImageData } from 'next/image';
 
-import { content, toImage } from '@/content';
+import { content, onContentChange, toImage } from '@/content';
 import { getMeditation } from '@/data/meditations';
 import type { Meditation } from '@/types';
 
@@ -18,13 +18,14 @@ export interface Recommendation {
  * Picked and ordered in Sanity (Studio → Home screen); a slot may carry its own
  * card artwork, otherwise it uses the session's.
  */
-const PICKS: { id: string; collection: string; image?: StaticImageData }[] =
-  content.home.recommended.map(({ image, ...pick }) => ({
-    ...pick,
-    ...(image ? { image: toImage(image) } : {}),
-  }));
+export let recommended: Recommendation[] = [];
 
-export const recommended: Recommendation[] = PICKS.flatMap(({ id, collection, image }) => {
-  const meditation = getMeditation(id);
-  return meditation ? [{ meditation, collection, image: image ?? meditation.image }] : [];
+// Rebuilt whenever fresh content arrives (src/content/live.ts).
+onContentChange(() => {
+  recommended = content.home.recommended.flatMap(({ id, collection, image }) => {
+    const meditation = getMeditation(id);
+    return meditation
+      ? [{ meditation, collection, image: image ? toImage(image) : meditation.image }]
+      : [];
+  });
 });

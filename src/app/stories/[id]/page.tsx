@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { StoryReader } from '@/components/stories/story-reader';
+import { StoryScreen } from '@/components/live/live-screens';
 import { getStory, stories } from '@/data/stories';
 
 export function generateStaticParams() {
@@ -17,13 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
+/** The story is looked up in the browser, so edits made in Sanity show without a rebuild. */
 export default async function StoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const story = getStory(id);
-
-  if (!story) {
-    notFound();
-  }
-
-  return <StoryReader story={story} />;
+  if (!getStory(id)) notFound();
+  return <StoryScreen id={id} />;
 }

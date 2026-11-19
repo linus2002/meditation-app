@@ -1,4 +1,4 @@
-import { content } from '@/content';
+import { content, onContentChange } from '@/content';
 
 export interface ReflectionPrompt {
   id: string;
@@ -12,7 +12,12 @@ export interface ReflectionPrompt {
  * is not a diagnostic instrument and should never read like one. Edited in
  * Sanity (Studio → Reflection prompts).
  */
-export const reflectionPrompts: ReflectionPrompt[] = content.reflectionPrompts;
+export let reflectionPrompts: ReflectionPrompt[] = [];
+
+// Rebuilt whenever fresh content arrives (src/content/live.ts).
+onContentChange(() => {
+  reflectionPrompts = content.reflectionPrompts;
+});
 
 /**
  * How the reflection sat — the weight of the thought, not a verdict on you.

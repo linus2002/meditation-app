@@ -1,3 +1,6 @@
+'use client';
+
+// Reads content at render, in the browser, so edits made in Sanity show without a rebuild (src/content/live.ts).
 import { AssessmentCard } from '@/components/home/assessment-card';
 import { CategoryDeck } from '@/components/home/category-deck';
 import { GreetingHeader } from '@/components/home/greeting-header';

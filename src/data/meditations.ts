@@ -1,4 +1,4 @@
-import { content, toImage, type ContentMeditation } from '@/content';
+import { content, onContentChange, toImage, type ContentMeditation } from '@/content';
 import type { BreathPhase, Meditation } from '@/types';
 
 /*
@@ -6,7 +6,10 @@ import type { BreathPhase, Meditation } from '@/types';
  * src/content. Order follows each document's Order field.
  */
 function toMeditation(item: ContentMeditation): Meditation {
-  const track = item.recording;
+  // A recording without a usable length (published before the Studio measured
+  // it) is still played, but the session keeps its listed minutes.
+  const track = item.recording?.src ? item.recording : undefined;
+  const trackSeconds = Number(track?.duration);
   return {
     id: item.id,
     title: item.title,
@@ -14,7 +17,8 @@ function toMeditation(item: ContentMeditation): Meditation {
     narrator: item.narrator,
     category: item.category,
     // A recording sets its own length; the minutes in Sanity are for the rest.
-    durationSeconds: track ? Math.round(track.duration) : item.durationMinutes * 60,
+    durationSeconds:
+      Number.isFinite(trackSeconds) && trackSeconds > 0 ? Math.round(trackSeconds) : item.durationMinutes * 60,
     ...(track ? { track: track.src } : {}),
     tone: item.tone,
     image: toImage(item.image),
@@ -29,10 +33,14 @@ function toMeditation(item: ContentMeditation): Meditation {
   };
 }
 
+/*
+ * Everything below is rebuilt whenever fresh content arrives from Sanity
+ * (see src/content/live.ts); `export let` keeps each import pointing at the
+ * current value.
+ */
+
 /** The library: every session marked to show in it. */
-export const meditations: Meditation[] = content.meditations
-  .filter((item) => item.inLibrary !== false)
-  .map(toMeditation);
+export let meditations: Meditation[] = [];
 
 /**
  * The sessions inside the free programmes, listed in the order each programme
@@ -40,16 +48,23 @@ export const meditations: Meditation[] = content.meditations
  * counts stay as they were; `getMeditation` and search look through both, so
  * each one plays and saves like any other.
  */
-export const programSessions: Meditation[] = content.meditations
-  .filter((item) => item.inLibrary === false)
-  .map(toMeditation);
+export let programSessions: Meditation[] = [];
 
 /** Every playable session: the library, then the programme sessions. */
-export const allSessions: Meditation[] = [...meditations, ...programSessions];
+export let allSessions: Meditation[] = [];
 
-export const dailyGoal = meditations.find((item) => item.isDailyGoal) ?? meditations[0];
-export const startGoal = meditations.find((item) => item.id === 'free-your-mind') ?? meditations[1];
-export const sleepSessions = meditations.filter((item) => item.isSleep);
+export let dailyGoal: Meditation;
+export let startGoal: Meditation;
+export let sleepSessions: Meditation[] = [];
+
+onContentChange(() => {
+  meditations = content.meditations.filter((item) => item.inLibrary !== false).map(toMeditation);
+  programSessions = content.meditations.filter((item) => item.inLibrary === false).map(toMeditation);
+  allSessions = [...meditations, ...programSessions];
+  dailyGoal = meditations.find((item) => item.isDailyGoal) ?? meditations[0];
+  startGoal = meditations.find((item) => item.id === 'free-your-mind') ?? meditations[1];
+  sleepSessions = meditations.filter((item) => item.isSleep);
+});
 
 export function getMeditation(id: string): Meditation | undefined {
   return allSessions.find((item) => item.id === id);

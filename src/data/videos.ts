@@ -1,4 +1,4 @@
-import { content } from '@/content';
+import { content, onContentChange } from '@/content';
 
 /**
  * Short portrait videos for the home screen's video rail.
@@ -16,4 +16,9 @@ export interface HomeVideo {
   poster: string;
 }
 
-export const homeVideos: HomeVideo[] = content.videos;
+export let homeVideos: HomeVideo[] = [];
+
+// Rebuilt whenever fresh content arrives (src/content/live.ts).
+onContentChange(() => {
+  homeVideos = content.videos;
+});

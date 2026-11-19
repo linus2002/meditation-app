@@ -352,7 +352,11 @@ function Legend({ color, label }: { color: string; label: string }) {
 }
 
 /** Ranked list with a proportional bar behind each row. */
-function BarList({ items, unit }: { items: { label: string; value: number }[]; unit?: string }) {
+function BarList({ items: raw, unit }: { items: { label: string; value: number }[]; unit?: string }) {
+  // Rows that read the same are one row: the app build's /home/ and the web's /home are both "Home".
+  const merged = new Map<string, number>();
+  for (const item of raw) merged.set(item.label, (merged.get(item.label) ?? 0) + item.value);
+  const items = [...merged].map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
   if (items.length === 0) return <Empty />;
   const max = Math.max(...items.map((i) => i.value));
   return (
@@ -525,7 +529,7 @@ function TopScreens({ range, titles }: { range: Range; titles: Map<string, strin
     `SELECT properties.$pathname AS path, count() AS views
      FROM events
      WHERE event = '$pageview' AND timestamp >= now() - INTERVAL ${range} DAY
-     GROUP BY path ORDER BY views DESC LIMIT 8`,
+     GROUP BY path ORDER BY views DESC LIMIT 12`,
     [range],
   );
   return (

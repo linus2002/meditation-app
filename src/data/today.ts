@@ -1,4 +1,4 @@
-import { content } from '@/content';
+import { content, onContentChange } from '@/content';
 import { getMeditation } from '@/data/meditations';
 import type { Meditation } from '@/types';
 
@@ -12,7 +12,12 @@ import type { Meditation } from '@/types';
  * the reader's own score (app-provider `ratings`), never a number somebody else
  * supposedly gave it.
  */
-export const todaysPicks: Meditation[] = content.home.today.flatMap(({ id }) => {
-  const meditation = getMeditation(id);
-  return meditation ? [meditation] : [];
+export let todaysPicks: Meditation[] = [];
+
+// Rebuilt whenever fresh content arrives (src/content/live.ts).
+onContentChange(() => {
+  todaysPicks = content.home.today.flatMap(({ id }) => {
+    const meditation = getMeditation(id);
+    return meditation ? [meditation] : [];
+  });
 });

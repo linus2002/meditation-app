@@ -8,6 +8,7 @@ import { StageGate } from '@/components/layout/stage-gate';
 import { HardwareBack } from '@/components/layout/hardware-back';
 import { NavigationTracker } from '@/components/layout/navigation-tracker';
 import { UndoProvider } from '@/components/layout/undo-toast';
+import { LiveContent } from '@/components/layout/live-content';
 import { ReminderScheduler } from '@/components/layout/reminder-scheduler';
 import { ServiceWorkerRegistrar } from '@/components/layout/service-worker';
 import { SystemBars } from '@/components/layout/system-bars';
@@ -96,7 +97,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AudioProvider>
             <UndoProvider>
               <StageGate>
-                <AccountGate>{children}</AccountGate>
+                <AccountGate>
+                  <LiveContent>{children}</LiveContent>
+                </AccountGate>
               </StageGate>
             </UndoProvider>
             <NavigationTracker />

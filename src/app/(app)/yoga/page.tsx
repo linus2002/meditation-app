@@ -1,3 +1,6 @@
+'use client';
+
+// Reads content at render, in the browser, so edits made in Sanity show without a rebuild (src/content/live.ts).
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { YogaMosaic } from '@/components/yoga/yoga-mosaic';
 import { YOGA_SAFETY, yogaSessions } from '@/data/yoga';

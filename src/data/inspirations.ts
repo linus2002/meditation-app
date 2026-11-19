@@ -1,4 +1,4 @@
-import { content } from '@/content';
+import { content, onContentChange } from '@/content';
 
 /**
  * Daily inspiration: one short, uplifting line a day.
@@ -31,9 +31,15 @@ export interface Inspiration {
 }
 
 /** Edited in Sanity (Studio → Daily inspirations); tags are limited to the ones above. */
-export const inspirations: Inspiration[] = content.inspirations as Inspiration[];
+export let inspirations: Inspiration[] = [];
 
-const byId = new Map(inspirations.map((entry) => [entry.id, entry]));
+let byId = new Map<string, Inspiration>();
+
+// Rebuilt whenever fresh content arrives (src/content/live.ts).
+onContentChange(() => {
+  inspirations = content.inspirations as Inspiration[];
+  byId = new Map(inspirations.map((entry) => [entry.id, entry]));
+});
 
 export function inspirationById(id: string): Inspiration | undefined {
   return byId.get(id);

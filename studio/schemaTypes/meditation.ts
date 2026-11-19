@@ -1,5 +1,6 @@
 import { defineArrayMember, defineField, defineType } from 'sanity';
 
+import { RecordingInput } from '../components/RecordingInput';
 import { idField, imageFields, orderField } from './fields';
 import { CATEGORIES, SOUNDSCAPES, TONES } from './options';
 
@@ -68,12 +69,18 @@ export const meditation = defineType({
       title: 'Recording (optional)',
       type: 'object',
       description:
-        'Guided audio, played in place of the soundscape; the session then runs for the recording’s length. Uploaded by `npm run content:recordings`.',
-      readOnly: true,
-      options: { collapsible: true, collapsed: true },
+        'Guided audio, played in place of the soundscape; the session then runs for the recording’s length. Upload or replace the MP3 here and publish: installed apps pick it up the next time they open.',
+      options: { collapsible: true, collapsed: false },
+      components: { input: RecordingInput },
       fields: [
         defineField({ name: 'audio', title: 'Audio', type: 'file', options: { accept: 'audio/*' } }),
-        defineField({ name: 'duration', title: 'Length (seconds)', type: 'number' }),
+        defineField({
+          name: 'duration',
+          title: 'Length (seconds)',
+          type: 'number',
+          description: 'Measured from the file automatically when it is uploaded.',
+          readOnly: true,
+        }),
         defineField({ name: 'hash', title: 'Uploaded from', type: 'string', hidden: true }),
       ],
     }),

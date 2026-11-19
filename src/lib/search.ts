@@ -1,5 +1,6 @@
 import { Compass, Flower2, MessageCircleHeart, PersonStanding, UserRound } from 'lucide-react';
 
+import { onContentChange } from '@/content';
 import { allSessions } from '@/data/meditations';
 import { programs, type Program } from '@/data/programs';
 import { appShortcuts, type Shortcut } from '@/data/shortcuts';
@@ -52,13 +53,18 @@ const PAGES: (Shortcut & { keywords?: string })[] = [
 ];
 
 /** Programme titles each session belongs to, so a programme's name finds its sessions too. */
-const programTitlesBySession = new Map<string, string>();
-for (const program of programs) {
-  for (const session of program.sessions) {
-    const before = programTitlesBySession.get(session.id);
-    programTitlesBySession.set(session.id, before ? `${before} ${program.title}` : program.title);
+let programTitlesBySession = new Map<string, string>();
+
+// Rebuilt with the programmes whenever fresh content arrives (src/content/live.ts).
+onContentChange(() => {
+  programTitlesBySession = new Map();
+  for (const program of programs) {
+    for (const session of program.sessions) {
+      const before = programTitlesBySession.get(session.id);
+      programTitlesBySession.set(session.id, before ? `${before} ${program.title}` : program.title);
+    }
   }
-}
+});
 
 /**
  * One searchable thing, flattened out of whichever collection it came from.
