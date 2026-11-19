@@ -42,7 +42,7 @@ export function WelcomeIntro({ onNext, onSkip }: { onNext: () => void; onSkip: (
 
       <div className="relative mt-auto px-7 pb-[clamp(24px,4.4vh,40px)]">
         <div {...reveal(0)}>
-          <SerenityMark />
+          <SerenityMark priority />
         </div>
 
         <p

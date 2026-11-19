@@ -12,7 +12,9 @@ import { BottomNav } from '@/components/layout/bottom-nav';
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-full flex-col">
-      <div className="flex-1">{children}</div>
+      {/* Room for the Kapwa button, which rises above the bar: without it the
+          last lines of a page (Kapwa's safety note, for one) sit under it. */}
+      <div className="flex-1 pb-7">{children}</div>
       <BottomNav />
     </div>
   );

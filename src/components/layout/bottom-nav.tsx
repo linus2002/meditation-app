@@ -124,7 +124,8 @@ export function BottomNav() {
                 {/* The active label picks up the same gradient as its icon. */}
                 <span
                   className={cn(
-                    'whitespace-nowrap text-label font-medium leading-none tracking-[0.01em]',
+                    // A touch smaller on the narrowest phones, so "Meditations" clears the Kapwa button.
+                    'whitespace-nowrap text-label font-medium leading-none tracking-[0.01em] max-[359px]:text-[0.6875rem] max-[359px]:tracking-normal',
                     isActive
                       ? 'bg-nav-active bg-clip-text text-transparent'
                       : 'text-[rgb(var(--nav-idle))]',

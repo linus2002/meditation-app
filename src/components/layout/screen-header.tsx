@@ -33,9 +33,10 @@ export function ScreenHeader({ eyebrow, title, action, className }: ScreenHeader
           <ChevronsLeft className="h-[22px] w-[22px]" strokeWidth={1.75} />
         </button>
 
-        <div className="flex flex-col items-center gap-[5px] text-center">
+        <div className="flex min-w-0 flex-col items-center gap-[5px] text-center">
           {eyebrow ? (
-            <p className="text-[clamp(0.75rem,3.1vw,0.8125rem)] font-normal leading-none text-ink-muted">
+            // One line, always: a long eyebrow is cut short rather than pushing the title down.
+            <p className="max-w-full truncate text-[clamp(0.75rem,3.1vw,0.8125rem)] font-normal leading-none text-ink-muted">
               {eyebrow}
             </p>
           ) : null}

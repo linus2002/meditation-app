@@ -115,7 +115,7 @@ export function SleepLogCard() {
             type="time"
             value={bedtime}
             onChange={(event) => setBedtime(event.target.value)}
-            className="mt-1.5 h-11 w-full rounded-xl bg-overlay/[0.06] px-3 text-[0.9375rem] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-1.5 h-11 w-full min-w-0 rounded-xl bg-overlay/[0.06] px-2.5 text-[clamp(0.8125rem,4.1vw,0.9375rem)] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           />
         </label>
         <label className="block">
@@ -124,7 +124,7 @@ export function SleepLogCard() {
             type="time"
             value={wakeTime}
             onChange={(event) => setWakeTime(event.target.value)}
-            className="mt-1.5 h-11 w-full rounded-xl bg-overlay/[0.06] px-3 text-[0.9375rem] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            className="mt-1.5 h-11 w-full min-w-0 rounded-xl bg-overlay/[0.06] px-2.5 text-[clamp(0.8125rem,4.1vw,0.9375rem)] tabular-nums text-ink outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           />
         </label>
       </div>

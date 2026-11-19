@@ -75,7 +75,7 @@ function MixList() {
   return (
     <div className="pb-6">
       <ScreenHeader
-        eyebrow="Meditations and stories, back to back"
+        eyebrow="Played back to back"
         title="Your mixes"
       />
 
@@ -88,7 +88,7 @@ function MixList() {
           value={name}
           maxLength={MAX_MIX_NAME}
           onChange={(event) => setName(event.target.value)}
-          placeholder="Name a new mix, e.g. Night wind-down"
+          placeholder="Name a new mix"
           className="h-11 min-w-0 flex-1 rounded-2xl bg-surface px-4 text-body-sm text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         />
         <button

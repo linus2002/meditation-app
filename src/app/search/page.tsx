@@ -24,6 +24,17 @@ export default function SearchPage() {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [query, setQuery] = React.useState('');
 
+  // The words live in the address (/search?q=...), so coming back from a
+  // result finds the same search rather than an empty box.
+  React.useEffect(() => {
+    const saved = new URLSearchParams(window.location.search).get('q');
+    if (saved) setQuery(saved);
+  }, []);
+  React.useEffect(() => {
+    const url = query.trim() ? `?q=${encodeURIComponent(query)}` : window.location.pathname;
+    window.history.replaceState(window.history.state, '', url);
+  }, [query]);
+
   const trimmed = query.trim();
   const results = React.useMemo(() => searchLibrary(query), [query]);
 
