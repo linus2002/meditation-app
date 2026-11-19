@@ -34,8 +34,8 @@
   .cover .top { position: absolute; left: 20mm; top: 20mm; display: flex; align-items: center; gap: 10px; }
   .cover .top span { font: 600 20pt/1 'Poppins'; letter-spacing: -0.02em; }
   .cover .title { position: absolute; left: 20mm; right: 20mm; bottom: 58mm; }
-  .cover .eyebrow { font: 500 9pt/1 'Poppins'; letter-spacing: .18em; text-transform: uppercase; color: #BFE6F7; margin-bottom: 14px; }
-  .cover h1 { font: 700 40pt/1.05 'Poppins'; letter-spacing: -0.02em; margin: 0; }
+  .cover .eyebrow { font: 500 10.5pt/1 'Poppins'; letter-spacing: .01em; color: #BFE6F7; margin-bottom: 14px; }
+  .cover h1 { font: 600 40pt/1.05 'Poppins'; letter-spacing: -0.02em; margin: 0; }
   .cover h1 span { font-weight: 300; display: block; }
   .cover .sub { margin-top: 18px; font: 400 11pt/1.55 'Poppins'; color: #D9EEF8; max-width: 125mm; }
   .cover .meta { position: absolute; left: 20mm; right: 20mm; bottom: 20mm; display: flex; gap: 0; border-top: 1px solid rgba(255,255,255,.25); padding-top: 12px; }
@@ -44,8 +44,8 @@
 
   /* ---------- headings ---------- */
   section.chapter { break-before: page; }
-  .num { font: 600 8.5pt/1 'Poppins'; letter-spacing: .16em; text-transform: uppercase; color: var(--blue); margin: 0 0 8px; }
-  h2 { font: 700 22pt/1.15 'Poppins'; letter-spacing: -0.015em; margin: 0 0 6px; }
+  .num { font: 600 9.5pt/1 'Poppins'; letter-spacing: .01em; color: var(--blue); margin: 0 0 8px; }
+  h2 { font: 600 22pt/1.15 'Poppins'; letter-spacing: -0.015em; margin: 0 0 6px; }
   .lede { font: 400 10.6pt/1.55 'Poppins'; color: var(--ink-soft); margin: 0 0 14px; }
   h3 { font: 600 12.5pt/1.3 'Poppins'; margin: 16px 0 5px; break-after: avoid; }
   h4 { font: 600 9.8pt/1.35 'Poppins'; margin: 14px 0 4px; break-after: avoid; color: var(--lagoon); }
@@ -61,7 +61,7 @@
   table { width: 100%; border-collapse: collapse; margin: 6px 0 14px; font-size: 8.5pt; line-height: 1.5; }
   thead { display: table-header-group; }
   tr { break-inside: avoid; }
-  th { text-align: left; font: 600 7.8pt/1.3 'Poppins'; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-muted);
+  th { text-align: left; font: 600 8.4pt/1.3 'Poppins'; letter-spacing: 0; color: var(--ink-muted);
     border-bottom: 1.5px solid var(--midnight); padding: 6px 8px 6px 0; }
   td { border-bottom: 1px solid var(--rule); padding: 4.5px 8px 4.5px 0; vertical-align: top; }
   td:first-child { font-weight: 500; }
@@ -100,7 +100,7 @@
 
   .toc { margin-top: 10px; }
   .toc a { display: flex; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--rule); color: var(--midnight); text-decoration: none; }
-  .toc .n { font: 600 9pt 'Poppins'; color: var(--blue); width: 24px; }
+  .toc .n { font: 600 9pt 'Poppins'; color: var(--blue); width: 34px; }
   .toc .t { font: 500 11pt 'Poppins'; flex: 1; }
   .toc .d { font: 400 8.4pt 'Poppins'; color: var(--ink-muted); }
 
@@ -152,24 +152,24 @@
   <p class="num">Contents</p>
   <h2>In this document</h2>
   <nav class="toc">
-    <a><span class="n">01</span><span class="t">Introduction</span><span class="d">What Serenity is, who it is for, the principles behind it</span></a>
-    <a><span class="n">02</span><span class="t">Serenity at a glance</span><span class="d">Content, numbers and the main screens</span></a>
-    <a><span class="n">03</span><span class="t">Getting around</span><span class="d">First run, navigation, guests and accounts</span></a>
-    <a><span class="n">04</span><span class="t">Features</span><span class="d">Every feature, how it behaves and where it lives</span></a>
-    <a><span class="n">05</span><span class="t">System architecture</span><span class="d">How the pieces fit together, and the tech stack</span></a>
-    <a><span class="n">06</span><span class="t">Content and sound</span><span class="d">The CMS, recordings, narration and synthesised sound</span></a>
-    <a><span class="n">07</span><span class="t">Data and privacy</span><span class="d">What stays on the phone, what syncs, analytics consent</span></a>
-    <a><span class="n">08</span><span class="t">Backend reference</span><span class="d">Supabase tables, functions, edge function, settings</span></a>
-    <a><span class="n">09</span><span class="t">Build, deploy and release</span><span class="d">Commands, Android build, environment, setup</span></a>
-    <a><span class="n">10</span><span class="t">Quality and accessibility</span><span class="d">Tests, device support, accessibility</span></a>
-    <a><span class="n">11</span><span class="t">Release checklist</span><span class="d">What must be done before publishing</span></a>
+    <a><span class="n">I</span><span class="t">Introduction</span><span class="d">What Serenity is, who it is for, the principles behind it</span></a>
+    <a><span class="n">II</span><span class="t">Serenity at a glance</span><span class="d">Content, numbers and the main screens</span></a>
+    <a><span class="n">III</span><span class="t">Getting around</span><span class="d">First run, navigation, guests and accounts</span></a>
+    <a><span class="n">IV</span><span class="t">Features</span><span class="d">Every feature, how it behaves and where it lives</span></a>
+    <a><span class="n">V</span><span class="t">System architecture</span><span class="d">How the pieces fit together, and the tech stack</span></a>
+    <a><span class="n">VI</span><span class="t">Content and sound</span><span class="d">The CMS, recordings, narration and synthesised sound</span></a>
+    <a><span class="n">VII</span><span class="t">Data and privacy</span><span class="d">What stays on the phone, what syncs, analytics consent</span></a>
+    <a><span class="n">VIII</span><span class="t">Backend reference</span><span class="d">Supabase tables, functions, edge function, settings</span></a>
+    <a><span class="n">IX</span><span class="t">Build, deploy and release</span><span class="d">Commands, Android build, environment, setup</span></a>
+    <a><span class="n">X</span><span class="t">Quality and accessibility</span><span class="d">Tests, device support, accessibility</span></a>
+    <a><span class="n">XI</span><span class="t">Release checklist</span><span class="d">What must be done before publishing</span></a>
     <a><span class="n">A</span><span class="t">Appendix: screen map</span><span class="d">Every route in the app</span></a>
   </nav>
 </section>
 
 <!-- ======================= 1 INTRO ======================= -->
 <section class="chapter">
-  <p class="num">01 · Introduction</p>
+  <p class="num">I · Introduction</p>
   <h2>A calm place to sit, sleep and recover</h2>
   <p class="lede">Serenity is a guided meditation and wellbeing app for phones and tablets. It offers guided sessions, multi-day programs, sleep tools, read-aloud stories, gentle yoga, a daily reflection and a built-in guide called Kapwa, all in one quiet, dark-first interface.</p>
 
@@ -198,14 +198,14 @@
     <tbody>
       <tr><td>Android app</td><td>A Capacitor 8 native shell around a static export of the web app. Package <code>com.linus2002.serenity</code>, minimum Android 7.0 (SDK 24), target SDK 36.</td></tr>
       <tr><td>Web / installable app (PWA)</td><td>A Next.js 15 deployment that can be installed to the home screen and works fully offline once installed.</td></tr>
-      <tr><td>iOS</td><td>Supported by the codebase (<code>npm run open:ios</code>), but the Xcode project has not been created yet. It needs a Mac (see section 11).</td></tr>
+      <tr><td>iOS</td><td>Supported by the codebase (<code>npm run open:ios</code>), but the Xcode project has not been created yet. It needs a Mac (see section XI).</td></tr>
     </tbody>
   </table>
 </section>
 
 <!-- ======================= 2 AT A GLANCE ======================= -->
 <section class="chapter">
-  <p class="num">02 · Serenity at a glance</p>
+  <p class="num">II · Serenity at a glance</p>
   <h2>The library and the screens</h2>
   <p class="lede">The content is managed in the Sanity CMS and built into the app. The figures below are taken from the content shipped in this release.</p>
 
@@ -240,7 +240,7 @@
 
 <!-- ======================= 3 GETTING AROUND ======================= -->
 <section class="chapter">
-  <p class="num">03 · Getting around</p>
+  <p class="num">III · Getting around</p>
   <h2>First run, navigation and accounts</h2>
   <p class="lede">A new user sees a short tour, then chooses whether to sign in or browse as a guest. After that the app opens straight to Home.</p>
 
@@ -272,7 +272,7 @@
 
 <!-- ======================= 4 FEATURES ======================= -->
 <section class="chapter">
-  <p class="num">04 · Features</p>
+  <p class="num">IV · Features</p>
   <h2>What Serenity does</h2>
   <p class="lede">Each feature is described as the user meets it, followed by notes on how it works and where its code lives.</p>
 
@@ -459,7 +459,7 @@
         <li><b>Appointments.</b> Users can add the date of a scan, scan results or chemo. On that day and the day before, the matching session is offered first. This is in-app only, with no notifications.</li>
         <li><b>Scope.</b> Comfort alongside medical care, never a substitute for it. Tests block any wording that claims an effect on cancer or treatment.</li>
       </ul>
-      <div class="callout c-amber"><b>Turned off for this release</b>The track is enabled with <code>NEXT_PUBLIC_SUPPORT_TRACK=1</code>. Its wording is still marked as draft. It must pass clinical review, then a legal check, then a soft launch with a partner organisation before it is switched on (section 11).</div>
+      <div class="callout c-amber"><b>Turned off for this release</b>The track is enabled with <code>NEXT_PUBLIC_SUPPORT_TRACK=1</code>. Its wording is still marked as draft. It must pass clinical review, then a legal check, then a soft launch with a partner organisation before it is switched on (section XI).</div>
     </div>
   </div>
 
@@ -473,7 +473,7 @@
 
 <!-- ======================= 5 ARCHITECTURE ======================= -->
 <section class="chapter">
-  <p class="num">05 · System architecture</p>
+  <p class="num">V · System architecture</p>
   <h2>How the pieces fit together</h2>
   <p class="lede">Serenity is a <b>device-first</b> app. The whole interface and almost all of its logic run on the phone. The servers handle three things: content (at build time), accounts and sync (Supabase), and the optional AI guide.</p>
 
@@ -562,7 +562,7 @@
 
 <!-- ======================= 6 CONTENT & SOUND ======================= -->
 <section class="chapter">
-  <p class="num">06 · Content and sound</p>
+  <p class="num">VI · Content and sound</p>
   <h2>Where the words and sounds come from</h2>
   <p class="lede">The library is edited in Sanity and built into the app. Sound comes from four sources: program recordings, narrated voice, composed music, and soundscapes generated on the device.</p>
 
@@ -590,7 +590,7 @@
 
 <!-- ======================= 7 DATA & PRIVACY ======================= -->
 <section class="chapter">
-  <p class="num">07 · Data and privacy</p>
+  <p class="num">VII · Data and privacy</p>
   <h2>What stays on the phone, and what leaves it</h2>
   <p class="lede">The phone always holds the main copy of a user's data. A server copy exists only for signed-in users, and only for practice history. Sensitive personal notes never leave the device.</p>
 
@@ -631,7 +631,7 @@
 
 <!-- ======================= 8 BACKEND ======================= -->
 <section class="chapter">
-  <p class="num">08 · Backend reference</p>
+  <p class="num">VIII · Backend reference</p>
   <h2>Supabase in detail</h2>
   <p class="lede">The schema is defined in migrations in <code>supabase/migrations/</code>, and every table has row-level security switched on. These are the parts the app uses today.</p>
 
@@ -675,7 +675,7 @@
 
 <!-- ======================= 9 BUILD & RELEASE ======================= -->
 <section class="chapter">
-  <p class="num">09 · Build, deploy and release</p>
+  <p class="num">IX · Build, deploy and release</p>
   <h2>From source to the store</h2>
 
   <h3>Commands</h3>
@@ -718,7 +718,7 @@
 
 <!-- ======================= 10 QUALITY ======================= -->
 <section class="chapter">
-  <p class="num">10 · Quality and accessibility</p>
+  <p class="num">X · Quality and accessibility</p>
   <h2>How it is tested, and who can use it</h2>
 
   <h3>Automated tests</h3>
@@ -737,7 +737,7 @@
       <li>Service-worker asset list, formatting, categories, settings</li>
     </ul>
   </div>
-  <p class="small muted">There are no end-to-end browser tests yet (section 11).</p>
+  <p class="small muted">There are no end-to-end browser tests yet (section XI).</p>
 
   <h3>Device support</h3>
   <ul>
@@ -757,7 +757,7 @@
 
 <!-- ======================= 11 CHECKLIST ======================= -->
 <section class="chapter">
-  <p class="num">11 · Release checklist</p>
+  <p class="num">XI · Release checklist</p>
   <h2>Before publishing</h2>
   <p class="lede">These items were found while reviewing the codebase for this document, and each is marked by priority. <span class="tag t-block">Blocker</span> items will stop store approval or break a feature. <span class="tag t-high">High</span> items should be done before launch. <span class="tag t-tidy">Tidy</span> items are good housekeeping.</p>
 
@@ -765,7 +765,7 @@
   <ul class="check">
     <li><span class="tag t-block">Blocker</span><b>Publish a privacy policy</b> and link it in the app and the store listing. The app has none yet. Google Play requires one for an app with accounts, analytics and wellbeing data.</li>
     <li><span class="tag t-block">Blocker</span><b>Add account deletion</b> inside the app and as a web link. Play requires both for apps that create accounts. No such flow exists today.</li>
-    <li><span class="tag t-high">High</span>Add <b>terms of use</b> and a short wellbeing disclaimer (Kapwa and the content are not medical care), and complete the Play <b>Data safety</b> form to match section 7.</li>
+    <li><span class="tag t-high">High</span>Add <b>terms of use</b> and a short wellbeing disclaimer (Kapwa and the content are not medical care), and complete the Play <b>Data safety</b> form to match section VII.</li>
     <li><span class="tag t-block">Blocker</span>Build a <b>signed release bundle</b> (AAB) with an upload key. CI produces only debug APKs. Increase <code>versionCode</code> with each upload.</li>
     <li><span class="tag t-high">High</span>Check that the merged Android manifest includes <code>POST_NOTIFICATIONS</code>, or reminders will not show on Android 13 and later.</li>
   </ul>
