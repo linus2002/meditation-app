@@ -13,6 +13,7 @@ import {
   syncRecordingForRoute,
   track,
 } from '@/lib/analytics';
+import { normalizePath } from '@/hooks/use-back';
 import { getSupabase } from '@/lib/supabase/client';
 import { useApp } from '@/providers/app-provider';
 
@@ -76,7 +77,8 @@ export function Analytics() {
   const ask =
     hydrated &&
     onboarded &&
-    pathname === '/home' &&
+    // The app build adds a trailing slash (/home/), so compare the bare path.
+    normalizePath(pathname) === '/home' &&
     settings[ASKED_SETTING] !== true &&
     analyticsAvailable();
 

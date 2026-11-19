@@ -17,7 +17,6 @@ const RANGES = [7, 30, 90] as const;
 type Range = (typeof RANGES)[number];
 
 const ACCENT = '#2f7bf6';
-const ACCENT_SOFT = 'rgba(47,123,246,0.14)';
 const GREEN = '#3fa66b';
 const TRACK = 'rgba(128,128,128,0.14)';
 
@@ -203,21 +202,56 @@ function Stat({
   );
 }
 
-/** Daily line chart of two series, with soft fill under the first. */
+/** Whole-number gridlines (0, a middle step when there's room, and the top) for a count axis. */
+function countTicks(max: number): number[] {
+  if (max <= 4) return Array.from({ length: max + 1 }, (_, i) => i);
+  const step = Math.ceil(max / 4);
+  const ticks: number[] = [];
+  for (let t = 0; t < max; t += step) ticks.push(t);
+  ticks.push(max);
+  return ticks;
+}
+
+const shortDay = (day: string) =>
+  new Date(`${day}T00:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+
+/**
+ * Daily counts as paired columns: one per day for people, one for finished
+ * meditations. Columns, not a line, because these are separate whole-number
+ * days; a line would draw slopes between them that never happened.
+ *
+ * Drawn at the panel's real width so text stays at its true size instead of
+ * being scaled up with the picture.
+ */
 function DailyChart({ days }: { days: { day: string; users: number; completed: number }[] }) {
-  const width = 720;
-  const height = 220;
-  const pad = { top: 12, right: 12, bottom: 26, left: 32 };
-  const innerW = width - pad.left - pad.right;
+  const ref = React.useRef<HTMLDivElement>(null);
+  const [width, setWidth] = React.useState(0);
+  const [hover, setHover] = React.useState<number | null>(null);
+
+  React.useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const measure = () => setWidth(el.clientWidth);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const height = 240;
+  const pad = { top: 16, right: 8, bottom: 30, left: 36 };
+  const innerW = Math.max(0, width - pad.left - pad.right);
   const innerH = height - pad.top - pad.bottom;
-  const max = Math.max(1, ...days.map((d) => Math.max(d.users, d.completed)));
-  const step = days.length > 1 ? innerW / (days.length - 1) : innerW;
-  const x = (i: number) => pad.left + i * step;
-  const y = (v: number) => pad.top + innerH - (v / max) * innerH;
-  const line = (key: 'users' | 'completed') => days.map((d, i) => `${i ? 'L' : 'M'}${x(i)},${y(d[key])}`).join(' ');
-  const area = `${line('users')} L${x(days.length - 1)},${y(0)} L${x(0)},${y(0)} Z`;
-  const ticks = [0, Math.round(max / 2), max].filter((v, i, all) => all.indexOf(v) === i);
-  const labelEvery = Math.max(1, Math.ceil(days.length / 7));
+  const peak = Math.max(1, ...days.map((d) => Math.max(d.users, d.completed)));
+  const ticks = countTicks(peak);
+  const top = ticks[ticks.length - 1];
+  const slot = days.length ? innerW / days.length : 0;
+  const barW = Math.max(2, Math.min(18, (slot - 4) / 2));
+  const y = (v: number) => pad.top + innerH - (v / top) * innerH;
+  // Room for about one date label per 64px, always including the last day.
+  const labelEvery = Math.max(1, Math.ceil(days.length / Math.max(1, Math.floor(innerW / 64))));
+  const quiet = days.every((d) => d.users === 0 && d.completed === 0);
+  const tip = hover === null ? null : days[hover];
 
   return (
     <Stack gap={3}>
@@ -225,26 +259,83 @@ function DailyChart({ days }: { days: { day: string; users: number; completed: n
         <Legend color={ACCENT} label="Active users" />
         <Legend color={GREEN} label="Meditations completed" />
       </Inline>
-      <svg viewBox={`0 0 ${width} ${height}`} width="100%" role="img" aria-label="Daily activity">
-        {ticks.map((t) => (
-          <g key={t}>
-            <line x1={pad.left} x2={width - pad.right} y1={y(t)} y2={y(t)} stroke={TRACK} />
-            <text x={pad.left - 8} y={y(t) + 4} textAnchor="end" fontSize="11" fill="currentColor" opacity={0.55}>
-              {t}
-            </text>
-          </g>
-        ))}
-        <path d={area} fill={ACCENT_SOFT} />
-        <path d={line('users')} fill="none" stroke={ACCENT} strokeWidth={2.5} strokeLinejoin="round" />
-        <path d={line('completed')} fill="none" stroke={GREEN} strokeWidth={2} strokeLinejoin="round" />
-        {days.map((d, i) =>
-          i % labelEvery === 0 || i === days.length - 1 ? (
-            <text key={d.day} x={x(i)} y={height - 6} textAnchor="middle" fontSize="11" fill="currentColor" opacity={0.55}>
-              {new Date(`${d.day}T00:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-            </text>
-          ) : null,
+      <div ref={ref} style={{ position: 'relative', width: '100%' }} onMouseLeave={() => setHover(null)}>
+        {width > 0 ? (
+          <svg width={width} height={height} role="img" aria-label="Daily activity" style={{ display: 'block' }}>
+            {ticks.map((t) => (
+              <g key={t}>
+                <line x1={pad.left} x2={width - pad.right} y1={y(t)} y2={y(t)} stroke={TRACK} />
+                <text x={pad.left - 10} y={y(t) + 4} textAnchor="end" fontSize={11} fill="currentColor" opacity={0.55}>
+                  {t}
+                </text>
+              </g>
+            ))}
+
+            {days.map((d, i) => {
+              const x0 = pad.left + i * slot;
+              const mid = x0 + slot / 2;
+              const showLabel = i % labelEvery === 0 || i === days.length - 1;
+              // Keep the outermost labels inside the chart instead of half off its edge.
+              const anchor = i === 0 ? 'start' : i === days.length - 1 ? 'end' : 'middle';
+              const lx = i === 0 ? x0 + 2 : i === days.length - 1 ? x0 + slot - 2 : mid;
+              const tooCloseToLast = i !== days.length - 1 && days.length - 1 - i < labelEvery;
+              return (
+                <g key={d.day} onMouseEnter={() => setHover(i)}>
+                  <rect x={x0} y={pad.top} width={slot} height={innerH} fill={hover === i ? TRACK : 'transparent'} />
+                  {d.users > 0 ? (
+                    <rect x={mid - barW - 1} y={y(d.users)} width={barW} height={y(0) - y(d.users)} rx={Math.min(3, barW / 2)} fill={ACCENT} />
+                  ) : null}
+                  {d.completed > 0 ? (
+                    <rect x={mid + 1} y={y(d.completed)} width={barW} height={y(0) - y(d.completed)} rx={Math.min(3, barW / 2)} fill={GREEN} />
+                  ) : null}
+                  {showLabel && !tooCloseToLast ? (
+                    <text x={lx} y={height - 8} textAnchor={anchor} fontSize={11} fill="currentColor" opacity={0.55}>
+                      {shortDay(d.day)}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+            <line x1={pad.left} x2={width - pad.right} y1={y(0)} y2={y(0)} stroke="currentColor" opacity={0.2} />
+          </svg>
+        ) : (
+          <div style={{ height }} />
         )}
-      </svg>
+
+        {quiet && width > 0 ? (
+          <div style={{ position: 'absolute', inset: `${pad.top}px ${pad.right}px ${pad.bottom}px ${pad.left}px`, display: 'grid', placeItems: 'center', pointerEvents: 'none' }}>
+            <Text size={1} muted>
+              No activity in this period yet.
+            </Text>
+          </div>
+        ) : null}
+
+        {tip && hover !== null ? (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: Math.min(Math.max(pad.left + hover * slot + slot / 2 - 80, 0), Math.max(0, width - 160)),
+              width: 160,
+              pointerEvents: 'none',
+            }}
+          >
+            <Card padding={3} radius={2} shadow={2}>
+              <Stack gap={2}>
+                <Text size={1} weight="semibold">
+                  {new Date(`${tip.day}T00:00:00`).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                </Text>
+                <Text size={1} muted>
+                  {tip.users} active {tip.users === 1 ? 'user' : 'users'}
+                </Text>
+                <Text size={1} muted>
+                  {tip.completed} {tip.completed === 1 ? 'meditation' : 'meditations'} completed
+                </Text>
+              </Stack>
+            </Card>
+          </div>
+        ) : null}
+      </div>
     </Stack>
   );
 }

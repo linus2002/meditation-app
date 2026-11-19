@@ -113,7 +113,9 @@ export function posthogProxy(): Plugin {
             const upstream = await fetch(`${host}/api/projects/${project}/query/`, {
               method: 'POST',
               headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-              body: JSON.stringify({ query: { kind: 'HogQLQuery', query } }),
+              // Always recalculate: PostHog otherwise may answer from a cached
+              // result, so a fresh event could stay missing until it expires.
+              body: JSON.stringify({ query: { kind: 'HogQLQuery', query }, refresh: 'force_blocking' }),
             });
             const data = (await upstream.json()) as { results?: unknown[][]; detail?: string };
             if (!upstream.ok) return send(upstream.status, { error: data.detail ?? 'Query failed' });
