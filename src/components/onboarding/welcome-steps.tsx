@@ -2,7 +2,16 @@
 
 import type * as React from 'react';
 import Image from 'next/image';
-import { PersonStanding, Sparkles, type LucideIcon } from 'lucide-react';
+import {
+  BookOpen,
+  Flower2,
+  Layers,
+  ListMusic,
+  Moon,
+  PersonStanding,
+  Sparkles,
+  type LucideIcon,
+} from 'lucide-react';
 
 import { AuroraSweep } from '@/components/onboarding/aurora-sweep';
 import { SerenityMark, SerenityLogo } from '@/components/onboarding/serenity-mark';
@@ -164,24 +173,49 @@ export function WelcomeLibrary({ onNext }: { onNext: () => void }) {
 /** What's new since the original tour. `ring` is drawn with the app's own logo. */
 const NEW_FEATURES: { title: string; body: string; icon: LucideIcon | 'ring' }[] = [
   {
+    title: 'Meditations',
+    body: 'Guided sessions for calm, sleep and focus.',
+    icon: Flower2,
+  },
+  {
+    title: 'Programmes',
+    body: 'Short courses, a few sessions long.',
+    icon: Layers,
+  },
+  {
     title: 'Yoga',
-    body: 'Gentle, guided yoga — one pose at a time, with a soft bell to move.',
+    body: 'Gentle poses, one at a time, with a soft bell.',
     icon: PersonStanding,
   },
   {
     title: 'Kapwa',
-    body: 'Your built-in guide, in the middle of the menu. Tell it how you feel.',
+    body: 'Your guide. Tell it how you feel.',
     icon: 'ring',
   },
   {
+    title: 'Read-aloud stories',
+    body: 'Calm stories, read to you or by you.',
+    icon: BookOpen,
+  },
+  {
+    title: 'Sleep and soundscapes',
+    body: 'Wind-downs, sleep sounds and timers.',
+    icon: Moon,
+  },
+  {
+    title: 'Mixes and calendar',
+    body: 'Your own playlists, and reminders to sit.',
+    icon: ListMusic,
+  },
+  {
     title: 'Daily inspiration',
-    body: 'One short, kind message each day, chosen for how you’re doing.',
+    body: 'A kind message each day, chosen for you.',
     icon: Sparkles,
   },
 ];
 
 /**
- * Step three: what's new. Three features, each an icon and one line, on the same
+ * Step three: what's new. Each feature is an icon and one line, on the same
  * dark ground as the rest of the tour with a soft blue and green glow behind.
  */
 export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
@@ -200,7 +234,7 @@ export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
       <div className="relative mt-auto px-7 pb-[clamp(24px,4.4vh,40px)]">
         <p
           style={reveal(0).style}
-          className="reveal text-caption font-semibold uppercase tracking-[0.16em] text-aurora-blue"
+          className="reveal text-caption font-semibold text-aurora-blue"
         >
           New in Serenity
         </p>
@@ -211,16 +245,16 @@ export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
           More ways to <span className="block text-aurora-green">feel better</span>
         </h2>
 
-        <ul className="mt-[clamp(18px,3.4vh,28px)] space-y-[clamp(10px,1.8vh,14px)]">
+        <ul className="mt-[clamp(16px,3vh,24px)] space-y-[clamp(8px,1.4vh,12px)]">
           {NEW_FEATURES.map(({ title, body, icon: Icon }, index) => (
             <li
               key={title}
-              style={reveal(220 + index * 90).style}
+              style={reveal(220 + index * 70).style}
               className="reveal flex items-start gap-3.5"
             >
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-surface">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-surface">
                 {Icon === 'ring' ? (
-                  <SerenityLogo className="h-6 w-6" />
+                  <SerenityLogo className="h-[22px] w-[22px]" />
                 ) : (
                   <Icon className="h-5 w-5 text-ink-soft" strokeWidth={1.7} />
                 )}
@@ -235,8 +269,8 @@ export function WelcomeFeatures({ onNext }: { onNext: () => void }) {
 
         <GradientButton
           onClick={onNext}
-          style={reveal(640).style}
-          className="reveal mt-[clamp(24px,4.6vh,40px)] h-[clamp(52px,7.35vh,62px)] w-full"
+          style={reveal(760).style}
+          className="reveal mt-[clamp(20px,3.6vh,32px)] h-[clamp(52px,7.35vh,62px)] w-full"
         >
           Next
         </GradientButton>

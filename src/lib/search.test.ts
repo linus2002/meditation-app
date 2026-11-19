@@ -36,8 +36,27 @@ describe('searchLibrary', () => {
   it('counts every type in the total', () => {
     const results = searchLibrary('rain');
     const parts =
-      results.meditations.length + results.stories.length + results.soundscapes.length;
+      results.programs.length +
+      results.meditations.length +
+      results.stories.length +
+      results.yoga.length +
+      results.soundscapes.length +
+      results.pages.length;
     expect(results.total).toBe(parts);
+  });
+
+  it('finds a programme by its full name, and the sessions inside it', () => {
+    const results = searchLibrary('letting go of stress');
+    expect(ids(results.programs)).toContain('letting-go-of-stress');
+    expect(ids(results.meditations)).toContain('letting-go-of-stress-map');
+  });
+
+  it('finds a yoga session by a pose in it', () => {
+    expect(searchLibrary('yoga').yoga.length).toBeGreaterThan(0);
+  });
+
+  it('finds the app’s own screens by name', () => {
+    expect(searchLibrary('calendar').pages.map((page) => page.href)).toContain('/calendar');
   });
 
   it('finds a soundscape by name', () => {

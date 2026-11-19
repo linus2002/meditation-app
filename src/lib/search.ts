@@ -1,7 +1,64 @@
+import { Compass, Flower2, MessageCircleHeart, PersonStanding, UserRound } from 'lucide-react';
+
 import { allSessions } from '@/data/meditations';
+import { programs, type Program } from '@/data/programs';
+import { appShortcuts, type Shortcut } from '@/data/shortcuts';
 import { stories } from '@/data/stories';
+import { yogaSessions, type YogaSession } from '@/data/yoga';
 import { soundscapeList, type SoundscapeMeta } from '@/lib/audio/soundscapes';
 import type { Meditation, Story } from '@/types';
+
+/**
+ * Screens a reader might look for by name: the tabs, plus every shortcut from
+ * the home menu. `keywords` carries words people use that the label does not.
+ */
+const PAGES: (Shortcut & { keywords?: string })[] = [
+  {
+    href: '/meditations',
+    label: 'Meditations',
+    description: 'The full library of guided sessions and programmes',
+    icon: Flower2,
+    keywords: 'library sessions programmes programs',
+  },
+  {
+    href: '/yoga',
+    label: 'Yoga',
+    description: 'Gentle guided yoga, one pose at a time',
+    icon: PersonStanding,
+    keywords: 'stretch poses movement',
+  },
+  {
+    href: '/kapwa',
+    label: 'Kapwa',
+    description: 'Your guide: ask for a session for how you feel',
+    icon: MessageCircleHeart,
+    keywords: 'chat guide help assistant',
+  },
+  {
+    href: '/discover',
+    label: 'Discover',
+    description: 'Browse by mood and find something new',
+    icon: Compass,
+    keywords: 'browse explore',
+  },
+  {
+    href: '/profile',
+    label: 'Profile',
+    description: 'Your account, preferences and shortcuts',
+    icon: UserRound,
+    keywords: 'account settings preferences',
+  },
+  ...appShortcuts,
+];
+
+/** Programme titles each session belongs to, so a programme's name finds its sessions too. */
+const programTitlesBySession = new Map<string, string>();
+for (const program of programs) {
+  for (const session of program.sessions) {
+    const before = programTitlesBySession.get(session.id);
+    programTitlesBySession.set(session.id, before ? `${before} ${program.title}` : program.title);
+  }
+}
 
 /**
  * One searchable thing, flattened out of whichever collection it came from.
@@ -62,8 +119,49 @@ function meditationEntry(item: Meditation): Entry<Meditation> {
     fields: [
       { text: normalise(item.title), weight: WEIGHT_TITLE },
       { text: normalise(item.subtitle), weight: WEIGHT_SUBTITLE },
-      { text: normalise(`${item.narrator} ${item.category}`), weight: WEIGHT_ATTRIBUTE },
+      {
+        text: normalise(`${item.narrator} ${item.category} ${programTitlesBySession.get(item.id) ?? ''}`),
+        weight: WEIGHT_ATTRIBUTE,
+      },
       { text: normalise(item.description), weight: WEIGHT_BODY },
+    ],
+  };
+}
+
+function programEntry(item: Program): Entry<Program> {
+  return {
+    item,
+    fields: [
+      { text: normalise(item.title), weight: WEIGHT_TITLE },
+      { text: normalise(item.description), weight: WEIGHT_SUBTITLE },
+      { text: normalise(`${item.author} ${item.level} programme program`), weight: WEIGHT_ATTRIBUTE },
+      { text: normalise(item.sessions.map((session) => session.title).join(' ')), weight: WEIGHT_BODY },
+    ],
+  };
+}
+
+function yogaEntry(item: YogaSession): Entry<YogaSession> {
+  return {
+    item,
+    fields: [
+      { text: normalise(item.title), weight: WEIGHT_TITLE },
+      { text: normalise(item.subtitle), weight: WEIGHT_SUBTITLE },
+      { text: normalise(`${item.focus} ${item.level} yoga`), weight: WEIGHT_ATTRIBUTE },
+      {
+        text: normalise(`${item.description} ${item.poses.map((pose) => pose.name).join(' ')}`),
+        weight: WEIGHT_BODY,
+      },
+    ],
+  };
+}
+
+function pageEntry(item: (typeof PAGES)[number]): Entry<Shortcut> {
+  return {
+    item,
+    fields: [
+      { text: normalise(item.label), weight: WEIGHT_TITLE },
+      { text: normalise(item.description), weight: WEIGHT_SUBTITLE },
+      { text: normalise(item.keywords ?? ''), weight: WEIGHT_ATTRIBUTE },
     ],
   };
 }
@@ -101,17 +199,28 @@ function rank<T>(entries: Entry<T>[], terms: string[]): T[] {
 }
 
 export interface SearchResults {
+  programs: Program[];
   meditations: Meditation[];
   stories: Story[];
+  yoga: YogaSession[];
   soundscapes: SoundscapeMeta[];
+  pages: Shortcut[];
   total: number;
 }
 
-const EMPTY: SearchResults = { meditations: [], stories: [], soundscapes: [], total: 0 };
+const EMPTY: SearchResults = {
+  programs: [],
+  meditations: [],
+  stories: [],
+  yoga: [],
+  soundscapes: [],
+  pages: [],
+  total: 0,
+};
 
 /**
- * Searches everything the app holds — sessions, stories and soundscapes — in
- * one pass.
+ * Searches everything the app holds — programmes, sessions, stories, yoga,
+ * soundscapes and the app's own screens — in one pass.
  *
  * Search used to cover sessions only, which quietly made the other two thirds
  * of the library unreachable by name: someone looking for "rain" got the
@@ -122,13 +231,16 @@ export function searchLibrary(query: string): SearchResults {
   if (terms.length === 0) return EMPTY;
 
   const found = {
+    programs: rank(programs.map(programEntry), terms),
     meditations: rank(allSessions.map(meditationEntry), terms),
     stories: rank(stories.map(storyEntry), terms),
+    yoga: rank(yogaSessions.map(yogaEntry), terms),
     soundscapes: rank(soundscapeList.map(soundscapeEntry), terms),
+    pages: rank(PAGES.map(pageEntry), terms),
   };
 
   return {
     ...found,
-    total: found.meditations.length + found.stories.length + found.soundscapes.length,
+    total: Object.values(found).reduce((sum, list) => sum + list.length, 0),
   };
 }

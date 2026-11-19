@@ -51,7 +51,7 @@ export default function SearchPage() {
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search sessions, stories and sounds"
+            placeholder="Search programmes, sessions, stories, yoga…"
             aria-label="Search the library"
             autoFocus
             enterKeyHint="search"
