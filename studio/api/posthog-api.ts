@@ -1,4 +1,4 @@
-import { createAnalyticsHandler, pickEnv } from '../server/analytics';
+import { createAnalyticsHandler, pickEnv } from './_lib/analytics.js';
 
 /**
  * The hosted Studio's Analytics tab: the same answers as the local dev proxy,

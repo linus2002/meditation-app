@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite';
 import { loadEnv } from 'vite';
 
-import { createAnalyticsHandler, pickEnv } from './server/analytics';
+import { createAnalyticsHandler, pickEnv } from './api/_lib/analytics';
 
 /**
  * Lets the local Studio's Analytics tab ask PostHog and Supabase for numbers
@@ -10,7 +10,7 @@ import { createAnalyticsHandler, pickEnv } from './server/analytics';
  * The tab calls `/posthog-api/...` on the dev server; this middleware answers
  * with the keys from studio/.env.local (kept out of git). The hosted Studio
  * gets the same answers from api/posthog-api.ts instead. The shared logic and
- * the list of variables live in server/analytics.ts.
+ * the list of variables live in api/_lib/analytics.ts.
  */
 export function posthogProxy(): Plugin {
   return {
