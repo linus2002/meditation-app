@@ -20,14 +20,23 @@ export function formatSpokenTime(totalSeconds: number): string {
   return `${unit(minutes, 'minute')} ${unit(seconds, 'second')}`;
 }
 
-/** 1800 -> "30 Min." — matches the label treatment on the Daily Goals card. */
+/**
+ * 1800 -> "30 Min.", 197 -> "3:17 Min." — matches the label treatment on the
+ * Daily Goals card. A recording's exact length keeps its seconds, so the label
+ * agrees with the player's clock.
+ */
 export function formatMinutesLabel(totalSeconds: number): string {
-  return `${Math.round(totalSeconds / 60)} Min.`;
+  const whole = Math.max(0, Math.round(totalSeconds));
+  return whole % 60 === 0 ? `${whole / 60} Min.` : `${formatMinutesSeconds(whole)} Min.`;
 }
 
-/** 300 -> "5m" — the compact form used on the home rails. */
+/** 300 -> "5m", 197 -> "3m 17s" — the compact form used on the home rails. */
 export function formatShortMinutes(totalSeconds: number): string {
-  return `${Math.round(totalSeconds / 60)}m`;
+  const whole = Math.max(0, Math.round(totalSeconds));
+  const minutes = Math.floor(whole / 60);
+  const seconds = whole % 60;
+  if (seconds === 0) return `${minutes}m`;
+  return minutes === 0 ? `${seconds}s` : `${minutes}m ${seconds}s`;
 }
 
 /** 0.72 -> "72%" */

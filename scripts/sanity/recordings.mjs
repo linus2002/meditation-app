@@ -1,5 +1,5 @@
 /**
- * Uploads each programme session's guided recording to Sanity and attaches it
+ * Uploads each session's guided recording to Sanity and attaches it
  * to the session's `recording` field, so the audio streams from Sanity's CDN
  * instead of shipping inside the app.
  *
@@ -7,14 +7,18 @@
  * Then `npm run content:pull` to bring the URLs into the app.
  *
  * The files are read from RECORDINGS_DIR (default: public/), one folder per
- * programme, as listed below. Each upload stores the file's SHA-1, so a re-run
+ * programme (library sessions sit in meditations/), as listed below. A file
+ * that isn't an MP3 (an .m4a, say) is converted to MP3 with ffmpeg first, so
+ * every phone, iPhones included, can play it; the length is measured from the
+ * file that is uploaded. Each upload stores the file's SHA-1, so a re-run
  * skips sessions whose file has not changed; put a replacement file in place
  * and re-run to swap one. A session missing its file locally is skipped with a
  * note, which is what lets this run after the local folders have been removed.
  */
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 import { createClient } from '@sanity/client';
@@ -25,6 +29,22 @@ const ROOT = process.cwd();
 
 /** Session id → [programme folder, file name]. */
 const RECORDINGS = {
+  'meditation-daily': ['meditations', 'Settle and Soften.m4a'],
+  'free-your-mind': ['meditations', 'Free Your Mind.m4a'],
+  'morning-clarity': ['meditations', 'Morning Clarity.m4a'],
+  'open-heart': ['meditations', 'Open Heart.m4a'],
+  'box-breathing': ['meditations', 'Box Breathing.m4a'],
+  'deep-rest': ['meditations', 'Deep Rest.m4a'],
+  'night-wind-down': ['meditations', 'Night Wind Down.m4a'],
+  'rain-on-glass': ['meditations', 'Rain on Glass.m4a'],
+  'midday-reset': ['meditations', 'Midday Reset.m4a'],
+  'mindful-walk': ['meditations', 'Mindful Walk.m4a'],
+  'deep-focus': ['meditations', 'Deep Focus.m4a'],
+  'coherent-breathing': ['meditations', 'Cohearant Breathing.m4a'],
+  'relaxing-breath': ['meditations', 'The Relaxing Breathe.m4a'],
+  'sleepy-body-scan': ['meditations', 'Sleep Body Scan.m4a'],
+  'panic-pause': ['meditations', 'Panic Pause.mp3'],
+
   'six-phase-connection': ['the-six-phase', '01 - Connection.mp3'],
   'six-phase-gratitude': ['the-six-phase', '02 - Gratitude.mp3'],
   'six-phase-forgiveness': ['the-six-phase', '03 - Forgiveness.mp3'],
@@ -129,6 +149,25 @@ function measure(file) {
   }
 }
 
+/**
+ * The MP3 to upload: the file itself, or an MP3 converted from it. Cover art
+ * embedded in the file is dropped; the session's artwork comes from Sanity.
+ */
+function toMp3(file, workDir) {
+  if (path.extname(file).toLowerCase() === '.mp3') return file;
+  const out = path.join(workDir, `${path.basename(file, path.extname(file))}.mp3`);
+  try {
+    execFileSync(
+      'ffmpeg',
+      ['-v', 'error', '-y', '-i', file, '-vn', '-map_metadata', '-1', '-codec:a', 'libmp3lame', '-b:a', '128k', out],
+      { stdio: ['ignore', 'ignore', 'pipe'] },
+    );
+  } catch (error) {
+    throw new Error(`could not convert ${path.basename(file)} to MP3 with ffmpeg (${error.message})`);
+  }
+  return out;
+}
+
 /** Retries a call through Sanity's occasional 5xx and dropped connections. */
 async function withRetry(label, call, attempts = 4) {
   for (let attempt = 1; ; attempt++) {
@@ -156,6 +195,7 @@ async function main() {
   let uploaded = 0;
   let unchanged = 0;
   const problems = [];
+  const workDir = mkdtempSync(path.join(os.tmpdir(), 'serenity-recordings-'));
 
   for (const [index, id] of ids.entries()) {
     const [folder, name] = RECORDINGS[id];
@@ -187,10 +227,12 @@ async function main() {
       continue;
     }
 
-    const duration = measure(file);
+    const mp3 = toMp3(file, workDir);
+    const upload = mp3 === file ? buffer : readFileSync(mp3);
+    const duration = measure(mp3);
     // Sanity names assets by their content, so a retried upload reuses the same asset.
     const asset = await withRetry(label, () =>
-      client.assets.upload('file', buffer, { filename: `${id}.mp3`, contentType: 'audio/mpeg' }),
+      client.assets.upload('file', upload, { filename: `${id}.mp3`, contentType: 'audio/mpeg' }),
     );
     await withRetry(label, () =>
       client
@@ -206,9 +248,10 @@ async function main() {
         .commit(),
     );
     uploaded += 1;
-    console.log(`${label}: uploaded (${(buffer.length / 1048576).toFixed(1)} MB, ${Math.round(duration)}s)`);
+    console.log(`${label}: uploaded (${(upload.length / 1048576).toFixed(1)} MB, ${Math.round(duration)}s)`);
   }
 
+  rmSync(workDir, { recursive: true, force: true });
   console.log(`\nrecordings: ${uploaded} uploaded, ${unchanged} already in Sanity, ${problems.length} problems`);
   if (problems.length) {
     for (const problem of problems) console.warn(`  - ${problem}`);

@@ -1,5 +1,5 @@
 {
-  "pulledAt": "2026-11-19T06:25:52.636Z",
+  "pulledAt": "2026-11-20T06:14:36.418Z",
   "meditations": [
     {
       "breathPattern": [
@@ -41,6 +41,10 @@
       "isDailyGoal": true,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 182.614,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/738b10b3c877d7b100078d12ee08eca7b5b7dc46.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "Your daily sit",
       "title": "Settle and Soften",
@@ -78,6 +82,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 233.854,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/747ebfb972eb3385bc0df5745bd0db9f1d146e97.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "Start here",
       "title": "Free Your Mind",
@@ -123,6 +131,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 188.014,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/544ed9a671837fb880d21a0bcc9a3658009f926f.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Begin the day unhurried",
       "title": "Morning Clarity",
@@ -202,6 +214,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 219.654,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/0d17961311524b414a825883d6cce05549c2a732.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "A practice in gratitude",
       "title": "Open Heart",
@@ -326,6 +342,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 197.174,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/fba8f54ac6c36a747764c5c35eef2585988602a1.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Four counts, four sides",
       "title": "Box Breathing",
@@ -368,6 +388,10 @@
       "isDailyGoal": false,
       "isSleep": true,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 480.014,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/043bd7e20839c94c901b4459625d3fc0a27776fa.mp3"
+      },
       "soundscape": "night",
       "subtitle": "Sleep story",
       "title": "Deep Rest",
@@ -409,6 +433,10 @@
       "isDailyGoal": false,
       "isSleep": true,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480.014,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/ccbef6f111b4b39ab38d030157972ccc936882d7.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Close the day gently",
       "title": "Night Wind Down",
@@ -446,6 +474,10 @@
       "isDailyGoal": false,
       "isSleep": true,
       "narrator": "Ambient",
+      "recording": {
+        "duration": 367.934,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/8f20a9cbd8c20398033b3daaf64c0a94c4bb2825.mp3"
+      },
       "soundscape": "rain",
       "subtitle": "Ambient soundscape",
       "title": "Rain On Glass",
@@ -484,6 +516,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 262.974,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/186d85a7e9918bb281eba8b971e4700760008cac.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "Five minutes back to centre",
       "title": "Midday Reset",
@@ -1400,6 +1436,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480.014,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/235694a914fee06b5e5323813d6ddde0bd1184ff.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "One step at a time",
       "title": "Mindful Walk",
@@ -1519,6 +1559,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480.014,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/98c23cd63c3fef4ec34a53be10b616c1a9b6df2e.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Hold one thing in mind",
       "title": "Deep Focus",
@@ -1556,6 +1600,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480.014,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/4ddd58ffd357eebee896093c6cf000bdc143b3db.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Five in, five out",
       "title": "Coherent Breathing",
@@ -1597,6 +1645,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 359.974,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/a57241bfb8607d99fdacc7d61558ac64498547da.mp3"
+      },
       "soundscape": "night",
       "subtitle": "Four, seven, eight",
       "title": "The Relaxing Breath",
@@ -1675,6 +1727,10 @@
       "isDailyGoal": false,
       "isSleep": true,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 480.014,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/020403d7536e3600a70d131fc800f294f0a72847.mp3"
+      },
       "soundscape": "night",
       "subtitle": "Drift off part by part",
       "title": "Sleepy Body Scan",
@@ -1712,6 +1768,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 240,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/98e6b76f73011ed36771375f1dbd4c9c1580b936.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "When it all feels too much",
       "title": "Panic Pause",
