@@ -154,7 +154,12 @@ export function createAnalyticsHandler(env: AnalyticsEnv) {
 export function pickEnv(...sources: Record<string, string | undefined>[]): AnalyticsEnv {
   const out: AnalyticsEnv = {};
   for (const source of sources) {
-    for (const name of ENV_NAMES) if (source[name]) out[name] = source[name];
+    for (const name of ENV_NAMES) {
+      // Pasted values often bring spaces, line breaks or quotes along; PostHog
+      // and Supabase would refuse the key over them.
+      const value = source[name]?.trim().replace(/^(["'])(.*)\1$/, '$2').trim();
+      if (value) out[name] = value;
+    }
   }
   return out;
 }
