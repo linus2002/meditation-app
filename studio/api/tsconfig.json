@@ -1,0 +1,13 @@
+{
+  "//": "Vercel compiles api/ with the nearest tsconfig and runs it as CommonJS (studio/package.json has no \"type\": \"module\"). The Studio's own tsconfig emits ES modules for its bundler, which Node then cannot load here.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["es2022", "dom"],
+    "types": ["node"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.ts"]
+}
