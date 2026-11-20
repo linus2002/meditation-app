@@ -125,7 +125,16 @@ export function createAnalyticsHandler(env: AnalyticsEnv) {
         // A key with only "Query: read" cannot read the project itself; a
         // numeric POSTHOG_PROJECT_ID is enough for the links in that case.
         if (!upstream.ok && /^\d+$/.test(project)) return { status: 200, body: { id: Number(project), name: '', host } };
-        if (!upstream.ok) return { status: upstream.status, body: { error: data.detail ?? 'PostHog refused the key' } };
+        if (!upstream.ok) {
+          // Name the missing setting, never its value, so a hosted Studio can be fixed from its own screen.
+          const hint = env.POSTHOG_PROJECT_ID
+            ? 'POSTHOG_PROJECT_ID should be the number after /project/ in PostHog’s address bar.'
+            : 'POSTHOG_PROJECT_ID is not set for this deployment.';
+          return {
+            status: upstream.status,
+            body: { error: `PostHog refused the key (${upstream.status}${data.detail ? `: ${data.detail}` : ''}). ${hint}` },
+          };
+        }
         return { status: 200, body: { id: data.id, name: data.name, host } };
       }
 
