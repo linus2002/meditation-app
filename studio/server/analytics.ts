@@ -54,7 +54,11 @@ interface SupabaseUser {
 /** Builds the handler once per process, so the people cache lives across requests. */
 export function createAnalyticsHandler(env: AnalyticsEnv) {
   const key = env.POSTHOG_PERSONAL_API_KEY;
-  const project = env.POSTHOG_PROJECT_ID || '@current';
+  // Accept the bare number, or a pasted PostHog address that contains /project/<number>.
+  const project =
+    env.POSTHOG_PROJECT_ID?.match(/project\/(\d+)/)?.[1] ??
+    env.POSTHOG_PROJECT_ID?.match(/^\d+$/)?.[0] ??
+    '@current';
   const host = (env.POSTHOG_APP_HOST || 'https://us.posthog.com').replace(/\/$/, '');
   const supabaseUrl = env.SUPABASE_URL?.replace(/\/$/, '');
   const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
