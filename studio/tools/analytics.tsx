@@ -8,10 +8,20 @@ import { useClient, type Tool } from 'sanity';
 /**
  * Serenity's Analytics tab: the app's usage, read live from PostHog.
  *
- * Every number comes from a HogQL query sent through the Studio's own dev
- * server (see posthogProxy.ts), which adds the PostHog key; the browser never
- * sees it. Only people who agreed to "Share usage" in the app are counted.
+ * Every number comes from a HogQL query sent to /posthog-api: the dev server
+ * (posthogProxy.ts) locally, a Vercel function (api/posthog-api.ts) when
+ * hosted. Either adds the PostHog key; the browser never sees it. Only people
+ * who agreed to "Share usage" in the app are counted.
  */
+
+/** The signed-in editor's Sanity token, which the hosted function checks. Set by the tool. */
+let sanityToken: string | undefined;
+
+function analyticsFetch(route: string, init: RequestInit = {}): Promise<Response> {
+  const headers = new Headers(init.headers);
+  if (sanityToken) headers.set('Authorization', `Bearer ${sanityToken}`);
+  return fetch(`/posthog-api/${route}`, { ...init, headers });
+}
 
 const RANGES = [7, 30, 90] as const;
 type Range = (typeof RANGES)[number];
@@ -29,7 +39,7 @@ interface Project {
 type Rows = unknown[][];
 
 async function hogql(query: string): Promise<Rows> {
-  const res = await fetch('/posthog-api/query', {
+  const res = await analyticsFetch('query', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ query }),
@@ -853,7 +863,7 @@ function useAccounts(ids: string[]): { accounts: Map<string, Account>; unavailab
   React.useEffect(() => {
     if (!key) return;
     let live = true;
-    fetch('/posthog-api/people', {
+    analyticsFetch('people', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ids: key.split(',') }),
@@ -1387,6 +1397,7 @@ function UserDetail({
 
 function AnalyticsTool() {
   const client = useClient({ apiVersion: '2024-01-01' });
+  sanityToken = client.config().token;
   const [range, setRange] = React.useState<Range>(30);
   const [project, setProject] = React.useState<Project | null>(null);
   const [status, setStatus] = React.useState<'loading' | 'ready' | 'setup' | 'error'>('loading');
@@ -1398,7 +1409,7 @@ function AnalyticsTool() {
   const [person, setPerson] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    fetch('/posthog-api/project')
+    analyticsFetch('project')
       .then(async (res) => {
         const data = (await res.json().catch(() => ({}))) as Partial<Project> & { error?: string };
         if (res.status === 503 || res.status === 404) return setStatus('setup');

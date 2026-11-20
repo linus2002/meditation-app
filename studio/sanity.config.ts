@@ -21,6 +21,11 @@ export default defineConfig({
   projectId: 'jn0rojao',
   dataset: 'production',
 
+  // Keep the sign-in as a token in the browser rather than a sanity.io cookie,
+  // so the Analytics tab can show it to its Vercel function (api/posthog-api.ts),
+  // which only answers members of this project.
+  auth: { loginMethod: 'token' },
+
   plugins: [
     structureTool({
       structure: (S) =>
