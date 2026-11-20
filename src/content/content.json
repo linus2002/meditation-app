@@ -1,5 +1,5 @@
 {
-  "pulledAt": "2026-11-20T06:14:36.418Z",
+  "pulledAt": "2026-11-20T07:07:54.466Z",
   "meditations": [
     {
       "breathPattern": [
@@ -177,6 +177,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 995.054,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d28483c24bd13e5f4044e92057a790e1abc98e90.mp3"
+      },
       "soundscape": "rain",
       "subtitle": "Release the racing thoughts",
       "title": "Quiet The Noise",
@@ -259,6 +263,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 995.054,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d28483c24bd13e5f4044e92057a790e1abc98e90.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Head to toe release",
       "title": "Full Body Scan",
@@ -297,6 +305,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 995.054,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d28483c24bd13e5f4044e92057a790e1abc98e90.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Slow tidal breathing",
       "title": "Ocean Drift",
@@ -1399,6 +1411,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 995.054,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d28483c24bd13e5f4044e92057a790e1abc98e90.mp3"
+      },
       "soundscape": "rain",
       "subtitle": "Loosen your grip",
       "title": "Letting Go",
@@ -1477,6 +1493,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ava Lindqvist",
+      "recording": {
+        "duration": 995.054,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d28483c24bd13e5f4044e92057a790e1abc98e90.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "Kindness, turned inward",
       "title": "Self-Compassion",
@@ -1514,6 +1534,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Ines Moreau",
+      "recording": {
+        "duration": 995.054,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d28483c24bd13e5f4044e92057a790e1abc98e90.mp3"
+      },
       "soundscape": "chimes",
       "subtitle": "Three good things",
       "title": "Evening Gratitude",
@@ -1686,6 +1710,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 995.054,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/d28483c24bd13e5f4044e92057a790e1abc98e90.mp3"
+      },
       "soundscape": "forest",
       "subtitle": "Unwind the day's tension",
       "title": "Stress Release",
@@ -2559,6 +2587,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/bca8ff108a1d39460f0ef1cfde33794e67f21461.mp3"
+      },
       "soundscape": "rain",
       "subtitle": "Where does it sit?",
       "title": "Stress Map",
@@ -2594,6 +2626,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/07a8c2678e74f38e70b48a255b21b89d45d5065c.mp3"
+      },
       "soundscape": "ocean",
       "subtitle": "Let the exhale do the work",
       "title": "Release on the Out-Breath",
@@ -2625,6 +2661,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/02316e8e731bd73df174e2418fdea728c4ff93a2.mp3"
+      },
       "soundscape": "pad",
       "subtitle": "A place to put it",
       "title": "Worry Time",
@@ -2656,6 +2696,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/c2fe610bbe7c4e29584bad753175fa3fc82c0a80.mp3"
+      },
       "soundscape": "drone",
       "subtitle": "Widening around the difficulty",
       "title": "More Room",
@@ -2695,6 +2739,10 @@
       "isDailyGoal": false,
       "isSleep": false,
       "narrator": "Noah Brandt",
+      "recording": {
+        "duration": 480,
+        "src": "https://cdn.sanity.io/files/jn0rojao/production/543083814dd2b50d7b4dc2bb96bd3af799cb24c4.mp3"
+      },
       "soundscape": "bowl",
       "subtitle": "For the middle of a hard day",
       "title": "The Two-Minute Reset",

@@ -45,6 +45,17 @@ const RECORDINGS = {
   'sleepy-body-scan': ['meditations', 'Sleep Body Scan.m4a'],
   'panic-pause': ['meditations', 'Panic Pause.mp3'],
 
+  // Stand-ins until these sessions have recordings of their own: one mix of
+  // Settle and Soften, Free Your Mind, Open Heart and Rain on Glass, stored in
+  // Sanity once and shared. Point an entry at its own file to replace it.
+  'quiet-the-noise': ['meditations', 'Combined Calm.mp3'],
+  'body-scan': ['meditations', 'Combined Calm.mp3'],
+  'ocean-drift': ['meditations', 'Combined Calm.mp3'],
+  'letting-go': ['meditations', 'Combined Calm.mp3'],
+  'self-compassion': ['meditations', 'Combined Calm.mp3'],
+  'evening-gratitude': ['meditations', 'Combined Calm.mp3'],
+  'stress-release': ['meditations', 'Combined Calm.mp3'],
+
   'six-phase-connection': ['the-six-phase', '01 - Connection.mp3'],
   'six-phase-gratitude': ['the-six-phase', '02 - Gratitude.mp3'],
   'six-phase-forgiveness': ['the-six-phase', '03 - Forgiveness.mp3'],
@@ -88,6 +99,12 @@ const RECORDINGS = {
   'better-mornings-energy': ['better-mornings', '03 - Energising Breath.mp3'],
   'better-mornings-gratitude': ['better-mornings', '04 - Morning Gratitude.mp3'],
   'better-mornings-step-out': ['better-mornings', '05 - Stepping Out.mp3'],
+
+  'letting-go-of-stress-map': ['letting-go-of-stress', '01 - Stress Map.mp3'],
+  'letting-go-of-stress-release': ['letting-go-of-stress', '02 - Release on the Out-Breath.mp3'],
+  'letting-go-of-stress-worry-time': ['letting-go-of-stress', '03 - Worry Time.mp3'],
+  'letting-go-of-stress-room': ['letting-go-of-stress', '04 - More Room.mp3'],
+  'letting-go-of-stress-reset': ['letting-go-of-stress', '05 - The Two-Minute Reset.mp3'],
 
   'breath-school-natural': ['breath-school', '01 - The Natural Breath.mp3'],
   'breath-school-belly': ['breath-school', '02 - Belly Breathing.mp3'],
@@ -196,6 +213,8 @@ async function main() {
   let unchanged = 0;
   const problems = [];
   const workDir = mkdtempSync(path.join(os.tmpdir(), 'serenity-recordings-'));
+  /** One upload per file, however many sessions share it. */
+  const sent = new Map();
 
   for (const [index, id] of ids.entries()) {
     const [folder, name] = RECORDINGS[id];
@@ -227,13 +246,19 @@ async function main() {
       continue;
     }
 
-    const mp3 = toMp3(file, workDir);
-    const upload = mp3 === file ? buffer : readFileSync(mp3);
-    const duration = measure(mp3);
-    // Sanity names assets by their content, so a retried upload reuses the same asset.
-    const asset = await withRetry(label, () =>
-      client.assets.upload('file', upload, { filename: `${id}.mp3`, contentType: 'audio/mpeg' }),
-    );
+    let ready = sent.get(hash);
+    if (!ready) {
+      const mp3 = toMp3(file, workDir);
+      const upload = mp3 === file ? buffer : readFileSync(mp3);
+      const duration = measure(mp3);
+      // Sanity names assets by their content, so a retried upload reuses the same asset.
+      const asset = await withRetry(label, () =>
+        client.assets.upload('file', upload, { filename: `${id}.mp3`, contentType: 'audio/mpeg' }),
+      );
+      ready = { asset, duration, size: upload.length };
+      sent.set(hash, ready);
+    }
+    const { asset, duration, size } = ready;
     await withRetry(label, () =>
       client
         .patch(doc._id)
@@ -248,7 +273,7 @@ async function main() {
         .commit(),
     );
     uploaded += 1;
-    console.log(`${label}: uploaded (${(upload.length / 1048576).toFixed(1)} MB, ${Math.round(duration)}s)`);
+    console.log(`${label}: uploaded (${(size / 1048576).toFixed(1)} MB, ${Math.round(duration)}s)`);
   }
 
   rmSync(workDir, { recursive: true, force: true });
