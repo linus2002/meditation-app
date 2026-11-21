@@ -159,7 +159,7 @@
     <a><span class="n">V</span><span class="t">System architecture</span><span class="d">How the pieces fit together, and the tech stack</span></a>
     <a><span class="n">VI</span><span class="t">Content and sound</span><span class="d">The CMS, recordings, narration and synthesised sound</span></a>
     <a><span class="n">VII</span><span class="t">Data and privacy</span><span class="d">What stays on the phone, what syncs, analytics consent</span></a>
-    <a><span class="n">VIII</span><span class="t">Backend reference</span><span class="d">Supabase tables, functions, edge function, settings</span></a>
+    <a><span class="n">VIII</span><span class="t">Backend reference</span><span class="d">Supabase, the Neon support database, functions, settings</span></a>
     <a><span class="n">IX</span><span class="t">Build, deploy and release</span><span class="d">Commands, Android build, environment, setup</span></a>
     <a><span class="n">X</span><span class="t">Quality and accessibility</span><span class="d">Tests, device support, accessibility</span></a>
     <a><span class="n">XI</span><span class="t">Release checklist</span><span class="d">What must be done before publishing</span></a>
@@ -265,6 +265,7 @@
       <tr><td>Activities, reflections, assessment, Kapwa, mixes, calendar</td><td>No (asked to sign in)</td><td>Yes</td></tr>
       <tr><td>Practice synced across devices</td><td>No</td><td>Yes: sittings, resume points, ratings</td></tr>
       <tr><td>Like a home video</td><td>Yes, through an anonymous account</td><td>Yes</td></tr>
+      <tr><td>Help &amp; support (raise a concern)</td><td>No (asked to sign in)</td><td>Yes</td></tr>
     </tbody>
   </table>
   <p class="small muted">The gate is <code>src/components/layout/account-gate.tsx</code>. If a build has no Supabase keys, every user is treated as a member, so the app still works without a backend. Signing out keeps the user's data on the phone.</p>
@@ -306,6 +307,7 @@
         <li><b>Sound.</b> Every session plays its own recording, streamed from Sanity's CDN (4.4). The audio follows the session clock and is resynced if it drifts by more than 1.5 s. The session pauses if the phone interrupts the sound. A struck bell ends a completed session.</li>
         <li><b>Breath cues and haptics.</b> Optional tones at the top of each inhale and exhale, and optional vibration on the same beat.</li>
         <li><b>Resume.</b> Leaving part-way saves the user's place.</li>
+        <li><b>Lock screen (Android).</b> What is playing shows on the lock screen and in the notification shade as a media player card (4.21).</li>
         <li><b>Accurate timing.</b> The clock is measured against real time, so a backgrounded tab does not drift. Length labels show the recording's exact length, for example 3:17 Min.</li>
       </ul>
       <p class="where">Where: <code>src/app/player/[id]</code>, <code>src/components/player/</code>, <code>src/hooks/use-player.ts</code>, <code>use-breath.ts</code>, <code>use-session-track.ts</code>.</p>
@@ -383,6 +385,7 @@
         <li><b>Two modes.</b> By default, replies are written for Serenity and matched on the device by keyword. With the AI switched on, replies are written by a language model through a Supabase edge function, with an hourly quota. If the AI is off, offline or over quota, the keyword replies are used.</li>
         <li><b>Safety first.</b> Messages about suicide or self-harm are answered on the device, with care and a pointer to emergency services, a crisis line or someone the user trusts, never with a meditation. Medical questions never reach the AI.</li>
         <li><b>Honest about itself.</b> Kapwa says it is not a person and not a substitute for professional care. The chat history stays on the phone, with a Clear button.</li>
+        <li><b>Always-ready message box.</b> The message box stays pinned just above the tab bar, however short the chat is, and long chats scroll behind it. Help &amp; support conversations use the same layout.</li>
       </ul>
       <p class="where">Where: <code>src/app/(app)/kapwa</code>, <code>src/lib/kapwa.ts</code>, <code>src/data/kapwa.ts</code>, <code>src/lib/kapwa-ai.ts</code>, <code>supabase/functions/kapwa-chat</code>.</p>
     </div>
@@ -479,9 +482,33 @@
       <ul>
         <li><b>Android.</b> The button downloads the latest APK. <code>/get/serenity.apk</code> redirects to the file that the "Android test APK" workflow publishes to the <code>test-build</code> GitHub release. Each run of the workflow is what people download, with no commit or redeploy. The service worker never caches it.</li>
         <li><b>iOS.</b> The page shows the Add to Home Screen steps in place, or a QR code when it is opened on a computer. Launched from the Home Screen icon, it opens the app.</li>
+        <li><b>Promo video.</b> A "Serenity Video" button opens the promo film in a window with play and pause, 5-second skips, a seek bar, mute, volume and full screen.</li>
         <li><b><code>/iphone</code></b> is a standalone iPhone guide that points Android users to <code>/get</code>.</li>
       </ul>
       <p class="where">Where: <code>public/get/index.html</code>, <code>public/iphone.html</code>, the redirect and rewrites in <code>next.config.mjs</code>. These pages are plain HTML, separate from the app's screens, and are left out of the Android build.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.20 Help &amp; support</h3>
+      <p>Signed-in users can raise a concern and talk to the Serenity team from <b>Profile → Help &amp; support</b> (<code>/help</code>). They choose a topic (Something isn't working, Account &amp; sign-in, Sessions &amp; content, Suggestion or Other), write a subject and a message, and follow the conversation in the app. A dot on the Profile card counts replies they have not opened yet. The app checks for these at most every two minutes while it is open.</p>
+      <ul>
+        <li><b>The team answers from the Studio.</b> A <b>Support</b> tab in Sanity Studio lists conversations by Awaiting reply, Open, Answered, Closed or All, with search and unread markers. Team members reply, mark a conversation answered, close it or reopen it. Replies carry the team member's name, and the app shows the Serenity logo beside them and the person's initials beside their own messages.</li>
+        <li><b>Stored in Neon, not Supabase.</b> Conversations live in a Neon Postgres database that only server code can reach (section VIII).</li>
+        <li><b>Limits.</b> Subjects up to 120 characters and messages up to 4,000. Each person can open 5 new conversations a day and send 30 messages an hour. Guests and anonymous accounts cannot raise concerns.</li>
+        <li><b>No alerts yet.</b> Nobody is emailed or notified when a concern arrives or a reply is sent. The team checks the Support tab, and people see replies the next time they open the app.</li>
+      </ul>
+      <p class="where">Where: <code>src/app/(app)/help</code>, <code>src/lib/support.ts</code>, <code>src/hooks/use-support-unread.ts</code>, <code>studio/api/support.ts</code>, <code>studio/api/support-admin.ts</code>, <code>studio/api/_lib/support.ts</code>, <code>studio/tools/support.tsx</code>.</p>
+    </div>
+  </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.21 Lock-screen player (Android)</h3>
+      <p>Whatever is playing shows on the Android lock screen and in the notification shade as a media player card. The card has the name of the session or sound, a line saying what kind of sound it is, its artwork, a progress bar and play and pause, with 10-second skips where seeking makes sense. Its buttons control the app's own players. The card stays while playback is paused.</p>
+      <p>It covers guided sessions, stories, yoga, the timer, support sessions and soundscapes played on their own. When a screen is playing over a soundscape, the screen takes the card.</p>
+      <p class="where">Where: <code>android/…/BackgroundSoundService.java</code> (a media session with a media-style notification), <code>BackgroundSoundPlugin.java</code>, <code>src/lib/audio/background.ts</code>, <code>src/hooks/use-lock-screen.ts</code>.</p>
     </div>
   </div>
 </section>
@@ -490,7 +517,7 @@
 <section class="chapter">
   <p class="num">V · System architecture</p>
   <h2>How the pieces fit together</h2>
-  <p class="lede">Serenity is a <b>device-first</b> app. The whole interface and almost all of its logic run on the phone. The servers handle four things: content (built in and refreshed live), streamed recordings, accounts and sync (Supabase), and the optional AI guide.</p>
+  <p class="lede">Serenity is a <b>device-first</b> app. The whole interface and almost all of its logic run on the phone. The servers handle five things: content (built in and refreshed live), streamed recordings, accounts and sync (Supabase), help and support conversations (Neon), and the optional AI guide.</p>
 
   <div class="diagram">
     <svg viewBox="0 0 660 360" width="100%" style="font-family:Poppins, sans-serif">
@@ -525,21 +552,25 @@
       <text x="178" y="206" font-size="9" fill="#C9CCF3">React 19 interface · players · Web Audio sound engine</text>
       <text x="178" y="221" font-size="9" fill="#C9CCF3">Progress, reflections, sleep log, settings in local storage</text>
       <text x="178" y="236" font-size="9" fill="#C9CCF3">Keyword guide · inspiration picker · notifications</text>
-      <text x="178" y="258" font-size="9" fill="#8FD0F0">Works fully offline once installed</text>
+      <text x="178" y="258" font-size="9" fill="#8FD0F0">Opens offline once installed · recordings stream</text>
       <line x1="565" y1="124" x2="440" y2="158" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
       <text x="520" y="148" font-size="8.5" fill="#5C607C">installs</text>
-      <!-- Supabase -->
-      <rect x="10" y="300" width="250" height="52" rx="12" fill="#E8F5FC" stroke="#10739A"/>
-      <text x="24" y="321" font-size="11" font-weight="600" fill="#181A2E">Supabase</text>
-      <text x="24" y="338" font-size="9" fill="#3A3D58">Email code sign-in · sync · ratings · likes</text>
-      <rect x="290" y="300" width="180" height="52" rx="12" fill="#E8F5FC" stroke="#10739A"/>
-      <text x="304" y="321" font-size="11" font-weight="600" fill="#181A2E">kapwa-chat function</text>
-      <text x="304" y="338" font-size="9" fill="#3A3D58">Quota · prompt → Ollama Cloud</text>
-      <rect x="500" y="300" width="150" height="52" rx="12" fill="#FFF6E5" stroke="#E59A1C"/>
-      <text x="514" y="321" font-size="11" font-weight="600" fill="#181A2E">PostHog</text>
-      <text x="514" y="338" font-size="9" fill="#3A3D58">Only after consent</text>
-      <line x1="230" y1="282" x2="150" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" marker-start="url(#ar)"/>
-      <line x1="360" y1="282" x2="375" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)"/>
+      <!-- Bottom row: services -->
+      <rect x="10" y="300" width="154" height="52" rx="12" fill="#E8F5FC" stroke="#10739A"/>
+      <text x="22" y="321" font-size="11" font-weight="600" fill="#181A2E">Supabase</text>
+      <text x="22" y="338" font-size="9" fill="#3A3D58">Sign-in · sync · ratings</text>
+      <rect x="172" y="300" width="154" height="52" rx="12" fill="#E8F5FC" stroke="#10739A"/>
+      <text x="184" y="321" font-size="11" font-weight="600" fill="#181A2E">kapwa-chat</text>
+      <text x="184" y="338" font-size="9" fill="#3A3D58">Quota → Ollama Cloud</text>
+      <rect x="334" y="300" width="154" height="52" rx="12" fill="#EEF6EA" stroke="#61A644"/>
+      <text x="346" y="321" font-size="11" font-weight="600" fill="#181A2E">Help &amp; support</text>
+      <text x="346" y="338" font-size="9" fill="#3A3D58">Studio API → Neon</text>
+      <rect x="496" y="300" width="154" height="52" rx="12" fill="#FFF6E5" stroke="#E59A1C"/>
+      <text x="508" y="321" font-size="11" font-weight="600" fill="#181A2E">PostHog</text>
+      <text x="508" y="338" font-size="9" fill="#3A3D58">Only after consent</text>
+      <line x1="200" y1="282" x2="110" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" marker-start="url(#ar)"/>
+      <line x1="290" y1="282" x2="255" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)"/>
+      <line x1="370" y1="282" x2="405" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" marker-start="url(#ar)"/>
       <line x1="470" y1="282" x2="560" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
       <line x1="95" y1="114" x2="200" y2="158" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
       <text x="22" y="146" font-size="8.5" fill="#5C607C">live content + media</text>
@@ -557,6 +588,7 @@
       <tr><td>Service worker</td><td>Caches every route and its code on install, then serves stale-while-revalidate. The cache is named for the build, so a new deploy replaces the old one. It is skipped in the Android app.</td></tr>
       <tr><td>Sound engine</td><td>One Web Audio context with crossfades, fades and a compressor on the master output. It plays generated beds, bells and cues, alongside <code>&lt;audio&gt;</code> elements for recordings.</td></tr>
       <tr><td>Supabase</td><td>Passwordless sign-in, practice sync, ratings, video likes, and the Kapwa AI quota and edge function. The app calls it directly from the device.</td></tr>
+      <tr><td>Help &amp; support</td><td>Two Vercel functions in the Studio's project: one for the app, which checks the person's Supabase sign-in, and one for the Studio's Support tab, for project members only. Both read and write a Neon Postgres database. The app never touches the database directly.</td></tr>
     </tbody>
   </table>
 
@@ -567,7 +599,7 @@
       <tr><td>Framework</td><td>Next.js 15.1.12 (a patched release; do not go below 15.1.11) · React 19 · TypeScript 5.7 (strict)</td></tr>
       <tr><td>UI</td><td>Tailwind CSS 3.4 · shadcn/ui on Radix primitives · Lucide icons · Poppins (bundled locally)</td></tr>
       <tr><td>Native</td><td>Capacitor 8.5 (Android, iOS) · @capacitor/local-notifications 8.3 · @capacitor/app</td></tr>
-      <tr><td>Backend</td><td>Supabase (Postgres, Auth, Edge Functions) · supabase-js 2.116</td></tr>
+      <tr><td>Backend</td><td>Supabase (Postgres, Auth, Edge Functions) · supabase-js 2.116 · Neon Postgres (@neondatabase/serverless 1.2) on Vercel functions</td></tr>
       <tr><td>Content</td><td>Sanity (Studio 6, client 8) · Kokoro-82M text-to-speech for narration, run locally</td></tr>
       <tr><td>AI guide</td><td>Ollama Cloud, default model <code>gpt-oss:20b</code>, through the edge function</td></tr>
       <tr><td>Analytics</td><td>PostHog (posthog-js 1.447), off until the user consents</td></tr>
@@ -634,7 +666,8 @@
       <tr><td>Session ratings</td><td>Signed-in users</td><td><code>meditation_ratings</code></td></tr>
       <tr><td>Video likes</td><td>When a video is liked (through an anonymous account if needed)</td><td><code>video_likes</code></td></tr>
       <tr><td>Kapwa messages</td><td>Only when the AI guide is turned on, and never crisis or medical messages</td><td>Edge function → Ollama Cloud</td></tr>
-      <tr><td>Usage analytics</td><td>Only after the user turns on "Share usage". Studio members can see each sharing user's activity, with their name and email added from Supabase inside the Studio.</td><td>PostHog</td></tr>
+      <tr><td>Support conversations</td><td>When a signed-in user raises a concern, with their account ID and email</td><td>Neon</td></tr>
+      <tr><td>Usage analytics</td><td>Only after "Share usage" is on. Studio members see each sharing user's activity, with name and email added inside the Studio.</td><td>PostHog</td></tr>
     </tbody>
   </table>
 
@@ -646,16 +679,16 @@
   </ul>
 
   <h3>Device storage keys</h3>
-  <p class="small">The data lives in the browser's local storage under <code>serenity.*</code> keys. The main ones are <code>serenity.state.v1</code> (app state), <code>serenity.audio.v1</code>, <code>serenity.mixes.v1</code>, <code>serenity.schedule.v1</code>, <code>serenity.kapwa.v1</code>, <code>serenity.resume.v1</code>, <code>serenity.support.v1</code>, <code>serenity.inspiration.plan.v1</code> <code>serenity.auth.v1</code> (the sign-in session) and <code>serenity.content.v1</code> (the latest live content). Versioned names allow safe migrations later.</p>
+  <p class="small">Data lives in the browser's local storage under versioned <code>serenity.*</code> keys, for example <code>serenity.state.v1</code> (app state), <code>serenity.kapwa.v1</code>, <code>serenity.support.v1</code>, <code>serenity.auth.v1</code> (the sign-in session) and <code>serenity.content.v1</code> (live content).</p>
 
   <h3>Server-side security</h3>
-  <p>Every Supabase table has row-level security switched on, so users can read and write only their own rows. Anonymous accounts are excluded from practice sync. The Kapwa quota table has no public access at all, and only the edge function's service role can use it. The Ollama key is stored only as a server secret and never in the app.</p>
+  <p>Every Supabase table has row-level security, so users reach only their own rows, and anonymous accounts are excluded from sync. Only the edge function can use the Kapwa quota table, and the Ollama key is a server secret. Neon is reached only through the Studio's server functions.</p>
 </section>
 
 <!-- ======================= 8 BACKEND ======================= -->
 <section class="chapter">
   <p class="num">VIII · Backend reference</p>
-  <h2>Supabase in detail</h2>
+  <h2>Supabase and Neon in detail</h2>
   <p class="lede">The schema is defined in migrations in <code>supabase/migrations/</code>, and every table has row-level security switched on. These are the parts the app uses today.</p>
 
   <table>
@@ -666,6 +699,19 @@
       <tr><td>meditation_ratings <span class="muted small">(2026-11-04)</span></td><td>Table <code>meditation_ratings</code>, and functions <code>set_meditation_rating</code> and <code>my_meditation_ratings</code>.</td></tr>
       <tr><td>video_likes <span class="muted small">(2026-10-27)</span></td><td>Table <code>video_likes</code>, and functions <code>set_video_like</code> and <code>video_like_counts</code> (public counts).</td></tr>
       <tr><td>circles_* <span class="muted small">(2026-09)</span></td><td>Schema, functions, security rules and seed data for <b>Circles</b> (small groups that sit together). <b>Circles is not in the app's screens in this release.</b> The tables remain, with a pgTAP test suite (<code>supabase/tests/circles_rls.test.sql</code>).</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Neon: help &amp; support</h3>
+  <p>The conversations live in a separate Neon Postgres database, connected to the Studio's Vercel project. The tables are created on first use, so there is no migration to run. A first visit retries setup once if two servers create the tables at the same moment.</p>
+  <table>
+    <thead><tr><th style="width:28%">Part</th><th>Details</th></tr></thead>
+    <tbody>
+      <tr><td><code>support_threads</code></td><td>One row per conversation: account ID and email, subject, topic, status (open, answered or closed), who spoke last, platform, timestamps, and when the person last saw it.</td></tr>
+      <tr><td><code>support_messages</code></td><td>Each message: its conversation, sender (user or team), the team member's name, the text and the time. They are deleted with their conversation.</td></tr>
+      <tr><td><code>POST /api/support</code></td><td>The app's endpoint (<code>studio/api/support.ts</code>). It needs the person's Supabase sign-in as a Bearer token, which it checks with Supabase. Anonymous accounts are refused. Actions: list, get, create, reply, close. Every answer is limited to the person's own conversations, and it accepts any origin because it uses no cookies.</td></tr>
+      <tr><td><code>/support-api</code></td><td>The Support tab's endpoint (<code>studio/api/support-admin.ts</code>), for members of the Sanity project only. Actions: counts, list, get, reply, status. Under <code>sanity dev</code>, <code>studio/supportProxy.ts</code> serves it locally.</td></tr>
+      <tr><td>Environment</td><td><code>DATABASE_URL</code> (or <code>POSTGRES_URL</code>), set by connecting Neon in the Vercel project's Storage tab, plus <code>SUPABASE_URL</code> and <code>SUPABASE_SERVICE_ROLE_KEY</code>, which the Analytics tab already uses. The app can point at another endpoint with <code>NEXT_PUBLIC_SUPPORT_API</code>.</td></tr>
     </tbody>
   </table>
 
@@ -691,6 +737,7 @@
       <tr><td><code>NEXT_PUBLIC_POSTHOG_KEY</code> / <code>_HOST</code></td><td>Analytics. Nothing is sent without these, or without consent.</td></tr>
       <tr><td><code>NEXT_PUBLIC_AUTH_CODE_LENGTH</code></td><td>Number of digits in the sign-in code (default 6).</td></tr>
       <tr><td><code>MOBILE_BUILD</code></td><td>Set by <code>build:mobile</code> to produce the static export.</td></tr>
+      <tr><td><code>NEXT_PUBLIC_SUPPORT_API</code></td><td>Optional. The Help &amp; support endpoint, which defaults to the hosted Studio's <code>/api/support</code>.</td></tr>
       <tr><td><code>SANITY_API_WRITE_TOKEN</code></td><td>Used only by content-authoring scripts; never needed in the app.</td></tr>
     </tbody>
   </table>
@@ -708,8 +755,7 @@
       <tr><td><code>npm run dev</code></td><td>Starts the development server at localhost:3000. It is slower on a page's first visit, so judge speed on a production build.</td></tr>
       <tr><td><code>npm run build</code></td><td>Production web build. It first pulls content from Sanity and generates the offline route list, so the list ships with the deployment. <code>/sw.js</code> and <code>/precache.json</code> are served <code>no-store</code>, so each deploy reaches installed users.</td></tr>
       <tr><td><code>npm run build:mobile</code></td><td>Static export for the native apps, built in <code>.next-mobile</code> and copied to <code>out/</code> without the install pages.</td></tr>
-      <tr><td><code>npm run sync:mobile</code></td><td>Runs <code>build:mobile</code>, then <code>cap sync</code>.</td></tr>
-      <tr><td><code>npm run open:android</code> / <code>open:ios</code></td><td>Syncs, then opens Android Studio or Xcode.</td></tr>
+      <tr><td><code>npm run sync:mobile</code> · <code>open:android</code> / <code>open:ios</code></td><td>Runs <code>build:mobile</code> and <code>cap sync</code>; the open commands then open Android Studio or Xcode.</td></tr>
       <tr><td><code>npm test</code> · <code>npm run typecheck</code> · <code>npm run lint</code></td><td>Unit tests, type check and lint.</td></tr>
       <tr><td><code>npm run studio</code></td><td>Runs Sanity Studio for editors.</td></tr>
       <tr><td><code>npm run content:narrate</code> · <code>music:compose</code></td><td>Records narration and composes the background music.</td></tr>
@@ -723,10 +769,10 @@
       <tr><td style="width:30%">Application ID</td><td><code>com.linus2002.serenity</code>, app name "Serenity"</td></tr>
       <tr><td>Version</td><td>versionCode 1, versionName "1.0"</td></tr>
       <tr><td>SDK levels</td><td>minimum 24 (Android 7.0); target and compile 36</td></tr>
-      <tr><td>Permissions</td><td>Internet, foreground service (media playback), wake lock</td></tr>
+      <tr><td>Permissions</td><td>Internet, foreground media playback (runs the lock-screen card), wake lock</td></tr>
       <tr><td>Notifications</td><td>Local notifications with the small icon <code>ic_stat_serenity</code> and accent colour <code>#1A93D8</code></td></tr>
       <tr><td>CI</td><td><code>.github/workflows/android-test-apk.yml</code>, run manually: Node 22 and Java 21, builds a <b>debug</b> APK and publishes it to the <code>test-build</code> release, which <code>/get</code> downloads</td></tr>
-      <tr><td>Studio hosting</td><td>Its own Vercel project for <code>studio/</code>, which holds the Analytics tab's keys.</td></tr>
+      <tr><td>Studio hosting</td><td>Its own Vercel project for <code>studio/</code>: Analytics keys, the Neon connection and the support functions.</td></tr>
     </tbody>
   </table>
 
@@ -787,8 +833,8 @@
 
   <h3>Store and legal</h3>
   <ul class="check">
-    <li><span class="tag t-block">Blocker</span><b>Publish a privacy policy</b> and link it in the app and the store listing. The app has none yet. Google Play requires one for an app with accounts, analytics and wellbeing data. It must say that project members can see each sharing user's activity, with their name and email, in the Studio.</li>
-    <li><span class="tag t-block">Blocker</span><b>Add account deletion</b> inside the app and as a web link. Play requires both for apps that create accounts. No such flow exists today.</li>
+    <li><span class="tag t-block">Blocker</span><b>Publish a privacy policy</b> and link it in the app and the store listing. The app has none yet. Google Play requires one for an app with accounts, analytics and wellbeing data. It must say that project members can see each sharing user's activity, with their name and email, in the Studio, and that support conversations are stored in Neon with the person's email.</li>
+    <li><span class="tag t-block">Blocker</span><b>Add account deletion</b> inside the app and as a web link. Play requires both for apps that create accounts. No such flow exists today. It must also delete the person's support conversations in Neon.</li>
     <li><span class="tag t-high">High</span>Add <b>terms of use</b> and a short wellbeing disclaimer (Kapwa and the content are not medical care), and complete the Play <b>Data safety</b> form to match section VII.</li>
     <li><span class="tag t-block">Blocker</span>Build a <b>signed release bundle</b> (AAB) with an upload key. CI produces only debug APKs. Increase <code>versionCode</code> with each upload.</li>
     <li><span class="tag t-high">High</span>The public <code>/get</code> page hands out the <b>debug</b> test APK. At launch, point the Android button to Google Play, or to a signed release build.</li>
@@ -802,7 +848,8 @@
 
   <h3>Backend and operations</h3>
   <ul class="check">
-    <li><span class="tag t-high">High</span>Move Supabase to the <b>Pro</b> plan, and add CAPTCHA (for example Turnstile) to sign-in and anonymous sign-up before opening to the public.</li>
+    <li><span class="tag t-high">High</span>Move Supabase to the <b>Pro</b> plan, check Neon's plan and backups, and add CAPTCHA (for example Turnstile) to sign-in and anonymous sign-up before opening to the public.</li>
+    <li><span class="tag t-high">High</span><b>Support alerts.</b> Send the team an email or notification when a concern arrives, and tell people when a reply is waiting. Today, both sides only see new messages when they open the Studio or the app.</li>
     <li><span class="tag t-high">High</span>Set the Kapwa quota and model for launch, and confirm the AI's crisis handling with a final review.</li>
     <li><span class="tag t-tidy">Tidy</span>Decide what to do with the unused <b>Circles</b> tables. Keep them for a later release, or drop them in a migration.</li>
   </ul>
@@ -860,6 +907,7 @@
         <tr><td><code>/calendar</code> 🔒</td><td>Scheduled sessions</td></tr>
         <tr><td><code>/favorites</code></td><td>Saved and recent</td></tr>
         <tr><td><code>/notifications</code></td><td>Inspiration and reminders</td></tr>
+        <tr><td><code>/help</code> 🔒</td><td>Help &amp; support</td></tr>
         <tr><td><code>/downloads</code></td><td>Offline downloads</td></tr>
         <tr><td><code>/profile</code></td><td>Profile and preferences</td></tr>
         <tr><td><code>/support</code></td><td>Support track hub*</td></tr>
