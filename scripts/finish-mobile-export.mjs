@@ -21,12 +21,31 @@ const STREAMED = [
   'kind-to-yourself', 'better-mornings', 'breath-school', 'focus-reset',
   'letting-go-of-stress', 'meditations',
 ];
-const skip = new Set([...WEB_ONLY, ...STREAMED].map((p) => path.join(from, p)));
+const skip = new Set(WEB_ONLY.map((p) => path.join(from, p)));
+const publicDir = path.join(root, 'public');
+
+/**
+ * A streamed folder can share its name with a screen: public/meditations/ holds
+ * recordings, and the Meditations tab exports to meditations/index.html. So only
+ * files that came from public/ are left out, never the pages beside them.
+ */
+function isStreamedFile(src) {
+  const rel = path.relative(from, src);
+  const top = rel.split(path.sep)[0];
+  if (!STREAMED.includes(top)) return false;
+  const original = path.join(publicDir, rel);
+  return fs.existsSync(original) && fs.statSync(original).isFile();
+}
 
 if (!fs.existsSync(path.join(from, 'index.html'))) {
   throw new Error('.next-mobile has no index.html: run the mobile build first.');
 }
 
 fs.rmSync(to, { recursive: true, force: true });
-fs.cpSync(from, to, { recursive: true, filter: (src) => !skip.has(src) });
-console.log(`[mobile] export copied to out/ without ${[...WEB_ONLY, ...STREAMED].length} web-only or streamed paths`);
+fs.cpSync(from, to, { recursive: true, filter: (src) => !skip.has(src) && !isStreamedFile(src) });
+
+// Every screen must make it into the apps; a missing one crashes the app when opened.
+for (const page of ['index.html', 'home/index.html', 'meditations/index.html', 'yoga/index.html', 'sleep/index.html', 'kapwa/index.html', 'profile/index.html', 'help/index.html']) {
+  if (!fs.existsSync(path.join(to, page))) throw new Error(`[mobile] ${page} is missing from out/`);
+}
+console.log(`[mobile] export copied to out/ without the web-only pages or the streamed recordings`);
