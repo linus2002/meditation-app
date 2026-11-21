@@ -12,7 +12,7 @@
  * build-time manifest, means the list is always right for the deployment that
  * served it.
  */
-const BUILD = 'mwowxv6h';
+const BUILD = 'mwpr8igv';
 const CACHE = `serenity-${BUILD}`;
 const MANIFEST = '/precache.json';
 const FALLBACK = '/offline';
@@ -210,9 +210,9 @@ self.addEventListener('fetch', (event) => {
   // tens of megabytes behind a home-screen rail would crowd out everything else.
   if (request.destination === 'video' || request.headers.has('range')) return;
 
-  // The Android APK (offered on /get) is tens of megabytes and must always be
-  // the newest build, so it never touches a cache.
-  if (url.pathname.endsWith('.apk')) return;
+  // The Android APK and the documentation PDF (offered on /get) are megabytes
+  // each and must always be the newest copy, so they never touch a cache.
+  if (url.pathname.endsWith('.apk') || url.pathname.endsWith('.pdf')) return;
 
   // Never serve our own update channel from a cache.
   if (url.pathname === MANIFEST || url.pathname === '/sw.js') {

@@ -141,7 +141,7 @@
   </div>
   <div class="meta">
     <div><b>Version 1.0.0</b>App release</div>
-    <div><b>November 2026</b>Document date</div>
+    <div><b>21 November 2026</b>Last updated</div>
     <div><b>Android · Web</b>Platforms</div>
     <div><b>com.linus2002.serenity</b>Application ID</div>
   </div>
@@ -186,7 +186,7 @@
   <div class="principles">
     <div class="principle"><b>Honest numbers</b><span>Every progress figure comes from sittings actually recorded on the device. A new install starts empty and nothing is invented.</span></div>
     <div class="principle"><b>Private by default</b><span>Practice, reflections, sleep logs and moods stay on the phone. Syncing needs an account, and analytics need explicit consent.</span></div>
-    <div class="principle"><b>Works offline</b><span>Installed, the app runs with no connection, including in hospitals. Sound is generated on the device, and the screens are cached when the app is installed.</span></div>
+    <div class="principle"><b>Works offline</b><span>Installed, the app opens and runs with no connection, including in hospitals. The timer, yoga, sleep sounds and support track work offline. Session recordings are streamed, so they need a connection.</span></div>
     <div class="principle"><b>Calm, not compulsive</b><span>There is no confetti, no scores and no "streak lost" warnings. Reflections are a record, not a rating of the person.</span></div>
     <div class="principle"><b>Made for the hand</b><span>The app is designed for phones and tablets, from a 320px iPhone SE to large Android handsets. Desktop screens get a "made for phones" page.</span></div>
     <div class="principle"><b>Safe by design</b><span>Kapwa never answers a crisis with a meditation. Cancer-support content can make no medical claims, and tests enforce this.</span></div>
@@ -196,9 +196,9 @@
   <table>
     <thead><tr><th style="width:30%">Platform</th><th>How it is delivered</th></tr></thead>
     <tbody>
-      <tr><td>Android app</td><td>A Capacitor 8 native shell around a static export of the web app. Package <code>com.linus2002.serenity</code>, minimum Android 7.0 (SDK 24), target SDK 36.</td></tr>
+      <tr><td>Android app</td><td>A Capacitor 8 native shell around a static export of the web app. Package <code>com.linus2002.serenity</code>, minimum Android 7.0 (SDK 24), target SDK 36. Test builds download from the <code>/get</code> page (4.19).</td></tr>
       <tr><td>Web / installable app (PWA)</td><td>A Next.js 15 deployment that can be installed to the home screen and works fully offline once installed.</td></tr>
-      <tr><td>iOS</td><td>Supported by the codebase (<code>npm run open:ios</code>), but the Xcode project has not been created yet. It needs a Mac (see section XI).</td></tr>
+      <tr><td>iOS</td><td>Installable today as a web app from Safari, using the Add to Home Screen guide at <code>/iphone</code>. A native app is supported by the codebase (<code>npm run open:ios</code>), but the Xcode project has not been created yet. It needs a Mac (see section XI).</td></tr>
     </tbody>
   </table>
 </section>
@@ -207,7 +207,7 @@
 <section class="chapter">
   <p class="num">II · Serenity at a glance</p>
   <h2>The library and the screens</h2>
-  <p class="lede">The content is managed in the Sanity CMS and built into the app. The figures below are taken from the content shipped in this release.</p>
+  <p class="lede">The content is managed in the Sanity CMS. It is built into the app and also updates live in installed apps. The figures below are taken from the content in this release.</p>
 
   <div class="stats">
     <div class="stat"><b>74</b><span>guided meditations</span></div>
@@ -215,7 +215,7 @@
     <div class="stat"><b>16</b><span>narrated stories</span></div>
     <div class="stat"><b>20</b><span>yoga sessions</span></div>
     <div class="stat"><b>16</b><span>generated soundscapes</span></div>
-    <div class="stat"><b>27</b><span>recorded program sessions</span></div>
+    <div class="stat"><b>74</b><span>sessions with recorded audio</span></div>
     <div class="stat"><b>55</b><span>daily inspiration messages</span></div>
     <div class="stat"><b>14</b><span>reflection prompts</span></div>
   </div>
@@ -247,7 +247,7 @@
   <h3>The first run</h3>
   <ol style="padding-left:16px; margin:0 0 10px">
     <li><b>Entry gate (<code>/</code>).</b> Waits until the device's saved state has loaded, so the wrong screen never flashes. First-time users go to the tour, everyone else to Home. <code>router.replace</code> keeps the tour out of the back history.</li>
-    <li><b>Welcome tour (<code>/welcome</code>).</b> Four swipeable steps, always shown in dark mode: the brand sweep, a grid of session artwork, "New in Serenity" (Yoga, Kapwa, Daily inspiration), and the intro screen. Finishing or skipping marks the tour as done.</li>
+    <li><b>Welcome tour (<code>/welcome</code>).</b> Four swipeable steps, always shown in dark mode: the brand sweep, a grid of session artwork, "New in Serenity" (every feature, each with an icon and one line), and the intro screen. Finishing or skipping marks the tour as done.</li>
     <li><b>Sign in (<code>/login</code>).</b> Three options: <i>Continue with Email</i>, <i>Create Account</i> or <i>Browse as a guest</i>. A <code>?next=</code> parameter returns the user to where they were going, and only in-app paths are accepted.</li>
   </ol>
 
@@ -291,7 +291,7 @@
     <div>
       <h3>4.2 Meditations, Discover and Search</h3>
       <p><b>Meditations</b> is the library, with tabs for All, Meditation, Programs, Stories, Sounds and Yoga. It shows today's mindful minutes, favourites and a "Start here" set. <b>Discover</b> adds category chips (Focus, Sleep, Anxiety, Happiness and more), the unguided sit, read-aloud stories and the full session list.</p>
-      <p><b>Search</b> (<code>/search</code>) is a full-screen search across sessions, stories and soundscapes, with mood suggestions to tap.</p>
+      <p><b>Search</b> (<code>/search</code>) is a full-screen search across sessions, stories, soundscapes, programs, yoga and the app's own screens, with mood suggestions to tap. Typing a program's name also finds its sessions. The search words are kept in the address (<code>?q=</code>), so going back returns to the same results.</p>
       <p>Favourites and recently played sessions are saved on the device. Users can also rate sessions, and ratings sync for signed-in users.</p>
       <p class="where">Where: <code>src/app/(app)/meditations</code>, <code>discover</code>, <code>src/app/search</code>, <code>src/lib/search.ts</code>, <code>src/lib/ratings.ts</code>.</p>
     </div>
@@ -303,10 +303,10 @@
       <h3>4.3 The session player</h3>
       <p>The player has a breathing orb, a scrubber and play, pause and ±15 s controls (<code>Space</code> or <code>K</code> on a keyboard). The orb's breathing phase is calculated from the session clock, so the ring, the phase label and the countdown always agree.</p>
       <ul>
-        <li><b>Sound.</b> A recorded track when the session has one (4.4), otherwise a generated ambient bed with a level slider and mute. A struck bell ends a completed session, and the bed fades out over four seconds.</li>
+        <li><b>Sound.</b> Every session plays its own recording, streamed from Sanity's CDN (4.4). The audio follows the session clock and is resynced if it drifts by more than 1.5 s. The session pauses if the phone interrupts the sound. A struck bell ends a completed session.</li>
         <li><b>Breath cues and haptics.</b> Optional tones at the top of each inhale and exhale, and optional vibration on the same beat.</li>
         <li><b>Resume.</b> Leaving part-way saves the user's place.</li>
-        <li><b>Accurate timing.</b> The clock is measured against real time, so a backgrounded tab does not drift.</li>
+        <li><b>Accurate timing.</b> The clock is measured against real time, so a backgrounded tab does not drift. Length labels show the recording's exact length, for example 3:17 Min.</li>
       </ul>
       <p class="where">Where: <code>src/app/player/[id]</code>, <code>src/components/player/</code>, <code>src/hooks/use-player.ts</code>, <code>use-breath.ts</code>, <code>use-session-track.ts</code>.</p>
     </div>
@@ -318,8 +318,9 @@
       <h3>4.4 Programs</h3>
       <p>Programs are short courses of sessions taken in order. Each program page shows a cover, the number of sessions and the total length, a <b>Start Session 1</b> button, and a grid of its sessions.</p>
       <p>There are ten programs. <b>The Six Phase</b> (6 sessions), <b>Sleep Mastery</b> (7), <b>A Steady Mind</b> (5) and <b>Open Water</b> (4) are featured on Home. Calm Foundations, Focus Reset, Kind to Yourself, Better Mornings, Letting Go of Stress and Breath School appear in the library.</p>
-      <p>27 program sessions play a <b>recorded audio track</b> instead of a generated bed: Six Phase, Sleep Mastery, A Steady Mind, Open Water and Calm Foundations. The recording sets the session's length, and the audio follows the session clock. It is resynced if it drifts by more than 1.5 s, and the session pauses if the phone interrupts the sound.</p>
-      <p class="where">Where: <code>src/app/(app)/programs/[id]</code>, <code>src/lib/audio/session-tracks.ts</code>, recordings in <code>public/&lt;program&gt;/</code>.</p>
+      <p><b>Every session now has a recording</b>, in all ten programs and in the library. Program and library sessions play their own recordings. Seven library sessions that have no recording of their own share one stand-in mix, stored in Sanity once. The recording sets each session's length.</p>
+      <p>Recordings are kept in Sanity and streamed from its CDN, so they are no longer in the app package or in git. Editors can upload or replace a recording in the Studio, and its length is measured from the file automatically.</p>
+      <p class="where">Where: <code>src/app/(app)/programs/[id]</code>, <code>src/hooks/use-session-track.ts</code>, the <code>recording</code> field in Sanity, <code>scripts/sanity/recordings.mjs</code>.</p>
     </div>
   </div>
 
@@ -427,6 +428,7 @@
     <div>
       <h3>4.15 Downloads and offline use</h3>
       <p>The installed app is cached in full on install, not page by page as the user browses, so screens they have never opened still work offline. On the web, the <b>Downloads</b> screen also lets users pin individual sessions (page, code and artwork) for offline use. In the Android app, everything is already bundled. If the user opens a page that is not cached while offline, they see a friendly offline page instead of the browser's error.</p>
+      <p><b>Not yet offline:</b> session recordings stream from Sanity and are not cached, so a guided session needs a connection to play its sound (see section XI).</p>
       <p class="where">Where: <code>public/sw.js</code>, <code>scripts/build-routes.mjs</code>, <code>src/lib/offline-downloads.ts</code>, <code>src/app/offline</code>.</p>
     </div>
   </div>
@@ -441,7 +443,7 @@
           <tr><td>Light mode</td><td>Switches to the light palette. Dark is the default. The tour and sign-in screens are always dark.</td></tr>
           <tr><td>Reminders · Bedtime · Daily inspiration</td><td>The 07:00, 22:30 and 08:00 notifications.</td></tr>
           <tr><td>Breathing haptics · Breath cues</td><td>Vibration and tones on each inhale and exhale.</td></tr>
-          <tr><td>Ambient sound</td><td>The generated bed behind guided sessions.</td></tr>
+          <tr><td>Ambient sound</td><td>The generated bed, which plays only behind sessions that have no recording. Every session has one in this release.</td></tr>
           <tr><td>Yoga voice</td><td>The recorded instructor in yoga sessions.</td></tr>
           <tr><td>Share usage</td><td>Anonymous analytics. <b>Off</b> until the user turns it on.</td></tr>
         </tbody>
@@ -469,13 +471,26 @@
       <p><code>/landing</code> is the marketing page. It has a hero, measured counts, a features section, sleep and breath spotlights, a programs path, Serenity's promises (including privacy), and download buttons for the App Store and Google Play.</p>
     </div>
   </div>
+
+  <div class="feature noshot">
+    <div>
+      <h3>4.19 Install pages</h3>
+      <p><code>/get</code> is the install page for both platforms. It shows the brand collage, a card with the headline and the Android and iOS badges, and a phone showing the app's home screen.</p>
+      <ul>
+        <li><b>Android.</b> The button downloads the latest APK. <code>/get/serenity.apk</code> redirects to the file that the "Android test APK" workflow publishes to the <code>test-build</code> GitHub release. Each run of the workflow is what people download, with no commit or redeploy. The service worker never caches it.</li>
+        <li><b>iOS.</b> The page shows the Add to Home Screen steps in place, or a QR code when it is opened on a computer. Launched from the Home Screen icon, it opens the app.</li>
+        <li><b><code>/iphone</code></b> is a standalone iPhone guide that points Android users to <code>/get</code>.</li>
+      </ul>
+      <p class="where">Where: <code>public/get/index.html</code>, <code>public/iphone.html</code>, the redirect and rewrites in <code>next.config.mjs</code>. These pages are plain HTML, separate from the app's screens, and are left out of the Android build.</p>
+    </div>
+  </div>
 </section>
 
 <!-- ======================= 5 ARCHITECTURE ======================= -->
 <section class="chapter">
   <p class="num">V · System architecture</p>
   <h2>How the pieces fit together</h2>
-  <p class="lede">Serenity is a <b>device-first</b> app. The whole interface and almost all of its logic run on the phone. The servers handle three things: content (at build time), accounts and sync (Supabase), and the optional AI guide.</p>
+  <p class="lede">Serenity is a <b>device-first</b> app. The whole interface and almost all of its logic run on the phone. The servers handle four things: content (built in and refreshed live), streamed recordings, accounts and sync (Supabase), and the optional AI guide.</p>
 
   <div class="diagram">
     <svg viewBox="0 0 660 360" width="100%" style="font-family:Poppins, sans-serif">
@@ -487,7 +502,7 @@
       <text x="24" y="44" font-size="12" font-weight="600" fill="#181A2E">Sanity CMS</text>
       <text x="24" y="62" font-size="9" fill="#3A3D58">Meditations, programs, stories,</text>
       <text x="24" y="75" font-size="9" fill="#3A3D58">yoga, videos, prompts, home page</text>
-      <text x="24" y="95" font-size="9" fill="#3A3D58">Images, video, narration on CDN</text>
+      <text x="24" y="95" font-size="9" fill="#3A3D58">Images, video, audio on CDN</text>
       <!-- Build -->
       <rect x="245" y="20" width="170" height="92" rx="12" fill="#F4F5F9" stroke="#C9CCDA"/>
       <text x="259" y="44" font-size="12" font-weight="600" fill="#181A2E">Build</text>
@@ -527,7 +542,7 @@
       <line x1="360" y1="282" x2="375" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)"/>
       <line x1="470" y1="282" x2="560" y2="298" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
       <line x1="95" y1="114" x2="200" y2="158" stroke="#5C607C" stroke-width="1.3" marker-end="url(#ar)" stroke-dasharray="4 3"/>
-      <text x="64" y="146" font-size="8.5" fill="#5C607C">media streamed</text>
+      <text x="22" y="146" font-size="8.5" fill="#5C607C">live content + media</text>
     </svg>
   </div>
 
@@ -537,6 +552,7 @@
     <tbody>
       <tr><td>App shell</td><td>Next.js 15 App Router with React 19. Two build modes: a normal server build for the web, and a static export (<code>MOBILE_BUILD=1</code>) that Capacitor wraps for Android.</td></tr>
       <tr><td>Providers</td><td><code>app-provider</code> (favourites, recents, settings, theme), <code>audio-provider</code> (the single sound engine), and the account and cloud-sync providers.</td></tr>
+      <tr><td>Live content</td><td>Fetches the published content from Sanity's CDN on open, and on return from the background at most every ten minutes. A copy is kept on the phone for offline use, with the built-in copy as the fallback. Updates apply only on the browse tabs, never mid-session. Items newer than the build wait for the next build.</td></tr>
       <tr><td>Device gate</td><td>Pure CSS at a 1025px breakpoint. Above that, the app is hidden and a "Made for phones and tablets" screen is shown, with no flash of the wrong layout.</td></tr>
       <tr><td>Service worker</td><td>Caches every route and its code on install, then serves stale-while-revalidate. The cache is named for the build, so a new deploy replaces the old one. It is skipped in the Android app.</td></tr>
       <tr><td>Sound engine</td><td>One Web Audio context with crossfades, fades and a compressor on the master output. It plays generated beds, bells and cues, alongside <code>&lt;audio&gt;</code> elements for recordings.</td></tr>
@@ -564,13 +580,13 @@
 <section class="chapter">
   <p class="num">VI · Content and sound</p>
   <h2>Where the words and sounds come from</h2>
-  <p class="lede">The library is edited in Sanity and built into the app. Sound comes from four sources: program recordings, narrated voice, composed music, and soundscapes generated on the device.</p>
+  <p class="lede">The library is edited in Sanity. It is built into the app and refreshed live in installed apps. Sound comes from four sources: session recordings, narrated voice, composed music, and soundscapes generated on the device.</p>
 
   <h3>Content pipeline (Sanity CMS)</h3>
   <ul>
-    <li><b>Editing.</b> Editors work in Sanity Studio (<code>npm run studio</code>, project <code>jn0rojao</code>, dataset <code>production</code>). The document types are: home page, meditation, program, yoga session, story (with narration audio), home video, category, deck card, inspiration and reflection prompt. The Studio also has an Analytics tab with the PostHog dashboard.</li>
-    <li><b>Into the app.</b> Before every build, <code>content:pull</code> downloads the content into <code>src/content/content.json</code>. If Sanity cannot be reached, the build uses the copy already committed.</li>
-    <li><b>Media stays on the CDN.</b> Images (WebP, up to 1080px, with blur previews), videos and narration are served from Sanity's CDN. This keeps them out of the Android package and keeps the app small.</li>
+    <li><b>Editing.</b> Editors work in Sanity Studio (<code>npm run studio</code>, project <code>jn0rojao</code>, dataset <code>production</code>). The document types are: home page, meditation, program, yoga session, story (with narration audio), home video, category, deck card, inspiration and reflection prompt. Session recordings are uploaded in the Studio too.</li>
+    <li><b>Into the app.</b> Before every build, <code>content:pull</code> downloads the content into <code>src/content/content.json</code>. If Sanity cannot be reached, the build uses the copy already committed. Installed apps also fetch the published content live (section V), so <b>a Studio edit reaches users without a new APK</b>. The build and the app share one query (<code>src/content/sanity-content.mjs</code>), so they cannot drift apart.</li>
+    <li><b>Media stays on the CDN.</b> Images (WebP, up to 1080px, with blur previews), videos, narration and session recordings are served from Sanity's CDN. This keeps them out of the Android package and keeps the app small.</li>
     <li><b>Adding content in bulk.</b> <code>scripts/sanity/add-content.mjs</code> adds new items from JSON files. <code>import.ts</code> was the one-time initial import.</li>
   </ul>
 
@@ -578,13 +594,20 @@
   <table>
     <thead><tr><th style="width:24%">Sound</th><th>How it is made</th><th style="width:30%">Used in</th></tr></thead>
     <tbody>
-      <tr><td>Program recordings</td><td>MP3 files shipped in <code>public/&lt;program&gt;/</code> and mapped to sessions in <code>session-tracks.ts</code>.</td><td>27 program sessions</td></tr>
+      <tr><td>Session recordings</td><td>MP3 files on Sanity's CDN. They are uploaded with <code>npm run content:recordings</code> or in the Studio. Files are converted to MP3 so iPhones can play them, and a file shared by several sessions is uploaded only once. The local source folders stay out of git.</td><td>All 74 sessions, including 7 that share a stand-in mix</td></tr>
       <tr><td>Narration</td><td>Generated with <b>Kokoro</b>, an open-source text-to-speech model run locally by <code>npm run content:narrate</code>. Story voices are Emma, Isabella and Michael, and the yoga instructor has its own voice. The script uploads the audio to Sanity with paragraph timings and records again only when the text changes.</td><td>Stories, yoga cues. The device voice is the fallback.</td></tr>
       <tr><td>Background music</td><td>Composed procedurally by <code>npm run music:compose</code> (chords, melody, reverb, a seamless loop), with nothing sampled. There are three beds: sleep, relaxation and mindfulness.</td><td>Under stories and yoga</td></tr>
-      <tr><td>Soundscapes</td><td>Generated live with the Web Audio API, so there are no files and no licences, they work offline and they never audibly loop. There are 16: rain, ocean, forest, night, singing bowl, warm pad, deep drone, chimes, thunder, stream, fireplace, wind, brown noise, heartbeat, om and theta.</td><td>Session beds, timer, sleep mixer</td></tr>
+      <tr><td>Soundscapes</td><td>Generated live with the Web Audio API, so there are no files and no licences, they work offline and they never audibly loop. There are 16: rain, ocean, forest, night, singing bowl, warm pad, deep drone, chimes, thunder, stream, fireplace, wind, brown noise, heartbeat, om and theta.</td><td>Timer, sleep mixer, and sessions without a recording</td></tr>
     </tbody>
   </table>
   <p>Bells, breath tones and other short sounds are also generated on the device. Audio starts only after the user taps something, as browsers require. It is released when the user leaves a screen, and a compressor stops a bell from clipping over a loud bed.</p>
+  <h3>Studio analytics</h3>
+  <p>The Studio has its own <b>Analytics</b> tab, which reads PostHog directly. It shows overview cards and a daily chart, the most completed meditations and most visited screens, devices, countries, and recent visits with links to replays. A <b>Users</b> view lists everyone who shared usage, with device, location, visits, active time and last activity. Each person has a page showing the features they used, the content they opened, the meditations they played, their visits and a step-by-step timeline.</p>
+  <ul>
+    <li><b>Active time</b> counts the gaps between events within a visit, capped at two minutes on ordinary screens and thirty on listening and reading screens. An app left open and idle is not counted.</li>
+    <li>Names and emails are looked up in Supabase Auth by account ID inside the Studio, so they are never sent to PostHog.</li>
+    <li>The Studio is hosted on Vercel as its own project. A server function (<code>studio/api/posthog-api.ts</code>) answers the tab's requests with keys held in Vercel's environment, and only for people whose Sanity sign-in belongs to a member of the project. The keys never reach the browser.</li>
+  </ul>
   <div class="callout c-blue"><b>Licensing</b>The stories, sessions, prompts and inspiration lines are original to Serenity. The bundled photographs are from Unsplash under the Unsplash License, with per-file credits in <code>src/assets/images/CREDITS.md</code>. The narration model and the music generator are open source and run locally, so no third-party audio licences apply.</div>
 </section>
 
@@ -611,7 +634,7 @@
       <tr><td>Session ratings</td><td>Signed-in users</td><td><code>meditation_ratings</code></td></tr>
       <tr><td>Video likes</td><td>When a video is liked (through an anonymous account if needed)</td><td><code>video_likes</code></td></tr>
       <tr><td>Kapwa messages</td><td>Only when the AI guide is turned on, and never crisis or medical messages</td><td>Edge function → Ollama Cloud</td></tr>
-      <tr><td>Usage analytics</td><td>Only after the user turns on "Share usage"</td><td>PostHog</td></tr>
+      <tr><td>Usage analytics</td><td>Only after the user turns on "Share usage". Studio members can see each sharing user's activity, with their name and email added from Supabase inside the Studio.</td><td>PostHog</td></tr>
     </tbody>
   </table>
 
@@ -623,7 +646,7 @@
   </ul>
 
   <h3>Device storage keys</h3>
-  <p class="small">The data lives in the browser's local storage under <code>serenity.*</code> keys. The main ones are <code>serenity.state.v1</code> (app state), <code>serenity.audio.v1</code>, <code>serenity.mixes.v1</code>, <code>serenity.schedule.v1</code>, <code>serenity.kapwa.v1</code>, <code>serenity.resume.v1</code>, <code>serenity.support.v1</code>, <code>serenity.inspiration.plan.v1</code> and <code>serenity.auth.v1</code> (the sign-in session). Versioned names allow safe migrations later.</p>
+  <p class="small">The data lives in the browser's local storage under <code>serenity.*</code> keys. The main ones are <code>serenity.state.v1</code> (app state), <code>serenity.audio.v1</code>, <code>serenity.mixes.v1</code>, <code>serenity.schedule.v1</code>, <code>serenity.kapwa.v1</code>, <code>serenity.resume.v1</code>, <code>serenity.support.v1</code>, <code>serenity.inspiration.plan.v1</code> <code>serenity.auth.v1</code> (the sign-in session) and <code>serenity.content.v1</code> (the latest live content). Versioned names allow safe migrations later.</p>
 
   <h3>Server-side security</h3>
   <p>Every Supabase table has row-level security switched on, so users can read and write only their own rows. Anonymous accounts are excluded from practice sync. The Kapwa quota table has no public access at all, and only the edge function's service role can use it. The Ollama key is stored only as a server secret and never in the app.</p>
@@ -684,12 +707,13 @@
     <tbody>
       <tr><td><code>npm run dev</code></td><td>Starts the development server at localhost:3000. It is slower on a page's first visit, so judge speed on a production build.</td></tr>
       <tr><td><code>npm run build</code></td><td>Production web build. It first pulls content from Sanity and generates the offline route list, so the list ships with the deployment. <code>/sw.js</code> and <code>/precache.json</code> are served <code>no-store</code>, so each deploy reaches installed users.</td></tr>
-      <tr><td><code>npm run build:mobile</code></td><td>Static export into <code>out/</code> for the native apps.</td></tr>
+      <tr><td><code>npm run build:mobile</code></td><td>Static export for the native apps, built in <code>.next-mobile</code> and copied to <code>out/</code> without the install pages.</td></tr>
       <tr><td><code>npm run sync:mobile</code></td><td>Runs <code>build:mobile</code>, then <code>cap sync</code>.</td></tr>
       <tr><td><code>npm run open:android</code> / <code>open:ios</code></td><td>Syncs, then opens Android Studio or Xcode.</td></tr>
       <tr><td><code>npm test</code> · <code>npm run typecheck</code> · <code>npm run lint</code></td><td>Unit tests, type check and lint.</td></tr>
       <tr><td><code>npm run studio</code></td><td>Runs Sanity Studio for editors.</td></tr>
       <tr><td><code>npm run content:narrate</code> · <code>music:compose</code></td><td>Records narration and composes the background music.</td></tr>
+      <tr><td><code>npm run content:recordings</code></td><td>Uploads session recordings to Sanity and links them to their sessions.</td></tr>
     </tbody>
   </table>
 
@@ -701,7 +725,8 @@
       <tr><td>SDK levels</td><td>minimum 24 (Android 7.0); target and compile 36</td></tr>
       <tr><td>Permissions</td><td>Internet, foreground service (media playback), wake lock</td></tr>
       <tr><td>Notifications</td><td>Local notifications with the small icon <code>ic_stat_serenity</code> and accent colour <code>#1A93D8</code></td></tr>
-      <tr><td>CI</td><td><code>.github/workflows/android-test-apk.yml</code>, run manually: Node 22 and Java 21, builds a <b>debug</b> APK and publishes it to a test release</td></tr>
+      <tr><td>CI</td><td><code>.github/workflows/android-test-apk.yml</code>, run manually: Node 22 and Java 21, builds a <b>debug</b> APK and publishes it to the <code>test-build</code> release, which <code>/get</code> downloads</td></tr>
+      <tr><td>Studio hosting</td><td>Its own Vercel project for <code>studio/</code>, which holds the Analytics tab's keys.</td></tr>
     </tbody>
   </table>
 
@@ -710,9 +735,8 @@
     <li>Create a Supabase project, on the <b>Pro</b> plan for launch (Free projects pause after a week of inactivity and have no backups).</li>
     <li>Copy <code>.env.example</code> to <code>.env.local</code>, then add the project URL and the publishable key.</li>
     <li>Link the project and apply the migrations: <code>npx supabase link --project-ref &lt;ref&gt;</code>, then <code>npx supabase db push</code>.</li>
-    <li>Enable email one-time-code sign-in, with the code length matching the app. Enable anonymous sign-ins for video likes.</li>
-    <li>For the AI guide, run <code>npx supabase secrets set OLLAMA_API_KEY=…</code>, then <code>npx supabase functions deploy kapwa-chat --no-verify-jwt</code>, then set <code>NEXT_PUBLIC_KAPWA_AI=1</code> and rebuild.</li>
-    <li>Set the same public variables on the web host (for example Vercel) and redeploy.</li>
+    <li>Enable email code sign-in (same code length as the app) and anonymous sign-ins.</li>
+    <li>For the AI guide, set the <code>OLLAMA_API_KEY</code> secret and deploy <code>kapwa-chat</code> with <code>--no-verify-jwt</code>. Set <code>NEXT_PUBLIC_KAPWA_AI=1</code> and the public variables on the web host, then redeploy.</li>
   </ol>
 </section>
 
@@ -722,7 +746,7 @@
   <h2>How it is tested, and who can use it</h2>
 
   <h3>Automated tests</h3>
-  <p><b>33 Vitest unit-test files</b> cover the app's logic, plus a pgTAP suite for database security. They are run with <code>npm test</code>.</p>
+  <p><b>34 Vitest unit-test files</b> cover the app's logic, plus a pgTAP suite for database security. They are run with <code>npm test</code>.</p>
   <div class="two small">
     <ul>
       <li>Session stats, sleep stats, streaks and dates/time zones</li>
@@ -734,7 +758,7 @@
       <li>Inspiration choice, reminders, notifications, the schedule</li>
       <li>Assessment scoring, search, mixes, yoga, stories</li>
       <li>Support track guard rails (no claim words, short tired-day sessions, no breath holds)</li>
-      <li>Service-worker asset list, formatting, categories, settings</li>
+      <li>Live content updates, the service-worker asset list, formatting, categories, settings</li>
     </ul>
   </div>
   <p class="small muted">There are no end-to-end browser tests yet (section XI).</p>
@@ -763,18 +787,17 @@
 
   <h3>Store and legal</h3>
   <ul class="check">
-    <li><span class="tag t-block">Blocker</span><b>Publish a privacy policy</b> and link it in the app and the store listing. The app has none yet. Google Play requires one for an app with accounts, analytics and wellbeing data.</li>
+    <li><span class="tag t-block">Blocker</span><b>Publish a privacy policy</b> and link it in the app and the store listing. The app has none yet. Google Play requires one for an app with accounts, analytics and wellbeing data. It must say that project members can see each sharing user's activity, with their name and email, in the Studio.</li>
     <li><span class="tag t-block">Blocker</span><b>Add account deletion</b> inside the app and as a web link. Play requires both for apps that create accounts. No such flow exists today.</li>
     <li><span class="tag t-high">High</span>Add <b>terms of use</b> and a short wellbeing disclaimer (Kapwa and the content are not medical care), and complete the Play <b>Data safety</b> form to match section VII.</li>
     <li><span class="tag t-block">Blocker</span>Build a <b>signed release bundle</b> (AAB) with an upload key. CI produces only debug APKs. Increase <code>versionCode</code> with each upload.</li>
-    <li><span class="tag t-high">High</span>Check that the merged Android manifest includes <code>POST_NOTIFICATIONS</code>, or reminders will not show on Android 13 and later.</li>
+    <li><span class="tag t-high">High</span>The public <code>/get</code> page hands out the <b>debug</b> test APK. At launch, point the Android button to Google Play, or to a signed release build.</li>
   </ul>
 
   <h3>Audio and content</h3>
   <ul class="check">
-    <li><span class="tag t-block">Blocker</span><b>Commit the new program recordings.</b> The six <code>public/&lt;program&gt;/</code> folders, <code>session-tracks.ts</code> and <code>use-session-track.ts</code> are untracked in git, and the player, data and type changes that use them are not committed.</li>
-    <li><span class="tag t-high">High</span><b>Focus Reset</b> has recordings in <code>public/focus-reset/</code>, but they are not mapped in <code>session-tracks.ts</code>. Map them or remove them.</li>
-    <li><span class="tag t-high">High</span>Program MP3s are not in the offline precache list or in Downloads, so recorded sessions need a connection on the web. Decide whether to cache them. The Downloads copy still says there are "no audio files", which is now wrong.</li>
+    <li><span class="tag t-high">High</span><b>Recordings need a connection.</b> They stream from Sanity and are not cached by the service worker or by Downloads. A session with a recording does not fall back to the generated bed, so offline it plays without sound. Cache recordings on play or download, or fall back to the soundscape.</li>
+    <li><span class="tag t-tidy">Tidy</span>The Downloads screen still says Serenity "synthesises its soundscapes and voices" on the device. That is now wrong, because every session streams a recording.</li>
   </ul>
 
   <h3>Backend and operations</h3>
@@ -842,6 +865,8 @@
         <tr><td><code>/support</code></td><td>Support track hub*</td></tr>
         <tr><td><code>/support/[id]</code> 🔒</td><td>7 support sessions*</td></tr>
         <tr><td><code>/offline</code></td><td>Offline fallback</td></tr>
+        <tr><td><code>/get</code></td><td>Install page (Android, iOS)</td></tr>
+        <tr><td><code>/iphone</code></td><td>iPhone Home Screen guide</td></tr>
       </tbody>
     </table>
   </div>
