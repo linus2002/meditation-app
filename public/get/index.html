@@ -102,12 +102,12 @@
     .lede { margin: 0; color: var(--muted); font-size: 0.85rem; }
     /* Two store badges side by side, the documentation button across both below them. */
     .actions { display: grid; grid-template-columns: repeat(2, max-content); gap: 6px; margin-top: 10px; }
-    .badge-wide { grid-column: 1 / -1; justify-content: center; height: 44px; padding: 0 18px; gap: 10px; }
+    .badge-wide { grid-column: 1 / -1; justify-content: flex-start; height: 48px; padding: 0 18px 0 14px; gap: 10px; }
 
     /* Store-badge style: black, compact, flat. */
     .badge {
       display: inline-flex; align-items: center; gap: 6px;
-      height: 34px; padding: 0 10px 0 8px;
+      height: 40px; padding: 0 14px 0 12px;
       border: 1px solid #a6a6a6; border-radius: 8px;
       background: #000; color: #fff;
       text-decoration: none;
@@ -116,7 +116,7 @@
     .badge:hover { background: #1a1a1a; }
     .badge:focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; }
     .badge svg { width: 18px; height: 18px; flex-shrink: 0; }
-    .badge span { display: flex; flex-direction: column; line-height: 1.05; }
+    .badge span { display: flex; flex-direction: column; align-items: flex-start; text-align: left; line-height: 1.05; }
     .badge small { font-size: 0.55rem; font-weight: 400; letter-spacing: 0.01em; }
     .badge b { font-size: 0.84rem; font-weight: 600; letter-spacing: -0.01em; }
 
@@ -181,6 +181,20 @@
       object-fit: contain;
       object-position: right bottom;
     }
+    @media (min-width: 901px) {
+      /*
+       * On wide screens the photo spans the whole card, anchored to its bottom-right
+       * corner, as tall as it can be while the phone and hands stay clear of the
+       * text. The script at the end of the page measures that height (--phone-h).
+       */
+      .stage > .phone-area { position: absolute; inset: 0; margin: 0; }
+      .phone-area img {
+        inset: auto 0 0 auto;
+        width: auto;
+        height: var(--phone-h, 58%);
+        max-width: 100%;
+      }
+    }
 
     /* Android install steps, shown once the download starts. */
     dialog {
@@ -235,6 +249,60 @@
     @keyframes nudge { 50% { transform: translateY(5px); } }
     @media (prefers-reduced-motion: reduce) { .share-hint { animation: none; } }
     .not-android { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #eef1f4; font-size: 0.88rem; }
+
+    /* The video button is a <button>, so it needs the link badges' look spelled out. */
+    button.badge { font: inherit; cursor: pointer; }
+
+    /* Promo video window: a portrait (9:16) player sized to the screen, with its own controls. */
+    dialog.promo {
+      width: fit-content; height: fit-content; max-width: none; max-height: none;
+      padding: 0; border: 0; background: transparent; overflow: visible;
+    }
+    dialog.promo::backdrop { background: rgba(5, 10, 16, 0.82); }
+    .promo-frame {
+      position: relative;
+      container-type: inline-size;
+      width: min(calc((100vh - 136px) * 9 / 16), calc(100vw - 32px));
+      aspect-ratio: 9 / 16;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+    }
+    .promo-frame:fullscreen, .promo-frame:-webkit-full-screen { width: 100%; height: 100%; border-radius: 0; aspect-ratio: auto; }
+    .promo-frame video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+    /* Close sits outside the video, above its top-right corner. */
+    .promo-close {
+      position: absolute; top: -50px; right: 0; z-index: 2;
+      display: grid; place-items: center; width: 40px; height: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14); color: #fff; cursor: pointer;
+    }
+    .promo-close:hover { background: rgba(255, 255, 255, 0.28); }
+    .promo-controls {
+      position: absolute; left: 0; right: 0; bottom: 0; z-index: 1;
+      padding: 40px 14px 12px;
+      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.75));
+      transition: opacity 0.25s ease;
+    }
+    /* While playing and left alone, the controls step aside; any touch or movement brings them back. */
+    .promo-frame.idle .promo-controls { opacity: 0; pointer-events: none; }
+    .promo-frame.idle { cursor: none; }
+    .promo-seek { width: 100%; margin: 0 0 8px; accent-color: #fff; cursor: pointer; }
+    .promo-row { display: flex; align-items: center; gap: 2px; min-width: 0; }
+    .promo-row button {
+      display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0;
+      border: 0; border-radius: 50%; background: transparent; color: #fff; cursor: pointer;
+    }
+    .promo-row button:hover { background: rgba(255, 255, 255, 0.16); }
+    .promo-row button:focus-visible, .promo-close:focus-visible, .promo-seek:focus-visible, .promo-volume:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+    .promo-row svg, .promo-close svg { width: 20px; height: 20px; }
+    .promo-time { margin-left: 4px; font-size: 0.78rem; font-variant-numeric: tabular-nums; opacity: 0.9; white-space: nowrap; overflow: hidden; min-width: 0; }
+    .promo-spacer { flex: 1 1 0; min-width: 0; }
+    .promo-volume { flex: 0 1 80px; min-width: 40px; accent-color: #fff; cursor: pointer; }
+    /* Narrow video: drop the volume slider (mute stays), then the time. Every button always fits. */
+    @container (max-width: 400px) { .promo-volume { display: none; } }
+    @container (max-width: 290px) { .promo-time { display: none; } }
 
     /* Narrow screens: the container with text and phone first, then the collage. Scrolls. */
     @media (max-width: 900px) {
@@ -298,6 +366,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
             <span><small>Features &amp; guide</small><b>Serenity Documentation</b></span>
           </a>
+          <button type="button" class="badge badge-wide" id="promo-open" aria-haspopup="dialog">
+            <!-- Play. -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.5v7l6-3.5z" fill="#fff"/></svg>
+            <span><small>Watch the</small><b>Serenity Video</b></span>
+          </button>
         </div>
       </header>
       <div class="phone-area"><img src="/get/img/phone-home.webp" alt="A hand holding a phone showing the Serenity home screen" width="1233" height="1263" /></div>
@@ -382,6 +455,242 @@
         if (typeof iosDialog.showModal === 'function') iosDialog.showModal();
       });
       document.getElementById('close-ios').addEventListener('click', function () { iosDialog.close(); });
+    })();
+  </script>
+
+  <dialog id="promo" class="promo" aria-label="Serenity promo video">
+    <div class="promo-frame" id="promo-frame">
+      <video id="promo-video" src="/get/serenity-promo.mp4" poster="/get/img/promo-poster.jpg" playsinline preload="metadata"></video>
+      <div class="promo-controls">
+        <input type="range" class="promo-seek" id="promo-seek" min="0" max="1000" value="0" step="1" aria-label="Seek" />
+        <div class="promo-row">
+          <button type="button" id="promo-play" aria-label="Pause">
+            <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" hidden><path d="M8 5.5v13l11-6.5z"/></svg>
+          </button>
+          <button type="button" id="promo-back" aria-label="Back 5 seconds">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 17 6 12l5-5M18 17l-5-5 5-5"/></svg>
+          </button>
+          <button type="button" id="promo-forward" aria-label="Forward 5 seconds">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m13 17 5-5-5-5M6 17l5-5-5-5"/></svg>
+          </button>
+          <span class="promo-time" id="promo-time">0:00 / 0:00</span>
+          <span class="promo-spacer"></span>
+          <button type="button" id="promo-mute" aria-label="Mute">
+            <svg class="i-sound" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+            <svg class="i-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" hidden><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="m17 9 5 6M22 9l-5 6"/></svg>
+          </button>
+          <input type="range" class="promo-volume" id="promo-volume" min="0" max="1" step="0.05" value="1" aria-label="Volume" />
+          <button type="button" id="promo-full" aria-label="Full screen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    <button type="button" class="promo-close" id="promo-close" aria-label="Close video">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </dialog>
+
+  <script>
+    // The promo video: opens in a window over the page, with its own controls.
+    (function () {
+      var dialog = document.getElementById('promo');
+      var frame = document.getElementById('promo-frame');
+      var video = document.getElementById('promo-video');
+      var seek = document.getElementById('promo-seek');
+      var playButton = document.getElementById('promo-play');
+      var muteButton = document.getElementById('promo-mute');
+      var volume = document.getElementById('promo-volume');
+      var time = document.getElementById('promo-time');
+      var SKIP = 5;
+      var seeking = false;
+      var idleTimer = 0;
+
+      function clock(seconds) {
+        seconds = Math.max(0, Math.floor(seconds || 0));
+        return Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0');
+      }
+      function showTime() {
+        time.textContent = clock(video.currentTime) + ' / ' + clock(video.duration);
+        if (!seeking && video.duration) seek.value = String(Math.round((video.currentTime / video.duration) * 1000));
+      }
+      function showPlaying() {
+        var playing = !video.paused && !video.ended;
+        playButton.querySelector('.i-pause').toggleAttribute('hidden', !playing);
+        playButton.querySelector('.i-play').toggleAttribute('hidden', playing);
+        playButton.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+        wake();
+      }
+      function showVolume() {
+        var silent = video.muted || video.volume === 0;
+        muteButton.querySelector('.i-sound').toggleAttribute('hidden', silent);
+        muteButton.querySelector('.i-muted').toggleAttribute('hidden', !silent);
+        muteButton.setAttribute('aria-label', silent ? 'Unmute' : 'Mute');
+        volume.value = String(video.muted ? 0 : video.volume);
+      }
+      // Controls fade out after a few still seconds of playing, and come back on any movement.
+      function wake() {
+        frame.classList.remove('idle');
+        window.clearTimeout(idleTimer);
+        if (!video.paused) idleTimer = window.setTimeout(function () { frame.classList.add('idle'); }, 2500);
+      }
+      function toggle() {
+        if (video.paused || video.ended) void video.play().catch(function () {});
+        else video.pause();
+      }
+      function skip(by) {
+        video.currentTime = Math.min(Math.max(0, video.currentTime + by), video.duration || 0);
+        wake();
+      }
+      function fullscreenElement() {
+        return document.fullscreenElement || document.webkitFullscreenElement;
+      }
+      function toggleFullscreen() {
+        if (fullscreenElement()) {
+          (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        } else if (frame.requestFullscreen) {
+          frame.requestFullscreen().catch(function () {});
+        } else if (frame.webkitRequestFullscreen) {
+          frame.webkitRequestFullscreen();
+        } else if (video.webkitEnterFullscreen) {
+          // iPhone: only the video itself can go full screen, with the system's controls.
+          video.webkitEnterFullscreen();
+        }
+      }
+      function close() {
+        video.pause();
+        if (fullscreenElement()) (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+        if (dialog.open) dialog.close();
+      }
+
+      document.getElementById('promo-open').addEventListener('click', function () {
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else dialog.setAttribute('open', '');
+        video.currentTime = 0;
+        // Started by the tap, so the browser allows it to play with sound.
+        void video.play().catch(function () {});
+        playButton.focus();
+      });
+      document.getElementById('promo-close').addEventListener('click', close);
+      dialog.addEventListener('cancel', function (event) { event.preventDefault(); close(); });
+      // A click on the dimmed backdrop (the dialog itself, outside the frame) closes it.
+      dialog.addEventListener('click', function (event) { if (event.target === dialog) close(); });
+
+      playButton.addEventListener('click', toggle);
+      video.addEventListener('click', toggle);
+      document.getElementById('promo-back').addEventListener('click', function () { skip(-SKIP); });
+      document.getElementById('promo-forward').addEventListener('click', function () { skip(SKIP); });
+      document.getElementById('promo-full').addEventListener('click', toggleFullscreen);
+      video.addEventListener('dblclick', toggleFullscreen);
+
+      muteButton.addEventListener('click', function () {
+        if (video.muted || video.volume === 0) {
+          video.muted = false;
+          if (video.volume === 0) video.volume = 1;
+        } else {
+          video.muted = true;
+        }
+      });
+      volume.addEventListener('input', function () {
+        video.volume = Number(volume.value);
+        video.muted = video.volume === 0;
+      });
+
+      seek.addEventListener('input', function () {
+        seeking = true;
+        if (video.duration) {
+          video.currentTime = (Number(seek.value) / 1000) * video.duration;
+          time.textContent = clock(video.currentTime) + ' / ' + clock(video.duration);
+        }
+      });
+      seek.addEventListener('change', function () { seeking = false; wake(); });
+
+      video.addEventListener('timeupdate', showTime);
+      video.addEventListener('loadedmetadata', showTime);
+      video.addEventListener('play', showPlaying);
+      video.addEventListener('pause', showPlaying);
+      video.addEventListener('ended', showPlaying);
+      video.addEventListener('volumechange', showVolume);
+      frame.addEventListener('pointermove', wake);
+      frame.addEventListener('pointerdown', wake);
+      frame.addEventListener('keydown', wake);
+
+      // Keyboard, while the window is open: space or K to play/pause, arrows to skip, F for full screen, M to mute.
+      dialog.addEventListener('keydown', function (event) {
+        if (event.target === seek || event.target === volume) return;
+        var key = event.key.toLowerCase();
+        if (key === ' ' || key === 'k') { event.preventDefault(); toggle(); }
+        else if (key === 'arrowleft') { event.preventDefault(); skip(-SKIP); }
+        else if (key === 'arrowright') { event.preventDefault(); skip(SKIP); }
+        else if (key === 'f') { toggleFullscreen(); }
+        else if (key === 'm') { muteButton.click(); }
+      });
+
+      showVolume();
+    })();
+  </script>
+  <script>
+    /*
+     * Wide screens: the photo of the hands is anchored to the card's bottom-right
+     * corner and made as tall as it can be while the phone and hands stay clear
+     * of the headline, text and buttons. Points are where the photo's content is,
+     * as fractions of its height (its width is 0.976 of that).
+     */
+    (function () {
+      var stage = document.querySelector('.stage');
+      var parts = document.querySelectorAll('.intro-text > *');
+      var RATIO = 1233 / 1263;
+      var POINTS = [
+        // The phone's frame (just outside its screen): top-left corner, along the top, top-right.
+        [0.17, 0.075],
+        [0.26, 0.05],
+        [0.35, 0.03],
+        [0.44, 0.012],
+        [0.53, 0],
+        [0.237, 0.425], // the holding hand's fingers
+        [0.04, 0.7] // the pointing hand
+      ];
+      var GAP = 24;
+      function fits(height, width, boxes) {
+        var left = width - RATIO * height;
+        var top = stage.clientHeight - height;
+        for (var i = 0; i < POINTS.length; i++) {
+          var x = left + POINTS[i][0] * height;
+          var y = top + POINTS[i][1] * height;
+          for (var j = 0; j < boxes.length; j++) {
+            var b = boxes[j];
+            if (x < b.right + GAP && y < b.bottom + GAP && y > b.top - GAP && x > b.left - GAP) return false;
+          }
+        }
+        return true;
+      }
+      function size() {
+        if (!window.matchMedia('(min-width: 901px)').matches) return;
+        var origin = stage.getBoundingClientRect();
+        var boxes = [];
+        function add(r) {
+          boxes.push({ left: r.left - origin.left, top: r.top - origin.top, right: r.right - origin.left, bottom: r.bottom - origin.top });
+        }
+        // Each line of text and each button, not the full-width blocks around them.
+        parts.forEach(function (part) {
+          if (part.classList.contains('actions')) {
+            Array.prototype.forEach.call(part.children, function (button) { add(button.getBoundingClientRect()); });
+            return;
+          }
+          var range = document.createRange();
+          range.selectNodeContents(part);
+          Array.prototype.forEach.call(range.getClientRects(), add);
+        });
+        var width = stage.clientWidth;
+        var height = Math.min(stage.clientHeight, width / RATIO);
+        while (height > 120 && !fits(height, width, boxes)) height -= 8;
+        stage.style.setProperty('--phone-h', height + 'px');
+      }
+      if ('ResizeObserver' in window) new ResizeObserver(size).observe(stage);
+      window.addEventListener('resize', size);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(size);
+      size();
     })();
   </script>
 </body>
