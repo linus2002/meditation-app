@@ -4,6 +4,7 @@ import { visionTool } from '@sanity/vision';
 
 import { schemaTypes } from './schemaTypes';
 import { analyticsTool } from './tools/analytics';
+import { supportTool } from './tools/support';
 
 /** The home screen's curated rows live in one fixed document. */
 const HOME_PAGE_ID = 'homePage';
@@ -52,8 +53,9 @@ export default defineConfig({
     visionTool(),
   ],
 
-  // An Analytics tab beside the content, showing a shared PostHog dashboard.
-  tools: (prev) => [...prev, analyticsTool],
+  // Analytics (a shared PostHog dashboard) and Support (concerns raised in the
+  // app, kept in Neon) tabs beside the content.
+  tools: (prev) => [...prev, analyticsTool, supportTool],
 
   schema: {
     types: schemaTypes,

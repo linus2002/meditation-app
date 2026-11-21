@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ChevronRight, User } from 'lucide-react';
+import { ChevronRight, MessageCircleQuestion, User } from 'lucide-react';
 
 import { AccountCard } from '@/components/auth/account-card';
 import { InstallPrompt } from '@/components/layout/install-prompt';
@@ -15,6 +15,7 @@ import { settingToggles } from '@/data/settings';
 import { appShortcuts } from '@/data/shortcuts';
 import { DAILY_GOAL_OPTIONS } from '@/data/stats';
 import { useReminders } from '@/hooks/use-reminders';
+import { useSupportUnread } from '@/hooks/use-support-unread';
 import { formatDuration } from '@/lib/format';
 import { reminderDefinitions } from '@/lib/reminders';
 import { handleRovingKey } from '@/lib/roving';
@@ -35,6 +36,7 @@ export default function ProfilePage() {
   const [draftName, setDraftName] = React.useState('');
   React.useEffect(() => setDraftName(name), [name]);
   const { permission, mode: reminderMode, inApp, enable, disable } = useReminders();
+  const supportUnread = useSupportUnread();
 
   /*
    * One line under the list saying what the reminders can and cannot do here.
@@ -291,6 +293,30 @@ export default function ProfilePage() {
         {reminderNote ? (
           <p className="mt-3 px-1 text-label leading-relaxed text-ink-faint">{reminderNote}</p>
         ) : null}
+      </section>
+
+      <section className="mt-6 px-5">
+        <SectionTitle>Help</SectionTitle>
+        <Link
+          href="/help"
+          className="mt-3 flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        >
+          <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
+            <MessageCircleQuestion className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.7} />
+            {supportUnread > 0 ? (
+              <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full bg-[#1D9FDA] ring-2 ring-surface" />
+            ) : null}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-body-sm font-medium leading-tight text-ink">Help &amp; support</span>
+            <span className="mt-0.5 block text-label leading-snug text-ink-muted">
+              {supportUnread > 0
+                ? `${supportUnread} new ${supportUnread === 1 ? 'reply' : 'replies'} from the Serenity team`
+                : 'Raise a concern or ask the Serenity team'}
+            </span>
+          </span>
+          <ChevronRight className="h-4 w-4 text-ink-faint" strokeWidth={1.8} />
+        </Link>
       </section>
 
       <section className="mt-6 px-5">

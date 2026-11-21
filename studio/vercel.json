@@ -6,6 +6,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/posthog-api/:route", "destination": "/api/posthog-api?route=:route" },
+    { "source": "/support-api", "destination": "/api/support-admin" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }

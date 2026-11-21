@@ -26,6 +26,7 @@ const MEMBER_ROUTES = [
   '/mixes',
   '/calendar',
   '/mix-play',
+  '/help',
 ];
 
 export function isMemberRoute(pathname: string): boolean {
