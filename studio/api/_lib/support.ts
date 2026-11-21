@@ -65,6 +65,9 @@ const LIMITS = {
   messagesPerHour: 30,
 };
 
+/** How long after the last keystroke someone still shows as typing. */
+const TYPING_SECONDS = 6;
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** The variables above, from any source (process.env, Vite's loadEnv). */
@@ -78,6 +81,12 @@ export function pickSupportEnv(...sources: Record<string, string | undefined>[])
     }
   }
   return out;
+}
+
+/** A message time the client already has, or null to ask for the whole conversation. */
+function since(value: unknown): string | null {
+  if (typeof value !== 'string' || value.length > 40 || Number.isNaN(Date.parse(value))) return null;
+  return value;
 }
 
 const ok = (body: unknown): Reply => ({ status: 200, body });
@@ -130,6 +139,9 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       await sql`create index if not exists support_threads_user on support_threads (user_id, updated_at desc)`;
       await sql`create index if not exists support_threads_status on support_threads (status, updated_at desc)`;
       await sql`create index if not exists support_messages_thread on support_messages (thread_id, created_at)`;
+      // When each side last pressed a key, for the "typing…" dots.
+      await sql`alter table support_threads add column if not exists user_typing_at timestamptz`;
+      await sql`alter table support_threads add column if not exists admin_typing_at timestamptz`;
     };
     ready ??= (async () => {
       try {
@@ -208,6 +220,32 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       return ok({ thread, messages });
     }
 
+    if (action === 'sync') {
+      // Asked every couple of seconds while a conversation is open: what's new
+      // since `after`, whether the team is typing, and this person's own typing.
+      const id = typeof payload.id === 'string' && UUID.test(payload.id) ? payload.id : null;
+      if (!id) return fail(400, 'Unknown conversation.');
+      const typing = payload.typing === true;
+      const [thread] = await db`
+        update support_threads set user_seen_at = now(),
+          user_typing_at = case when ${typing}::boolean then now() else null end
+        where id = ${id} and user_id = ${user.id}
+        returning status,
+          coalesce(admin_typing_at > now() - make_interval(secs => ${TYPING_SECONDS}), false) as other_typing`;
+      if (!thread) return fail(404, 'Unknown conversation.');
+      const after = since(payload.after);
+      // ">=": times come back to the millisecond, so the latest message may
+      // repeat; the app ignores ids it already has.
+      const messages = after
+        ? await db`
+            select id, sender, admin_name, body, created_at from support_messages
+            where thread_id = ${id} and created_at >= ${after}::timestamptz order by created_at`
+        : await db`
+            select id, sender, admin_name, body, created_at from support_messages
+            where thread_id = ${id} order by created_at`;
+      return ok({ status: thread.status, typing: thread.other_typing, messages });
+    }
+
     if (action === 'create') {
       const subject = text(payload.subject, LIMITS.subject);
       const body = text(payload.body, LIMITS.body);
@@ -244,12 +282,15 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       // Replying reopens a conversation that was answered or closed.
       const [thread] = await db`
         update support_threads
-        set status = 'open', last_sender = 'user', updated_at = now(), user_seen_at = now()
+        set status = 'open', last_sender = 'user', updated_at = now(), user_seen_at = now(),
+          user_typing_at = null
         where id = ${id} and user_id = ${user.id}
         returning id`;
       if (!thread) return fail(404, 'Unknown conversation.');
-      await db`insert into support_messages (thread_id, sender, body) values (${id}, 'user', ${body})`;
-      return ok({ id });
+      const [message] = await db`
+        insert into support_messages (thread_id, sender, body) values (${id}, 'user', ${body})
+        returning id, sender, admin_name, body, created_at`;
+      return ok({ id, message });
     }
 
     if (action === 'close') {
@@ -320,6 +361,29 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       return ok({ thread, messages });
     }
 
+    if (action === 'sync') {
+      // The open conversation in the Support tab, every couple of seconds.
+      const id = typeof payload.id === 'string' && UUID.test(payload.id) ? payload.id : null;
+      if (!id) return fail(400, 'Unknown conversation.');
+      const typing = payload.typing === true;
+      const [thread] = await db`
+        update support_threads set admin_seen_at = now(),
+          admin_typing_at = case when ${typing}::boolean then now() else null end
+        where id = ${id}
+        returning status,
+          coalesce(user_typing_at > now() - make_interval(secs => ${TYPING_SECONDS}), false) as other_typing`;
+      if (!thread) return fail(404, 'Unknown conversation.');
+      const after = since(payload.after);
+      const messages = after
+        ? await db`
+            select id, sender, admin_name, body, created_at from support_messages
+            where thread_id = ${id} and created_at >= ${after}::timestamptz order by created_at`
+        : await db`
+            select id, sender, admin_name, body, created_at from support_messages
+            where thread_id = ${id} order by created_at`;
+      return ok({ status: thread.status, typing: thread.other_typing, messages });
+    }
+
     if (action === 'reply') {
       const id = typeof payload.id === 'string' && UUID.test(payload.id) ? payload.id : null;
       const body = text(payload.body, LIMITS.body);
@@ -328,12 +392,14 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       const [thread] = await db`
         update support_threads
         set status = 'answered', last_sender = 'admin', updated_at = now(),
-          last_admin_reply_at = now(), admin_seen_at = now()
+          last_admin_reply_at = now(), admin_seen_at = now(), admin_typing_at = null
         where id = ${id} returning id`;
       if (!thread) return fail(404, 'Unknown conversation.');
-      await db`insert into support_messages (thread_id, sender, admin_name, body)
-        values (${id}, 'admin', ${adminName}, ${body})`;
-      return ok({ id });
+      const [message] = await db`
+        insert into support_messages (thread_id, sender, admin_name, body)
+        values (${id}, 'admin', ${adminName}, ${body})
+        returning id, sender, admin_name, body, created_at`;
+      return ok({ id, message });
     }
 
     if (action === 'status') {

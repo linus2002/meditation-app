@@ -15,6 +15,7 @@ import {
   listThreads,
   replyToThread,
   SUPPORT_CATEGORIES,
+  syncThread,
   supportErrorText,
   type SupportCategory,
   type SupportMessage,
@@ -34,8 +35,14 @@ import { cn } from '@/lib/utils';
 
 const MAX_SUBJECT = 120;
 const MAX_BODY = 4000;
-/** How often an open conversation checks for a reply. */
-const POLL_MS = 30_000;
+/** How often an open conversation checks for new messages and typing. */
+const LIVE_MS = 2_000;
+/** How often the list of conversations refreshes while it's on screen. */
+const LIST_MS = 10_000;
+/** A keystroke counts as "typing" for this long. */
+const TYPING_MS = 4_000;
+/** Typing is told to the team at most this often. */
+const TYPING_SIGNAL_MS = 2_000;
 
 const statusLabel: Record<SupportStatus, string> = {
   open: 'Waiting for reply',
@@ -152,8 +159,12 @@ function ThreadList() {
     const onVisible = () => {
       if (document.visibilityState === 'visible') void load();
     };
+    const refresh = window.setInterval(onVisible, LIST_MS);
     document.addEventListener('visibilitychange', onVisible);
-    return () => document.removeEventListener('visibilitychange', onVisible);
+    return () => {
+      window.clearInterval(refresh);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, [load]);
 
   return (
@@ -337,65 +348,164 @@ function NewConcern() {
  * One conversation
  * ------------------------------------------------------------------ */
 
+/** A message on screen: from the server, or one of ours still on its way. */
+type ShownMessage = SupportMessage & { pending?: boolean };
+
+/** Adds messages not already shown, oldest first, with ones still sending last. */
+function mergeMessages(current: ShownMessage[], incoming: ShownMessage[]): ShownMessage[] {
+  const known = new Set(current.map((m) => m.id));
+  const fresh = incoming.filter((m) => !known.has(m.id));
+  if (!fresh.length) return current;
+  return [...current, ...fresh].sort(
+    (a, b) =>
+      Number(Boolean(a.pending)) - Number(Boolean(b.pending)) ||
+      Date.parse(a.created_at) - Date.parse(b.created_at),
+  );
+}
+
+/** Three bouncing dots, as messaging apps show while the other side writes. */
+function TypingBubble() {
+  return (
+    <li className="flex items-end gap-2 motion-safe:animate-bubble-in">
+      <TeamAvatar />
+      <div className="rounded-2xl rounded-bl-md bg-surface px-4 py-3.5">
+        <span className="sr-only">The Serenity team is typing</span>
+        <span className="flex h-3 items-center gap-1" aria-hidden="true">
+          {[0, 160, 320].map((delay) => (
+            <span
+              key={delay}
+              className="h-2 w-2 rounded-full bg-ink-muted motion-safe:animate-typing-dot"
+              style={{ animationDelay: `${delay}ms` }}
+            />
+          ))}
+        </span>
+      </div>
+    </li>
+  );
+}
+
 function Conversation({ id }: { id: string }) {
   const [thread, setThread] = React.useState<{ subject: string; status: SupportStatus; category: string | null } | null>(null);
-  const [messages, setMessages] = React.useState<SupportMessage[] | null>(null);
+  const [messages, setMessages] = React.useState<ShownMessage[] | null>(null);
+  const [teamTyping, setTeamTyping] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
   const [draft, setDraft] = React.useState('');
-  const [sending, setSending] = React.useState(false);
   const [sendProblem, setSendProblem] = React.useState<string | null>(null);
   const endRef = React.useRef<HTMLDivElement>(null);
-  const countRef = React.useRef(0);
   const initials = useInitials();
+
+  // Kept in refs so the live check always sees the latest without restarting.
+  const messagesRef = React.useRef<ShownMessage[] | null>(null);
+  messagesRef.current = messages;
+  const draftRef = React.useRef('');
+  draftRef.current = draft;
+  const lastKeyRef = React.useRef(0);
+  const lastSignalRef = React.useRef(0);
+  const syncingRef = React.useRef(false);
+  /** Messages there when the screen opened don't animate in; new ones do. */
+  const firstIdsRef = React.useRef<Set<string> | null>(null);
+  const tempRef = React.useRef(0);
 
   const load = React.useCallback(async () => {
     try {
       const data = await getThread(id);
       setThread({ subject: data.thread.subject, status: data.thread.status, category: data.thread.category });
-      setMessages(data.messages);
+      firstIdsRef.current ??= new Set(data.messages.map((m) => m.id));
+      setMessages((current) => mergeMessages(current ?? [], data.messages));
       setProblem(null);
     } catch (error) {
       setProblem(supportErrorText(error));
     }
   }, [id]);
 
+  const sync = React.useCallback(async () => {
+    const shown = messagesRef.current;
+    if (!shown || syncingRef.current) return;
+    syncingRef.current = true;
+    const typing = Boolean(draftRef.current.trim()) && Date.now() - lastKeyRef.current < TYPING_MS;
+    if (typing) lastSignalRef.current = Date.now();
+    const newest = shown.filter((m) => !m.pending).at(-1)?.created_at ?? null;
+    try {
+      const data = await syncThread(id, newest, typing);
+      setMessages((current) => mergeMessages(current ?? [], data.messages));
+      setTeamTyping(data.typing);
+      setThread((current) => (current && current.status !== data.status ? { ...current, status: data.status } : current));
+    } catch {
+      // A missed check is fine: the next one catches up.
+    } finally {
+      syncingRef.current = false;
+    }
+  }, [id]);
+
   React.useEffect(() => {
     void load();
-    const poll = window.setInterval(() => {
-      if (document.visibilityState === 'visible') void load();
-    }, POLL_MS);
-    return () => window.clearInterval(poll);
   }, [load]);
 
-  // Keep the newest message in view as messages arrive.
+  // The live check: every couple of seconds while the screen is in view.
+  const opened = thread !== null;
   React.useEffect(() => {
-    if (messages && messages.length !== countRef.current) {
-      countRef.current = messages.length;
-      endRef.current?.scrollIntoView({ block: 'end' });
-    }
-  }, [messages]);
+    if (!opened) return;
+    const tick = () => {
+      if (document.visibilityState === 'visible') void sync();
+    };
+    const timer = window.setInterval(tick, LIVE_MS);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', tick);
+    };
+  }, [opened, sync]);
 
-  const send = async (event: React.FormEvent) => {
-    event.preventDefault();
+  // Keep the newest message (or the typing dots) in view, gliding to it once open.
+  const count = messages?.length ?? 0;
+  const scrolledRef = React.useRef(false);
+  React.useEffect(() => {
+    if (!count) return;
+    endRef.current?.scrollIntoView({ block: 'end', behavior: scrolledRef.current ? 'smooth' : 'auto' });
+    scrolledRef.current = true;
+  }, [count, teamTyping]);
+
+  const onDraft = (value: string) => {
+    setDraft(value);
+    lastKeyRef.current = Date.now();
+    draftRef.current = value;
+    // Tell the team straight away when typing starts, not at the next check.
+    if (value.trim() && Date.now() - lastSignalRef.current > TYPING_SIGNAL_MS) void sync();
+  };
+
+  const send = async (event?: React.FormEvent) => {
+    event?.preventDefault();
     const text = draft.trim();
-    if (!text || sending) return;
-    setSending(true);
+    if (!text) return;
+    // Show it at once, as messaging apps do; it settles when the server has it.
+    const tempId = `sending-${++tempRef.current}`;
+    const stand: ShownMessage = {
+      id: tempId,
+      sender: 'user',
+      admin_name: null,
+      body: text,
+      created_at: new Date().toISOString(),
+      pending: true,
+    };
+    setMessages((current) => [...(current ?? []), stand]);
+    setDraft('');
+    lastKeyRef.current = 0;
     setSendProblem(null);
     try {
-      await replyToThread(id, text);
-      setDraft('');
-      await load();
+      const { message } = await replyToThread(id, text);
+      setMessages((current) => mergeMessages((current ?? []).filter((m) => m.id !== tempId), [message]));
+      setThread((current) => (current ? { ...current, status: 'open' } : current));
     } catch (error) {
+      setMessages((current) => (current ?? []).filter((m) => m.id !== tempId));
+      setDraft((current) => current || text);
       setSendProblem(supportErrorText(error));
-    } finally {
-      setSending(false);
     }
   };
 
   const close = async () => {
     try {
       await closeThread(id);
-      await load();
+      setThread((current) => (current ? { ...current, status: 'closed' } : current));
     } catch (error) {
       setSendProblem(supportErrorText(error));
     }
@@ -432,18 +542,26 @@ function Conversation({ id }: { id: string }) {
         {messages.map((message) => {
           const mine = message.sender === 'user';
           return (
-            <li key={message.id} className={cn('flex items-end gap-2', mine ? 'justify-end' : 'justify-start')}>
+            <li
+              key={message.id}
+              className={cn(
+                'flex items-end gap-2',
+                mine ? 'justify-end' : 'justify-start',
+                firstIdsRef.current?.has(message.id) ? null : 'motion-safe:animate-bubble-in',
+              )}
+            >
               {mine ? null : <TeamAvatar />}
               <div
                 className={cn(
-                  'max-w-[78%] rounded-2xl px-4 py-3',
+                  'max-w-[78%] rounded-2xl px-4 py-3 transition-opacity duration-200',
                   mine ? 'rounded-br-md bg-aurora-blue text-white' : 'rounded-bl-md bg-surface text-ink',
+                  message.pending ? 'opacity-70' : null,
                 )}
               >
                 <p className={cn('text-label leading-none', mine ? 'text-white/75' : 'text-ink-muted')}>
                   {mine ? 'You' : message.admin_name ? `${message.admin_name} · Serenity team` : 'Serenity team'}
                   {' · '}
-                  {when(message.created_at)}
+                  {message.pending ? 'Sending…' : when(message.created_at)}
                 </p>
                 <p className="mt-2 whitespace-pre-wrap break-words text-body-sm leading-relaxed">{message.body}</p>
               </div>
@@ -451,6 +569,7 @@ function Conversation({ id }: { id: string }) {
             </li>
           );
         })}
+        {teamTyping ? <TypingBubble /> : null}
       </ol>
 
       {thread.status === 'closed' ? (
@@ -471,21 +590,29 @@ function Conversation({ id }: { id: string }) {
             rows={1}
             value={draft}
             maxLength={MAX_BODY}
-            onChange={(event) => setDraft(event.target.value)}
+            onChange={(event) => onDraft(event.target.value)}
+            onKeyDown={(event) => {
+              // On a computer, Enter sends and Shift+Enter starts a new line.
+              if (
+                event.key === 'Enter' &&
+                !event.shiftKey &&
+                !event.nativeEvent.isComposing &&
+                window.matchMedia('(pointer: fine)').matches
+              ) {
+                event.preventDefault();
+                void send();
+              }
+            }}
             placeholder="Write a reply…"
             className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl bg-surface px-4 py-3 text-body-sm leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           />
           <button
             type="submit"
-            disabled={!draft.trim() || sending}
+            disabled={!draft.trim()}
             aria-label="Send"
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-aurora-blue text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
-            {sending ? (
-              <Loader2 className="h-[18px] w-[18px] animate-spin" aria-hidden="true" />
-            ) : (
-              <Send className="h-[18px] w-[18px]" strokeWidth={1.8} />
-            )}
+            <Send className="h-[18px] w-[18px]" strokeWidth={1.8} />
           </button>
         </form>
         {sendProblem ? (

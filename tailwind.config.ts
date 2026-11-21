@@ -172,6 +172,14 @@ const config: Config = {
           '0%, 100%': { transform: 'translate3d(0,0,0)' },
           '50%': { transform: 'translate3d(0,-12px,0)' },
         },
+        'bubble-in': {
+          from: { opacity: '0', transform: 'translateY(10px) scale(0.96)' },
+          to: { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
+        'typing-dot': {
+          '0%, 60%, 100%': { transform: 'translateY(0)', opacity: '0.45' },
+          '30%': { transform: 'translateY(-4px)', opacity: '1' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -182,6 +190,8 @@ const config: Config = {
         'fade-in': 'fade-in 0.4s ease-out both',
         shimmer: 'shimmer 2.4s linear infinite',
         float: 'float 6s ease-in-out infinite',
+        'bubble-in': 'bubble-in 0.28s cubic-bezier(0.22,1,0.36,1) both',
+        'typing-dot': 'typing-dot 1.2s ease-in-out infinite',
       },
     },
   },

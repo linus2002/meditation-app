@@ -102,8 +102,22 @@ export function createThread(input: { subject: string; body: string; category: S
   return call<{ id: string }>({ action: 'create', ...input, platform: platform() });
 }
 
+/**
+ * The open conversation's live check: messages since `after` (the newest one
+ * already shown; it may come back again), whether the team is typing, and
+ * whether this person is.
+ */
+export function syncThread(id: string, after: string | null, typing: boolean) {
+  return call<{ status: SupportStatus; typing: boolean; messages: SupportMessage[] }>({
+    action: 'sync',
+    id,
+    after,
+    typing,
+  });
+}
+
 export function replyToThread(id: string, body: string) {
-  return call<{ id: string }>({ action: 'reply', id, body });
+  return call<{ id: string; message: SupportMessage }>({ action: 'reply', id, body });
 }
 
 export function closeThread(id: string) {

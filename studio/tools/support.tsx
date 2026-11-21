@@ -14,6 +14,9 @@ import { useClient, useCurrentUser, type Tool } from 'sanity';
  * them through /support-api: a Vercel function (api/support-admin.ts) when
  * hosted, which only answers members of this Sanity project, and the dev
  * server (supportProxy.ts) locally. The browser never holds the database password.
+ *
+ * It is live: the open conversation checks for new messages and typing every
+ * couple of seconds, and the inbox every few, so nothing needs a page refresh.
  */
 
 /** The signed-in editor's Sanity token, which the hosted function checks. Set by the tool. */
@@ -52,6 +55,8 @@ interface Message {
   admin_name: string | null;
   body: string;
   created_at: string;
+  /** A reply shown at once, before the server has confirmed it. */
+  pending?: boolean;
 }
 
 interface ThreadDetail {
@@ -75,8 +80,23 @@ const STATUS_TONE: Record<Status, 'caution' | 'positive' | 'default'> = {
   closed: 'default',
 };
 
-/** How often the list refreshes itself while the tab is open. */
-const REFRESH_MS = 60_000;
+/** How often the open conversation checks for new messages and typing. */
+const LIVE_MS = 2_000;
+/** How often the inbox refreshes itself. */
+const LIST_MS = 5_000;
+/** A keystroke counts as "typing" for this long. */
+const TYPING_MS = 4_000;
+/** Typing is told to the person at most this often. */
+const TYPING_SIGNAL_MS = 2_000;
+
+/** The bubble and typing-dot animations (Sanity UI has none of its own). */
+const LIVE_CSS = `
+@keyframes support-bubble-in { from { opacity: 0; transform: translateY(10px) scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes support-dot { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-4px); opacity: 1; } }
+.support-new { animation: support-bubble-in .28s cubic-bezier(.22,1,.36,1) both; }
+.support-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: support-dot 1.2s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) { .support-new, .support-dot { animation: none; } }
+`;
 
 function when(iso: string): string {
   const date = new Date(iso);
@@ -85,6 +105,16 @@ function when(iso: string): string {
   return sameDay
     ? date.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })
     : date.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: date.getFullYear() === today.getFullYear() ? undefined : 'numeric' });
+}
+
+/** Adds messages not already shown, oldest first, with ones still sending last. */
+function mergeMessages(current: Message[], incoming: Message[]): Message[] {
+  const known = new Set(current.map((m) => m.id));
+  const fresh = incoming.filter((m) => !known.has(m.id));
+  if (!fresh.length) return current;
+  return [...current, ...fresh].sort(
+    (a, b) => Number(Boolean(a.pending)) - Number(Boolean(b.pending)) || Date.parse(a.created_at) - Date.parse(b.created_at),
+  );
 }
 
 function SupportTool() {
@@ -101,8 +131,24 @@ function SupportTool() {
   const [selected, setSelected] = React.useState<string | null>(null);
   const [detail, setDetail] = React.useState<ThreadDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = React.useState(false);
+  const [userTyping, setUserTyping] = React.useState(false);
   const [draft, setDraft] = React.useState('');
-  const [sending, setSending] = React.useState(false);
+
+  // Kept in refs so the live check always sees the latest without restarting.
+  const selectedRef = React.useRef<string | null>(null);
+  selectedRef.current = selected;
+  const detailRef = React.useRef<ThreadDetail | null>(null);
+  detailRef.current = detail;
+  const draftRef = React.useRef('');
+  draftRef.current = draft;
+  const lastKeyRef = React.useRef(0);
+  const lastSignalRef = React.useRef(0);
+  const syncingRef = React.useRef(false);
+  /** Messages there when a conversation opened don't animate; new ones do. */
+  const firstIdsRef = React.useRef<Set<string>>(new Set());
+  const tempRef = React.useRef(0);
+  const endRef = React.useRef<HTMLDivElement>(null);
+  const scrolledRef = React.useRef(false);
 
   const loadList = React.useCallback(async () => {
     try {
@@ -110,7 +156,8 @@ function SupportTool() {
         call<{ threads: ThreadRow[] }>({ action: 'list', filter, search }),
         call<Counts>({ action: 'counts' }),
       ]);
-      setThreads(list.threads);
+      // The conversation on screen is being read, so it isn't new.
+      setThreads(list.threads.map((t) => (t.id === selectedRef.current ? { ...t, unread: false } : t)));
       setCounts(totals);
       setProblem(null);
     } catch (error) {
@@ -124,37 +171,140 @@ function SupportTool() {
     return () => window.clearTimeout(id);
   }, [loadList, search]);
 
+  // The inbox stays current on its own: new concerns and replies appear without a refresh.
   React.useEffect(() => {
-    const id = window.setInterval(() => void loadList(), REFRESH_MS);
-    return () => window.clearInterval(id);
+    const tick = () => {
+      if (document.visibilityState === 'visible') void loadList();
+    };
+    const id = window.setInterval(tick, LIST_MS);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener('visibilitychange', tick);
+    };
   }, [loadList]);
 
-  const openThread = React.useCallback(async (id: string) => {
-    setSelected(id);
-    setLoadingDetail(true);
+  const openThread = React.useCallback(
+    async (id: string) => {
+      if (id === selectedRef.current && detailRef.current) return;
+      setSelected(id);
+      selectedRef.current = id;
+      setDetail(null);
+      setUserTyping(false);
+      setDraft('');
+      scrolledRef.current = false;
+      setLoadingDetail(true);
+      try {
+        const data = await call<ThreadDetail>({ action: 'get', id });
+        if (selectedRef.current !== id) return;
+        firstIdsRef.current = new Set(data.messages.map((m) => m.id));
+        setDetail(data);
+        setThreads((current) => current?.map((t) => (t.id === id ? { ...t, unread: false } : t)) ?? null);
+      } catch (error) {
+        toast.push({ status: 'error', title: error instanceof Error ? error.message : 'Could not open it.' });
+      } finally {
+        setLoadingDetail(false);
+      }
+    },
+    [toast],
+  );
+
+  /** The live check for the open conversation. */
+  const sync = React.useCallback(async () => {
+    const id = selectedRef.current;
+    const current = detailRef.current;
+    if (!id || !current || current.thread.id !== id || syncingRef.current) return;
+    syncingRef.current = true;
+    const typing = Boolean(draftRef.current.trim()) && Date.now() - lastKeyRef.current < TYPING_MS;
+    if (typing) lastSignalRef.current = Date.now();
+    const newest = current.messages.filter((m) => !m.pending).at(-1)?.created_at ?? null;
     try {
-      setDetail(await call<ThreadDetail>({ action: 'get', id }));
-      // Opening marks it read in the list.
-      setThreads((current) => current?.map((t) => (t.id === id ? { ...t, unread: false } : t)) ?? null);
-    } catch (error) {
-      toast.push({ status: 'error', title: error instanceof Error ? error.message : 'Could not open it.' });
+      const data = await call<{ status: Status; typing: boolean; messages: Message[] }>({
+        action: 'sync',
+        id,
+        after: newest,
+        typing,
+      });
+      if (selectedRef.current !== id) return;
+      setUserTyping(data.typing);
+      setDetail((d) =>
+        d && d.thread.id === id
+          ? {
+              thread: d.thread.status === data.status ? d.thread : { ...d.thread, status: data.status },
+              messages: mergeMessages(d.messages, data.messages),
+            }
+          : d,
+      );
+    } catch {
+      // A missed check is fine: the next one catches up.
     } finally {
-      setLoadingDetail(false);
+      syncingRef.current = false;
     }
-  }, [toast]);
+  }, []);
+
+  const liveId = detail?.thread.id ?? null;
+  React.useEffect(() => {
+    if (!liveId) return;
+    const tick = () => {
+      if (document.visibilityState === 'visible') void sync();
+    };
+    const id = window.setInterval(tick, LIVE_MS);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      window.clearInterval(id);
+      document.removeEventListener('visibilitychange', tick);
+    };
+  }, [liveId, sync]);
+
+  // Keep the newest message (or the typing dots) in view, gliding to it once open.
+  const messageCount = detail?.messages.length ?? 0;
+  React.useEffect(() => {
+    if (!messageCount) return;
+    endRef.current?.scrollIntoView({ block: 'end', behavior: scrolledRef.current ? 'smooth' : 'auto' });
+    scrolledRef.current = true;
+  }, [messageCount, userTyping, liveId]);
+
+  const onDraft = (value: string) => {
+    setDraft(value);
+    draftRef.current = value;
+    lastKeyRef.current = Date.now();
+    // Tell the person straight away when typing starts, not at the next check.
+    if (value.trim() && Date.now() - lastSignalRef.current > TYPING_SIGNAL_MS) void sync();
+  };
 
   const sendReply = async () => {
-    if (!selected || !draft.trim()) return;
-    setSending(true);
+    const id = selected;
+    const body = draft.trim();
+    if (!id || !body) return;
+    const adminName = user?.name ?? 'Serenity team';
+    // Show it at once, as messaging apps do; it settles when the server has it.
+    const tempId = `sending-${++tempRef.current}`;
+    const stand: Message = {
+      id: tempId,
+      sender: 'admin',
+      admin_name: adminName,
+      body,
+      created_at: new Date().toISOString(),
+      pending: true,
+    };
+    setDetail((d) => (d && d.thread.id === id ? { ...d, messages: [...d.messages, stand] } : d));
+    setDraft('');
+    lastKeyRef.current = 0;
     try {
-      await call({ action: 'reply', id: selected, body: draft, adminName: user?.name ?? 'Serenity team' });
-      setDraft('');
-      toast.push({ status: 'success', title: 'Reply sent' });
-      await Promise.all([openThread(selected), loadList()]);
+      const { message } = await call<{ message: Message }>({ action: 'reply', id, body, adminName });
+      setDetail((d) =>
+        d && d.thread.id === id
+          ? {
+              thread: { ...d.thread, status: 'answered' },
+              messages: mergeMessages(d.messages.filter((m) => m.id !== tempId), [message]),
+            }
+          : d,
+      );
+      void loadList();
     } catch (error) {
+      setDetail((d) => (d ? { ...d, messages: d.messages.filter((m) => m.id !== tempId) } : d));
+      setDraft((current) => current || body);
       toast.push({ status: 'error', title: error instanceof Error ? error.message : 'Could not send the reply.' });
-    } finally {
-      setSending(false);
     }
   };
 
@@ -163,7 +313,8 @@ function SupportTool() {
     try {
       await call({ action: 'status', id: selected, status });
       toast.push({ status: 'success', title: status === 'closed' ? 'Closed' : `Marked ${status}` });
-      await Promise.all([openThread(selected), loadList()]);
+      setDetail((d) => (d ? { ...d, thread: { ...d.thread, status } } : d));
+      void loadList();
     } catch (error) {
       toast.push({ status: 'error', title: error instanceof Error ? error.message : 'Could not change it.' });
     }
@@ -171,6 +322,7 @@ function SupportTool() {
 
   return (
     <Flex height="fill" style={{ minHeight: 0 }}>
+      <style>{LIVE_CSS}</style>
       {/* The inbox. */}
       <Card borderRight style={{ width: 400, minWidth: 320, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <Box padding={4} paddingBottom={3}>
@@ -245,8 +397,9 @@ function SupportTool() {
                       {thread.user_email ?? 'Unknown'}
                     </Text>
                     <Text size={1} muted textOverflow="ellipsis">
-                      {thread.last_sender === 'admin' ? 'You: ' : ''}
-                      {thread.last_body ?? ''}
+                      {selected === thread.id && userTyping
+                        ? 'Typing…'
+                        : `${thread.last_sender === 'admin' ? 'You: ' : ''}${thread.last_body ?? ''}`}
                     </Text>
                     <Flex gap={2}>
                       <Badge tone={STATUS_TONE[thread.status]} fontSize={0}>
@@ -304,18 +457,22 @@ function SupportTool() {
                 {detail.messages.map((message) => {
                   const mine = message.sender === 'admin';
                   return (
-                    <Flex key={message.id} justify={mine ? 'flex-end' : 'flex-start'}>
+                    <Flex
+                      key={message.id}
+                      justify={mine ? 'flex-end' : 'flex-start'}
+                      className={firstIdsRef.current.has(message.id) ? undefined : 'support-new'}
+                    >
                       <Card
                         padding={3}
                         radius={3}
                         tone={mine ? 'primary' : 'transparent'}
                         border={!mine}
-                        style={{ maxWidth: '75%' }}
+                        style={{ maxWidth: '75%', opacity: message.pending ? 0.7 : 1, transition: 'opacity .2s' }}
                       >
                         <Stack gap={2}>
                           <Text size={0} muted>
                             {mine ? message.admin_name ?? 'Serenity team' : detail.thread.user_email ?? 'User'} ·{' '}
-                            {new Date(message.created_at).toLocaleString()}
+                            {message.pending ? 'Sending…' : new Date(message.created_at).toLocaleString()}
                           </Text>
                           <Text size={1} style={{ whiteSpace: 'pre-wrap' }}>
                             {message.body}
@@ -325,31 +482,40 @@ function SupportTool() {
                     </Flex>
                   );
                 })}
+                {userTyping ? (
+                  <Flex justify="flex-start" className="support-new">
+                    <Card padding={3} radius={3} border tone="transparent">
+                      <span aria-label={`${detail.thread.user_email ?? 'The person'} is typing`} style={{ display: 'flex', gap: 4, alignItems: 'center', height: 14, opacity: 0.6 }}>
+                        <span className="support-dot" />
+                        <span className="support-dot" style={{ animationDelay: '160ms' }} />
+                        <span className="support-dot" style={{ animationDelay: '320ms' }} />
+                      </span>
+                    </Card>
+                  </Flex>
+                ) : null}
+                <div ref={endRef} />
               </Stack>
             </Box>
 
             <Card padding={4} borderTop>
               <Stack gap={3}>
                 <TextArea
-                  rows={4}
+                  rows={3}
                   placeholder="Write a reply. The person sees it in the app under Help & support."
                   value={draft}
-                  onChange={(event) => setDraft(event.currentTarget.value)}
+                  onChange={(event) => onDraft(event.currentTarget.value)}
                   onKeyDown={(event) => {
-                    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) void sendReply();
+                    if (event.key === 'Enter' && !event.shiftKey && !event.nativeEvent.isComposing) {
+                      event.preventDefault();
+                      void sendReply();
+                    }
                   }}
                 />
                 <Flex justify="space-between" align="center">
                   <Text size={0} muted>
-                    Ctrl+Enter to send. Sending marks it answered.
+                    Enter to send, Shift+Enter for a new line. Sending marks it answered.
                   </Text>
-                  <Button
-                    text="Send reply"
-                    tone="primary"
-                    disabled={!draft.trim() || sending}
-                    loading={sending}
-                    onClick={() => void sendReply()}
-                  />
+                  <Button text="Send reply" tone="primary" disabled={!draft.trim()} onClick={() => void sendReply()} />
                 </Flex>
               </Stack>
             </Card>
