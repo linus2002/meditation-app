@@ -2,5 +2,9 @@
 <resources>
     <string name="background_sound_channel">Sessions and sounds</string>
     <string name="background_sound_text">Keeps going while your screen is off.</string>
+    <string name="background_sound_play">Play</string>
+    <string name="background_sound_pause">Pause</string>
+    <string name="background_sound_back">Back 10 seconds</string>
+    <string name="background_sound_forward">Forward 10 seconds</string>
     <color name="background_sound_tint">#1A93D8</color>
 </resources>

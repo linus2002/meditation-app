@@ -21,6 +21,8 @@ import { formatMinutesLabel } from '@/lib/format';
 import type { SupportListen } from '@/lib/support-history';
 import { cn } from '@/lib/utils';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useLockScreen } from '@/hooks/use-lock-screen';
+import { soundscapes } from '@/lib/audio/soundscapes';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 
 type Stage = 'intro' | 'playing' | 'done';
@@ -103,6 +105,27 @@ export function SupportPlayer({
 
   useWakeLock(player.isPlaying && session.keepScreenOn);
   useBackgroundHold(player.isPlaying);
+
+  // The lock-screen player card while the session is under way.
+  useLockScreen(
+    stage === 'playing'
+      ? {
+          title: session.title,
+          subtitle: `${soundscapes[session.soundscape].name} · Support session`,
+          duration: stretch,
+          position: player.elapsed,
+          playing: player.isPlaying,
+          canSeek: false,
+        }
+      : null,
+    {
+      onPlay: () => {
+        void prime();
+        player.play();
+      },
+      onPause: () => player.pause(),
+    },
+  );
 
   // Sound cut off by a call or the like: hold the place rather than sit on in silence.
   useOnAudioInterrupted(() => {

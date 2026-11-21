@@ -19,6 +19,7 @@ import { estimatedMinutes } from '@/lib/story';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useLockScreen } from '@/hooks/use-lock-screen';
 import { useAudio } from '@/providers/audio-provider';
 import { musicSrc } from '@/lib/audio/music';
 import type { Story } from '@/types';
@@ -198,6 +199,27 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
     await prime();
     if (narration.speaking && !narration.paused) playMusic(musicSrc, MUSIC_LEVEL);
   };
+
+  // The lock-screen player card while the story is being read.
+  useLockScreen(
+    speaking
+      ? {
+          title: story.title,
+          subtitle: `${story.category === 'sleep' ? 'Sleep story' : 'Story'} · read aloud${music ? ' with music' : ''}`,
+          artwork: (story.cover ?? story.image).src,
+          // A recording keeps time in seconds; the device's voice only in sentences.
+          duration: narration.exact ? narration.seek.max : undefined,
+          position: narration.exact ? narration.seek.value : 0,
+          playing: !paused,
+          canSeek: narration.exact,
+        }
+      : null,
+    {
+      onPlay: () => narration.play(),
+      onPause: () => narration.pause(),
+      onSeek: (seconds) => seekTo(seconds),
+    },
+  );
 
   const minutesLeft = timerEndsAt ? Math.max(1, Math.ceil((timerEndsAt - now) / 60_000)) : 0;
 

@@ -26,6 +26,7 @@ import { useWakeLock } from '@/hooks/use-wake-lock';
 import { soundscapes, type SoundscapeId } from '@/lib/audio/soundscapes';
 import { formatClock } from '@/lib/format';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useLockScreen } from '@/hooks/use-lock-screen';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 
 type Phase = 'setup' | 'warmup' | 'running' | 'done';
@@ -120,6 +121,22 @@ export default function TimerPage() {
     if (scape) void play(scape);
     countdown.resume();
   };
+
+  // The lock-screen player card while the sit (or its settling-in) is under way.
+  const warming = phase === 'warmup';
+  useLockScreen(
+    warming || phase === 'running'
+      ? {
+          title: warming ? 'Settling in' : 'Meditation timer',
+          subtitle: scape ? `${soundscapes[scape].name} · Timed sit` : 'Silent timed sit',
+          duration: warming ? warmupSeconds : totalSeconds,
+          position: warming ? warmupSeconds - countdown.remaining : elapsed,
+          playing: countdown.running,
+          canSeek: false,
+        }
+      : null,
+    { onPlay: resumeSit, onPause: () => countdown.pause() },
+  );
 
   const begin = async () => {
     // Audio has to be unlocked by the gesture that starts the sit.

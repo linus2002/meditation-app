@@ -30,6 +30,7 @@ import {
 } from '@/lib/yoga';
 import { useApp } from '@/providers/app-provider';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useLockScreen } from '@/hooks/use-lock-screen';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 import { yogaMusic } from '@/lib/audio/music';
 
@@ -200,6 +201,22 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     if (musicOn) playMusic(music, YOGA_MUSIC_LEVEL);
     clock.resume();
   };
+
+  // The lock-screen player card, naming the pose under way.
+  useLockScreen(
+    phase === 'running'
+      ? {
+          title: session.title,
+          subtitle: `Yoga · ${poseTitle(pose)}`,
+          artwork: session.image.src,
+          duration: total,
+          position: elapsed,
+          playing: clock.running,
+          canSeek: false,
+        }
+      : null,
+    { onPlay: () => resume(), onPause: () => pause() },
+  );
 
   // Ending is asked, not done: the corner button sits where Back usually is.
   const [confirmingEnd, setConfirmingEnd] = React.useState(false);

@@ -3,8 +3,9 @@
 import * as React from 'react';
 
 import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { SOUNDSCAPE_PRIORITY, useLockScreen } from '@/hooks/use-lock-screen';
 import { audioEngine } from '@/lib/audio/engine';
-import type { SoundscapeId } from '@/lib/audio/soundscapes';
+import { soundscapes, type SoundscapeId } from '@/lib/audio/soundscapes';
 
 const VOLUME_KEY = 'serenity.audio.v1';
 
@@ -145,6 +146,39 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     audioEngine.stop(fadeSeconds);
     setPlaying(null);
   }, []);
+
+  /*
+   * A soundscape's own lock-screen card. Under a session the session's card is
+   * shown instead (it ranks higher). Paused from the lock screen, the sound
+   * stops but its card stays, so it can be played again from there.
+   */
+  const [lockPaused, setLockPaused] = React.useState<SoundscapeId | null>(null);
+  React.useEffect(() => {
+    if (playing) setLockPaused(null);
+  }, [playing]);
+  const cardScape = playing ?? lockPaused;
+  useLockScreen(
+    cardScape
+      ? {
+          title: soundscapes[cardScape].name,
+          subtitle: soundscapes[cardScape].description,
+          position: 0,
+          playing: playing !== null,
+          canSeek: false,
+        }
+      : null,
+    {
+      onPlay: () => {
+        if (lockPaused) void play(lockPaused);
+      },
+      onPause: () => {
+        if (!playing) return;
+        setLockPaused(playing);
+        stop(1);
+      },
+    },
+    SOUNDSCAPE_PRIORITY,
+  );
 
   const prime = React.useCallback(async () => {
     await audioEngine.resume();

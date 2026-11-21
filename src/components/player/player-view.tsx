@@ -25,6 +25,8 @@ import { formatClock, formatMinutesLabel } from '@/lib/format';
 import { clearResume, readResume, saveResume } from '@/lib/resume';
 import { useApp } from '@/providers/app-provider';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
+import { useLockScreen } from '@/hooks/use-lock-screen';
+import { soundscapes } from '@/lib/audio/soundscapes';
 import { useAudio, useOnAudioInterrupted } from '@/providers/audio-provider';
 import type { Meditation } from '@/types';
 
@@ -138,6 +140,32 @@ export function PlayerView({
     }
     toggleTransport();
   }, [isPlaying, prime, startTrack, toggleTransport]);
+
+  // The lock-screen player card, from the first press of play until the session ends.
+  const startedRef = React.useRef(false);
+  if (isPlaying) startedRef.current = true;
+  useLockScreen(
+    startedRef.current && !completed
+      ? {
+          title: meditation.title,
+          subtitle: meditation.track
+            ? 'Guided meditation'
+            : `${soundscapes[meditation.soundscape].name} · Breath-paced meditation`,
+          artwork: (backdrop ?? meditation.cover ?? meditation.image).src,
+          duration: meditation.durationSeconds,
+          position: player.elapsed,
+          playing: isPlaying,
+          canSeek: true,
+        }
+      : null,
+    {
+      onPlay: () => {
+        if (!isPlaying) toggle();
+      },
+      onPause: () => player.pause(),
+      onSeek: (seconds) => player.seek(seconds),
+    },
+  );
 
   // Space and K start or stop the session from anywhere on the screen.
   React.useEffect(() => {
