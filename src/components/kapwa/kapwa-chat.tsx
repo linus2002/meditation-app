@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { Phone, Send, Trash2 } from 'lucide-react';
 
+import { CHAT_END_CLASS, ChatDock } from '@/components/layout/chat-dock';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { useUndo } from '@/components/layout/undo-toast';
 import { KapwaIcon } from '@/components/kapwa/kapwa-icon';
@@ -237,7 +238,7 @@ export function KapwaChat() {
   };
 
   return (
-    <div className="pb-4">
+    <div className="flex flex-1 flex-col">
       <ScreenHeader
         eyebrow="Your Serenity guide"
         title="Kapwa"
@@ -331,8 +332,12 @@ export function KapwaChat() {
         </div>
       ) : null}
 
+      <div ref={endRef} className={CHAT_END_CLASS} />
+
+      {/* The message box stays at the foot of the screen, above the tab bar. */}
+      <ChatDock>
       <form
-        className="mt-4 flex items-end gap-2 px-4"
+        className="flex items-end gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           send(draft);
@@ -366,11 +371,10 @@ export function KapwaChat() {
         </button>
       </form>
 
-      <p className="mt-3 px-6 text-center text-caption leading-relaxed text-ink-muted">
+      <p className="mt-2 px-2 text-center text-caption leading-relaxed text-ink-muted">
         Kapwa can’t give medical advice. In an emergency, call {emergencyLine.display}.
       </p>
-
-      <div ref={endRef} />
+      </ChatDock>
     </div>
   );
 }

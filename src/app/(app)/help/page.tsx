@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronRight, Loader2, MessageCircleQuestion, Plus, Send } from 'lucide-react';
 
+import { CHAT_END_CLASS, ChatDock } from '@/components/layout/chat-dock';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { Skeleton } from '@/components/shared/skeleton';
@@ -21,6 +22,8 @@ import {
   type SupportThread,
 } from '@/lib/support';
 import { markSupportSeen } from '@/hooks/use-support-unread';
+import { accountEmail } from '@/lib/auth';
+import { useApp } from '@/providers/app-provider';
 import { cn } from '@/lib/utils';
 
 /**
@@ -81,6 +84,46 @@ function Problem({ message, onRetry }: { message: string; onRetry?: () => void }
         </button>
       ) : null}
     </div>
+  );
+}
+
+/** The person's initials: from the name they gave in Profile, else their email. */
+function useInitials(): string {
+  const { name } = useApp();
+  const [email, setEmail] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    void accountEmail()
+      .then(setEmail)
+      .catch(() => {});
+  }, []);
+  const source = name?.trim() || email?.split('@')[0] || '';
+  const parts = source.split(/[\s._-]+/).filter(Boolean);
+  const initials = parts.length > 1 ? `${parts[0][0]}${parts[1][0]}` : (parts[0]?.[0] ?? '');
+  return initials.toUpperCase() || 'Me';
+}
+
+function UserAvatar({ initials }: { initials: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,#1D9FDA_0%,#61A644_100%)] text-[0.75rem] font-semibold tracking-[0.02em] text-white"
+    >
+      {initials}
+    </span>
+  );
+}
+
+/** The Serenity team speaks with the app's own icon. */
+function TeamAvatar() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/icons/apple-touch-icon.png"
+      alt=""
+      width={32}
+      height={32}
+      className="h-8 w-8 shrink-0 rounded-full object-cover ring-1 ring-overlay/10"
+    />
   );
 }
 
@@ -303,6 +346,7 @@ function Conversation({ id }: { id: string }) {
   const [sendProblem, setSendProblem] = React.useState<string | null>(null);
   const endRef = React.useRef<HTMLDivElement>(null);
   const countRef = React.useRef(0);
+  const initials = useInitials();
 
   const load = React.useCallback(async () => {
     try {
@@ -375,8 +419,8 @@ function Conversation({ id }: { id: string }) {
   }
 
   return (
-    <div className="px-5">
-      <div className="mt-5">
+    <div className="flex flex-1 flex-col">
+      <div className="mt-5 px-5">
         <h2 className="text-[1.0625rem] font-semibold leading-snug text-ink">{thread.subject}</h2>
         <div className="mt-2 flex flex-wrap items-center gap-2">
           <StatusPill status={thread.status} />
@@ -384,14 +428,15 @@ function Conversation({ id }: { id: string }) {
         </div>
       </div>
 
-      <ol className="mt-5 space-y-3" aria-label="Messages">
+      <ol className="mt-5 space-y-3.5 px-4" aria-label="Messages">
         {messages.map((message) => {
           const mine = message.sender === 'user';
           return (
-            <li key={message.id} className={cn('flex', mine ? 'justify-end' : 'justify-start')}>
+            <li key={message.id} className={cn('flex items-end gap-2', mine ? 'justify-end' : 'justify-start')}>
+              {mine ? null : <TeamAvatar />}
               <div
                 className={cn(
-                  'max-w-[85%] rounded-2xl px-4 py-3',
+                  'max-w-[78%] rounded-2xl px-4 py-3',
                   mine ? 'rounded-br-md bg-aurora-blue text-white' : 'rounded-bl-md bg-surface text-ink',
                 )}
               >
@@ -402,59 +447,62 @@ function Conversation({ id }: { id: string }) {
                 </p>
                 <p className="mt-2 whitespace-pre-wrap break-words text-body-sm leading-relaxed">{message.body}</p>
               </div>
+              {mine ? <UserAvatar initials={initials} /> : null}
             </li>
           );
         })}
       </ol>
-      <div ref={endRef} />
 
       {thread.status === 'closed' ? (
-        <p className="mt-5 text-center text-label leading-relaxed text-ink-faint">
+        <p className="mt-5 px-5 text-center text-label leading-relaxed text-ink-faint">
           This conversation is closed. Writing again reopens it.
         </p>
       ) : null}
+      <div ref={endRef} className={cn('h-4', CHAT_END_CLASS)} />
 
-      <form className="mt-5 flex items-end gap-2" onSubmit={send}>
-        <label htmlFor="support-reply" className="sr-only">
-          Your reply
-        </label>
-        <textarea
-          id="support-reply"
-          rows={2}
-          value={draft}
-          maxLength={MAX_BODY}
-          onChange={(event) => setDraft(event.target.value)}
-          placeholder="Write a reply…"
-          className="max-h-40 min-h-[48px] flex-1 resize-none rounded-2xl bg-surface px-4 py-3 text-body-sm leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-        />
-        <button
-          type="submit"
-          disabled={!draft.trim() || sending}
-          aria-label="Send"
-          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-aurora-blue text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-        >
-          {sending ? (
-            <Loader2 className="h-[18px] w-[18px] animate-spin" aria-hidden="true" />
-          ) : (
-            <Send className="h-[18px] w-[18px]" strokeWidth={1.8} />
-          )}
-        </button>
-      </form>
-      {sendProblem ? (
-        <div className="mt-3">
-          <Problem message={sendProblem} />
-        </div>
-      ) : null}
-
-      {thread.status !== 'closed' ? (
-        <button
-          type="button"
-          onClick={() => void close()}
-          className="mx-auto mt-5 block text-caption font-medium text-ink-muted underline-offset-2 hover:text-ink hover:underline"
-        >
-          My concern is resolved, close it
-        </button>
-      ) : null}
+      {/* The reply box stays at the foot of the screen, above the tab bar. */}
+      <ChatDock>
+        <form className="flex items-end gap-2" onSubmit={send}>
+          <label htmlFor="support-reply" className="sr-only">
+            Your reply
+          </label>
+          <textarea
+            id="support-reply"
+            rows={1}
+            value={draft}
+            maxLength={MAX_BODY}
+            onChange={(event) => setDraft(event.target.value)}
+            placeholder="Write a reply…"
+            className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl bg-surface px-4 py-3 text-body-sm leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          />
+          <button
+            type="submit"
+            disabled={!draft.trim() || sending}
+            aria-label="Send"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-aurora-blue text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          >
+            {sending ? (
+              <Loader2 className="h-[18px] w-[18px] animate-spin" aria-hidden="true" />
+            ) : (
+              <Send className="h-[18px] w-[18px]" strokeWidth={1.8} />
+            )}
+          </button>
+        </form>
+        {sendProblem ? (
+          <div className="mt-2">
+            <Problem message={sendProblem} />
+          </div>
+        ) : null}
+        {thread.status !== 'closed' ? (
+          <button
+            type="button"
+            onClick={() => void close()}
+            className="mx-auto mt-2 block text-caption font-medium text-ink-muted underline-offset-2 hover:text-ink hover:underline"
+          >
+            My concern is resolved, close it
+          </button>
+        ) : null}
+      </ChatDock>
     </div>
   );
 }
@@ -467,7 +515,7 @@ function HelpScreen() {
   const composing = params.get('new') === '1';
 
   return (
-    <div className="pb-6">
+    <div className={cn('flex flex-1 flex-col', threadId ? null : 'pb-6')}>
       <ScreenHeader
         eyebrow="Serenity team"
         title={threadId ? 'Conversation' : composing ? 'Raise a concern' : 'Help & support'}

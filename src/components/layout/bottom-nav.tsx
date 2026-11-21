@@ -47,8 +47,23 @@ export function BottomNav() {
   // via the bar still pushes, so Back can return to it.
   const onTabRoot = isTabRoot(pathname);
 
+  // Shares the bar's height as --nav-h, so a chat's message box (ChatDock) can
+  // sit right above it.
+  const navRef = React.useRef<HTMLElement>(null);
+  React.useEffect(() => {
+    const nav = navRef.current;
+    if (!nav || typeof ResizeObserver === 'undefined') return undefined;
+    const write = () =>
+      document.documentElement.style.setProperty('--nav-h', `${Math.round(nav.getBoundingClientRect().height)}px`);
+    write();
+    const observer = new ResizeObserver(write);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <nav
+      ref={navRef}
       aria-label="Primary"
       className="sticky bottom-0 z-20 shrink-0 bg-canvas px-2 pb-3.5 pt-2"
     >

@@ -14,7 +14,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     <div className="relative flex min-h-full flex-col">
       {/* Room for the Kapwa button, which rises above the bar: without it the
           last lines of a page (Kapwa's safety note, for one) sit under it. */}
-      <div className="flex-1 pb-7">{children}</div>
+      {/* A column, so a chat screen can fill it and keep its message box at the foot. */}
+      <div className="flex flex-1 flex-col pb-7">{children}</div>
       <BottomNav />
     </div>
   );
