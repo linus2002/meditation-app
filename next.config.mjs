@@ -22,6 +22,8 @@ const nextConfig = {
   ...(isMobileBuild
     ? {
         output: 'export',
+        // Its own build folder, so building the apps doesn't clash with a running `next dev`.
+        distDir: '.next-mobile',
         // Emits /home/index.html rather than /home.html, which is what a
         // native WebView expects when resolving routes from the filesystem.
         trailingSlash: true,
@@ -41,6 +43,24 @@ const nextConfig = {
           return [
             { source: '/sw.js', headers: noStore },
             { source: '/precache.json', headers: noStore },
+            // The Android app, downloaded from /get. Revalidated so a new build reaches people at once.
+            {
+              source: '/get/serenity.apk',
+              headers: [
+                ...noStore,
+                { key: 'Content-Type', value: 'application/vnd.android.package-archive' },
+                { key: 'Content-Disposition', value: 'attachment; filename="Serenity.apk"' },
+              ],
+            },
+          ];
+        },
+
+        // Install pages: plain HTML in public/, apart from the app's screens.
+        // /get offers both platforms; /iphone is the Home Screen guide.
+        async rewrites() {
+          return [
+            { source: '/get', destination: '/get/index.html' },
+            { source: '/iphone', destination: '/iphone.html' },
           ];
         },
       }),

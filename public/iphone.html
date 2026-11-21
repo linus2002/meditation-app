@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Get Serenity on iPhone</title>
+  <meta name="description" content="Install the Serenity meditation app on your iPhone in three taps. Free, no App Store needed." />
+  <meta name="theme-color" content="#000000" />
+  <link rel="icon" type="image/png" href="/icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+  <meta property="og:title" content="Get Serenity on iPhone" />
+  <meta property="og:description" content="Install the Serenity meditation app on your iPhone in three taps. Free, no App Store needed." />
+  <meta property="og:image" content="/icons/icon-512.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /*
+     * Served at /iphone on the app's own website (next.config.mjs), outside the
+     * app's screens: it tells iPhone users how to add Serenity to the Home Screen.
+     * Plain HTML so it loads instantly and none of the app's sign-in gates apply.
+     */
+    :root {
+      --bg: #000;
+      --card: #121212;
+      --card-2: #1c1c1e;
+      --line: rgba(255, 255, 255, 0.08);
+      --ink: #fff;
+      --soft: #dbdbdb;
+      --muted: #a8a8a8;
+      --blue: #1d9fda;
+      --green: #61a644;
+      --action: linear-gradient(90deg, #1d9fda 0%, #61a644 100%);
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Poppins, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20vh -20vw auto;
+      height: 70vh;
+      background:
+        radial-gradient(closest-side at 30% 50%, rgba(29, 159, 218, 0.28), transparent),
+        radial-gradient(closest-side at 72% 40%, rgba(97, 166, 68, 0.2), transparent);
+      filter: blur(20px);
+      pointer-events: none;
+      z-index: -1;
+    }
+    main {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+      padding: max(40px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom));
+    }
+    .brand { text-align: center; }
+    .brand img {
+      width: 88px; height: 88px; border-radius: 22px;
+      box-shadow: 0 18px 40px -16px rgba(29, 159, 218, 0.6);
+    }
+    h1 { margin: 18px 0 6px; font-size: 1.75rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.15; }
+    .lede { margin: 0 auto; max-width: 32ch; color: var(--muted); font-size: 0.98rem; }
+    .card {
+      margin-top: 28px;
+      padding: 22px 20px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+    }
+    .card h2 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 600; }
+    .card p { margin: 0; color: var(--muted); font-size: 0.93rem; }
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%; min-height: 52px; margin-top: 16px; padding: 0 20px;
+      border: 0; border-radius: 999px;
+      background: var(--action); color: #fff;
+      font: inherit; font-size: 1rem; font-weight: 500; text-decoration: none;
+      cursor: pointer;
+    }
+    .btn:focus-visible, .copy:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    .btn svg { width: 18px; height: 18px; }
+    .address {
+      display: flex; align-items: center; gap: 8px;
+      margin-top: 14px; padding: 6px 6px 6px 14px;
+      background: var(--card-2); border-radius: 14px;
+    }
+    .address span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.88rem; color: var(--soft); }
+    .copy {
+      flex-shrink: 0; min-height: 36px; padding: 0 14px;
+      border: 0; border-radius: 10px; background: #2c2c2e; color: #fff;
+      font: inherit; font-size: 0.85rem; font-weight: 500; cursor: pointer;
+    }
+    .qr { display: flex; justify-content: center; margin-top: 18px; }
+    .qr-box { padding: 14px; background: #fff; border-radius: 18px; line-height: 0; }
+    .qr-box img, .qr-box canvas { width: 180px !important; height: 180px !important; }
+    ol.steps { list-style: none; margin: 18px 0 0; padding: 0; counter-reset: step; }
+    ol.steps li {
+      counter-increment: step;
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 14px 0; border-top: 1px solid var(--line);
+      color: var(--soft); font-size: 0.95rem;
+    }
+    ol.steps li:first-child { border-top: 0; padding-top: 4px; }
+    ol.steps li::before {
+      content: counter(step);
+      flex-shrink: 0; display: grid; place-items: center;
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--action); color: #fff; font-size: 0.85rem; font-weight: 600;
+    }
+    ol.steps b { color: var(--ink); font-weight: 500; }
+    .glyph {
+      display: inline-grid; place-items: center; vertical-align: -6px;
+      width: 24px; height: 24px; margin: 0 2px; border-radius: 6px;
+      background: var(--card-2); color: var(--blue);
+    }
+    .glyph svg { width: 15px; height: 15px; }
+    .notes { margin-top: 24px; padding: 0 4px; }
+    .notes h3 { margin: 0 0 10px; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .notes ul { margin: 0; padding: 0; list-style: none; }
+    .notes li { position: relative; padding: 0 0 10px 20px; color: var(--muted); font-size: 0.9rem; }
+    .notes li::before { content: ""; position: absolute; left: 4px; top: 0.6em; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    .notes b { color: var(--soft); font-weight: 500; }
+    footer { margin-top: 28px; text-align: center; color: #6b6b6b; font-size: 0.8rem; }
+    footer a { color: var(--muted); }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="brand">
+      <img src="/icons/apple-touch-icon.png" alt="" width="88" height="88" />
+      <h1>Serenity on your iPhone</h1>
+      <p class="lede">Guided meditation, sleep and breathing. Free, and no App Store needed.</p>
+    </header>
+
+    <!-- Exactly one of these is shown, by the script below, to fit the reader's device. -->
+    <section class="card" id="for-safari" hidden>
+      <h2>Step 1: open the app</h2>
+      <p>It opens in Safari. Then add it to your Home Screen with the steps below.</p>
+      <a class="btn js-app-link" href="#">Open Serenity <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+    </section>
+
+    <section class="card" id="for-other-browser" hidden>
+      <h2>Open this in Safari first</h2>
+      <p>iPhones only add apps like this one to the Home Screen from Safari.</p>
+      <a class="btn js-safari-link" href="#">Open in Safari <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      <p style="margin-top:14px">If nothing happens, copy the address and paste it into Safari:</p>
+      <div class="address"><span class="js-app-text"></span><button type="button" class="copy js-copy">Copy</button></div>
+    </section>
+
+    <section class="card" id="for-elsewhere" hidden>
+      <h2>Scan with your iPhone</h2>
+      <p>Point your iPhone’s camera at the code, tap the link, then follow the steps below.</p>
+      <div class="qr"><div class="qr-box" id="qr" role="img" aria-label="QR code for the Serenity app"></div></div>
+      <div class="address"><span class="js-app-text"></span><button type="button" class="copy js-copy">Copy</button></div>
+    </section>
+
+    <section class="card" id="for-installed" hidden>
+      <h2>You’re all set</h2>
+      <p>Serenity is on your Home Screen. Open it from there any time.</p>
+    </section>
+
+    <section class="card" id="steps">
+      <h2>Add it to your Home Screen</h2>
+      <p>On the Serenity page in Safari:</p>
+      <ol class="steps">
+        <li><span>Tap <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg></span> <b>Share</b> in the toolbar (the square with an arrow, at the bottom of the screen).</span></li>
+        <li><span>Scroll down and tap <span class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg></span> <b>Add to Home Screen</b>.</span></li>
+        <li><span>Tap <b>Add</b>. Serenity’s icon appears on your Home Screen.</span></li>
+        <li><span>Open <b>Serenity</b> from the icon. It runs full screen, like any app.</span></li>
+      </ol>
+    </section>
+
+    <section class="notes">
+      <h3>Good to know</h3>
+      <ul>
+        <li><b>Updates are automatic.</b> You always get the newest version when you open it.</li>
+        <li><b>Keep the app open during a session.</b> iPhones pause the audio if you lock the screen or switch apps.</li>
+        <li><b>Reminders</b> work once it’s on your Home Screen and you allow notifications.</li>
+      </ul>
+    </section>
+
+    <footer>On Android? <a href="/get">Download the Android app</a>.</footer>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha512-CNgIRecGo7nphbeZ04Sc13ka07paqdeTu0WR1IM4kNcpmBAUSHSQX0FslNhTDadL4O5SAGapGt4FodqL8My0mA==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+  <script>
+    // The app lives on this same website, so its address follows whatever domain this page is on.
+    var APP_URL = window.location.origin + '/';
+
+    (function () {
+      var nav = window.navigator;
+      var ua = nav.userAgent;
+      // iPadOS asks for the desktop site, so it reads as a Mac with a touch screen.
+      var ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && nav.maxTouchPoints > 1);
+      var standalone = nav.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+      // Chrome, Firefox, Edge, Opera, the Google app and the in-app browsers of Facebook, Instagram and Line.
+      var otherBrowser = /CriOS|FxiOS|EdgiOS|OPiOS|GSA\/|FBAN|FBAV|Instagram|Line\//.test(ua);
+
+      var show = standalone ? 'for-installed' : !ios ? 'for-elsewhere' : otherBrowser ? 'for-other-browser' : 'for-safari';
+      document.getElementById(show).hidden = false;
+      if (standalone) document.getElementById('steps').hidden = true;
+
+      document.querySelectorAll('.js-app-link').forEach(function (a) { a.href = APP_URL; });
+      document.querySelectorAll('.js-app-text').forEach(function (s) { s.textContent = APP_URL.replace(/^https?:\/\//, '').replace(/\/$/, ''); });
+      // iOS 17 and later hand an x-safari-https link from any app straight to Safari.
+      document.querySelectorAll('.js-safari-link').forEach(function (a) { a.href = 'x-safari-' + APP_URL; });
+
+      document.querySelectorAll('.js-copy').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var done = function () {
+            button.textContent = 'Copied';
+            setTimeout(function () { button.textContent = 'Copy'; }, 2000);
+          };
+          if (nav.clipboard && nav.clipboard.writeText) {
+            nav.clipboard.writeText(APP_URL).then(done, function () {});
+          }
+        });
+      });
+
+      if (show === 'for-elsewhere') {
+        window.addEventListener('load', function () {
+          var box = document.getElementById('qr');
+          if (typeof window.QRCode !== 'function') {
+            // The QR library didn't load (offline or blocked): the address below still works.
+            box.parentNode.hidden = true;
+            return;
+          }
+          new window.QRCode(box, { text: APP_URL, width: 360, height: 360, colorDark: '#000000', colorLight: '#ffffff', correctLevel: window.QRCode.CorrectLevel.M });
+          box.removeAttribute('title');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

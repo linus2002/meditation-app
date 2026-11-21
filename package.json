@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "build:mobile": "npm run content:pull && node scripts/build-routes.mjs && cross-env MOBILE_BUILD=1 next build",
+    "build:mobile": "npm run content:pull && node scripts/build-routes.mjs && cross-env MOBILE_BUILD=1 next build && node scripts/finish-mobile-export.mjs",
     "sync:mobile": "npm run build:mobile && cap sync",
     "open:android": "npm run sync:mobile && cap open android",
     "open:ios": "npm run sync:mobile && cap open ios",

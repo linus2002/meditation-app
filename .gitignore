@@ -1,5 +1,6 @@
 node_modules
 .next
+.next-mobile
 out
 .env*.local
 next-env.d.ts
