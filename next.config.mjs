@@ -43,14 +43,22 @@ const nextConfig = {
           return [
             { source: '/sw.js', headers: noStore },
             { source: '/precache.json', headers: noStore },
-            // The Android app, downloaded from /get. Revalidated so a new build reaches people at once.
+          ];
+        },
+
+        /*
+         * The Android app, downloaded from /get. It points at the APK the
+         * "Android test APK" workflow publishes to the test-build release, so
+         * each run of that workflow is what people download, with no redeploy.
+         * Temporary, so browsers ask again every time instead of caching it.
+         */
+        async redirects() {
+          return [
             {
               source: '/get/serenity.apk',
-              headers: [
-                ...noStore,
-                { key: 'Content-Type', value: 'application/vnd.android.package-archive' },
-                { key: 'Content-Disposition', value: 'attachment; filename="Serenity.apk"' },
-              ],
+              destination:
+                'https://github.com/linus2002/meditation-app/releases/download/test-build/serenity-test.apk',
+              permanent: false,
             },
           ];
         },
