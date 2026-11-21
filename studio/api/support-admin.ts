@@ -29,7 +29,7 @@ async function respond(request: Request): Promise<Response> {
     return json(502, { error: 'Could not check your Sanity sign-in.' });
   }
   const payload = (await request.json().catch(() => ({}))) as Record<string, unknown>;
-  const reply = await support.safely(() => support.forAdmin(payload));
+  const reply = await support.safely(() => support.forAdmin(payload), true);
   return json(reply.status, reply.body);
 }
 

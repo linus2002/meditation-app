@@ -27,7 +27,7 @@ export function supportProxy(): Plugin {
         } catch {
           // An empty or broken body is answered as an unknown request.
         }
-        const reply = await support.safely(() => support.forAdmin(payload));
+        const reply = await support.safely(() => support.forAdmin(payload), true);
         res.statusCode = reply.status;
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify(reply.body));

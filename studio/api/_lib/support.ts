@@ -103,7 +103,7 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
   /** Creates the tables once per process. Safe to run against an existing database. */
   function ensureSchema(): Promise<void> {
     if (!sql) return Promise.reject(new Error('not-configured'));
-    ready ??= (async () => {
+    const create = async () => {
       await sql`create table if not exists support_threads (
         id uuid primary key default gen_random_uuid(),
         user_id text not null,
@@ -130,6 +130,17 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       await sql`create index if not exists support_threads_user on support_threads (user_id, updated_at desc)`;
       await sql`create index if not exists support_threads_status on support_threads (status, updated_at desc)`;
       await sql`create index if not exists support_messages_thread on support_messages (thread_id, created_at)`;
+    };
+    ready ??= (async () => {
+      try {
+        await create();
+      } catch {
+        // Two servers creating the tables at the same moment (the Studio asks
+        // for the list and the counts together) collide once; by the second
+        // try the tables exist and "if not exists" passes.
+        await new Promise((resolve) => setTimeout(resolve, 400));
+        await create();
+      }
     })().catch((error) => {
       ready = null;
       throw error;
@@ -337,8 +348,11 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
     return fail(400, 'Unknown request.');
   }
 
-  /** Runs a handler, turning setup and database problems into readable answers. */
-  async function safely(run: () => Promise<Reply>): Promise<Reply> {
+  /**
+   * Runs a handler, turning setup and database problems into readable answers.
+   * `detailed` adds the database's own error text, for editors in the Studio only.
+   */
+  async function safely(run: () => Promise<Reply>, detailed = false): Promise<Reply> {
     if (!sql) {
       return fail(503, 'Support isn’t set up yet: DATABASE_URL is missing from this deployment.');
     }
@@ -350,7 +364,12 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
         return fail(503, 'Support isn’t set up yet: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing.');
       }
       console.error('[support]', message);
-      return fail(502, 'The support database could not be reached. Please try again.');
+      return fail(
+        502,
+        detailed
+          ? `The support database answered with an error: ${message.slice(0, 400)}`
+          : 'The support database could not be reached. Please try again.',
+      );
     }
   }
 
