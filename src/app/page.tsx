@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 
+import { safePath } from '@/lib/safe-path';
 import { useApp } from '@/providers/app-provider';
 
 /**
@@ -26,7 +27,7 @@ export default function EntryPage() {
     // where it was headed rather than dropping the reader on the home screen.
     const { pathname, search } = window.location;
     if (pathname !== '/') {
-      router.replace(pathname + search);
+      router.replace(safePath(pathname + search) ?? '/home');
       return;
     }
     router.replace(onboarded ? '/home' : '/welcome');

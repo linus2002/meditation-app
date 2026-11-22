@@ -3,7 +3,9 @@
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
 
-import { accountEmail, accountsAvailable, AUTH_CHANGE_EVENT } from '@/lib/auth';
+import { followAccountChange } from '@/lib/account-change';
+import { storedAccount } from '@/lib/account-scope';
+import { accountsAvailable, AUTH_CHANGE_EVENT } from '@/lib/auth';
 import { getSupabase } from '@/lib/supabase/client';
 
 /**
@@ -26,9 +28,9 @@ function set(next: AccountStatus) {
 }
 
 function refresh() {
-  void accountEmail()
-    .catch(() => null)
-    .then((email) => set(email ? 'member' : 'guest'));
+  // A different reader gets a fresh page; this one must not redraw as theirs.
+  if (followAccountChange()) return;
+  set(storedAccount() ? 'member' : 'guest');
 }
 
 /** Starts watching once, for the life of the page. */
@@ -44,6 +46,9 @@ function start() {
   // re-read waits a tick.
   getSupabase()?.auth.onAuthStateChange(() => window.setTimeout(refresh, 0));
   window.addEventListener(AUTH_CHANGE_EVENT, refresh);
+  // Signed in or out in another tab, or this page brought back from history.
+  window.addEventListener('storage', refresh);
+  window.addEventListener('pageshow', refresh);
 }
 
 function subscribe(listener: () => void) {

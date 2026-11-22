@@ -1,5 +1,6 @@
 import { kapwaMessages } from '../../supabase/functions/_shared/kapwa-prompt';
 
+import { safetyKind } from '@/lib/kapwa';
 import { getSupabase } from '@/lib/supabase/client';
 
 /**
@@ -41,6 +42,8 @@ export const HISTORY_TURNS = 12;
 /** Give up and fall back if the first words take longer than this. A local
  *  model on a CPU, loading into memory for the first time, can take minutes. */
 const FIRST_TOKEN_MS = localMode ? 180_000 : 20_000;
+/** Once words are flowing, give up if none arrive for this long. */
+const IDLE_MS = 20_000;
 /** Local mode: how long Ollama keeps the model in memory after a reply. */
 const KEEP_ALIVE = '10m';
 
@@ -79,12 +82,22 @@ export interface KapwaTurn {
 /**
  * The recent conversation in the shape the model expects: the welcome is
  * dropped, empty messages skipped, and it ends with the reader's message.
+ *
+ * Nothing said about a crisis or a medical emergency goes along, nor Kapwa's
+ * answer to it. Each message is checked again here rather than trusting only
+ * its `private` mark, so chats saved before that mark existed are covered.
  */
 export function buildHistory(
-  messages: { id: string; from: 'kapwa' | 'you'; text: string }[],
+  messages: { id: string; from: 'kapwa' | 'you'; text: string; private?: boolean }[],
   latest: string,
 ): KapwaTurn[] {
-  const turns: KapwaTurn[] = messages
+  let withheld = false;
+  const shareable = messages.filter((message) => {
+    if (message.from === 'you') withheld = message.private === true || safetyKind(message.text) !== null;
+    return !withheld && !message.private;
+  });
+
+  const turns: KapwaTurn[] = shareable
     .filter((message) => message.id !== 'welcome' && message.text.trim())
     .map((message) => ({
       role: message.from === 'you' ? ('user' as const) : ('assistant' as const),
@@ -148,7 +161,7 @@ export async function streamKapwaReply(
   if (!kapwaAiEnabled) throw new Error('disabled');
 
   const timeout = new AbortController();
-  const timer = window.setTimeout(() => timeout.abort(), FIRST_TOKEN_MS);
+  let timer = window.setTimeout(() => timeout.abort(), FIRST_TOKEN_MS);
   signal?.addEventListener('abort', () => timeout.abort());
 
   try {
@@ -164,7 +177,9 @@ export async function streamKapwaReply(
     for (;;) {
       const { done, value } = await reader.read();
       if (done) break;
+      // From here it is the gap between words that counts: a stalled stream is given up on.
       window.clearTimeout(timer);
+      timer = window.setTimeout(() => timeout.abort(), IDLE_MS);
       const chunk = decoder.decode(value, { stream: true });
       if (localMode) {
         // Raw Ollama output: JSON lines. The cloud proxy sends plain text.

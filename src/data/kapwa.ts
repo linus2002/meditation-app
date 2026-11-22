@@ -94,6 +94,16 @@ export const crisisReply: KapwaReply = {
 };
 
 /**
+ * What follows a crisis reply, whatever is typed next ("yes, tonight", "ok").
+ * DRAFT wording: needs clinical review.
+ */
+export const crisisFollowUpReply: KapwaReply = {
+  intentId: 'crisis',
+  text: 'Thank you for telling me. A real person can help with this in a way I can’t. Please call one of these numbers now, and if you can, move away from anything you could hurt yourself with and stay near someone you trust.',
+  actions: crisisReply.actions,
+};
+
+/**
  * Checked straight after the crisis list. During cancer treatment these can be
  * signs of infection or another emergency, and the right answer is the care
  * team or emergency services — never a meditation. Phrases are specific on
@@ -139,8 +149,9 @@ export const medicalUrgentReply: KapwaReply = {
 
 export const kapwaFallback: KapwaReply = {
   intentId: 'fallback',
-  text: 'I’m not sure I understood — I know simple things best. I can help with stress, sleep, focus, feeling low, getting started, or finding your way around Serenity. Try one of the suggestions below.',
-  actions: [],
+  text: 'I’m not sure I understood — I know simple things best. I can help with stress, sleep, focus, feeling low, getting started, or finding your way around Serenity. If you’re in danger or thinking of hurting yourself, please call the crisis line now.',
+  // The word lists will always miss someone. This is what they get instead of a dead end.
+  actions: [{ type: 'call', line: crisisLines[0] }],
 };
 
 export const kapwaIntents: KapwaIntent[] = [

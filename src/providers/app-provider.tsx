@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { settingToggles } from '@/data/settings';
 import { DAILY_GOAL_MINUTES, DAILY_GOAL_OPTIONS } from '@/data/stats';
+import { personalKey, readDevice, storedAccount, writeDevice } from '@/lib/account-scope';
 import { track } from '@/lib/analytics';
 import type { AssessmentAnswers } from '@/lib/assessment';
 import { pushSession } from '@/lib/cloud-sync';
@@ -11,6 +12,8 @@ import { fetchMyRatings, syncRating } from '@/lib/ratings';
 import type { Reflection, SessionRecord, SleepLog } from '@/types';
 
 const STORAGE_KEY = 'serenity.state.v1';
+/** Set once the account's first name has been offered, so clearing it sticks. */
+const NAMED_KEY = 'serenity.named.v1';
 
 interface PersistedState {
   favorites: string[];
@@ -104,7 +107,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Read once on mount so the server and first client render always agree.
   React.useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const raw = window.localStorage.getItem(personalKey(STORAGE_KEY));
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<PersistedState>;
         setState((current) => ({
@@ -122,6 +125,21 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           goalMinutes: validGoal(parsed.goalMinutes) ?? current.goalMinutes,
         }));
       }
+
+      // The tour and the theme belong to the phone, whoever is signed in.
+      const device = readDevice();
+      setState((current) => ({
+        ...current,
+        onboarded: device.onboarded ?? current.onboarded,
+        settings: { ...current.settings, lightMode: device.lightMode ?? current.settings.lightMode },
+      }));
+
+      // Greets a reader by the name on their account, unless they chose one here.
+      const firstName = storedAccount()?.firstName;
+      if (firstName && !window.localStorage.getItem(personalKey(NAMED_KEY))) {
+        setState((current) => (current.name ? current : { ...current, name: firstName.slice(0, 40) }));
+        window.localStorage.setItem(personalKey(NAMED_KEY), '1');
+      }
     } catch {
       // A blocked or unavailable store simply falls back to the seeded defaults.
     }
@@ -131,11 +149,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   React.useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      window.localStorage.setItem(personalKey(STORAGE_KEY), JSON.stringify(state));
     } catch {
       // Persistence is a convenience here, never a requirement.
     }
   }, [state, hydrated]);
+
+  React.useEffect(() => {
+    if (hydrated) writeDevice({ onboarded: state.onboarded, lightMode: state.settings.lightMode === true });
+  }, [hydrated, state.onboarded, state.settings.lightMode]);
 
   /*
    * After local hydration, fetch the reader's ratings from Supabase (if they
@@ -257,7 +279,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
    * background — the UI never waits for the network.
    */
   const rateMeditation = React.useCallback((id: string, score: number) => {
-    if (stateRef.current.ratings[id] !== score) track('meditation_rated', { meditation_id: id, score });
+    if (stateRef.current.ratings[id] !== score) track('meditation_rated', { meditation_id: id });
     setState((current) => {
       const next = { ...current.ratings };
       const clearing = next[id] === score;

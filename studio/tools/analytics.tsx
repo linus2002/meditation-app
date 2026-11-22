@@ -809,7 +809,8 @@ function describe(
     case 'session_completed':
       return { icon: '✓', text: `Finished ${title}${seconds ? ` · ${duration(seconds)}` : ''}`, content: meditation };
     case 'meditation_rated':
-      return { icon: '★', text: `Rated ${title} ${score} of 5`, content: meditation };
+      // Newer visits send that a rating happened, not the score.
+      return { icon: '★', text: score ? `Rated ${title} ${score} of 5` : `Rated ${title}`, content: meditation };
     case 'sleep_logged':
       return { icon: '☾', text: 'Logged their sleep' };
     case 'reflection_saved':

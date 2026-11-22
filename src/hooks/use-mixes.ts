@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 
+import { personalKey } from '@/lib/account-scope';
 import {
   addItem as addToMix,
   cleanName,
@@ -28,7 +29,7 @@ const listeners = new Set<() => void>();
 function load(): Mix[] {
   if (cache) return cache;
   try {
-    cache = parseMixes(window.localStorage.getItem(STORAGE_KEY));
+    cache = parseMixes(window.localStorage.getItem(personalKey(STORAGE_KEY)));
   } catch {
     cache = [];
   }
@@ -38,7 +39,7 @@ function load(): Mix[] {
 function save(next: Mix[]) {
   cache = next;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    window.localStorage.setItem(personalKey(STORAGE_KEY), JSON.stringify(next));
   } catch {
     // Kept for this visit even if storage is blocked.
   }
@@ -49,7 +50,7 @@ function subscribe(listener: () => void) {
   listeners.add(listener);
   // Another tab changed them.
   const onStorage = (event: StorageEvent) => {
-    if (event.key !== STORAGE_KEY) return;
+    if (event.key !== personalKey(STORAGE_KEY)) return;
     cache = null;
     listener();
   };

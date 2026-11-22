@@ -347,6 +347,23 @@ How it behaves:
 Later: human-narrated audio for each session (recorded after review), and
 private cancer-support and caregiver Circles once invite-only circles exist.
 
+## Accounts on a shared phone
+
+Everything personal kept on the phone is stored per account
+(`src/lib/account-scope.ts`). Signing out hides it and signing in brings it
+back; the tour and the theme stay with the phone. A change of account loads a
+fresh page, so nothing in memory crosses over. Read and write any new personal
+store through `personalKey`.
+
+Data from builds before this goes to the account it last synced with, else to
+whoever is signed in. Private data with neither is kept under
+`:unclaimed` keys, shown to nobody. Older builds cannot read the new keys, so
+rolling back past this change makes local data look empty until rolling forward.
+
+Analytics consent and identity are per account too. Autocapture and session
+replay are off (`src/lib/analytics.ts`), and Android backup is off, so private
+entries are not copied to the cloud or to a new phone.
+
 ## Kapwa, the built-in guide
 
 The raised button in the middle of the bottom bar, drawn with the app's own
@@ -360,7 +377,9 @@ instead (`src/lib/kapwa-ai.ts`). The app never holds the Ollama key: it calls
 the `kapwa-chat` Supabase edge function (`supabase/functions/kapwa-chat`),
 which adds Kapwa's system prompt, enforces an hourly quota per account or IP
 (`kapwa_take_quota`), and streams the reply back. Crisis and medical messages
-never reach the AI, the keyword match still picks the buttons under each
+that the on-device check recognises never reach the AI, then or later as
+history, and for 30 minutes afterwards nothing typed in that chat does either.
+The keyword match still picks the buttons under each
 reply, and if the AI is off, offline or over quota the keyword reply is used.
 
 To set it up:
@@ -376,6 +395,12 @@ To set it up:
 - Covers stress, sleep, focus, low moods, anger, body tension, short on time,
   getting started, and the way to Circles, the timer, stories, reminders and
   progress. Cancer-support replies appear only where that track is on.
+- The crisis and medical patterns (`src/data/kapwa-safety.ts`: English,
+  Filipino, some Cebuano) are not clinically validated and cannot catch
+  everything (60% of an unseen test set when written), so the chat always
+  shows a crisis line, also in every "didn't understand" reply. Keep that.
+  Have the patterns reviewed, and add each missed phrase to
+  `src/lib/kapwa-safety.test.ts`.
 - Anything about suicide or self-harm is checked first, and answered with care
   and a pointer to local emergency services, a crisis line or someone
   trusted — never a meditation.

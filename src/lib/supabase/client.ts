@@ -1,5 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
+import { AUTH_STORAGE_KEY } from '@/lib/account-scope';
+
 /**
  * The one Supabase client, used from the browser only.
  *
@@ -31,7 +33,7 @@ export function getSupabase(): SupabaseClient | null {
         autoRefreshToken: true,
         // Email linking uses a typed code, never a redirect back into the app.
         detectSessionInUrl: false,
-        storageKey: 'serenity.auth.v1',
+        storageKey: AUTH_STORAGE_KEY,
       },
     });
   }

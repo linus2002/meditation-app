@@ -14,7 +14,7 @@ type State =
 /**
  * The account row on Profile: a way to sign in for anyone who skipped it on
  * the first run, and a way to sign out. Signing out asks once, in place, and
- * says plainly what it keeps: everything recorded on this phone.
+ * says plainly what happens to what is on this phone.
  */
 export function AccountCard() {
   const [state, setState] = React.useState<State>({ kind: 'loading' });
@@ -48,7 +48,7 @@ export function AccountCard() {
         <span className="min-w-0 flex-1">
           <span className="block text-body-sm font-medium leading-tight text-ink">Sign in or create an account</span>
           <span className="mt-0.5 block text-label leading-snug text-ink-muted">
-            Needed to start sessions, and keeps your name across phones
+            Needed to start sessions, and keeps what you do apart from others on this phone
           </span>
         </span>
         <ChevronRight className="h-4 w-4 text-ink-faint" strokeWidth={1.8} />
@@ -91,7 +91,8 @@ export function AccountCard() {
       {state.confirming ? (
         <div className="mt-3 border-t border-overlay/[0.08] pt-3">
           <p className="text-label leading-relaxed text-ink-muted">
-            Your sessions, streak and favorites stay on this phone.
+            Your sessions, reflections and favorites will be hidden on this phone until you sign in
+            again. Nothing is erased.
           </p>
           <div className="mt-3 flex gap-2">
             <button

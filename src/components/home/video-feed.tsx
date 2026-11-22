@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Heart, Play, Volume2, VolumeX, X } from 'lucide-react';
 
 import type { HomeVideo } from '@/data/videos';
+import { personalKey } from '@/lib/account-scope';
 import { cn } from '@/lib/utils';
 import {
   fetchLikeCounts,
@@ -24,7 +25,7 @@ const LIKES_KEY = 'serenity.likedVideos.v1';
 
 function readLikes(): string[] {
   try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(LIKES_KEY) ?? '[]');
+    const parsed: unknown = JSON.parse(localStorage.getItem(personalKey(LIKES_KEY)) ?? '[]');
     return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [];
   } catch {
     return [];
@@ -33,7 +34,7 @@ function readLikes(): string[] {
 
 function writeLikes(ids: string[]): void {
   try {
-    localStorage.setItem(LIKES_KEY, JSON.stringify(ids));
+    localStorage.setItem(personalKey(LIKES_KEY), JSON.stringify(ids));
   } catch {
     // Not remembered; the like still shows for this visit.
   }

@@ -1,3 +1,4 @@
+import { isThisReader } from '@/lib/account-scope';
 import { getSupabase } from '@/lib/supabase/client';
 
 /*
@@ -21,10 +22,13 @@ export async function fetchMyRatings(): Promise<Record<string, number> | null> {
   if (!client) return null;
 
   const { data: session } = await client.auth.getSession();
-  if (!session.session) return null;
+  const user = session.session?.user;
+  if (!session.session || !isThisReader(user)) return null;
 
   const { data, error } = await client.rpc('my_meditation_ratings');
   if (error || !Array.isArray(data)) return null;
+  // The session can change during the request; then this answer is someone else's.
+  if ((await client.auth.getSession()).data.session?.user?.id !== user?.id) return null;
 
   const ratings: Record<string, number> = {};
   for (const row of data as { meditation_id: string; score: number }[]) {
@@ -48,7 +52,7 @@ export async function syncRating(
   if (!client) return undefined;
 
   const { data: session } = await client.auth.getSession();
-  if (!session.session) return undefined;
+  if (!session.session || !isThisReader(session.session.user)) return undefined;
 
   try {
     const { data, error } = await client.rpc('set_meditation_rating', {

@@ -1,3 +1,4 @@
+import { isThisReader, personalKey } from '@/lib/account-scope';
 import { getSupabase } from '@/lib/supabase/client';
 
 /*
@@ -33,10 +34,12 @@ export async function fetchMyLikes(): Promise<string[] | null> {
   if (!client) return null;
 
   const { data: session } = await client.auth.getSession();
-  if (!session.session) return null;
+  const user = session.session?.user;
+  if (!session.session || !isThisReader(user)) return null;
 
   const { data, error } = await client.from('video_likes').select('video_id');
   if (error || !data) return null;
+  if ((await client.auth.getSession()).data.session?.user?.id !== user?.id) return null;
   return (data as { video_id: string }[]).map((row) => row.video_id);
 }
 
@@ -47,6 +50,8 @@ export async function saveLike(id: string, liked: boolean): Promise<number | nul
 
   try {
     const existing = await client.auth.getSession();
+    // Also stops an offline member being swapped for a new anonymous account.
+    if (!isThisReader(existing.data.session?.user)) return null;
     if (!existing.data.session) {
       const { error } = await client.auth.signInAnonymously();
       if (error) return null;
@@ -67,7 +72,7 @@ function pendingLikes(): Record<string, boolean> {
   if (pending) return pending;
   pending = {};
   try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(PENDING_KEY) ?? '{}');
+    const parsed: unknown = JSON.parse(localStorage.getItem(personalKey(PENDING_KEY)) ?? '{}');
     if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
       pending = parsed as Record<string, boolean>;
     }
@@ -79,7 +84,7 @@ function pendingLikes(): Record<string, boolean> {
 
 function storePendingLikes(): void {
   try {
-    localStorage.setItem(PENDING_KEY, JSON.stringify(pendingLikes()));
+    localStorage.setItem(personalKey(PENDING_KEY), JSON.stringify(pendingLikes()));
   } catch {
     // Not remembered past this visit.
   }
