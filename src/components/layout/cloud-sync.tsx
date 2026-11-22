@@ -17,7 +17,7 @@ import { useApp } from '@/providers/app-provider';
  * phone, and `memberId` refuses any other (see lib/account-scope).
  */
 export function CloudSync() {
-  const { hydrated, sessions, replaceSessions } = useApp();
+  const { hydrated, sessions, mergeSessions } = useApp();
   const status = useAccountStatus();
   const sessionsRef = React.useRef(sessions);
   sessionsRef.current = sessions;
@@ -33,9 +33,9 @@ export function CloudSync() {
       if (!userId || cancelled || syncedForRef.current === userId) return;
       syncedForRef.current = userId;
 
-      const merged = await syncSessions(sessionsRef.current);
+      const merged = await syncSessions(() => sessionsRef.current);
       if (cancelled || merged === null) return;
-      replaceSessions(merged);
+      mergeSessions(merged);
 
       const remote = await fetchResume();
       if (remote) await pushResume(mergeRemoteResume(remote));
@@ -44,7 +44,7 @@ export function CloudSync() {
     return () => {
       cancelled = true;
     };
-  }, [hydrated, status, replaceSessions]);
+  }, [hydrated, status, mergeSessions]);
 
   // Signing out lets the next sign-in, whoever it is, sync afresh.
   React.useEffect(() => {

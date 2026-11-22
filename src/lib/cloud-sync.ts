@@ -121,11 +121,12 @@ export function sessionsToSend(local: SessionRecord[], remote: SessionRecord[]):
 
 /**
  * Brings the account and this phone level. Returns the merged list for the
- * phone to keep, or null when there was nothing to sync with.
+ * phone to fold in, or null when there was nothing to sync with.
+ *
+ * `readLocal` is read once the account answers: a sitting saved while waiting
+ * would otherwise be left out, or sent up over its own newer copy.
  */
-export async function syncSessions(
-  local: SessionRecord[],
-): Promise<SessionRecord[] | null> {
+export async function syncSessions(readLocal: () => SessionRecord[]): Promise<SessionRecord[] | null> {
   try {
     const client = getSupabase();
     const userId = await memberId();
@@ -139,6 +140,7 @@ export async function syncSessions(
     // The session can change during the request; then this answer is someone else's.
     if (error || (await memberId()) !== userId) return null;
     const remote = (data as SessionRow[]).map(fromRow);
+    const local = readLocal();
 
     await upsertSessions(userId, sessionsToSend(local, remote));
     return mergeSessionLists(local, remote).slice(0, 2000);

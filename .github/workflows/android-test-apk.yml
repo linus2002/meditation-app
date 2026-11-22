@@ -24,6 +24,24 @@ jobs:
       NEXT_PUBLIC_POSTHOG_KEY: ${{ vars.NEXT_PUBLIC_POSTHOG_KEY }}
       NEXT_PUBLIC_POSTHOG_HOST: ${{ vars.NEXT_PUBLIC_POSTHOG_HOST }}
     steps:
+      # A build signed with any other key cannot update the installed app, and
+      # uninstalling to get past that erases the reader's data. So: no key, no APK.
+      - name: Check the signing key is set
+        env:
+          KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          FINGERPRINT: ${{ vars.ANDROID_CERT_SHA256 }}
+        run: |
+          missing=0
+          for name in KEYSTORE PASSWORD ALIAS FINGERPRINT; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Android signing is not set up (missing $name). See MOBILE.md, Signing."
+              missing=1
+            fi
+          done
+          exit $missing
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -52,14 +70,34 @@ jobs:
       - name: Copy it into the Android project
         run: npx cap sync android
 
-      - name: Build the APK
+      - name: Build and sign the APK
         working-directory: android
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          SERENITY_KEYSTORE: ${{ runner.temp }}/serenity.jks
+          SERENITY_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          SERENITY_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
+          trap 'rm -f "$SERENITY_KEYSTORE"' EXIT
+          printf '%s' "$KEYSTORE_BASE64" | tr -d '\r\n' | base64 -d > "$SERENITY_KEYSTORE"
+          # Rises with every run. Renaming this workflow file restarts run_number: add an offset if you do.
+          export SERENITY_VERSION_CODE=$((GITHUB_RUN_NUMBER + 1))
           chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          ./gradlew assembleRelease --no-daemon
 
-      - name: Name the APK
-        run: cp android/app/build/outputs/apk/debug/app-debug.apk serenity-test.apk
+      - name: Check it carries the permanent key
+        env:
+          EXPECTED: ${{ vars.ANDROID_CERT_SHA256 }}
+        run: |
+          apk=android/app/build/outputs/apk/release/app-release.apk
+          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          actual=$("$apksigner" verify --print-certs "$apk" | sed -n 's/.*certificate SHA-256 digest: //p' | head -1)
+          expected=$(printf '%s' "$EXPECTED" | tr -d ': \r\n' | tr 'A-F' 'a-f')
+          if [ -z "$actual" ] || [ "$actual" != "$expected" ]; then
+            echo "::error::Signed with a different key from ANDROID_CERT_SHA256. Not publishing: installed copies could not update."
+            exit 1
+          fi
+          cp "$apk" serenity-test.apk
 
       - name: Publish to the test-build release
         env:

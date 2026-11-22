@@ -7,7 +7,8 @@ android {
         applicationId "com.linus2002.serenity"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        // CI passes a number that rises with every build; Android refuses to install a lower one.
+        versionCode((System.getenv('SERENITY_VERSION_CODE') ?: '1').toInteger())
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
@@ -16,8 +17,26 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    // The permanent key, given only through the environment, never the repo (MOBILE.md,
+    // "Signing"). Without it a release build is unsigned and won't install; debug builds
+    // don't need it.
+    def keystorePath = System.getenv('SERENITY_KEYSTORE')
+    signingConfigs {
+        if (keystorePath) {
+            release {
+                storeFile file(keystorePath)
+                storePassword System.getenv('SERENITY_KEYSTORE_PASSWORD')
+                keyAlias System.getenv('SERENITY_KEY_ALIAS')
+                // A PKCS12 store has one password for the store and the key.
+                keyPassword System.getenv('SERENITY_KEYSTORE_PASSWORD')
+            }
+        }
+    }
     buildTypes {
         release {
+            if (keystorePath) {
+                signingConfig signingConfigs.release
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
