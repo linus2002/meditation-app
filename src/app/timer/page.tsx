@@ -6,6 +6,7 @@ import { Pause, Play, Square, X } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
+import { useBackGuard } from '@/hooks/use-back-guard';
 import { SessionComplete } from '@/components/session/session-complete';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
@@ -168,6 +169,10 @@ export default function TimerPage() {
 
   // Ending is asked, not done: the corner button sits where Back usually is.
   const [confirmingEnd, setConfirmingEnd] = React.useState(false);
+
+  // Back during a sit asks first, as the corner button does; Back again keeps going.
+  // A timed sit has no place to resume from, so leaving by accident would lose it.
+  useBackGuard(phase === 'warmup' || phase === 'running', () => (confirmingEnd ? keepGoing() : askToEnd()));
   const wasRunningRef = React.useRef(false);
   const askToEnd = () => {
     wasRunningRef.current = countdown.running;

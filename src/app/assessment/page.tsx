@@ -9,6 +9,7 @@ import { Check, ChevronRight, Sparkles, X } from 'lucide-react';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { categories } from '@/data/categories';
 import { useBack } from '@/hooks/use-back';
+import { useBackGuard } from '@/hooks/use-back-guard';
 import { picksFor } from '@/hooks/use-assessment-picks';
 import {
   ASSESSMENT_QUESTIONS,
@@ -33,7 +34,9 @@ const TOTAL = ASSESSMENT_QUESTIONS.length;
 export default function AssessmentPage() {
   const router = useRouter();
   const goBack = useBack();
-  const { completeAssessment } = useApp();
+  const { completeAssessment, assessment, hydrated } = useApp();
+  // Finished before: show what it found rather than starting again at question 1.
+  const saved = hydrated ? assessment : null;
 
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState<AssessmentAnswers>({});
@@ -73,7 +76,14 @@ export default function AssessmentPage() {
 
   const onBack = () => (step === 0 ? goBack() : setStep(step - 1));
 
+  // The phone's Back steps back a question, rather than out with every answer lost.
+  useBackGuard(!done && step > 0, () => setStep((current) => Math.max(0, current - 1)));
+
   if (done) return <AssessmentResult answers={answers} onFinish={() => router.replace('/home')} />;
+  if (!hydrated) return <div className="min-h-full bg-canvas" aria-hidden="true" />;
+  if (saved && step === 0 && Object.keys(answers).length === 0) {
+    return <AssessmentResult answers={saved.answers} onFinish={() => router.replace('/home')} />;
+  }
 
   return (
     <div className="relative flex min-h-full flex-col">

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Bookmark } from 'lucide-react';
 
 import { ProgramRail } from '@/components/home/program-rail';
@@ -72,15 +72,35 @@ export function MeditationsView() {
   const linkedCategory = categories.some((item) => item.slug === requestedCategory)
     ? (requestedCategory as CategorySlug)
     : null;
-  const [tab, setTab] = React.useState<TabId>(
-    linkedCategory ? 'meditation' : isTabId(requestedTab) ? requestedTab : 'all',
+  const fromAddress: TabId = linkedCategory ? 'meditation' : isTabId(requestedTab) ? requestedTab : 'all';
+  const [tab, setTabState] = React.useState<TabId>(fromAddress);
+  const router = useRouter();
+
+  /*
+   * The tab is written into the address (replacing, not adding, a history
+   * entry), so Back from something opened here returns to the same tab. A new
+   * tab starts at the top: keeping the old offset opened a short tab scrolled
+   * past its end.
+   */
+  const setTab = React.useCallback(
+    (next: TabId) => {
+      setTabState(next);
+      router.replace(next === 'all' ? '/meditations' : `/meditations?tab=${next}`, { scroll: false });
+      document.querySelector('[data-scroll-frame]')?.scrollTo({ top: 0 });
+    },
+    [router],
   );
+
+  // The address changed from outside (the bottom bar's Meditations, say): follow it.
+  React.useEffect(() => {
+    if (!linkedCategory) setTabState(isTabId(requestedTab) ? requestedTab : 'all');
+  }, [requestedTab, linkedCategory]);
   const [category, setCategory] = React.useState<CategorySlug | 'all'>(linkedCategory ?? 'all');
 
   // Following another link while already on this screen still lands on its mood.
   React.useEffect(() => {
     if (!linkedCategory) return;
-    setTab('meditation');
+    setTabState('meditation');
     setCategory(linkedCategory);
   }, [linkedCategory]);
 

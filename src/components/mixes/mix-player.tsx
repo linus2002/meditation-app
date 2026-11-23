@@ -10,6 +10,7 @@ import { StoryReader } from '@/components/stories/story-reader';
 import { getMeditation } from '@/data/meditations';
 import { mixItemDetails, type MixItemDetails } from '@/data/mix-items';
 import { getStory } from '@/data/stories';
+import { canGoBackInApp } from '@/hooks/use-back';
 import { useMixes } from '@/hooks/use-mixes';
 import { nextPosition, playOrder, previousPosition } from '@/lib/mixes';
 
@@ -64,7 +65,12 @@ export function MixPlayer() {
   }, [items, position, loop, shuffle, goTo]);
 
   const back = () => goTo(previousPosition(position, items?.length ?? 0, loop));
-  const close = () => router.push(id ? `/mixes?id=${id}` : '/mixes');
+  // Back to the screen that opened this one. Pushing the mix again stacked it
+  // over this player, so Back from the mix reopened the player and replayed it.
+  const close = () => {
+    if (canGoBackInApp()) router.back();
+    else router.replace(id ? `/mixes?id=${id}` : '/mixes');
+  };
 
   if (!ready || !items) return <div className="min-h-full bg-canvas" aria-hidden="true" />;
 
@@ -73,7 +79,7 @@ export function MixPlayer() {
       <div className="flex min-h-full flex-col items-center justify-center bg-canvas px-8 text-center">
         <ListMusic className="h-8 w-8 text-ink-muted" strokeWidth={1.5} />
         <p className="mt-4 text-body-sm text-ink">{mix ? 'This mix is empty.' : 'Mix not found.'}</p>
-        <Link href="/mixes" className="mt-3 text-caption font-medium text-ink underline underline-offset-2">
+        <Link href="/mixes" replace className="mt-3 text-caption font-medium text-ink underline underline-offset-2">
           Back to your mixes
         </Link>
       </div>
