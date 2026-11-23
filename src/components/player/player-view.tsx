@@ -199,11 +199,13 @@ export function PlayerView({
   React.useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      const typing =
-        target?.tagName === 'INPUT' ||
-        target?.tagName === 'TEXTAREA' ||
-        target?.isContentEditable === true;
-      if (typing) return;
+      // A focused control answers its own keys (Space presses a button, moves a
+      // slider, picks a star); an open dialog owns the keyboard; and a finished
+      // session is not restarted by a stray Space under a new record.
+      const ownsKeys =
+        target?.isContentEditable === true ||
+        target?.closest('input, textarea, select, button, a, [role="slider"], [role="radio"], [role="switch"]') !== null;
+      if (ownsKeys || completedRef.current || document.querySelector('[aria-modal="true"]')) return;
 
       if (event.code === 'Space' || event.key.toLowerCase() === 'k') {
         event.preventDefault();
@@ -394,6 +396,10 @@ export function PlayerView({
           aria-hidden="true"
           className="absolute inset-0 bg-[linear-gradient(180deg,rgb(var(--canvas)/0)_38%,rgb(var(--canvas)/0.55)_62%,rgb(var(--canvas)/0.94)_86%,rgb(var(--canvas))_100%)]"
         />
+        {/* Finished: the minutes and the rating sit where the art was, so it steps back. */}
+        {completed ? (
+          <div aria-hidden="true" className="absolute inset-0 bg-[rgb(var(--canvas)/0.86)]" />
+        ) : null}
       </div>
 
       <header className="relative flex items-center justify-between px-4 pt-[calc(var(--header-gap)-10px)] text-white">

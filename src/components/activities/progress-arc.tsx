@@ -52,10 +52,16 @@ export function ProgressArc({ value, className, gradientId = 'arc-gradient' }: P
       </defs>
 
       {/*
-        At zero the arc would still paint its rounded cap — a stray dot floating
-        where the ring starts. An empty day shows nothing instead. The reference
-        has no track behind the untravelled portion, so none is drawn here.
+        A faint track of the whole ring, so an empty day still shows what is
+        being filled rather than a lone "0%". At zero the arc itself is not
+        drawn: its rounded cap would be a stray dot where the ring starts.
       */}
+      <path
+        d={describeArc(CENTER, CENTER, RADIUS, START_ANGLE, 359.9)}
+        className="stroke-overlay/10"
+        strokeWidth={STROKE}
+        strokeLinecap="round"
+      />
       {fraction > 0.001 ? (
       <path
         d={path}

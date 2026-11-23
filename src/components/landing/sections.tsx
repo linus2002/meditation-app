@@ -660,9 +660,9 @@ export function BreathSpotlight() {
             className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle_at_35%_30%,#FFFFFF_0%,#E3F5FC_38%,#9AD8F1_75%,#5BBDE6_100%)] shadow-[0_0_80px_10px_rgba(255,255,255,0.45),inset_-20px_-30px_60px_rgba(14,110,160,0.35)] transition-transform [transition-duration:4000ms] ease-in-out"
             style={{ transform: `scale(${reduced ? 0.85 : phase.scale})` }}
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-[#0B5E86]" aria-live="polite">
-            <p className="text-[1.6rem] font-semibold tracking-[-0.02em]">{phase.label}</p>
-            <p className="mt-1 text-body-sm tabular-nums text-[#0B5E86]/70">{count}</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-[#0B5E86]">
+            <p aria-live="polite" className="text-[1.6rem] font-semibold tracking-[-0.02em]">{phase.label}</p>
+            <p aria-hidden="true" className="mt-1 text-body-sm tabular-nums text-[#0B5E86]/70">{count}</p>
           </div>
         </div>
       </div>

@@ -49,12 +49,10 @@ export function BreathingOrb({ breath, isPlaying, className }: BreathingOrbProps
       />
 
       {/* Held inside the inner disc so the label never spills over the ring. */}
-      <div
-        className="relative z-10 flex max-w-[56%] flex-col items-center gap-1 text-center"
-        aria-live="polite"
-      >
+      <div className="relative z-10 flex max-w-[56%] flex-col items-center gap-1 text-center">
         {isPlaying ? (
-          <p className="text-[clamp(0.8125rem,4vw,0.9375rem)] font-medium tracking-[0.02em] text-ink">
+          // Read out as each phase begins; the countdown below is left to the eye.
+          <p aria-live="polite" className="text-[clamp(0.8125rem,4vw,0.9375rem)] font-medium tracking-[0.02em] text-ink">
             {breath.phase.label}
           </p>
         ) : (
@@ -68,7 +66,7 @@ export function BreathingOrb({ breath, isPlaying, className }: BreathingOrbProps
           </>
         )}
         {isPlaying ? (
-          <p className="text-[clamp(1.625rem,8.7vw,2.125rem)] font-light leading-none tabular-nums text-ink">
+          <p aria-hidden="true" className="text-[clamp(1.625rem,8.7vw,2.125rem)] font-light leading-none tabular-nums text-ink">
             {breath.secondsLeft}
           </p>
         ) : null}

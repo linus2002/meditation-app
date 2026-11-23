@@ -4,6 +4,7 @@ import * as React from 'react';
 
 import { GradientButton } from '@/components/shared/gradient-button';
 import { MIN_RECORDED_SECONDS } from '@/data/stats';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
 
 interface EndSessionPromptProps {
   open: boolean;
@@ -30,6 +31,8 @@ export function endSessionNote(seconds: number): string {
 export function EndSessionPrompt({ open, secondsSoFar, onKeepGoing, onEnd }: EndSessionPromptProps) {
   const keepRef = React.useRef<HTMLButtonElement>(null);
   const returnFocusRef = React.useRef<Element | null>(null);
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, open);
   // Players re-render on every tick; the focus effect must only run on open.
   const keepGoingRef = React.useRef(onKeepGoing);
   keepGoingRef.current = onKeepGoing;
@@ -59,6 +62,7 @@ export function EndSessionPrompt({ open, secondsSoFar, onKeepGoing, onEnd }: End
         className="absolute inset-0 bg-canvas-deep/70 backdrop-blur-[2px]"
       />
       <div
+        ref={dialogRef}
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="end-session-title"

@@ -123,7 +123,7 @@ export default function ActivitiesPage() {
       </section>
 
       {ready && day.sessions === 0 ? (
-        <p className="relative -mt-2 px-5 text-label leading-relaxed text-ink-faint">
+        <p className="relative mt-4 px-5 text-label leading-relaxed text-ink-faint">
           Nothing recorded for this day yet. Finish a session and it lands here.
         </p>
       ) : null}

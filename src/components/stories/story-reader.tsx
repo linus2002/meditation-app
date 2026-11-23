@@ -340,7 +340,7 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
               <span
                 className={cn(
                   'flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors',
-                  music ? 'bg-aurora-blue' : 'bg-overlay/12',
+                  music ? 'bg-aurora-blue' : 'bg-overlay/[0.12]',
                 )}
               >
                 <span

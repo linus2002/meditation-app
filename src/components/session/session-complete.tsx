@@ -119,10 +119,10 @@ export function SessionComplete({
         */}
       {hydrated && rated ? (
         <div className="mt-6 rounded-tile bg-surface p-4">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col items-start gap-2">
             <div className="min-w-0">
               <p className="text-caption font-medium leading-tight text-ink">How was that?</p>
-              <p className="mt-0.5 truncate text-label leading-tight text-ink-faint">
+              <p className="mt-0.5 text-label leading-tight text-ink-faint">
                 {ratings[rated.id] ? 'Tap the same star to clear it.' : 'Only you ever see this.'}
               </p>
             </div>
@@ -130,6 +130,7 @@ export function SessionComplete({
               value={ratings[rated.id]}
               onChange={(score) => rateMeditation(rated.id, score)}
               label={`Rate ${rated.title}`}
+              className="-ml-2.5"
             />
           </div>
         </div>
