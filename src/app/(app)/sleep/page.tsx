@@ -13,6 +13,8 @@ import { SleepTimer } from '@/components/sleep/sleep-timer';
 import { StoryCard } from '@/components/stories/story-card';
 import { sleepSessions } from '@/data/meditations';
 import { sleepStories } from '@/data/stories';
+import { useToday } from '@/hooks/use-today';
+import { fromDateKey } from '@/lib/date';
 import { formatPercent } from '@/lib/format';
 import { recentNights, summariseSleep } from '@/lib/sleep-stats';
 import { useApp } from '@/providers/app-provider';
@@ -40,8 +42,8 @@ export default function SleepPage() {
 
   // Resolved on the client: the window of nights depends on the local clock,
   // and these pages are prerendered at build time.
-  const [today, setToday] = React.useState<Date | null>(null);
-  React.useEffect(() => setToday(new Date()), []);
+  const todayKey = useToday();
+  const today = React.useMemo(() => (todayKey ? fromDateKey(todayKey) : null), [todayKey]);
 
   const nights = React.useMemo(
     () => (today ? recentNights(sleepLogs, today, WINDOW_NIGHTS) : []),

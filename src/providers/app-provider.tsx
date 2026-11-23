@@ -87,13 +87,14 @@ const defaultSettings = settingToggles.reduce<Record<string, boolean>>((acc, tog
 }, {});
 
 const initialState: PersistedState = {
-  favorites: ['open-heart', 'ocean-drift'],
-  recents: ['meditation-daily'],
+  // Nothing saved or played until the reader does it.
+  favorites: [],
+  recents: [],
   settings: defaultSettings,
   onboarded: false,
   reflections: [],
   sessions: [],
-  favoriteStories: ['lighthouse'],
+  favoriteStories: [],
   // Both start empty on purpose: a seeded night or score would be a number the
   // reader never gave, on a screen whose whole job is to report what they did.
   sleepLogs: [],

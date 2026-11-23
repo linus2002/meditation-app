@@ -167,6 +167,16 @@ export default function TimerPage() {
     setPhase('setup');
   };
 
+  // A paused sit is quiet: the sound stops with the clock and comes back with it.
+  const sitting = phase === 'warmup' || phase === 'running';
+  React.useEffect(() => {
+    if (!sitting || !scape) return;
+    if (countdown.running) void play(scape);
+    else stop(0.8);
+    // Follows the clock alone; play and stop are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countdown.running, sitting]);
+
   // Ending is asked, not done: the corner button sits where Back usually is.
   const [confirmingEnd, setConfirmingEnd] = React.useState(false);
 

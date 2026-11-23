@@ -44,7 +44,8 @@ export function ScheduleSheet({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultDate: string;
-  onSave: (entry: NewSchedule) => Promise<void> | void;
+  /** Resolves false when it could not be saved: the calendar is full. */
+  onSave: (entry: NewSchedule) => Promise<boolean>;
 }) {
   const [kind, setKind] = React.useState<ScheduleKind>('meditation');
   const [itemId, setItemId] = React.useState<string | null>(null);
@@ -83,7 +84,10 @@ export function ScheduleSheet({
       setError('That time has already passed — pick a later time.');
       return;
     }
-    await onSave(entry);
+    if (!(await onSave(entry))) {
+      setError('Your calendar is full. Remove a scheduled session to add this one.');
+      return;
+    }
     onOpenChange(false);
   };
 

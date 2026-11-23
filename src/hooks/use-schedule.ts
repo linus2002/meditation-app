@@ -3,7 +3,7 @@
 import * as React from 'react';
 
 import { personalKey } from '@/lib/account-scope';
-import { MAX_SCHEDULES, parseSchedules, type ScheduledSession } from '@/lib/schedule';
+import { MAX_SCHEDULES, parseSchedules, pruneSchedules, type ScheduledSession } from '@/lib/schedule';
 
 /**
  * The reader's scheduled sessions, kept on this device. One shared store, so
@@ -19,7 +19,7 @@ const listeners = new Set<() => void>();
 function load(): ScheduledSession[] {
   if (cache) return cache;
   try {
-    cache = parseSchedules(window.localStorage.getItem(personalKey(STORAGE_KEY)));
+    cache = pruneSchedules(parseSchedules(window.localStorage.getItem(personalKey(STORAGE_KEY))), new Date());
   } catch {
     cache = [];
   }

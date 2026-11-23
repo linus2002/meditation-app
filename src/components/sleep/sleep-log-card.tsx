@@ -1,11 +1,12 @@
 'use client';
 
 import * as React from 'react';
+
+import { useToday } from '@/hooks/use-today';
 import { Check, PencilLine } from 'lucide-react';
 
 import { GradientButton } from '@/components/shared/gradient-button';
 import { Skeleton } from '@/components/shared/skeleton';
-import { toDateKey } from '@/lib/date';
 import { minutesAsleep } from '@/lib/sleep-stats';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
@@ -28,10 +29,9 @@ const DEFAULT_WAKE = '07:00';
 export function SleepLogCard() {
   const { sleepLogs, saveSleepLog, hydrated } = useApp();
 
-  // Resolved on the client: these pages are prerendered, so the build date must
-  // not decide which night "last night" is.
-  const [today, setToday] = React.useState<string | null>(null);
-  React.useEffect(() => setToday(toDateKey(new Date())), []);
+  // Resolved on the client, and kept current: left open overnight, "last night"
+  // must move on rather than overwrite the night before.
+  const today = useToday();
 
   const existing = today ? sleepLogs.find((entry) => entry.date === today) : undefined;
 

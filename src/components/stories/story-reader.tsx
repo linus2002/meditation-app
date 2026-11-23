@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+
+import { recordStoryFinished } from '@/lib/story-finishes';
 import Image from 'next/image';
 import { ChevronsLeft, Moon } from 'lucide-react';
 
@@ -60,7 +62,10 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
   const loop = mix ? false : savedLoop;
   const finishedRef = React.useRef(mix?.onFinished);
   finishedRef.current = mix?.onFinished;
-  const onEnded = React.useCallback(() => finishedRef.current?.(), []);
+  const onEnded = React.useCallback(() => {
+    recordStoryFinished(story.id);
+    finishedRef.current?.();
+  }, [story.id]);
   const narration = useStoryPlayer(story, loop, onEnded);
 
   const [music, setMusic] = React.useState(true);
