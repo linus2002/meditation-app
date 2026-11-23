@@ -414,7 +414,13 @@ export function PlayerView({
 
         <div className="flex items-center gap-1.5">
           <span className="flex rounded-full bg-black/25 backdrop-blur-md">
-            <DownloadButton meditationId={meditation.id} title={meditation.title} size="md" />
+            <DownloadButton
+              meditationId={meditation.id}
+              title={meditation.title}
+              track={meditation.track}
+              artwork={[meditation.image.src, ...(meditation.cover ? [meditation.cover.src] : [])]}
+              size="md"
+            />
           </span>
           <span className="flex rounded-full bg-black/25 backdrop-blur-md">
             <AddToMixButton item={{ kind: 'meditation', id: meditation.id }} title={meditation.title} />

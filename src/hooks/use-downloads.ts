@@ -98,7 +98,8 @@ export interface DownloadsApi {
   dismissError: () => void;
   isSaved: (id: string) => boolean;
   isBusy: (id: string) => boolean;
-  save: (id: string) => Promise<void>;
+  /** `media`: the recording and artwork addresses beyond the page (see saveSession). */
+  save: (id: string, media?: string[]) => Promise<void>;
   remove: (id: string) => Promise<void>;
   refresh: () => Promise<void>;
 }
@@ -126,7 +127,7 @@ export function useDownloads(): DownloadsApi {
     dismissError: () => setState({ error: null, failed: null }),
     isSaved: (id) => snapshot.status.sessions.some((entry) => entry.id === id),
     isBusy: (id) => snapshot.busy.includes(id),
-    save: (id) => run(id, () => saveSession(id), 'The session could not be saved.'),
+    save: (id, media) => run(id, () => saveSession(id, media), 'The session could not be saved.'),
     remove: (id) => run(id, () => removeSession(id), 'The session could not be removed.'),
     refresh,
   };

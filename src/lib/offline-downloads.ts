@@ -1,18 +1,15 @@
 'use client';
 
 /**
- * Saving a session to the device, and the honest limits of doing so.
+ * Saving a session to the device.
  *
- * Worth being plain about what is and is not downloaded here, because it is not
- * what a music app would mean by the word. Serenity synthesises every sound at
- * runtime — the soundscapes are oscillators and noise buffers, the narration is
- * the device's own speech engine — so there is no audio file to fetch, and the
- * sound already works with no network at all.
- *
- * What does not survive a flight is everything around the sound: the page, the
- * JavaScript that runs it, and above all the artwork, which on the web build is
- * served from `/_next/image?...` and so was never covered by the precache. That
- * is what saving pins, into a cache the worker keeps across deploys.
+ * A session is its page, the JavaScript that runs it, its artwork and, for most
+ * sessions, a recording streamed from Sanity's CDN. The soundscapes underneath
+ * are synthesised, so they need nothing. The worker reads the page and code
+ * from the HTML; the artwork (drawn after the page loads, from
+ * `/_next/image?...`) and the recording are not in it, so the player names them
+ * here. All of it goes into a cache the worker keeps across deploys, and a save
+ * that can't fetch every part fails rather than claim a copy that won't play.
  */
 
 export interface SavedSession {
@@ -104,9 +101,43 @@ export async function requestPersistentStorage(): Promise<boolean> {
   }
 }
 
-export async function saveSession(id: string): Promise<void> {
+/**
+ * Every address the browser may fetch for these artworks on this screen: each
+ * `srcset` candidate, since the device picks by pixel density and a variant
+ * missing offline is a blank frame. Matched by the image's file name, which is
+ * Sanity's content hash, inside the optimiser's `url=` parameter.
+ */
+export function artworkOnPage(sources: string[]): string[] {
+  if (typeof document === 'undefined') return [];
+  const names = sources
+    .map((src) => src.split('?')[0].split('/').pop())
+    .filter((name): name is string => Boolean(name));
+  if (names.length === 0) return [];
+
+  const found = new Set<string>();
+  for (const img of Array.from(document.images)) {
+    const candidates = [img.currentSrc, img.getAttribute('src') ?? '']
+      .concat((img.getAttribute('srcset') ?? '').split(',').map((part) => part.trim().split(/\s+/)[0]));
+    for (const candidate of candidates) {
+      if (!candidate) continue;
+      let url: URL;
+      try {
+        url = new URL(candidate, window.location.href);
+      } catch {
+        continue;
+      }
+      if (url.origin !== window.location.origin || url.pathname !== '/_next/image') continue;
+      const inner = url.searchParams.get('url') ?? '';
+      if (names.some((name) => inner.includes(name))) found.add(url.pathname + url.search);
+    }
+  }
+  return [...found];
+}
+
+/** `media`: the recording and artwork addresses the session needs beyond its page. */
+export async function saveSession(id: string, media: string[] = []): Promise<void> {
   await requestPersistentStorage();
-  await ask({ type: 'pin', id, route: `/player/${id}` }, PIN_TIMEOUT_MS);
+  await ask({ type: 'pin', id, route: `/player/${id}`, media }, PIN_TIMEOUT_MS);
 }
 
 export async function removeSession(id: string): Promise<void> {

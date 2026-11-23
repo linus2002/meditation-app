@@ -4,11 +4,16 @@ import * as React from 'react';
 import { ArrowDownToLine, Check, Loader2 } from 'lucide-react';
 
 import { useDownloads } from '@/hooks/use-downloads';
+import { artworkOnPage } from '@/lib/offline-downloads';
 import { cn } from '@/lib/utils';
 
 interface DownloadButtonProps {
   meditationId: string;
   title: string;
+  /** The session's recording, saved with it. */
+  track?: string;
+  /** The session's artwork sources, saved as this screen draws them. */
+  artwork?: string[];
   className?: string;
   size?: 'sm' | 'md';
 }
@@ -25,6 +30,8 @@ interface DownloadButtonProps {
 export function DownloadButton({
   meditationId,
   title,
+  track,
+  artwork = [],
   className,
   size = 'sm',
 }: DownloadButtonProps) {
@@ -57,7 +64,7 @@ export function DownloadButton({
             : `Save ${title} for offline`
       }
       disabled={busy}
-      onClick={() => (saved ? void remove(meditationId) : void save(meditationId))}
+      onClick={() => (saved ? void remove(meditationId) : void save(meditationId, [...(track ? [track] : []), ...artworkOnPage(artwork)]))}
       className={cn(
         'flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 hover:scale-110 active:scale-95 disabled:hover:scale-100',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
