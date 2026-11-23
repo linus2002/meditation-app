@@ -1,5 +1,6 @@
 import { AUTH_STORAGE_KEY, storedAccount, TEST_ACCOUNT, TEST_SESSION_KEY } from '@/lib/account-scope';
 import { getSupabase } from '@/lib/supabase/client';
+import { rememberGuestLikes } from '@/lib/video-likes';
 
 /**
  * Email sign-in with a one-time code, on the app's Supabase project.
@@ -182,6 +183,8 @@ export async function verifyEmailCode(email: string, code: string): Promise<void
     setTestSignedIn(true);
     return;
   }
+  // A guest's likes are kept for the account this signs in to (lib/video-likes).
+  await rememberGuestLikes().catch(() => undefined);
   const { error } = await client().auth.verifyOtp({
     email: normaliseEmail(email),
     token: code.trim(),

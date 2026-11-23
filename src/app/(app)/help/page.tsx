@@ -13,6 +13,7 @@ import {
   createThread,
   getThread,
   listThreads,
+  newestTime,
   replyToThread,
   SUPPORT_CATEGORIES,
   syncThread,
@@ -405,12 +406,18 @@ function Conversation({ id }: { id: string }) {
   /** Messages there when the screen opened don't animate in; new ones do. */
   const firstIdsRef = React.useRef<Set<string> | null>(null);
   const tempRef = React.useRef(0);
+  /**
+   * The newest message time the server has sent us. Our own reply is left out:
+   * using it would skip anything the team sent in the moment before it.
+   */
+  const cursorRef = React.useRef<string | null>(null);
 
   const load = React.useCallback(async () => {
     try {
       const data = await getThread(id);
       setThread({ subject: data.thread.subject, status: data.thread.status, category: data.thread.category });
       firstIdsRef.current ??= new Set(data.messages.map((m) => m.id));
+      cursorRef.current = newestTime(cursorRef.current, data.messages);
       setMessages((current) => mergeMessages(current ?? [], data.messages));
       setProblem(null);
     } catch (error) {
@@ -424,9 +431,9 @@ function Conversation({ id }: { id: string }) {
     syncingRef.current = true;
     const typing = Boolean(draftRef.current.trim()) && Date.now() - lastKeyRef.current < TYPING_MS;
     if (typing) lastSignalRef.current = Date.now();
-    const newest = shown.filter((m) => !m.pending).at(-1)?.created_at ?? null;
     try {
-      const data = await syncThread(id, newest, typing);
+      const data = await syncThread(id, cursorRef.current, typing);
+      cursorRef.current = newestTime(cursorRef.current, data.messages);
       setMessages((current) => mergeMessages(current ?? [], data.messages));
       setTeamTyping(data.typing);
       setThread((current) => (current && current.status !== data.status ? { ...current, status: data.status } : current));

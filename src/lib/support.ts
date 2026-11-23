@@ -127,3 +127,12 @@ export function closeThread(id: string) {
 export function supportErrorText(error: unknown): string {
   return error instanceof Error ? error.message : 'Something went wrong. Please try again.';
 }
+
+/** The later of `cursor` and the newest of `messages`, as the server wrote it. */
+export function newestTime(cursor: string | null, messages: { created_at: string }[]): string | null {
+  let newest = cursor;
+  for (const { created_at } of messages) {
+    if (!newest || Date.parse(created_at) > Date.parse(newest)) newest = created_at;
+  }
+  return newest;
+}

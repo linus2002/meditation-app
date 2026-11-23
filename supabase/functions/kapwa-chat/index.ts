@@ -13,19 +13,26 @@
  *   OLLAMA_API_KEY      required, from ollama.com -> Settings -> Keys
  *   KAPWA_MODEL         optional, default gpt-oss:20b
  *   KAPWA_HOURLY_LIMIT  optional, messages per person per hour, default 30
+ *   KAPWA_GLOBAL_HOURLY_LIMIT  optional, messages per hour from everyone together,
+ *                       default 2000: a ceiling on the bill whoever is sending
  * SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are provided by Supabase.
  */
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+import { parseLimit, quotaSubjects } from '../_shared/kapwa-limits.ts';
 import { kapwaMessages } from '../_shared/kapwa-prompt.ts';
 
 const OLLAMA_URL = 'https://ollama.com/api/chat';
 const MODEL = Deno.env.get('KAPWA_MODEL') ?? 'gpt-oss:20b';
-const HOURLY_LIMIT = Number(Deno.env.get('KAPWA_HOURLY_LIMIT') ?? '30');
+// A typo in either must not mean "no limit".
+const HOURLY_LIMIT = parseLimit(Deno.env.get('KAPWA_HOURLY_LIMIT'), 30);
+const GLOBAL_HOURLY_LIMIT = parseLimit(Deno.env.get('KAPWA_GLOBAL_HOURLY_LIMIT'), 2000);
 const MAX_TURNS = 12;
 const MAX_CHARS = 600;
-const MAX_CONTEXT_CHARS = 16_000;
+// The app's context is a list of sessions and features; this is room for it
+// and little else, since anything in it reaches the model as instructions do.
+const MAX_CONTEXT_CHARS = 8_000;
 
 const cors = {
   'Access-Control-Allow-Origin': '*',
@@ -86,22 +93,36 @@ Deno.serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
     { auth: { persistSession: false } },
   );
-  let subject: string | null = null;
+  let userId: string | null = null;
+  let anonymous = false;
   const token = req.headers.get('Authorization')?.replace(/^Bearer\s+/i, '');
   if (token && token.split('.').length === 3) {
     const { data } = await admin.auth.getUser(token);
-    if (data.user) subject = `user:${data.user.id}`;
+    if (data.user) {
+      userId = data.user.id;
+      anonymous = data.user.is_anonymous === true;
+    }
   }
-  if (!subject) {
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
-    subject = `ip:${await sha256(ip)}`;
+  // NOTE: check in the deployed function's logs which header carries the
+  // caller's address; the first x-forwarded-for value can be set by the caller.
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() ?? 'unknown';
+  const [own, everyone] = quotaSubjects({ userId, anonymous, ipHash: await sha256(ip) });
+
+  for (const [subject, limit] of [
+    [own, HOURLY_LIMIT],
+    [everyone, GLOBAL_HOURLY_LIMIT],
+  ] as const) {
+    const { data: allowed, error: quotaError } = await admin.rpc('kapwa_take_quota', {
+      p_subject: subject,
+      p_limit: limit,
+    });
+    // Unable to count is not permission to spend: the app falls back to its own replies.
+    if (quotaError) {
+      console.error('quota check failed', quotaError.message);
+      return json(503, { error: 'quota_unavailable' });
+    }
+    if (allowed === false) return json(429, { error: 'rate_limited' });
   }
-  const { data: allowed, error: quotaError } = await admin.rpc('kapwa_take_quota', {
-    p_subject: subject,
-    p_limit: HOURLY_LIMIT,
-  });
-  if (quotaError) console.error('quota check failed', quotaError.message);
-  else if (allowed === false) return json(429, { error: 'rate_limited' });
 
   const upstream = await fetch(OLLAMA_URL, {
     method: 'POST',

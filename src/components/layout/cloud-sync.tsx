@@ -5,6 +5,7 @@ import * as React from 'react';
 import { useAccountStatus } from '@/hooks/use-account';
 import { fetchResume, memberId, pushResume, syncSessions, watchResumeChanges } from '@/lib/cloud-sync';
 import { mergeRemoteResume } from '@/lib/resume';
+import { claimGuestLikes } from '@/lib/video-likes';
 import { useApp } from '@/providers/app-provider';
 
 /**
@@ -39,6 +40,7 @@ export function CloudSync() {
 
       const remote = await fetchResume();
       if (remote) await pushResume(mergeRemoteResume(remote));
+      await claimGuestLikes(() => undefined);
     })();
 
     return () => {

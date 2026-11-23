@@ -108,6 +108,15 @@ function when(iso: string): string {
 }
 
 /** Adds messages not already shown, oldest first, with ones still sending last. */
+/** The later of `cursor` and the newest of `messages`, as the server wrote it. */
+function newestTime(cursor: string | null, messages: { created_at: string }[]): string | null {
+  let newest = cursor;
+  for (const { created_at } of messages) {
+    if (!newest || Date.parse(created_at) > Date.parse(newest)) newest = created_at;
+  }
+  return newest;
+}
+
 function mergeMessages(current: Message[], incoming: Message[]): Message[] {
   const known = new Set(current.map((m) => m.id));
   const fresh = incoming.filter((m) => !known.has(m.id));
@@ -148,6 +157,14 @@ function SupportTool() {
   const firstIdsRef = React.useRef<Set<string>>(new Set());
   const tempRef = React.useRef(0);
   const endRef = React.useRef<HTMLDivElement>(null);
+  /**
+   * The newest message time the server has sent for the open conversation.
+   * Our own reply is left out: using it would skip a message the person sent
+   * in the moment before it.
+   */
+  const cursorRef = React.useRef<string | null>(null);
+  /** Unsent words per conversation, so nothing typed for one person reaches another. */
+  const draftsRef = React.useRef(new Map<string, string>());
   const scrolledRef = React.useRef(false);
 
   const loadList = React.useCallback(async () => {
@@ -187,23 +204,28 @@ function SupportTool() {
   const openThread = React.useCallback(
     async (id: string) => {
       if (id === selectedRef.current && detailRef.current) return;
+      const leaving = selectedRef.current;
+      if (leaving) draftsRef.current.set(leaving, draftRef.current);
       setSelected(id);
       selectedRef.current = id;
+      cursorRef.current = null;
       setDetail(null);
       setUserTyping(false);
-      setDraft('');
+      setDraft(draftsRef.current.get(id) ?? '');
       scrolledRef.current = false;
       setLoadingDetail(true);
       try {
         const data = await call<ThreadDetail>({ action: 'get', id });
         if (selectedRef.current !== id) return;
         firstIdsRef.current = new Set(data.messages.map((m) => m.id));
+        cursorRef.current = newestTime(null, data.messages);
         setDetail(data);
         setThreads((current) => current?.map((t) => (t.id === id ? { ...t, unread: false } : t)) ?? null);
       } catch (error) {
         toast.push({ status: 'error', title: error instanceof Error ? error.message : 'Could not open it.' });
       } finally {
-        setLoadingDetail(false);
+        // An older request finishing late must not clear the newer one's loading state.
+        if (selectedRef.current === id) setLoadingDetail(false);
       }
     },
     [toast],
@@ -217,15 +239,15 @@ function SupportTool() {
     syncingRef.current = true;
     const typing = Boolean(draftRef.current.trim()) && Date.now() - lastKeyRef.current < TYPING_MS;
     if (typing) lastSignalRef.current = Date.now();
-    const newest = current.messages.filter((m) => !m.pending).at(-1)?.created_at ?? null;
     try {
       const data = await call<{ status: Status; typing: boolean; messages: Message[] }>({
         action: 'sync',
         id,
-        after: newest,
+        after: cursorRef.current,
         typing,
       });
       if (selectedRef.current !== id) return;
+      cursorRef.current = newestTime(cursorRef.current, data.messages);
       setUserTyping(data.typing);
       setDetail((d) =>
         d && d.thread.id === id
@@ -289,13 +311,20 @@ function SupportTool() {
     };
     setDetail((d) => (d && d.thread.id === id ? { ...d, messages: [...d.messages, stand] } : d));
     setDraft('');
+    draftsRef.current.delete(id);
     lastKeyRef.current = 0;
     try {
-      const { message } = await call<{ message: Message }>({ action: 'reply', id, body, adminName });
+      const { message, status } = await call<{ message: Message; status?: Status }>({
+        action: 'reply',
+        id,
+        body,
+        adminName,
+      });
       setDetail((d) =>
         d && d.thread.id === id
           ? {
-              thread: { ...d.thread, status: 'answered' },
+              // Still "open" when a message from them crossed with this reply.
+              thread: { ...d.thread, status: status ?? 'answered' },
               messages: mergeMessages(d.messages.filter((m) => m.id !== tempId), [message]),
             }
           : d,
@@ -303,17 +332,21 @@ function SupportTool() {
       void loadList();
     } catch (error) {
       setDetail((d) => (d ? { ...d, messages: d.messages.filter((m) => m.id !== tempId) } : d));
-      setDraft((current) => current || body);
+      // Back into the draft of the conversation it was written for, wherever the screen is now.
+      if (selectedRef.current === id) setDraft((current) => current || body);
+      else draftsRef.current.set(id, draftsRef.current.get(id) || body);
       toast.push({ status: 'error', title: error instanceof Error ? error.message : 'Could not send the reply.' });
     }
   };
 
   const setStatus = async (status: Status) => {
-    if (!selected) return;
+    const id = selected;
+    if (!id) return;
     try {
-      await call({ action: 'status', id: selected, status });
+      await call({ action: 'status', id, status });
       toast.push({ status: 'success', title: status === 'closed' ? 'Closed' : `Marked ${status}` });
-      setDetail((d) => (d ? { ...d, thread: { ...d.thread, status } } : d));
+      // Only the conversation it was set on, even if another is open by now.
+      setDetail((d) => (d && d.thread.id === id ? { ...d, thread: { ...d.thread, status } } : d));
       void loadList();
     } catch (error) {
       toast.push({ status: 'error', title: error instanceof Error ? error.message : 'Could not change it.' });
