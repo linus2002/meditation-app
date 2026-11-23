@@ -223,6 +223,16 @@
    * `position: relative` sits in this layer so that an `absolute` utility on
    * the same element still wins.
    */
+  /*
+   * iPhone Safari zooms the page into any text field under 16px and leaves it
+   * zoomed. Fields on touch screens are set to 16px; desktop sizes are untouched.
+   */
+  @media (pointer: coarse) {
+    :is(input, textarea, select):is(.text-body-sm, .text-caption, .text-label) {
+      font-size: 16px;
+    }
+  }
+
   .tap-target {
     position: relative;
   }

@@ -31,7 +31,7 @@ import { readStoryFinishes, type StoryFinishes } from '@/lib/story-finishes';
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 const navButton =
-  'flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
+  'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
 
 /** "Today", "Tomorrow", or "Friday, 20 November". */
 function dayHeading(key: string, today: string): string {

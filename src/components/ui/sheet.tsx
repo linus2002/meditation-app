@@ -61,7 +61,11 @@ const SheetContent = React.forwardRef<
     <SheetOverlay data-theme={(props as { 'data-theme'?: string })['data-theme']} />
     <SheetPrimitive.Content ref={ref} className={cn(sheetVariants({ side }), className)} {...props}>
       {children}
-      <SheetPrimitive.Close className="absolute right-5 top-5 rounded-full p-1 text-ink-muted opacity-80 transition hover:opacity-100 focus:outline-none">
+      {/* A 44px target; on sheets that reach the top of the screen, below the status bar. */}
+      <SheetPrimitive.Close className={cn(
+        side === 'bottom' ? 'top-2.5' : 'top-[calc(env(safe-area-inset-top,0px)+10px)]',
+        'absolute right-2.5 flex h-11 w-11 items-center justify-center rounded-full text-ink-muted opacity-80 transition hover:opacity-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+      )}>
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>

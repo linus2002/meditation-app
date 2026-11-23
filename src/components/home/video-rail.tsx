@@ -95,7 +95,7 @@ function ControlButton({
       onClick={onClick}
       aria-label={label}
       aria-pressed={pressed}
-      className="flex h-8 w-8 items-center justify-center text-white transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+      className="flex h-11 w-11 items-center justify-center text-white transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
     >
       {children}
     </button>

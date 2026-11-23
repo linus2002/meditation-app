@@ -180,7 +180,7 @@ export function VideoFeed({
   }, [onClose]);
 
   return (
-    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Videos" className="fixed inset-0 z-50 bg-black">
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Videos" className="fixed inset-0 z-[60] mx-auto max-w-[430px] bg-black">
       <div
         ref={scrollerRef}
         className="rail h-full snap-y snap-mandatory overflow-y-scroll overscroll-contain"

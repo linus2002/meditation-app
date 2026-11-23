@@ -56,7 +56,8 @@ export function Analytics() {
     <div
       role="dialog"
       aria-labelledby="analytics-consent-title"
-      className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+92px)] z-50 flex justify-center px-4"
+      // Hidden wherever the app itself is (the desktop gate in DeviceStage).
+      className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+92px)] z-50 flex justify-center px-4 desktop:hidden"
     >
       <div className="pointer-events-auto w-full max-w-[398px] rounded-tile bg-surface px-4 py-3.5 shadow-pill">
         <div className="flex items-start gap-3.5">

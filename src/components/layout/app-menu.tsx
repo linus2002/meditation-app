@@ -59,7 +59,8 @@ export function AppMenu() {
 
       <SheetContent
         side="left"
-        className="flex w-full max-w-none flex-col sm:max-w-none overflow-y-auto border-none bg-canvas px-4 pb-[calc(env(safe-area-inset-bottom,0px)+20px)] pt-[calc(env(safe-area-inset-top,0px)+20px)]"
+        // Within the app's 430px frame on a tablet, not across the whole window.
+        className="right-0 mx-auto flex w-full max-w-[430px] flex-col sm:max-w-[430px] overflow-y-auto border-none bg-canvas px-4 pb-[calc(env(safe-area-inset-bottom,0px)+20px)] pt-[calc(env(safe-area-inset-top,0px)+20px)]"
       >
         <SheetTitle className="sr-only">Menu</SheetTitle>
         <SheetDescription className="sr-only">Every screen in Serenity</SheetDescription>
