@@ -34,9 +34,13 @@ import { Constellation } from './constellation';
 import { REVEAL, clamp, usePrefersReducedMotion, useReveal } from './motion';
 import { Phone } from './phone';
 
-/* Store links: swap in the real listings once they are live. */
-export const APP_STORE_URL = '#download';
-export const PLAY_STORE_URL = '#download';
+/*
+ * There are no store listings yet. Both buttons go to /get, which offers the
+ * same two ways in: the Android app as a download, and iOS from the Home
+ * Screen. The hash opens the matching steps there.
+ */
+export const IOS_URL = '/get#ios';
+export const ANDROID_URL = '/get#android';
 
 const BLUE = '#1EA0DA';
 
@@ -105,36 +109,36 @@ function AppleLogo({ className }: { className?: string }) {
   );
 }
 
-/** The four-colour Play triangle. */
-function PlayLogo({ className }: { className?: string }) {
+/** The Android robot's head, as on /get. */
+function AndroidLogo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 22 24" aria-hidden="true" className={className}>
-      <path d="M1 .9 L12.3 12 L1 23.1 C.6 22.8.4 22.3.4 21.7 V2.3 C.4 1.7.6 1.2 1 .9 Z" fill="#4285F4" />
-      <path d="M1 .9 C1.5.5 2.2.4 3 .9 L16.2 8.4 L12.3 12 Z" fill="#34A853" />
-      <path d="M16.2 8.4 L20.4 10.8 C21.6 11.5 21.6 12.5 20.4 13.2 L16.2 15.6 L12.3 12 Z" fill="#FBBC04" />
-      <path d="M12.3 12 L16.2 15.6 L3 23.1 C2.2 23.6 1.5 23.5 1 23.1 Z" fill="#EA4335" />
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="M2.5 18.5a9.5 9.5 0 0 1 19 0z" fill="#3ddc84" />
+      <path d="M6.6 10.6 4.6 7.2M17.4 10.6l2-3.4" stroke="#3ddc84" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="8.3" cy="14.6" r="1.1" fill="#000" />
+      <circle cx="15.7" cy="14.6" r="1.1" fill="#000" />
     </svg>
   );
 }
 
-/** The App Store and Google Play badges, drawn after the official artwork. */
+/** The two ways in, worded as on /get: there are no store listings yet. */
 function StoreButtons() {
   const badge =
-    'inline-flex h-[54px] items-center gap-2.5 rounded-[10px] bg-black pl-3.5 pr-5 text-white transition hover:-translate-y-0.5 hover:shadow-[0_16px_30px_-14px_rgba(0,0,0,0.6)] [font-family:-apple-system,BlinkMacSystemFont,"Helvetica_Neue",Arial,sans-serif]';
+    'inline-flex h-[54px] items-center gap-2.5 rounded-[10px] bg-black pl-3.5 pr-5 text-white transition hover:-translate-y-0.5 hover:shadow-[0_16px_30px_-14px_rgba(0,0,0,0.6)]';
   return (
     <div className="flex flex-wrap gap-3">
-      <a href={APP_STORE_URL} aria-label="Download on the App Store" className={badge}>
-        <AppleLogo className="h-[30px] w-[30px]" />
+      <a href={ANDROID_URL} className={cn(badge, 'border border-[#A6A6A6]')}>
+        <AndroidLogo className="h-[30px] w-[30px]" />
         <span className="flex flex-col leading-none">
-          <span className="text-[12px] font-medium tracking-[0.01em]">Download on the</span>
-          <span className="mt-[3px] text-[25px] font-semibold tracking-[-0.02em]">App Store</span>
+          <span className="text-[12px] font-medium">Download for</span>
+          <span className="mt-[3px] text-[22px] font-semibold">Android</span>
         </span>
       </a>
-      <a href={PLAY_STORE_URL} aria-label="Get it on Google Play" className={cn(badge, 'border border-[#A6A6A6]')}>
-        <PlayLogo className="h-[28px] w-[26px]" />
+      <a href={IOS_URL} className={badge}>
+        <AppleLogo className="h-[28px] w-[28px]" />
         <span className="flex flex-col leading-none">
-          <span className="text-[11px] font-medium tracking-[0.04em]">GET IT ON</span>
-          <span className="mt-[3px] text-[24px] font-medium tracking-[-0.01em]">Google Play</span>
+          <span className="text-[12px] font-medium">Download on</span>
+          <span className="mt-[3px] text-[22px] font-semibold">iOS</span>
         </span>
       </a>
     </div>

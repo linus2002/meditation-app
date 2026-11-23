@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronRight, Loader2, MessageCircleQuestion, Plus, Send } from 'lucide-react';
 
+import { GuestHelp } from '@/components/help/guest-help';
 import { CHAT_END_CLASS, ChatDock } from '@/components/layout/chat-dock';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { GradientButton } from '@/components/shared/gradient-button';
@@ -24,6 +25,7 @@ import {
   type SupportThread,
 } from '@/lib/support';
 import { markSupportSeen } from '@/hooks/use-support-unread';
+import { useAccountStatus } from '@/hooks/use-account';
 import { accountEmail } from '@/lib/auth';
 import { useApp } from '@/providers/app-provider';
 import { cn } from '@/lib/utils';
@@ -647,6 +649,16 @@ function HelpScreen() {
   const params = useSearchParams();
   const threadId = params.get('t');
   const composing = params.get('new') === '1';
+  const status = useAccountStatus();
+
+  if (status !== 'member') {
+    return (
+      <div className="flex flex-1 flex-col pb-6">
+        <ScreenHeader eyebrow="Serenity team" title="Help & support" />
+        {status === 'guest' ? <GuestHelp /> : <Skeleton className="mx-5 mt-6 h-[240px]" />}
+      </div>
+    );
+  }
 
   return (
     <div className={cn('flex flex-1 flex-col', threadId ? null : 'pb-6')}>

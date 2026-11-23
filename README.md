@@ -560,9 +560,12 @@ plays behind it.
 
 Where sound is used:
 
-- **Player** — the session's bed starts and stops with the transport, with a
-  mute toggle and level slider. A struck bell closes a completed session and the
-  bed fades away over four seconds.
+- **Player** — the session's bed starts and stops with the transport. Under a
+  recorded voice it plays at about a third of its level so the words stay
+  clear; "Ambient background" in Settings switches it off. There is no in-app
+  volume or mute control: the phone's own volume buttons set the level (iOS
+  ignores a web page's volume anyway). A struck bell closes a completed session
+  and the bed fades away over four seconds.
 - **Breath cues** — a soft tone at the top of each inhale (528Hz) and exhale
   (396Hz), driven by the same clock as the orb. Toggleable in Preferences.
 - **Haptics** — `navigator.vibrate` pulses on the same breath phases, where the

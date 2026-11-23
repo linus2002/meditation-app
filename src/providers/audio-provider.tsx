@@ -18,7 +18,8 @@ interface AudioContextValue {
   setVolume: (value: number) => void;
   toggleMuted: () => void;
   /** Starts (or crossfades to) a soundscape. Resolves once audio is running. */
-  play: (id: SoundscapeId) => Promise<void>;
+  /** `level` below 1 sits the scape under a voice. */
+  play: (id: SoundscapeId, level?: number) => Promise<void>;
   /**
    * Unlocks the audio context from a user gesture without starting a bed —
    * needed when the only sounds are one-shots, like the timer's bells.
@@ -137,13 +138,13 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   const cancelFadeStop = () => window.clearTimeout(fadeStopRef.current);
 
   const play = React.useCallback(
-    async (id: SoundscapeId) => {
+    async (id: SoundscapeId, level?: number) => {
       cancelFadeStop();
       const running = await audioEngine.resume();
       if (!running) return;
       // Re-assert the level in case a previous fade-out left the master down.
       audioEngine.setVolume(volume);
-      audioEngine.play(id);
+      audioEngine.play(id, level);
       setPlaying(id);
     },
     [volume],

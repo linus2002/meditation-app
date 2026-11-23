@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail } from 'lucide-react';
 
@@ -98,6 +99,12 @@ export default function LoginPage() {
         <p className="mt-1.5 text-center text-label text-ink-muted">
           Guests can look around. Sign in to start sessions.
         </p>
+        <Link
+          href="/help"
+          className="mx-auto mt-4 block w-fit rounded-full px-3 py-1 text-label font-medium text-ink-muted underline underline-offset-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        >
+          Trouble signing in? Get help
+        </Link>
       </div>
 
       <EmailSignInSheet

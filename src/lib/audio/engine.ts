@@ -24,7 +24,7 @@ export class AudioEngine {
   private bus: GainNode | null = null;
   private analyser: AnalyserNode | null = null;
   private buffers: Record<NoiseColor, AudioBuffer> | null = null;
-  private current: { id: SoundscapeId; handle: SoundscapeHandle } | null = null;
+  private current: { id: SoundscapeId; handle: SoundscapeHandle; level: GainNode } | null = null;
   private music: {
     src: string;
     element: HTMLAudioElement;
@@ -146,14 +146,26 @@ export class AudioEngine {
     };
   }
 
-  /** Crossfades to `id`. Calling it with the scape already playing is a no-op. */
-  play(id: SoundscapeId): void {
+  /**
+   * Crossfades to `id`, at `level` (1 is full; lower sits it under a voice).
+   * With the scape already playing, only its level moves.
+   */
+  play(id: SoundscapeId, level = 1): void {
     const ctx = this.ensure();
     if (!ctx || !this.bus || !this.buffers) return;
-    if (this.current?.id === id) return;
+    const target = Math.min(1, Math.max(0, level));
+    if (this.current?.id === id) {
+      const gain = this.current.level.gain;
+      gain.cancelScheduledValues(ctx.currentTime);
+      gain.setTargetAtTime(target, ctx.currentTime, 0.3);
+      return;
+    }
 
     this.current?.handle.stop(0.7);
-    this.current = { id, handle: buildSoundscape(id, ctx, this.bus, this.buffers) };
+    const gain = ctx.createGain();
+    gain.gain.value = target;
+    gain.connect(this.bus);
+    this.current = { id, handle: buildSoundscape(id, ctx, gain, this.buffers), level: gain };
   }
 
   stop(fadeSeconds = 0.8): void {
