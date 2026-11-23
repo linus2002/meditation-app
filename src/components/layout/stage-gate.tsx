@@ -9,7 +9,8 @@ import { DeviceStage } from '@/components/layout/device-stage';
  * Routes that are web pages rather than app screens. They are read on laptops
  * as much as phones, so they skip the handset frame and the desktop gate.
  */
-const FULL_WIDTH_ROUTES = ['/landing'];
+// The account-deletion page is linked from app store listings and read on laptops.
+const FULL_WIDTH_ROUTES = ['/landing', '/account-deletion'];
 
 /**
  * Picks the frame for a route. The pathname is known during server rendering,

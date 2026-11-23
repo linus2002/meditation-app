@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronRight, MessageCircleQuestion, User } from 'lucide-react';
 
 import { AccountCard } from '@/components/auth/account-card';
+import { DeleteAccount } from '@/components/auth/delete-account';
 import { InstallPrompt } from '@/components/layout/install-prompt';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { SectionTitle } from '@/components/shared/section-title';
@@ -351,6 +352,11 @@ export default function ProfilePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Last, and apart from everything else: it cannot be undone. */}
+      <section className="mt-8 px-5">
+        <DeleteAccount />
       </section>
     </div>
   );

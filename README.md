@@ -364,6 +364,19 @@ Analytics consent and identity are per account too. Autocapture and session
 replay are off (`src/lib/analytics.ts`), and Android backup is off, so private
 entries are not copied to the cloud or to a new phone.
 
+## Deleting an account
+
+Profile → Delete account (typed confirmation) calls Studio's `/api/account`
+(`studio/api/_lib/account.ts`). It removes the person's support conversations,
+then their PostHog person and events, then the Supabase account, which takes
+every synced table with it (`on delete cascade`). The phone then erases that
+account's local stores.
+
+PostHog deletion needs `POSTHOG_PERSONAL_API_KEY` with the **person:write**
+scope on the Studio's Vercel project. With the Analytics tab's read-only key the
+account is still deleted, the person is told the team will remove analytics, and
+the Studio logs it. `/account-deletion` is the public page for store listings.
+
 ## Kapwa, the built-in guide
 
 The raised button in the middle of the bottom bar, drawn with the app's own

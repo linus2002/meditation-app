@@ -451,5 +451,11 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
     }
   }
 
-  return { whoIs, forUser, forAdmin, safely, configured: Boolean(sql) };
+  /** Every conversation a person ever started, and its messages: for deleting an account. */
+  async function eraseUser(userId: string): Promise<void> {
+    await ensureSchema();
+    await sql!`delete from support_threads where user_id = ${userId}`;
+  }
+
+  return { whoIs, forUser, forAdmin, safely, eraseUser, configured: Boolean(sql) };
 }
