@@ -14,7 +14,7 @@ interface SectionTitleProps {
 export function SectionTitle({ children, actionHref, actionLabel, className }: SectionTitleProps) {
   return (
     <div className={cn('flex items-baseline justify-between gap-3', className)}>
-      <h2 className="text-[0.9375rem] font-medium leading-none text-ink-soft">{children}</h2>
+      <h2 className="text-[0.9375rem] font-semibold leading-none text-ink-soft">{children}</h2>
       {actionHref && actionLabel ? (
         <Link
           href={actionHref}

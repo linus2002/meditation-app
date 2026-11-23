@@ -304,7 +304,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
 
           <h1
             aria-live="polite"
-            className="mt-[clamp(18px,4vh,32px)] text-[clamp(1.375rem,7vw,1.75rem)] font-bold leading-tight tracking-[-0.02em] text-ink"
+            className="mt-[clamp(18px,4vh,32px)] text-[clamp(1.375rem,7vw,1.75rem)] font-semibold leading-tight tracking-[-0.02em] text-ink"
           >
             {pose.name}
           </h1>
@@ -457,7 +457,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
           {resumeFrom !== null ? 'Continue' : 'Start'}
         </button>
 
-        <h2 className="mt-7 text-[0.9375rem] font-medium leading-none text-ink-soft">The poses</h2>
+        <h2 className="mt-7 text-[0.9375rem] font-semibold leading-none text-ink-soft">The poses</h2>
         <ol className="mt-3 space-y-1.5">
           {session.poses.map((item, index) => (
             <li

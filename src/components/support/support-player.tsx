@@ -241,7 +241,7 @@ export function SupportPlayer({
 
           <h1
             className={cn(
-              'font-bold leading-tight tracking-[-0.02em] text-ink',
+              'font-semibold leading-tight tracking-[-0.02em] text-ink',
               size('text-[1.5rem]', 'text-[1.8125rem]'),
             )}
           >

@@ -258,7 +258,7 @@ export function CalendarView() {
 
         {dayDone.length > 0 ? (
           <>
-            <h3 className="mt-5 text-label font-medium uppercase tracking-wide text-ink-faint">Practised</h3>
+            <h3 className="mt-5 text-label font-semibold text-ink-faint">Practised</h3>
             <ul className="mt-2 space-y-1.5">
               {dayDone.map((record) => {
                 const title =

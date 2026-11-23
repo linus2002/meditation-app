@@ -31,7 +31,7 @@ export function HomeSection({
     <section className={cn('pt-7', className)}>
       <div className="px-5">
         <div className="flex items-baseline justify-between gap-3">
-          <h2 className="text-[clamp(1.0625rem,4.8vw,1.25rem)] font-medium leading-tight tracking-[-0.01em] text-ink">
+          <h2 className="text-[clamp(1.0625rem,4.8vw,1.25rem)] font-semibold leading-tight tracking-[-0.01em] text-ink">
             {title}
           </h2>
           {actionHref && actionLabel ? (

@@ -78,7 +78,7 @@ export function SearchResults({ query, results }: { query: string; results: Resu
 
       {results.programs.length > 0 ? (
         <section className="mt-4">
-          <SectionTitle>Programmes · {results.programs.length}</SectionTitle>
+          <SectionTitle>Programs · {results.programs.length}</SectionTitle>
           <ul className="mt-3 space-y-2.5">
             {results.programs.map((program) => (
               <ProgramRow key={program.id} program={program} />

@@ -459,7 +459,7 @@ export function PlayerView({
         {/* The title floats over the foot of the artwork, poster-style. */}
         <div className="mt-[clamp(10px,1.8vh,16px)] text-center">
           <p className="text-caption font-medium leading-none text-ink-soft">{meditation.subtitle}</p>
-          <h1 className="mt-2 text-[clamp(1.625rem,8.4vw,2.125rem)] font-medium leading-[1.08] tracking-[-0.02em] text-ink drop-shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
+          <h1 className="mt-2 text-[clamp(1.625rem,8.4vw,2.125rem)] font-semibold leading-[1.08] tracking-[-0.02em] text-ink drop-shadow-[0_2px_16px_rgba(0,0,0,0.25)]">
             {meditation.title}
           </h1>
         </div>

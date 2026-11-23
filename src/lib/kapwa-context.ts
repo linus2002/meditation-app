@@ -24,7 +24,7 @@ export function appFeatures(
   return [
     'Bottom bar: Home, Meditations, Kapwa (middle button), Yoga, Sleep.',
     'Home: today’s suggested session, daily goal, streak and recent activity.',
-    'Meditations: the library by mood category (Focus, Sleep, Anxiety, Happiness, Relaxation, Breathing) and free multi-session programmes. Tap a session to play it; tap the heart to save it to Favourites; tap download to keep it offline.',
+    'Meditations: the library by mood category (Focus, Sleep, Anxiety, Happiness, Relaxation, Breathing) and free multi-session programs. Tap a session to play it; tap the heart to save it to Saved; tap download to keep it offline.',
     'Yoga: short guided yoga sessions with a spoken voice guide.',
     'Sleep: sleep sessions, a soundscape mixer and a sleep log.',
     'Profile: streak, mindful minutes and sessions count; Daily Goal (set your minutes per day); Preferences; Shortcuts; account sign-in and sign-out.',
@@ -106,7 +106,7 @@ export function buildKapwaContext(input: KapwaContextInput): string {
     `STARTED BUT NOT FINISHED (${started.length}):`,
     ...list(started),
     '',
-    `FAVOURITES (${saved.length}):`,
+    `SAVED (${saved.length}):`,
     ...list(saved),
     '',
     'PROGRAMMES (free, multi-session, in Meditations):',

@@ -168,9 +168,9 @@ export const ASSESSMENT_QUESTIONS: AssessmentQuestion[] = [
     title: 'How would you like to start?',
     description: 'You can switch any time.',
     options: [
-      { id: 'program', label: 'A step-by-step programme', description: 'A short course, one session a day', tags: ['format:program', 'format:program'] },
+      { id: 'program', label: 'A step-by-step program', description: 'A short course, one session a day', tags: ['format:program', 'format:program'] },
       { id: 'pick', label: 'Pick sessions as I go', description: 'Something new whenever I feel like it', tags: ['format:meditation'] },
-      { id: 'both', label: 'A mix of both', description: 'A programme plus extras', tags: ['format:program', 'format:meditation'] },
+      { id: 'both', label: 'A mix of both', description: 'A program plus extras', tags: ['format:program', 'format:meditation'] },
     ],
   },
 ];

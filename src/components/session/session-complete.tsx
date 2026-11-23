@@ -73,7 +73,7 @@ export function SessionComplete({
           <Check className="h-7 w-7 text-white" strokeWidth={2.4} />
         </span>
 
-        <p className="mt-4 text-[clamp(1.625rem,8vw,2rem)] font-bold leading-none tracking-[-0.02em] text-ink">
+        <p className="mt-4 text-[clamp(1.625rem,8vw,2rem)] font-semibold leading-none tracking-[-0.02em] text-ink">
           {minutes >= 1 ? `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : skipped ? 'Skipped ahead' : 'Under a minute'}
         </p>
         <p className="mt-2 text-caption leading-none text-ink-muted">

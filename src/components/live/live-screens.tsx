@@ -50,7 +50,7 @@ export function PlayerScreen({ id }: { id: string }) {
 
 export function ProgramPageScreen({ id }: { id: string }) {
   const program = getProgram(id);
-  if (!program) return <Gone what="programme" />;
+  if (!program) return <Gone what="program" />;
   return <ProgramScreen program={program} />;
 }
 

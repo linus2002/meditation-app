@@ -1,4 +1,4 @@
-import { Compass, Flower2, MessageCircleHeart, PersonStanding, UserRound } from 'lucide-react';
+import { Compass, Flower2, MessageCircleHeart, MessageCircleQuestion, PersonStanding, UserRound } from 'lucide-react';
 
 import { onContentChange } from '@/content';
 import { allSessions } from '@/data/meditations';
@@ -17,9 +17,9 @@ const PAGES: (Shortcut & { keywords?: string })[] = [
   {
     href: '/meditations',
     label: 'Meditations',
-    description: 'The full library of guided sessions and programmes',
+    description: 'The full library of guided sessions and programs',
     icon: Flower2,
-    keywords: 'library sessions programmes programs',
+    keywords: 'library sessions programs programmes',
   },
   {
     href: '/yoga',
@@ -48,6 +48,13 @@ const PAGES: (Shortcut & { keywords?: string })[] = [
     description: 'Your account, preferences and shortcuts',
     icon: UserRound,
     keywords: 'account settings preferences',
+  },
+  {
+    href: '/help',
+    label: 'Help & support',
+    description: 'Sign-in tips, or ask the Serenity team',
+    icon: MessageCircleQuestion,
+    keywords: 'help support contact problem concern sign in login trouble',
   },
   ...appShortcuts,
 ];
@@ -95,10 +102,66 @@ export function queryTerms(query: string): string[] {
 }
 
 /**
+ * Edit distance between two short words, counting a swap of two neighbouring
+ * letters as one slip ("brehte" is one away from "breathe", not two).
+ */
+export function editDistance(a: string, b: string): number {
+  const rows = a.length + 1;
+  const cols = b.length + 1;
+  const d: number[][] = Array.from({ length: rows }, (_, i) => {
+    const row = new Array<number>(cols).fill(0);
+    row[0] = i;
+    return row;
+  });
+  for (let j = 0; j < cols; j++) d[0][j] = j;
+  for (let i = 1; i < rows; i++) {
+    for (let j = 1; j < cols; j++) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
+      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
+        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
+      }
+    }
+  }
+  return d[rows - 1][cols - 1];
+}
+
+/** How many slips a term of this length may carry and still count. */
+function slipsAllowed(term: string): number {
+  if (term.length < 4) return 0;
+  return term.length < 8 ? 1 : 2;
+}
+
+/**
+ * Whether a mistyped term is close to the start of some word in the text:
+ * "breth" to "breathing", "meditaton" to "meditation". The word's opening is
+ * compared at the term's own length and one either side, so a dropped or extra
+ * letter still lines up.
+ */
+export function nearlyMatches(term: string, text: string): boolean {
+  const allowed = slipsAllowed(term);
+  if (allowed === 0) return false;
+  for (const word of text.split(/[^\p{L}\p{N}]+/u)) {
+    if (word.length < term.length - allowed) continue;
+    for (let length = term.length - 1; length <= term.length + 1; length++) {
+      if (length < 1 || length > word.length) continue;
+      if (editDistance(term, word.slice(0, length)) <= allowed) return true;
+    }
+  }
+  return false;
+}
+
+/** A near miss counts for less than any exact hit in the same field. */
+const NEAR_MISS_SHARE = 1 / 3;
+
+/**
  * Scores one entry against the terms, or returns 0 when any term is missing.
  *
  * A term scores its best field rather than every field it appears in, so a word
- * repeated through a long description cannot outrank a title match.
+ * repeated through a long description cannot outrank a title match. A term
+ * found nowhere as typed may still match a near spelling in the title,
+ * subtitle or attributes (not the long body text, where near misses are
+ * mostly noise), for a smaller score.
  */
 function score<T>(entry: Entry<T>, terms: string[]): number {
   let total = 0;
@@ -111,6 +174,13 @@ function score<T>(entry: Entry<T>, terms: string[]): number {
       const boundary = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(field.text);
       const value = boundary ? field.weight : field.weight / 2;
       if (value > best) best = value;
+    }
+    if (best === 0) {
+      for (const field of entry.fields) {
+        if (field.weight < WEIGHT_ATTRIBUTE) continue;
+        const value = field.weight * NEAR_MISS_SHARE;
+        if (value > best && nearlyMatches(term, field.text)) best = value;
+      }
     }
     if (best === 0) return 0;
     total += best;

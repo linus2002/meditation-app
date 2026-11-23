@@ -178,7 +178,7 @@ const NEW_FEATURES: { title: string; body: string; icon: LucideIcon | 'ring' }[]
     icon: Flower2,
   },
   {
-    title: 'Programmes',
+    title: 'Programs',
     body: 'Short courses, a few sessions long.',
     icon: Layers,
   },

@@ -36,10 +36,10 @@ export function ProgramScreen({ program }: { program: Program }) {
             style={{ backgroundColor: program.scrim }}
           />
           <span className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-            <span className="text-[clamp(1.375rem,6.5vw,1.75rem)] font-bold uppercase leading-[1.05] tracking-[0.01em] text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">
+            <span className="text-[clamp(1.375rem,6.5vw,1.75rem)] font-semibold leading-[1.1] tracking-[-0.01em] text-white drop-shadow-[0_2px_14px_rgba(0,0,0,0.45)]">
               {program.title}
             </span>
-            <span className="mt-2 text-label font-semibold uppercase tracking-[0.28em] text-white/80">
+            <span className="mt-2 text-caption font-medium tracking-[0.01em] text-white/80">
               {program.author}
             </span>
           </span>

@@ -252,7 +252,7 @@ function AssessmentResult({
                   <Image src={pick.image} alt="" fill sizes="56px" placeholder="blur" className="object-cover" />
                 </span>
                 <span className="min-w-0 flex-1">
-                  <span className="block text-label font-semibold uppercase tracking-[0.06em] text-aurora-blue">
+                  <span className="block text-label font-semibold tracking-[0.01em] text-aurora-blue">
                     {pick.kind}
                   </span>
                   <span className="mt-0.5 block truncate text-body-sm font-semibold leading-tight text-ink">

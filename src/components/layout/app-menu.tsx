@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ChevronRight, Menu, Settings2, User } from 'lucide-react';
+import { ChevronRight, Menu, MessageCircleQuestion, Settings2, User } from 'lucide-react';
 
 import { IconButton } from '@/components/shared/icon-button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -106,6 +106,12 @@ export function AppMenu() {
             label="Profile and preferences"
             description="Your progress, light mode, reminders and sounds"
             icon={Settings2}
+          />
+          <MenuRow
+            href="/help"
+            label="Help & support"
+            description="Sign-in tips, or ask the Serenity team"
+            icon={MessageCircleQuestion}
           />
         </ul>
       </SheetContent>

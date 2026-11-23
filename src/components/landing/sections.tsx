@@ -211,7 +211,7 @@ export function Hero() {
             </span>
           </h1>
           <p className="mt-7 max-w-[34rem] animate-rise-in text-[1.05rem] leading-[1.75] text-[#4A5B6B] [animation-delay:160ms]">
-            Getmeds Meditation is a calm companion for your phone. Guided sessions, breathing,
+            Serenity is a calm companion for your phone. Guided sessions, breathing,
             sleep sounds, stories and yoga, with your progress
             kept honestly on your own device.
           </p>

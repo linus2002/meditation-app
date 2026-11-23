@@ -36,6 +36,27 @@ export default function ProfilePage() {
   // through every keystroke.
   const [draftName, setDraftName] = React.useState('');
   React.useEffect(() => setDraftName(name), [name]);
+  // Leaving the screen mid-edit (Back, a tab, the phone's back gesture)
+  // unmounts the field without a blur, which used to drop what was typed. Kept
+  // here instead, and saved on the way out or when the app is put away.
+  const unsaved = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    const save = () => {
+      if (unsaved.current === null) return;
+      setName(unsaved.current);
+      unsaved.current = null;
+    };
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') save();
+    };
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', save);
+    return () => {
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', save);
+      save();
+    };
+  }, [setName]);
   const { permission, mode: reminderMode, inApp, enable, disable } = useReminders();
   const supportUnread = useSupportUnread();
 
@@ -115,7 +136,7 @@ export default function ProfilePage() {
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="truncate text-[1.125rem] font-bold leading-tight tracking-[-0.01em] text-ink">
+          <p className="truncate text-[1.125rem] font-semibold leading-tight tracking-[-0.01em] text-ink">
             {hydrated && name ? name : 'Your practice'}
           </p>
           <p className="mt-1 text-caption leading-snug text-ink-muted">
@@ -140,8 +161,14 @@ export default function ProfilePage() {
           maxLength={40}
           autoComplete="given-name"
           placeholder="Your first name"
-          onChange={(event) => setDraftName(event.target.value)}
-          onBlur={() => setName(draftName)}
+          onChange={(event) => {
+            setDraftName(event.target.value);
+            unsaved.current = event.target.value;
+          }}
+          onBlur={() => {
+            setName(draftName);
+            unsaved.current = null;
+          }}
           onKeyDown={(event) => {
             if (event.key === 'Enter') event.currentTarget.blur();
           }}

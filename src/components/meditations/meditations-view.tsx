@@ -216,7 +216,7 @@ export function MeditationsView() {
 
           <section className="mt-7 px-5">
             <SectionTitle actionHref={savedCount > 0 ? '/favorites' : undefined} actionLabel="See all">
-              Favorites
+              Saved
             </SectionTitle>
 
             {!hydrated ? (
@@ -236,7 +236,7 @@ export function MeditationsView() {
                   <Bookmark className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />
                 </span>
                 <p className="text-body-sm leading-snug text-ink-muted">
-                  Save your favorite content into your personal library.
+                  Tap the heart on anything you like to keep it here.
                 </p>
               </div>
             )}

@@ -18,7 +18,7 @@ export function SearchBarLink({ className }: { className?: string }) {
       )}
     >
       <Search className="h-4 w-4 shrink-0 text-ink-muted" strokeWidth={1.7} />
-      <span className="min-w-0 truncate">Search programmes, sessions, stories, yoga…</span>
+      <span className="min-w-0 truncate">Search programs, sessions, stories, yoga…</span>
     </Link>
   );
 }

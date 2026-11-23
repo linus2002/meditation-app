@@ -91,7 +91,7 @@ export function AccountCard() {
       {state.confirming ? (
         <div className="mt-3 border-t border-overlay/[0.08] pt-3">
           <p className="text-label leading-relaxed text-ink-muted">
-            Your sessions, reflections and favorites will be hidden on this phone until you sign in
+            Your sessions, reflections and saved items will be hidden on this phone until you sign in
             again. Nothing is erased.
           </p>
           <div className="mt-3 flex gap-2">
