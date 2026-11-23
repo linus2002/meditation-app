@@ -290,7 +290,7 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
         </h1>
         <p className="mt-2 text-caption leading-relaxed text-ink-muted">{story.description}</p>
         <p className="mt-1.5 text-label leading-none text-ink-faint">
-          Read by {story.voice}
+          Read by {story.voice}, an AI voice
         </p>
       </div>
 

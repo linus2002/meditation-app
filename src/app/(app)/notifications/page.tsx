@@ -145,7 +145,7 @@ export default function NotificationsPage() {
               body:
                 mode === 'native'
                   ? 'Reminders are scheduled with your phone, so they arrive even when Serenity is closed.'
-                  : 'In a browser, reminders arrive while Serenity is open. Install it to your home screen for the best chance of seeing them.',
+                  : 'In a browser, reminders arrive only while Serenity is open, in a tab or from the home screen. The Android app can remind you with it closed.',
             };
 
   const StatusIcon = status.icon;

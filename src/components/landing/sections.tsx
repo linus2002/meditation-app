@@ -352,7 +352,7 @@ export function Measured({ counts }: { counts: LandingCounts }) {
   const stats = [
     { value: counts.meditations, label: 'Guided sessions' },
     { value: counts.programs, label: 'Programs' },
-    { value: counts.stories, label: 'Sleep stories' },
+    { value: counts.stories, label: 'Stories read aloud' },
     { value: counts.yoga, label: 'Yoga flows' },
   ];
   return (
@@ -401,10 +401,10 @@ const FEATURES = [
   { icon: Route, title: 'Programs', text: 'Multi-session journeys such as Sleep Mastery and Breath School, played in order.' },
   { icon: Wind, title: 'Breathing orb', text: 'Paced breath with a soft tone at each turn and gentle haptics where the phone allows.' },
   { icon: Moon, title: 'Sleep', text: 'A four-sound mixer, a wind-down timer that fades it out, and a nightly sleep log.' },
-  { icon: BookOpen, title: 'Stories read aloud', text: 'Original sleep stories narrated by the device voice, with skip, scrub and a sleep timer.' },
+  { icon: BookOpen, title: 'Stories read aloud', text: 'Original stories for sleep and calm, read by AI voices, with skip, scrub and a sleep timer.' },
   { icon: PersonStanding, title: 'Yoga', text: 'Gentle guided flows, one pose at a time, with a voice guide and a bell to move.' },
   { icon: Timer, title: 'Unguided timer', text: 'Sit for 3 to 60 minutes with interval bells, a settling pause and optional ambience.' },
-  { icon: MessageCircleHeart, title: 'Kapwa', text: 'A built-in guide that suggests a session for how you feel. Not a person, not an AI.' },
+  { icon: MessageCircleHeart, title: 'Kapwa', text: 'A guide that suggests a session for how you feel. Not a person or a therapist.' },
   { icon: PenLine, title: 'Daily reflection', text: 'One prompt a day, a sentence in reply and a note of how it sat. A record, not a score.' },
   { icon: Sparkles, title: 'Daily inspiration', text: 'One short line each morning, chosen for how your week has been going.' },
   { icon: Activity, title: 'Progress and streaks', text: 'Mindful minutes, a daily goal and your week, all from sittings you really did.' },
@@ -817,7 +817,7 @@ const PROMISES = [
   {
     icon: WifiOff,
     title: 'Works offline',
-    text: 'Once installed, sessions, stories and the timer keep working with no signal, on a flight or in a waiting room.',
+    text: 'Once installed, sessions you save, the timer and the soundscapes keep working with no signal, on a flight or in a waiting room.',
   },
   {
     icon: AudioWaveform,
@@ -827,7 +827,7 @@ const PROMISES = [
   {
     icon: Lock,
     title: 'Your words stay yours',
-    text: 'Reflections, sleep notes and Kapwa chats are kept on the phone.',
+    text: 'Reflections and sleep notes are kept on the phone. Kapwa keeps its chats there too, and sends a message to our AI service only to write the reply.',
   },
 ];
 
@@ -838,7 +838,7 @@ export function Promises() {
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
           <Eyebrow>Privacy</Eyebrow>
-          <SectionTitle className="mx-auto max-w-3xl">Calm that stays on your phone.</SectionTitle>
+          <SectionTitle className="mx-auto max-w-3xl">Calm that keeps your words private.</SectionTitle>
         </div>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {PROMISES.map(({ icon: Icon, title, text }, i) => (

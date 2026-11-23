@@ -307,8 +307,8 @@ export function WelcomeIntent({ onDone }: { onDone: () => void }) {
         <p
           style={reveal(300).style}
           className="reveal mt-[clamp(12px,1.9vh,16px)] max-w-[300px] text-[clamp(0.875rem,3.85vw,0.9375rem)] font-normal leading-[1.6] text-ink-muted">
-          Short sessions for stress, sleep and harder days. Go at your own pace. Everything you
-          do here stays on your phone.
+          Short sessions for stress, sleep and harder days. Go at your own pace. Your reflections
+          and sleep notes stay on your phone.
         </p>
 
         <GradientButton

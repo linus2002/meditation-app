@@ -57,7 +57,7 @@ export default function ProfilePage() {
           ? 'Notifications are blocked for Serenity. Allow them in your phone’s settings to switch the reminders back on.'
           : 'Notifications are blocked for Serenity. Allow them in your browser or system settings to switch the reminders back on.'
         : reminderMode === 'web'
-          ? 'In a browser tab, reminders arrive while Serenity is open. Install it to your home screen for nudges that reach you with the app closed.'
+          ? 'In a browser, reminders arrive only while Serenity is open. The Android app can remind you with Serenity closed.'
           : null;
 
   // Resolved on the client: these pages are prerendered, so the build date

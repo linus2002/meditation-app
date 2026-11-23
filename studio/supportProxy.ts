@@ -2,6 +2,7 @@ import type { Plugin } from 'vite';
 import { loadEnv } from 'vite';
 
 import { createSupport, pickSupportEnv } from './api/_lib/support';
+import { refuseOthers } from './localGuard';
 
 /**
  * Lets the local Studio's Support tab read and answer conversations without the
@@ -20,6 +21,7 @@ export function supportProxy(): Plugin {
       const support = createSupport(env);
 
       server.middlewares.use('/support-api', async (req, res) => {
+        if (refuseOthers(req, res)) return;
         const raw = await readBody(req);
         let payload: Record<string, unknown> = {};
         try {
