@@ -12,6 +12,7 @@ import { mixItemDetails, type MixItemDetails } from '@/data/mix-items';
 import { getStory } from '@/data/stories';
 import { canGoBackInApp } from '@/hooks/use-back';
 import { useMixes } from '@/hooks/use-mixes';
+import { bridgeHold } from '@/lib/audio/background';
 import { nextPosition, playOrder, previousPosition } from '@/lib/mixes';
 
 const barButton =
@@ -47,7 +48,14 @@ export function MixPlayer() {
     setOrder(playOrder(list.length, shuffle));
   }, [ready, mix, items, shuffle]);
 
+  // On Android, moving on with the screen locked must not let the app go
+  // between one item and the next: it would not be allowed to start again.
+  const bridgeRef = React.useRef<(() => void) | null>(null);
+  React.useEffect(() => () => bridgeRef.current?.(), []);
+
   const goTo = React.useCallback((next: number) => {
+    bridgeRef.current?.();
+    bridgeRef.current = bridgeHold();
     setPosition(next);
     setTurn((value) => value + 1);
   }, []);

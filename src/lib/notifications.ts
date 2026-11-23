@@ -9,6 +9,7 @@ import {
   upcomingDaily,
   type ReminderDefinition,
 } from '@/lib/reminders';
+import { reminderAlarms, scheduleAlarms, type NativeReminderAlarm } from '@/lib/reminder-alarms';
 import { isScheduleDue, upcomingOccurrences, type ScheduledSession } from '@/lib/schedule';
 
 /**
@@ -65,9 +66,22 @@ interface NativeListener {
   remove(): Promise<void>;
 }
 
+/**
+ * The Android app's own scheduler (ReminderAlarmsPlugin.java). It keeps rules
+ * rather than fixed moments, so reminders never run out, follow the phone
+ * across time zones, and wake an idle phone on time. Where it is missing (iOS,
+ * or an Android build from before it), the notification plugin schedules them.
+ */
+interface NativeReminderAlarms {
+  set(options: { group: 'reminders' | 'schedule'; alarms: NativeReminderAlarm[] }): Promise<void>;
+  timing(): Promise<{ exact: boolean; canAsk: boolean }>;
+  openTimingSettings(): Promise<void>;
+  addListener(event: 'tap', handler: (event: { url?: unknown }) => void): NativeListener | Promise<NativeListener>;
+}
+
 interface CapacitorBridge {
   isNativePlatform?: () => boolean;
-  Plugins?: { LocalNotifications?: NativeNotifications };
+  Plugins?: { LocalNotifications?: NativeNotifications; ReminderAlarms?: NativeReminderAlarms };
 }
 
 function capacitorBridge(): CapacitorBridge | undefined {
@@ -83,6 +97,66 @@ export function isNativeShell(): boolean {
 function nativePlugin(): NativeNotifications | null {
   if (!isNativeShell()) return null;
   return capacitorBridge()?.Plugins?.LocalNotifications ?? null;
+}
+
+function alarmsPlugin(): NativeReminderAlarms | null {
+  if (!isNativeShell()) return null;
+  return capacitorBridge()?.Plugins?.ReminderAlarms ?? null;
+}
+
+/** Set once the notification plugin's own schedule has been cleared for the app's scheduler. */
+const HANDED_OVER_KEY = 'serenity.reminders.alarms.v1';
+
+/**
+ * Clears what the notification plugin scheduled before the app had its own
+ * scheduler, once, so nothing arrives twice: the fixed reminders, a fortnight
+ * of daily inspiration, and the scheduled sessions.
+ */
+async function retirePluginSchedule(native: NativeNotifications): Promise<void> {
+  try {
+    if (window.localStorage.getItem(HANDED_OVER_KEY)) return;
+  } catch {
+    return;
+  }
+  const ids = [
+    ...reminderDefinitions.map((entry) => entry.nativeId),
+    ...reminderDefinitions.filter((entry) => entry.bodyFor).flatMap(dailyNativeIds),
+    ...readScheduledIds(),
+  ];
+  await native.cancel({ notifications: ids.map((id) => ({ id })) });
+  try {
+    window.localStorage.setItem(HANDED_OVER_KEY, '1');
+    window.localStorage.removeItem(SCHEDULE_IDS_KEY);
+  } catch {
+    // Tried again next launch; cancelling twice is harmless.
+  }
+}
+
+export interface ReminderTiming {
+  /** Arrives on the minute. Otherwise Android may hold it back up to an hour. */
+  exact: boolean;
+  /** The phone has a switch for it (Android 12 and later). */
+  canAsk: boolean;
+}
+
+/** How precisely this phone delivers reminders, or null where that isn't a question. */
+export async function reminderTiming(): Promise<ReminderTiming | null> {
+  const alarms = alarmsPlugin();
+  if (!alarms) return null;
+  try {
+    return await alarms.timing();
+  } catch {
+    return null;
+  }
+}
+
+/** Opens the phone's "Alarms & reminders" switch for Serenity. */
+export async function openReminderTiming(): Promise<void> {
+  try {
+    await alarmsPlugin()?.openTimingSettings();
+  } catch {
+    // Nothing to open on this phone.
+  }
 }
 
 // Never the web route inside the native shell: nothing there can keep the
@@ -316,6 +390,18 @@ async function syncNative(enabledIds: string[], bodyOf: BodyResolver): Promise<v
   if (!native) return;
 
   const enabled = reminderDefinitions.filter((entry) => enabledIds.includes(entry.id));
+
+  const alarms = alarmsPlugin();
+  if (alarms) {
+    try {
+      await retirePluginSchedule(native);
+      await alarms.set({ group: 'reminders', alarms: reminderAlarms(enabled, new Date(), bodyOf) });
+    } catch {
+      // Left as it was; tried again next launch.
+    }
+    return;
+  }
+
   const disabled = reminderDefinitions.filter((entry) => !enabledIds.includes(entry.id));
   const daily = reminderDefinitions.filter((entry) => entry.bodyFor);
 
@@ -458,6 +544,18 @@ async function syncScheduleNative(
 ): Promise<void> {
   const native = nativePlugin();
   if (!native) return;
+
+  const alarms = alarmsPlugin();
+  if (alarms) {
+    try {
+      await retirePluginSchedule(native);
+      await alarms.set({ group: 'schedule', alarms: scheduleAlarms(entries, describe) });
+    } catch {
+      // Left as it was; tried again next launch.
+    }
+    return;
+  }
+
   try {
     const previous = readScheduledIds();
     if (previous.length > 0) await native.cancel({ notifications: previous.map((id) => ({ id })) });
@@ -545,12 +643,25 @@ export function onNotificationTap(open: (url: string) => void): () => void {
   const native = nativePlugin();
   if (!native) return () => {};
 
-  const subscription = native.addListener('localNotificationActionPerformed', (action) => {
-    const url = tappedUrl(action);
-    if (url) open(url);
-  });
+  const subscriptions = [
+    native.addListener('localNotificationActionPerformed', (action) => {
+      const url = tappedUrl(action);
+      if (url) open(url);
+    }),
+  ];
+  const alarms = alarmsPlugin();
+  if (alarms) {
+    subscriptions.push(
+      alarms.addListener('tap', (event) => {
+        const url = tappedUrl({ notification: { extra: { url: event?.url } } });
+        if (url) open(url);
+      }),
+    );
+  }
   return () => {
-    void Promise.resolve(subscription).then((handle) => handle.remove());
+    for (const subscription of subscriptions) {
+      void Promise.resolve(subscription).then((handle) => handle.remove());
+    }
   };
 }
 

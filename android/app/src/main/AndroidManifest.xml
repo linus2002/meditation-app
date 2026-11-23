@@ -34,6 +34,19 @@
             android:foregroundServiceType="mediaPlayback"
             android:stopWithTask="true" />
 
+        <!-- Reminders: each alarm lands here, and everything is armed again when the clock moves. -->
+        <receiver
+            android:name=".ReminderReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -53,4 +66,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- Breathing haptics: navigator.vibrate does nothing in the WebView without it. -->
     <uses-permission android:name="android.permission.VIBRATE" />
+    <!-- Reminders: armed again after a reboot, and on the minute where the phone allows it. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 </manifest>

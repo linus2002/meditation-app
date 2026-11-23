@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
     public void onCreate(Bundle savedInstanceState) {
         // The app's own plugins aren't found by `cap sync`, and must be in before the bridge starts.
         registerPlugin(BackgroundSoundPlugin.class);
+        registerPlugin(ReminderAlarmsPlugin.class);
         super.onCreate(savedInstanceState);
     }
 }
