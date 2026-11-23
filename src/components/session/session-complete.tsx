@@ -16,8 +16,10 @@ import { useApp } from '@/providers/app-provider';
 import type { Meditation } from '@/types';
 
 interface SessionCompleteProps {
-  /** Minutes just sat. */
-  minutes: number;
+  /** Seconds credited to today: time actually heard, not the session's length. */
+  seconds: number;
+  /** Most of it was skipped, so it was not counted as finished. */
+  skipped?: boolean;
   againLabel: string;
   onAgain: () => void;
   /** Offered as the next thing to do, if there is one worth offering. */
@@ -36,13 +38,15 @@ interface SessionCompleteProps {
  * only appears if today's has not been written, so it never reads as a chore.
  */
 export function SessionComplete({
-  minutes,
+  seconds,
+  skipped = false,
   againLabel,
   onAgain,
   nextUp,
   rated,
   className,
 }: SessionCompleteProps) {
+  const minutes = Math.round(seconds / 60);
   const { sessions, reflections, ratings, rateMeditation, hydrated, goalMinutes } = useApp();
 
   // The local date is resolved on the client; these pages are prerendered.
@@ -70,9 +74,11 @@ export function SessionComplete({
         </span>
 
         <p className="mt-4 text-[clamp(1.625rem,8vw,2rem)] font-bold leading-none tracking-[-0.02em] text-ink">
-          {minutes} {minutes === 1 ? 'minute' : 'minutes'}
+          {minutes >= 1 ? `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : skipped ? 'Skipped ahead' : 'Under a minute'}
         </p>
-        <p className="mt-2 text-caption leading-none text-ink-muted">added to today</p>
+        <p className="mt-2 text-caption leading-none text-ink-muted">
+          {!skipped ? 'added to today' : minutes >= 1 ? 'added to today · skipped parts don’t count' : 'Only the time you listen counts'}
+        </p>
       </div>
 
       {/* Where the day now stands. */}

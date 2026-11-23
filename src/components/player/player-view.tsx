@@ -15,6 +15,7 @@ import { FavoriteButton } from '@/components/shared/favorite-button';
 import { useBack } from '@/hooks/use-back';
 import { useLoop } from '@/hooks/use-loop';
 import { useBreath } from '@/hooks/use-breath';
+import { useListened } from '@/hooks/use-listened';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
 import { usePlayer } from '@/hooks/use-player';
 import { useSessionTrack } from '@/hooks/use-session-track';
@@ -22,6 +23,7 @@ import { suggestNext } from '@/data/meditations';
 import { recommended } from '@/data/recommended';
 import { MIN_RECORDED_SECONDS } from '@/data/stats';
 import { formatClock, formatMinutesLabel } from '@/lib/format';
+import { finishedProperly } from '@/lib/listening';
 import { clearResume, readResume, saveResume } from '@/lib/resume';
 import { useApp } from '@/providers/app-provider';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
@@ -71,22 +73,35 @@ export function PlayerView({
   const offsetRef = React.useRef(0);
   const completedRef = React.useRef(false);
 
+  // Only time heard counts: dragging to the end is not sitting through it.
+  const listened = useListened();
+  /** What the end of this sitting is credited with, for the completion panel. */
+  const [credited, setCredited] = React.useState({ seconds: 0, skipped: false });
+
+  /** Logs reaching the end: finished if most of it was heard, otherwise as far as it went. */
+  const creditEnd = React.useCallback(() => {
+    const heard = listened.heardRef.current;
+    const finished = finishedProperly(heard, meditation.durationSeconds - offsetRef.current);
+    recorder.elapsedRef.current = heard;
+    if (finished) recorder.markFinished();
+    recorder.commit(finished);
+    setCredited({ seconds: heard, skipped: !finished });
+  }, [listened.heardRef, meditation.durationSeconds, recorder]);
+
   const handleComplete = React.useCallback(() => {
     // In a mix the next item takes over; no "Sit again" panel in between.
     if (!mixRef.current) setCompleted(true);
     completedRef.current = true;
     clearResume(meditation.id);
     markPlayed(meditation.id);
-    // The ref trails the last render by one tick, so a finished session is
-    // logged at its full length rather than a fraction short.
-    recorder.elapsedRef.current = meditation.durationSeconds - offsetRef.current;
-    recorder.markFinished();
-    recorder.commit(true);
+    creditEnd();
+    // Anything played after this (Space on the panel) starts a fresh count.
+    listened.reset(meditation.durationSeconds);
     // A single struck bell to close the session, then let the bed fall away.
     bell();
     stopAudio(4);
     mixRef.current?.onFinished();
-  }, [markPlayed, meditation.id, meditation.durationSeconds, recorder, bell, stopAudio]);
+  }, [markPlayed, meditation.id, meditation.durationSeconds, creditEnd, listened, bell, stopAudio]);
 
   // With loop on, each time round counts as a finished sitting, marked with a
   // bell, and the next one begins straight away with the sound still playing.
@@ -96,20 +111,25 @@ export function PlayerView({
   const handleLoop = React.useCallback(() => {
     clearResume(meditation.id);
     markPlayed(meditation.id);
-    recorder.elapsedRef.current = meditation.durationSeconds - offsetRef.current;
-    recorder.markFinished();
-    recorder.commit(true);
+    creditEnd();
     recorder.restart();
+    listened.reset(0);
     offsetRef.current = 0;
     bell();
-  }, [markPlayed, meditation.id, meditation.durationSeconds, recorder, bell]);
+  }, [markPlayed, meditation.id, creditEnd, recorder, listened, bell]);
+
+  // While a recording loads the clock holds, so nothing is skipped and the
+  // time is not counted as listened.
+  const [trackState, setTrackState] = React.useState<'ok' | 'loading' | 'failed'>('ok');
 
   const player = usePlayer({
     durationSeconds: meditation.durationSeconds,
     onComplete: handleComplete,
     loop,
     onLoop: handleLoop,
+    held: trackState === 'loading',
   });
+  listened.follow(player.elapsed, player.isPlaying && trackState !== 'loading');
   const breath = useBreath(meditation.breathPattern, player.elapsed);
 
   const { isPlaying, toggle: toggleTransport } = player;
@@ -125,6 +145,13 @@ export function PlayerView({
     isPlaying,
     elapsed: player.elapsed,
     onInterrupted: player.pause,
+    // Played from the lock screen or a headset: the session goes with it.
+    onExternalPlay: player.play,
+    onStallChange: (stalled) => setTrackState((current) => (stalled ? 'loading' : current === 'loading' ? 'ok' : current)),
+    onFailed: () => {
+      player.pause();
+      setTrackState('failed');
+    },
   });
 
   // A session keeps going with the screen off, even a silent one, and ends with its bell.
@@ -135,6 +162,7 @@ export function PlayerView({
   // has to be unlocked here, synchronously, while the gesture is still live.
   const toggle = React.useCallback(() => {
     if (!isPlaying) {
+      setTrackState('ok');
       void prime();
       startTrack();
     }
@@ -207,7 +235,7 @@ export function PlayerView({
 
   React.useEffect(() => () => stopAudio(0.4), [stopAudio]);
 
-  recorder.elapsedRef.current = Math.max(0, player.elapsed - offsetRef.current);
+  recorder.elapsedRef.current = listened.heardRef.current;
 
   // Open where the reader left off, if they left part-way through.
   const [resumedAt, setResumedAt] = React.useState<number | null>(null);
@@ -237,6 +265,7 @@ export function PlayerView({
 
   const startFromBeginning = () => {
     offsetRef.current = 0;
+    listened.reset(0);
     clearResume(meditation.id);
     seek(0);
     setResumedAt(null);
@@ -283,11 +312,11 @@ export function PlayerView({
   const markedRef = React.useRef(false);
   React.useEffect(() => {
     if (markedRef.current) return;
-    if (player.elapsed - offsetRef.current >= MIN_RECORDED_SECONDS) {
+    if (listened.heardRef.current >= MIN_RECORDED_SECONDS) {
       markedRef.current = true;
       markPlayed(meditation.id);
     }
-  }, [player.elapsed, markPlayed, meditation.id]);
+  }, [player.elapsed, markPlayed, meditation.id, listened.heardRef]);
 
 
   // Cue tones and a haptic pulse at the top of each inhale and exhale.
@@ -331,6 +360,7 @@ export function PlayerView({
     offsetRef.current = 0;
     completedRef.current = false;
     recorder.restart();
+    listened.reset(0);
     setCompleted(false);
     player.seek(0);
     player.play();
@@ -392,7 +422,8 @@ export function PlayerView({
       {completed ? (
         <div className="relative flex-1 px-7 pb-[clamp(18px,3.8vh,32px)] pt-4">
           <SessionComplete
-            minutes={Math.round(meditation.durationSeconds / 60)}
+            seconds={credited.seconds}
+            skipped={credited.skipped}
             againLabel="Sit again"
             onAgain={sitAgain}
             nextUp={nextUp}
@@ -446,6 +477,14 @@ export function PlayerView({
             onStartOver={startFromBeginning}
             className="mb-3"
           />
+        ) : null}
+
+        {trackState !== 'ok' ? (
+          <p role="status" className="mb-3 text-center text-label leading-relaxed text-ink-soft">
+            {trackState === 'loading'
+              ? 'Loading the recording…'
+              : 'The recording couldn’t load. Check your connection, then press play to try again.'}
+          </p>
         ) : null}
 
         <SessionScrubber

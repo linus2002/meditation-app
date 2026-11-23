@@ -14,7 +14,9 @@ import { YOGA_SAFETY, type YogaSession } from '@/data/yoga';
 import { useBack } from '@/hooks/use-back';
 import { useKeepPlace } from '@/hooks/use-keep-place';
 import { useLoop } from '@/hooks/use-loop';
+import { useListened } from '@/hooks/use-listened';
 import { useSessionRecorder } from '@/hooks/use-session-recorder';
+import { finishedProperly } from '@/lib/listening';
 import { useWakeLock } from '@/hooks/use-wake-lock';
 import { useYogaSession } from '@/hooks/use-yoga-session';
 import { useYogaVoice } from '@/hooks/use-yoga-voice';
@@ -78,6 +80,18 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   }, [placeKey, total]);
   const offsetRef = React.useRef(0);
 
+  // Only time spent in poses counts: tapping Next through them is not doing them.
+  const listened = useListened();
+  const [credited, setCredited] = React.useState({ seconds: 0, skipped: false });
+  const creditEnd = () => {
+    const heard = listened.heardRef.current;
+    const finished = finishedProperly(heard, total - offsetRef.current);
+    recorder.elapsedRef.current = heard;
+    if (finished) recorder.markFinished();
+    recorder.commit(finished);
+    setCredited({ seconds: heard, skipped: !finished });
+  };
+
   // The music dips while the instructor speaks, and comes back up between cues.
   const voice = useYogaVoice({ onSpeakingChange: duckMusic });
   // The pose the instructor has just said "Next, …" for.
@@ -92,10 +106,9 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     onLoop: () => {
       // A full round done: log it as a finished session, then go again.
       clearResume(placeKey);
-      recorder.elapsedRef.current = total - offsetRef.current;
-      recorder.markFinished();
-      recorder.commit(true);
+      creditEnd();
       recorder.restart();
+      listened.reset(0);
       offsetRef.current = 0;
       announcedRef.current = -1;
     },
@@ -120,9 +133,7 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     onFinish: () => {
       clearResume(placeKey);
       setResumeFrom(null);
-      recorder.elapsedRef.current = total - offsetRef.current;
-      recorder.markFinished();
-      recorder.commit(true);
+      creditEnd();
       bell(392);
       stop(4);
       stopMusic(4);
@@ -135,7 +146,8 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
   const next = session.poses[clock.index + 1] ?? (loop ? session.poses[0] : undefined);
   const elapsed =
     phase === 'running' ? elapsedAt(session.poses, clock.index, clock.remaining) : 0;
-  if (phase === 'running') recorder.elapsedRef.current = Math.max(0, elapsed - offsetRef.current);
+  listened.follow(elapsed, phase === 'running' && clock.running);
+  if (phase === 'running') recorder.elapsedRef.current = listened.heardRef.current;
   useKeepPlace(placeKey, elapsed, clock.running, phase === 'running');
 
   useWakeLock(phase === 'running');
@@ -153,6 +165,9 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
     await prime();
     if (musicOn) playMusic(music, YOGA_MUSIC_LEVEL);
     recorder.restart();
+    listened.reset(0);
+    // Yoga has no soundscape of its own: one left playing would sound under the session.
+    stop(0.8);
     announcedRef.current = -1;
     setPhase('running');
     const from = fromStart ? null : resumeFrom;
@@ -345,7 +360,8 @@ export function YogaPlayer({ session }: { session: YogaSession }) {
         </header>
         <div className="relative flex-1 px-5 pb-[clamp(18px,3.8vh,32px)] pt-4">
           <SessionComplete
-            minutes={Math.max(1, Math.round(total / 60))}
+            seconds={credited.seconds}
+            skipped={credited.skipped}
             againLabel="Flow again"
             onAgain={() => void begin(true)}
           />

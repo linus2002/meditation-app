@@ -138,10 +138,23 @@ export default function TimerPage() {
     { onPlay: resumeSit, onPause: () => countdown.pause() },
   );
 
+  // A sit's own sound never outlives the screen, however it is left. A
+  // soundscape the reader had on before opening the timer is left alone.
+  const startedSoundRef = React.useRef(false);
+  React.useEffect(
+    () => () => {
+      if (startedSoundRef.current) stop(1);
+    },
+    [stop],
+  );
+
   const begin = async () => {
     // Audio has to be unlocked by the gesture that starts the sit.
     await prime();
+    // "Silence" means silence: no soundscape left playing from elsewhere.
+    startedSoundRef.current = true;
     if (scape) void play(scape);
+    else stop(0.8);
     setPhase(warmupSeconds > 0 ? 'warmup' : 'running');
   };
 
@@ -238,7 +251,7 @@ export default function TimerPage() {
       ) : phase === 'done' ? (
         <div className="relative flex-1 px-5 pb-[clamp(18px,3.8vh,32px)] pt-6">
           <SessionComplete
-            minutes={minutes}
+            seconds={minutes * 60}
             againLabel="Sit again"
             // Through `begin`, so the chosen ambience starts again with the sit.
             onAgain={() => void begin()}

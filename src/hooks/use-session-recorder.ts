@@ -46,7 +46,9 @@ export function useSessionRecorder(meditationId: string): SessionRecorder {
     (completed: boolean, interim = false) => {
       // Once finished, the clock being rewound cannot shorten it.
       const seconds = Math.max(Math.round(elapsedRef.current), finishedSecondsRef.current);
-      if (seconds < MIN_RECORDED_SECONDS) return;
+      // A minimum keeps out a tap and a change of mind. One properly finished
+      // (picked up near its end, say) counts however short.
+      if (seconds <= 0 || (seconds < MIN_RECORDED_SECONDS && !finishedRef.current)) return;
       savedSecondsRef.current = seconds;
 
       recordSession(

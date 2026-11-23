@@ -53,7 +53,7 @@ export interface StoryMixMode {
 
 export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }) {
   const goBack = useBack('/stories');
-  const { playMusic, pauseMusic, stopMusic, prime } = useAudio();
+  const { playMusic, pauseMusic, stopMusic, prime, stop: stopScape } = useAudio();
 
   const [savedLoop, toggleLoop] = useLoop('story');
   // In a mix, the mix decides what comes next, so a single story never repeats.
@@ -174,6 +174,8 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
   // Started from the tap itself, so mobile browsers allow the music to play.
   const startNarration = async () => {
     await prime();
+    // A soundscape left playing from elsewhere would sound under the story.
+    stopScape(0.8);
     if (music) playMusic(musicSrc, MUSIC_LEVEL);
     narration.play();
   };

@@ -24,16 +24,16 @@ const WIND_DOWN_FADE_SECONDS = 20;
 const WINDOW_NIGHTS = 7;
 
 export default function SleepPage() {
-  const { playing, fadeOut, stop } = useAudio();
+  const { playing, fadeOutThenStop, stop } = useAudio();
   const { sleepLogs, hydrated } = useApp();
 
   // The timer ends by fading the sound out rather than cutting it, and never
   // rings a bell — the point is to be asleep by then.
   const handleTimerComplete = React.useCallback(() => {
     if (!playing) return;
-    fadeOut(WIND_DOWN_FADE_SECONDS);
-    window.setTimeout(() => stop(0.5), (WIND_DOWN_FADE_SECONDS + 1) * 1000);
-  }, [playing, fadeOut, stop]);
+    // A sound picked during the fade cancels the stop, rather than being silenced by it.
+    fadeOutThenStop(WIND_DOWN_FADE_SECONDS);
+  }, [playing, fadeOutThenStop]);
 
   // Ambience should not follow you off the screen.
   React.useEffect(() => () => stop(1.5), [stop]);
