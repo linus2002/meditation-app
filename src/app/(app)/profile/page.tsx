@@ -91,6 +91,13 @@ export default function ProfilePage() {
     { label: 'Sessions', value: ready ? String(totals.sessions) : '—' },
   ];
 
+  // Breathing haptics only where a phone can actually buzz: never on iPhone, which
+  // has no vibration for web pages, nor on a desktop with no motor to run.
+  const [canVibrate, setCanVibrate] = React.useState(false);
+  React.useEffect(() => {
+    setCanVibrate(typeof navigator.vibrate === 'function' && window.matchMedia('(pointer: coarse)').matches);
+  }, []);
+
   return (
     <div className="pb-4">
       {/*
@@ -243,7 +250,7 @@ export default function ProfilePage() {
       <section className="mt-6 px-5">
         <SectionTitle>Preferences</SectionTitle>
         <ul className="mt-3 space-y-2.5">
-          {settingToggles.map((toggle) => {
+          {settingToggles.filter((toggle) => toggle.id !== 'haptics' || canVibrate).map((toggle) => {
             const Icon = toggle.icon;
             const stored = settings[toggle.id] ?? toggle.defaultOn;
 

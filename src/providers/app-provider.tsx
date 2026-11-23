@@ -104,6 +104,24 @@ const initialState: PersistedState = {
   goalMinutes: DAILY_GOAL_MINUTES,
 };
 
+/** A stored copy laid over the current state, field by field, with only valid values taken. */
+function fromStored(current: PersistedState, parsed: Partial<PersistedState>): PersistedState {
+  return {
+    favorites: parsed.favorites ?? current.favorites,
+    recents: parsed.recents ?? current.recents,
+    settings: { ...current.settings, ...(parsed.settings ?? {}) },
+    onboarded: parsed.onboarded ?? current.onboarded,
+    reflections: parsed.reflections ?? current.reflections,
+    sessions: parsed.sessions ?? current.sessions,
+    favoriteStories: parsed.favoriteStories ?? current.favoriteStories,
+    sleepLogs: parsed.sleepLogs ?? current.sleepLogs,
+    ratings: parsed.ratings ?? current.ratings,
+    name: parsed.name ?? current.name,
+    assessment: parsed.assessment ?? current.assessment,
+    goalMinutes: validGoal(parsed.goalMinutes) ?? current.goalMinutes,
+  };
+}
+
 const AppContext = React.createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -116,20 +134,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       const raw = window.localStorage.getItem(personalKey(STORAGE_KEY));
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<PersistedState>;
-        setState((current) => ({
-          favorites: parsed.favorites ?? current.favorites,
-          recents: parsed.recents ?? current.recents,
-          settings: { ...current.settings, ...(parsed.settings ?? {}) },
-          onboarded: parsed.onboarded ?? current.onboarded,
-          reflections: parsed.reflections ?? current.reflections,
-          sessions: parsed.sessions ?? current.sessions,
-          favoriteStories: parsed.favoriteStories ?? current.favoriteStories,
-          sleepLogs: parsed.sleepLogs ?? current.sleepLogs,
-          ratings: parsed.ratings ?? current.ratings,
-          name: parsed.name ?? current.name,
-          assessment: parsed.assessment ?? current.assessment,
-          goalMinutes: validGoal(parsed.goalMinutes) ?? current.goalMinutes,
-        }));
+        setState((current) => fromStored(current, parsed));
       }
 
       // The tour and the theme belong to the phone, whoever is signed in.
@@ -151,6 +156,28 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
     setHydrated(true);
   }, []);
+
+  /*
+   * The app open twice (two tabs, or the installed app and a tab): each saves
+   * its whole state, so the last to save used to erase what the other had just
+   * saved. Taking in the other's save as it lands keeps both in step, and the
+   * next save here carries both changes.
+   */
+  React.useEffect(() => {
+    if (!hydrated) return undefined;
+    const key = personalKey(STORAGE_KEY);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== key || !event.newValue) return;
+      try {
+        const parsed = JSON.parse(event.newValue) as Partial<PersistedState>;
+        setState((current) => fromStored(current, parsed));
+      } catch {
+        // A damaged value from elsewhere is ignored; ours is still good.
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [hydrated]);
 
   React.useEffect(() => {
     if (!hydrated) return;
