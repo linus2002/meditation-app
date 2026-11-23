@@ -58,11 +58,23 @@ export function authErrorText(error: unknown): string {
   }
 }
 
+/** Exported for its tests. */
+export function authErrorFrom(error: { message?: string; code?: string; status?: number }): AuthError {
+  return toError(error);
+}
+
 function toError(error: { message?: string; code?: string; status?: number }): AuthError {
   const message = error.message ?? '';
   if (/signups? not allowed|otp_disabled|user not found/i.test(`${message} ${error.code ?? ''}`)) {
     return new AuthError('no_account', message);
   }
+  // Before the code check below: an address the server rejects also says
+  // "invalid", and was reported as a wrong code.
+  if (error.code === 'email_address_invalid' || /email.*invalid|invalid.*email|validate email/i.test(message)) {
+    return new AuthError('invalid_email', message);
+  }
+  // Safari words a dropped connection "Load failed".
+  if (/fetch|network|load failed/i.test(message)) return new AuthError('offline', message);
   if (error.code === 'otp_expired' || /token has expired|invalid/i.test(message)) {
     return new AuthError('invalid_code', message);
   }
@@ -78,13 +90,9 @@ function toError(error: { message?: string; code?: string; status?: number }): A
   ) {
     return new AuthError('rate_limited', message);
   }
-  if (error.code === 'email_address_invalid' || /email.*invalid|invalid.*email/i.test(message)) {
-    return new AuthError('invalid_email', message);
-  }
   // The account service could not hand the email to the mail provider (see
   // the SMTP settings in Supabase): nothing the reader can fix by retyping.
   if (/error sending .*email/i.test(message)) return new AuthError('email_failed', message);
-  if (/fetch|network/i.test(message)) return new AuthError('offline', message);
   return new AuthError('unknown', message);
 }
 

@@ -1,8 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { ChevronsLeft, Pause, Play, X } from 'lucide-react';
 
 import { BreathingOrb } from '@/components/player/breathing-orb';
@@ -20,6 +18,7 @@ import { clearResume, readResume, resumeKey } from '@/lib/resume';
 import { formatMinutesLabel } from '@/lib/format';
 import type { SupportListen } from '@/lib/support-history';
 import { cn } from '@/lib/utils';
+import { useBack } from '@/hooks/use-back';
 import { useBackgroundHold } from '@/hooks/use-background-hold';
 import { useLockScreen } from '@/hooks/use-lock-screen';
 import { soundscapes } from '@/lib/audio/soundscapes';
@@ -50,7 +49,8 @@ export function SupportPlayer({
   onToggleLargeText: () => void;
   onListened: (listen: SupportListen) => void;
 }) {
-  const router = useRouter();
+  // Back to the hub it came from, or to it, never a new copy on top.
+  const goBack = useBack('/support');
   const { play: playBed, stop, bell, prime } = useAudio();
 
   const [stage, setStage] = React.useState<Stage>('intro');
@@ -207,6 +207,8 @@ export function SupportPlayer({
     void prime();
     setStretch(EXTEND_SECONDS);
     setStage('playing');
+    // A fresh stretch from its start: the clock still held where the first one ended.
+    player.seek(0);
     player.play();
   };
 
@@ -217,7 +219,7 @@ export function SupportPlayer({
       <header className="relative flex items-center justify-between px-4 pt-[calc(var(--header-gap)-10px)]">
         <button
           type="button"
-          onClick={() => (stage === 'playing' ? askToEnd() : router.push('/support'))}
+          onClick={() => (stage === 'playing' ? askToEnd() : goBack())}
           aria-label={stage === 'playing' ? 'End session' : 'Back to support'}
           className="tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
@@ -352,15 +354,16 @@ export function SupportPlayer({
                 Keep going for {Math.round(EXTEND_SECONDS / 60)} more minutes
               </GradientButton>
             ) : null}
-            <Link
-              href="/support"
+            <button
+              type="button"
+              onClick={goBack}
               className={cn(
                 'flex w-full items-center justify-center rounded-full border border-overlay/25 text-ink transition-colors hover:bg-overlay/[0.05] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
                 size('h-12 text-body-sm', 'h-14 text-[1.0625rem]'),
               )}
             >
               Back to support
-            </Link>
+            </button>
           </div>
         </div>
       )}

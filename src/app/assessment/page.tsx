@@ -37,6 +37,14 @@ export default function AssessmentPage() {
   const { completeAssessment, assessment, hydrated } = useApp();
   // Finished before: show what it found rather than starting again at question 1.
   const saved = hydrated ? assessment : null;
+  // "Retake" on the result: the questions again, from the start.
+  const [retaking, setRetaking] = React.useState(false);
+  const retake = () => {
+    setRetaking(true);
+    setDone(false);
+    setAnswers({});
+    setStep(0);
+  };
 
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState<AssessmentAnswers>({});
@@ -79,10 +87,10 @@ export default function AssessmentPage() {
   // The phone's Back steps back a question, rather than out with every answer lost.
   useBackGuard(!done && step > 0, () => setStep((current) => Math.max(0, current - 1)));
 
-  if (done) return <AssessmentResult answers={answers} onFinish={() => router.replace('/home')} />;
+  if (done) return <AssessmentResult answers={answers} onFinish={() => router.replace('/home')} onRetake={retake} />;
   if (!hydrated) return <div className="min-h-full bg-canvas" aria-hidden="true" />;
-  if (saved && step === 0 && Object.keys(answers).length === 0) {
-    return <AssessmentResult answers={saved.answers} onFinish={() => router.replace('/home')} />;
+  if (saved && !retaking && step === 0 && Object.keys(answers).length === 0) {
+    return <AssessmentResult answers={saved.answers} onFinish={() => router.replace('/home')} onRetake={retake} />;
   }
 
   return (
@@ -193,9 +201,11 @@ export default function AssessmentPage() {
 function AssessmentResult({
   answers,
   onFinish,
+  onRetake,
 }: {
   answers: AssessmentAnswers;
   onFinish: () => void;
+  onRetake: () => void;
 }) {
   const picks = React.useMemo(() => picksFor(answers), [answers]);
   const focus = topTopics(buildProfile(answers)).map(
@@ -261,6 +271,13 @@ function AssessmentResult({
         <GradientButton onClick={onFinish} className="h-12 w-full">
           Go to home
         </GradientButton>
+        <button
+          type="button"
+          onClick={onRetake}
+          className="mt-2 h-11 w-full rounded-full text-body-sm font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        >
+          Retake the questions
+        </button>
       </footer>
     </div>
   );

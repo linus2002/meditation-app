@@ -30,6 +30,8 @@ interface StoreState {
   busy: string[];
   loaded: boolean;
   error: string | null;
+  /** The session the error is about, so its own button can say so. */
+  failed: string | null;
 }
 
 let state: StoreState = {
@@ -37,6 +39,7 @@ let state: StoreState = {
   busy: [],
   loaded: false,
   error: null,
+  failed: null,
 };
 
 const listeners = new Set<() => void>();
@@ -70,12 +73,12 @@ async function refresh(): Promise<void> {
 async function run(id: string, action: () => Promise<void>, failure: string): Promise<void> {
   if (state.busy.includes(id)) return;
 
-  setState({ busy: [...state.busy, id], error: null });
+  setState({ busy: [...state.busy, id], error: null, failed: null });
   try {
     await action();
     setState({ status: await readStatus() });
   } catch (error) {
-    setState({ error: error instanceof Error ? error.message : failure });
+    setState({ error: error instanceof Error ? error.message : failure, failed: id });
   } finally {
     setState({ busy: state.busy.filter((entry) => entry !== id) });
   }
@@ -89,6 +92,10 @@ export interface DownloadsApi {
   totalBytes: number;
   totalLabel: string;
   error: string | null;
+  /** The error for this session, if its last save or removal failed. */
+  errorFor: (id: string) => string | null;
+  /** Puts the error away. */
+  dismissError: () => void;
   isSaved: (id: string) => boolean;
   isBusy: (id: string) => boolean;
   save: (id: string) => Promise<void>;
@@ -115,6 +122,8 @@ export function useDownloads(): DownloadsApi {
     totalBytes: snapshot.status.bytes,
     totalLabel: formatBytes(snapshot.status.bytes),
     error: snapshot.error,
+    errorFor: (id) => (snapshot.failed === id ? snapshot.error : null),
+    dismissError: () => setState({ error: null, failed: null }),
     isSaved: (id) => snapshot.status.sessions.some((entry) => entry.id === id),
     isBusy: (id) => snapshot.busy.includes(id),
     save: (id) => run(id, () => saveSession(id), 'The session could not be saved.'),

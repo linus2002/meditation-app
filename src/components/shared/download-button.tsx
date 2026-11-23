@@ -1,5 +1,6 @@
 'use client';
 
+import * as React from 'react';
 import { ArrowDownToLine, Check, Loader2 } from 'lucide-react';
 
 import { useDownloads } from '@/hooks/use-downloads';
@@ -27,7 +28,15 @@ export function DownloadButton({
   className,
   size = 'sm',
 }: DownloadButtonProps) {
-  const { support, isSaved, isBusy, save, remove } = useDownloads();
+  const { support, isSaved, isBusy, save, remove, errorFor, dismissError } = useDownloads();
+  const error = errorFor(meditationId);
+
+  // Said where it was asked for, not only on the Downloads screen; it goes after a while.
+  React.useEffect(() => {
+    if (!error) return undefined;
+    const timer = window.setTimeout(dismissError, 6000);
+    return () => window.clearTimeout(timer);
+  }, [error, dismissError]);
 
   if (support !== 'available') return null;
 
@@ -36,6 +45,7 @@ export function DownloadButton({
   const dimension = size === 'sm' ? 'h-4 w-4' : 'h-[18px] w-[18px]';
 
   return (
+    <span className="relative flex">
     <button
       type="button"
       aria-pressed={saved}
@@ -77,5 +87,14 @@ export function DownloadButton({
         />
       )}
     </button>
+    {error ? (
+      <span
+        role="alert"
+        className="absolute right-0 top-full z-20 mt-2 w-max max-w-[240px] rounded-xl bg-ink px-3 py-2 text-left text-label leading-snug text-canvas shadow-pill"
+      >
+        {error}
+      </span>
+    ) : null}
+    </span>
   );
 }

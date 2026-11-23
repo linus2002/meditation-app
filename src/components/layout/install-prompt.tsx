@@ -3,10 +3,7 @@
 import * as React from 'react';
 import { Check, Download, Share } from 'lucide-react';
 
-interface BeforeInstallPromptEvent extends Event {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-}
+import { installOffer, markInstalled, onInstallOfferChange, spendOffer } from '@/lib/install-prompt';
 
 function isStandalone(): boolean {
   if (typeof window === 'undefined') return false;
@@ -26,37 +23,23 @@ function isStandalone(): boolean {
  * the only thing that actually helps an iPhone user.
  */
 export function InstallPrompt() {
-  const [deferred, setDeferred] = React.useState<BeforeInstallPromptEvent | null>(null);
-  const [installed, setInstalled] = React.useState(false);
+  // Caught as the app loaded (lib/install-prompt), wherever the reader was then.
+  const offer = React.useSyncExternalStore(onInstallOfferChange, installOffer, () => null);
+  const deferred = offer?.deferred ?? null;
+  const [standalone, setStandalone] = React.useState(false);
+  const installed = standalone || Boolean(offer?.installed);
   const [iosHint, setIosHint] = React.useState(false);
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
-    setInstalled(isStandalone());
-
-    const onPrompt = (event: Event) => {
-      event.preventDefault();
-      setDeferred(event as BeforeInstallPromptEvent);
-    };
-    const onInstalled = () => {
-      setInstalled(true);
-      setDeferred(null);
-    };
-
-    window.addEventListener('beforeinstallprompt', onPrompt);
-    window.addEventListener('appinstalled', onInstalled);
+    setStandalone(isStandalone());
 
     // iOS: no install event exists, so detect Safari on an Apple handheld.
     const ua = window.navigator.userAgent;
     const isIosSafari =
       /iPad|iPhone|iPod/.test(ua) && /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS/.test(ua);
     setIosHint(isIosSafari && !isStandalone());
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', onPrompt);
-      window.removeEventListener('appinstalled', onInstalled);
-    };
   }, []);
 
   if (!mounted) return null;
@@ -94,8 +77,8 @@ export function InstallPrompt() {
         onClick={async () => {
           await deferred.prompt();
           const { outcome } = await deferred.userChoice;
-          if (outcome === 'accepted') setInstalled(true);
-          setDeferred(null);
+          if (outcome === 'accepted') markInstalled();
+          else spendOffer();
         }}
         className="flex w-full items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5 text-left transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >

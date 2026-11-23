@@ -274,8 +274,10 @@ function FeedSlide({
       node.pause();
       return;
     }
-    void node.play().catch(() => {
-      if (node.muted) return;
+    void node.play().catch((error: unknown) => {
+      // Only a refusal of sound means sound is blocked. A play cut short by
+      // swiping on (AbortError) is not, and used to mute the whole feed.
+      if (node.muted || !(error instanceof DOMException && error.name === 'NotAllowedError')) return;
       onSoundBlocked();
       node.muted = true;
       void node.play().catch(() => {});

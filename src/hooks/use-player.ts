@@ -112,11 +112,14 @@ export function usePlayer({
   }, [running, durationSeconds]);
 
   const play = React.useCallback(() => {
-    baseElapsedRef.current = elapsed >= durationSeconds ? 0 : elapsed;
+    // The latest reading, not the last render's: a seek just before play (as
+    // "keep going" does) would otherwise be undone by a stale value.
+    const at = lastRef.current;
+    baseElapsedRef.current = at >= durationSeconds ? 0 : at;
     lastRef.current = baseElapsedRef.current;
-    if (elapsed >= durationSeconds) setElapsed(0);
+    if (at >= durationSeconds) setElapsed(0);
     setIsPlaying(true);
-  }, [elapsed, durationSeconds]);
+  }, [durationSeconds]);
 
   const pause = React.useCallback(() => {
     baseElapsedRef.current = elapsed;
