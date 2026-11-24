@@ -14,6 +14,8 @@ interface UsePlayerOptions {
   loop?: boolean;
   /** Fires each time a loop goes round, in place of `onComplete`. */
   onLoop?: () => void;
+  /** Hold the clock where it is while still "playing": a recording is loading. */
+  held?: boolean;
 }
 
 export interface PlayerState {
@@ -42,12 +44,15 @@ export function usePlayer({
   onComplete,
   loop = false,
   onLoop,
+  held = false,
 }: UsePlayerOptions): PlayerState {
   const [elapsed, setElapsed] = React.useState(0);
   const [isPlaying, setIsPlaying] = React.useState(false);
 
   const startedAtRef = React.useRef(0);
   const baseElapsedRef = React.useRef(0);
+  /** The latest reading, so a hold or a pause carries on from exactly there. */
+  const lastRef = React.useRef(0);
   const completeRef = React.useRef(onComplete);
   const loopRef = React.useRef({ loop, onLoop });
 
@@ -58,8 +63,10 @@ export function usePlayer({
     loopRef.current = { loop, onLoop };
   }, [loop, onLoop]);
 
+  const running = isPlaying && !held;
+
   React.useEffect(() => {
-    if (!isPlaying) return undefined;
+    if (!running) return undefined;
 
     startedAtRef.current = Date.now();
     const watch = watchForFreeze(() => audioEngine.soundClock);
@@ -69,15 +76,18 @@ export function usePlayer({
       if (watch.frozen(now)) {
         const kept = baseElapsedRef.current + Math.max(0, watch.lastTick - startedAtRef.current) / 1000;
         baseElapsedRef.current = kept;
+        lastRef.current = kept;
         setElapsed(kept);
         setIsPlaying(false);
         return;
       }
 
       const seconds = baseElapsedRef.current + (now - startedAtRef.current) / 1000;
+      lastRef.current = Math.min(seconds, durationSeconds);
       if (seconds >= durationSeconds && loopRef.current.loop) {
         // Round again without stopping: the clock restarts from the top.
         baseElapsedRef.current = 0;
+        lastRef.current = 0;
         startedAtRef.current = now;
         setElapsed(0);
         loopRef.current.onLoop?.();
@@ -85,6 +95,7 @@ export function usePlayer({
       }
       if (seconds >= durationSeconds) {
         baseElapsedRef.current = durationSeconds;
+        lastRef.current = durationSeconds;
         setElapsed(durationSeconds);
         setIsPlaying(false);
         completeRef.current?.();
@@ -93,17 +104,26 @@ export function usePlayer({
       setElapsed(seconds);
     }, 250);
 
-    return () => window.clearInterval(id);
-  }, [isPlaying, durationSeconds]);
+    return () => {
+      window.clearInterval(id);
+      // Held or paused: the next run counts on from here.
+      baseElapsedRef.current = lastRef.current;
+    };
+  }, [running, durationSeconds]);
 
   const play = React.useCallback(() => {
-    baseElapsedRef.current = elapsed >= durationSeconds ? 0 : elapsed;
-    if (elapsed >= durationSeconds) setElapsed(0);
+    // The latest reading, not the last render's: a seek just before play (as
+    // "keep going" does) would otherwise be undone by a stale value.
+    const at = lastRef.current;
+    baseElapsedRef.current = at >= durationSeconds ? 0 : at;
+    lastRef.current = baseElapsedRef.current;
+    if (at >= durationSeconds) setElapsed(0);
     setIsPlaying(true);
-  }, [elapsed, durationSeconds]);
+  }, [durationSeconds]);
 
   const pause = React.useCallback(() => {
     baseElapsedRef.current = elapsed;
+    lastRef.current = elapsed;
     setIsPlaying(false);
   }, [elapsed]);
 
@@ -116,6 +136,7 @@ export function usePlayer({
     (seconds: number) => {
       const next = clamp(seconds, 0, durationSeconds);
       baseElapsedRef.current = next;
+      lastRef.current = next;
       startedAtRef.current = Date.now();
       setElapsed(next);
     },

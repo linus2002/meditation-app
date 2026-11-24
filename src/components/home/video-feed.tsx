@@ -4,6 +4,8 @@ import * as React from 'react';
 import { Heart, Play, Volume2, VolumeX, X } from 'lucide-react';
 
 import type { HomeVideo } from '@/data/videos';
+import { useFocusTrap } from '@/hooks/use-focus-trap';
+import { personalKey } from '@/lib/account-scope';
 import { cn } from '@/lib/utils';
 import {
   fetchLikeCounts,
@@ -24,7 +26,7 @@ const LIKES_KEY = 'serenity.likedVideos.v1';
 
 function readLikes(): string[] {
   try {
-    const parsed: unknown = JSON.parse(localStorage.getItem(LIKES_KEY) ?? '[]');
+    const parsed: unknown = JSON.parse(localStorage.getItem(personalKey(LIKES_KEY)) ?? '[]');
     return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === 'string') : [];
   } catch {
     return [];
@@ -33,7 +35,7 @@ function readLikes(): string[] {
 
 function writeLikes(ids: string[]): void {
   try {
-    localStorage.setItem(LIKES_KEY, JSON.stringify(ids));
+    localStorage.setItem(personalKey(LIKES_KEY), JSON.stringify(ids));
   } catch {
     // Not remembered; the like still shows for this visit.
   }
@@ -70,6 +72,12 @@ export function VideoFeed({
   onClose: () => void;
 }) {
   const scrollerRef = React.useRef<HTMLDivElement>(null);
+  // A full-screen layer: focus moves into it, stays in it, and returns on closing.
+  const dialogRef = React.useRef<HTMLDivElement>(null);
+  useFocusTrap(dialogRef, true);
+  React.useEffect(() => {
+    dialogRef.current?.querySelector<HTMLElement>('button')?.focus();
+  }, []);
   const [active, setActive] = React.useState(startIndex);
   const [muted, setMuted] = React.useState(false);
   const [liked, setLiked] = React.useState<string[]>([]);
@@ -172,7 +180,7 @@ export function VideoFeed({
   }, [onClose]);
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Videos" className="fixed inset-0 z-50 bg-black">
+    <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="Videos" className="fixed inset-0 z-[60] mx-auto max-w-[430px] bg-black">
       <div
         ref={scrollerRef}
         className="rail h-full snap-y snap-mandatory overflow-y-scroll overscroll-contain"
@@ -266,8 +274,10 @@ function FeedSlide({
       node.pause();
       return;
     }
-    void node.play().catch(() => {
-      if (node.muted) return;
+    void node.play().catch((error: unknown) => {
+      // Only a refusal of sound means sound is blocked. A play cut short by
+      // swiping on (AbortError) is not, and used to mute the whole feed.
+      if (node.muted || !(error instanceof DOMException && error.name === 'NotAllowedError')) return;
       onSoundBlocked();
       node.muted = true;
       void node.play().catch(() => {});

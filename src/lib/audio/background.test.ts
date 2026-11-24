@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  RELEASE_GRACE_MS,
+  bridgeHold,
   claimLockScreen,
   holdBackground,
   resetBackgroundForTests,
@@ -42,10 +44,12 @@ const noControls = { onPlay: () => {}, onPause: () => {} };
 afterEach(() => {
   resetBackgroundForTests();
   vi.unstubAllGlobals();
+  vi.useRealTimers();
 });
 
 describe('holdBackground', () => {
-  it('runs the service from the first hold to the last release', () => {
+  it('runs the service from the first hold to the last release, and a moment after', () => {
+    vi.useFakeTimers();
     const { plugin } = installPlugin();
 
     const session = holdBackground();
@@ -57,20 +61,41 @@ describe('holdBackground', () => {
     expect(plugin.update).toHaveBeenCalledTimes(1);
 
     soundscape();
+    expect(lastState(plugin)?.holding).toBe(true);
+    vi.advanceTimersByTime(RELEASE_GRACE_MS);
     expect(lastState(plugin)).toEqual({ holding: false, nowPlaying: null });
   });
 
   it('counts a repeated release once', () => {
+    vi.useFakeTimers();
     const { plugin } = installPlugin();
 
     const first = holdBackground();
     const second = holdBackground();
     first();
     first();
+    vi.advanceTimersByTime(RELEASE_GRACE_MS);
     expect(lastState(plugin)?.holding).toBe(true);
 
     second();
+    vi.advanceTimersByTime(RELEASE_GRACE_MS);
     expect(lastState(plugin)?.holding).toBe(false);
+  });
+
+  it('never stops between one sound and the next when they meet within the grace', () => {
+    vi.useFakeTimers();
+    const { plugin } = installPlugin();
+
+    holdBackground()();
+    // The card leaving at the same moment must not stop it either.
+    const claim = claimLockScreen(2, noControls);
+    claim.show(card());
+    claim.release();
+    vi.advanceTimersByTime(RELEASE_GRACE_MS - 1);
+    holdBackground();
+    vi.advanceTimersByTime(RELEASE_GRACE_MS * 2);
+
+    expect(plugin.update.mock.calls.every(([state]) => state.holding)).toBe(true);
   });
 
   it('survives Android refusing the service', () => {
@@ -83,6 +108,35 @@ describe('holdBackground', () => {
   it('does nothing outside the native app', () => {
     expect(() => holdBackground()()).not.toThrow();
     expect(() => claimLockScreen(2, noControls).show(card())).not.toThrow();
+  });
+});
+
+describe('bridgeHold', () => {
+  it('holds across a mix moving on until the next sound takes over', () => {
+    vi.useFakeTimers();
+    const { plugin } = installPlugin();
+
+    const first = holdBackground();
+    bridgeHold();
+    first();
+    // Loading the next item takes a while with the screen off.
+    vi.advanceTimersByTime(20_000);
+    expect(lastState(plugin)?.holding).toBe(true);
+
+    const next = holdBackground();
+    next();
+    vi.advanceTimersByTime(RELEASE_GRACE_MS);
+    // The bridge went when the next sound held, so this release is the last.
+    expect(lastState(plugin)?.holding).toBe(false);
+  });
+
+  it('lets go by itself if the next sound never starts', () => {
+    vi.useFakeTimers();
+    const { plugin } = installPlugin();
+
+    bridgeHold(30_000);
+    vi.advanceTimersByTime(30_000 + RELEASE_GRACE_MS);
+    expect(lastState(plugin)?.holding).toBe(false);
   });
 });
 

@@ -1,24 +1,26 @@
 import posthog from 'posthog-js';
 
+import { personalScope } from '@/lib/account-scope';
+import { scrubEvent } from '@/lib/analytics-privacy';
+
 /**
- * Product analytics and session replay, through PostHog.
+ * Product analytics, through PostHog.
  *
- * Nothing is sent until the reader agrees: the SDK starts opted out, and only
- * the "Share usage" choice (the consent card, or the toggle on Profile) opts it
- * in. Without a key in the environment every call here is a no-op, so a build
- * without one is still a complete app.
+ * The SDK is not even started until this reader agrees ("Share usage": the
+ * consent card, or the toggle on Profile), so before that nothing is fetched
+ * or sent. Consent and identity are kept per account, so neither passes to the
+ * next person on the phone.
  *
- * What a replay may show is kept narrow on purpose. Every typed input is
- * masked, anything marked `data-private` is blocked outright, and recording
- * pauses entirely on the screens that hold personal entries.
+ * Only screen visits and the named events below leave the phone. Autocapture
+ * and session replay are off, and must stay off while the consent card says
+ * answers are never recorded: both read what is on the screen, where button
+ * labels and even which option is highlighted are the answers. Everything
+ * sent also passes `scrubEvent` (lib/analytics-privacy).
  */
 
 // Written out in full so Next inlines them at build time.
 const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 const host = process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
-
-/** Screens whose content is the reader's own: recording stops while on them. */
-const PRIVATE_ROUTES = ['/reflections', '/assessment', '/support'];
 
 let started = false;
 
@@ -30,9 +32,9 @@ function ready(): boolean {
   return started && !posthog.has_opted_out_capturing();
 }
 
-/** Starts the SDK once. Safe to call repeatedly. */
-export function initAnalytics(): void {
+function start(): void {
   if (started || !analyticsAvailable()) return;
+  const reader = personalScope().replace(/[^a-z0-9-]/gi, '_');
   posthog.init(key!, {
     api_host: host,
     defaults: '2026-08-30',
@@ -42,42 +44,39 @@ export function initAnalytics(): void {
     // Guests stay anonymous; a profile exists only for signed-in accounts.
     person_profiles: 'identified_only',
     opt_out_capturing_by_default: true,
-    session_recording: {
-      maskAllInputs: true,
-      blockSelector: '[data-private]',
-    },
+
+    // One identity and one consent per reader, never the phone's.
+    persistence: 'localStorage',
+    persistence_name: `serenity_${reader}`,
+    consent_persistence_name: `serenity_consent_${reader}`,
+
+    // Everything that reads the screen, or fetches code that could.
+    autocapture: false,
+    rageclick: false,
+    capture_dead_clicks: false,
+    capture_heatmaps: false,
+    capture_exceptions: false,
+    capture_performance: false,
+    disable_session_recording: true,
+    disable_surveys: true,
+    disable_external_dependency_loading: true,
+    advanced_disable_flags: true,
+    mask_all_text: true,
+    save_referrer: false,
+    save_campaign_params: false,
+
+    before_send: (event) => scrubEvent(event),
   });
   started = true;
 }
 
-/** Applies the reader's choice. Off also stops anything already recording. */
+/** Applies the reader's choice, starting the SDK the first time it is a yes. */
 export function setAnalyticsConsent(allowed: boolean): void {
-  if (!started) return;
   if (allowed) {
-    if (posthog.has_opted_out_capturing()) posthog.opt_in_capturing();
-  } else if (!posthog.has_opted_out_capturing()) {
-    posthog.stopSessionRecording();
+    start();
+    if (started && posthog.has_opted_out_capturing()) posthog.opt_in_capturing();
+  } else if (started && !posthog.has_opted_out_capturing()) {
     posthog.opt_out_capturing();
-    pausedForRoute = false;
-  }
-}
-
-let pausedForRoute = false;
-
-/**
- * Pauses replay on private screens and resumes it on leaving them. It only
- * resumes what it paused, so the project's own replay settings still decide
- * whether a session is recorded at all.
- */
-export function syncRecordingForRoute(pathname: string): void {
-  if (!ready()) return;
-  const isPrivate = PRIVATE_ROUTES.some((route) => pathname === route || pathname.startsWith(`${route}/`));
-  if (isPrivate && !pausedForRoute) {
-    posthog.stopSessionRecording();
-    pausedForRoute = true;
-  } else if (!isPrivate && pausedForRoute) {
-    posthog.startSessionRecording();
-    pausedForRoute = false;
   }
 }
 
@@ -94,15 +93,4 @@ export function track(event: string, properties?: Record<string, string | number
 export function identifyUser(userId: string): void {
   if (!ready()) return;
   if (posthog.get_distinct_id() !== userId) posthog.identify(userId);
-}
-
-/**
- * On sign-out, so the next person on this phone starts as a new guest.
- * `reset()` also clears consent back to opted out, so the reader's existing
- * choice is applied again straight after.
- */
-export function resetUser(allowed: boolean): void {
-  if (!started) return;
-  posthog.reset();
-  setAnalyticsConsent(allowed);
 }

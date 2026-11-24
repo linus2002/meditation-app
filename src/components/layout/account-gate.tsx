@@ -12,6 +12,8 @@ import { currentPath, loginHref, useAccountStatus } from '@/hooks/use-account';
  *
  * A trailing slash marks "anything beneath, but not the list itself": a guest
  * may look through /yoga, but not start /yoga/<session>.
+ *
+ * Help is open to guests: someone who can't sign in is who needs it most.
  */
 const MEMBER_ROUTES = [
   '/player/',
@@ -26,7 +28,6 @@ const MEMBER_ROUTES = [
   '/mixes',
   '/calendar',
   '/mix-play',
-  '/help',
 ];
 
 export function isMemberRoute(pathname: string): boolean {

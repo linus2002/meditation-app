@@ -10,7 +10,9 @@ import { StoryReader } from '@/components/stories/story-reader';
 import { getMeditation } from '@/data/meditations';
 import { mixItemDetails, type MixItemDetails } from '@/data/mix-items';
 import { getStory } from '@/data/stories';
+import { canGoBackInApp } from '@/hooks/use-back';
 import { useMixes } from '@/hooks/use-mixes';
+import { bridgeHold } from '@/lib/audio/background';
 import { nextPosition, playOrder, previousPosition } from '@/lib/mixes';
 
 const barButton =
@@ -46,7 +48,14 @@ export function MixPlayer() {
     setOrder(playOrder(list.length, shuffle));
   }, [ready, mix, items, shuffle]);
 
+  // On Android, moving on with the screen locked must not let the app go
+  // between one item and the next: it would not be allowed to start again.
+  const bridgeRef = React.useRef<(() => void) | null>(null);
+  React.useEffect(() => () => bridgeRef.current?.(), []);
+
   const goTo = React.useCallback((next: number) => {
+    bridgeRef.current?.();
+    bridgeRef.current = bridgeHold();
     setPosition(next);
     setTurn((value) => value + 1);
   }, []);
@@ -64,7 +73,12 @@ export function MixPlayer() {
   }, [items, position, loop, shuffle, goTo]);
 
   const back = () => goTo(previousPosition(position, items?.length ?? 0, loop));
-  const close = () => router.push(id ? `/mixes?id=${id}` : '/mixes');
+  // Back to the screen that opened this one. Pushing the mix again stacked it
+  // over this player, so Back from the mix reopened the player and replayed it.
+  const close = () => {
+    if (canGoBackInApp()) router.back();
+    else router.replace(id ? `/mixes?id=${id}` : '/mixes');
+  };
 
   if (!ready || !items) return <div className="min-h-full bg-canvas" aria-hidden="true" />;
 
@@ -73,7 +87,7 @@ export function MixPlayer() {
       <div className="flex min-h-full flex-col items-center justify-center bg-canvas px-8 text-center">
         <ListMusic className="h-8 w-8 text-ink-muted" strokeWidth={1.5} />
         <p className="mt-4 text-body-sm text-ink">{mix ? 'This mix is empty.' : 'Mix not found.'}</p>
-        <Link href="/mixes" className="mt-3 text-caption font-medium text-ink underline underline-offset-2">
+        <Link href="/mixes" replace className="mt-3 text-caption font-medium text-ink underline underline-offset-2">
           Back to your mixes
         </Link>
       </div>

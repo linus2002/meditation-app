@@ -4,13 +4,17 @@ import * as React from 'react';
 
 import { settingToggles } from '@/data/settings';
 import { DAILY_GOAL_MINUTES, DAILY_GOAL_OPTIONS } from '@/data/stats';
+import { personalKey, readDevice, storedAccount, writeDevice } from '@/lib/account-scope';
 import { track } from '@/lib/analytics';
 import type { AssessmentAnswers } from '@/lib/assessment';
-import { pushSession } from '@/lib/cloud-sync';
-import { fetchMyRatings, syncRating } from '@/lib/ratings';
+import { mergeSessionLists, pushSession } from '@/lib/cloud-sync';
+import { loadRatings, queueRating } from '@/lib/ratings';
+import { MAX_SESSIONS, saveSessionNow, withSession } from '@/lib/session-store';
 import type { Reflection, SessionRecord, SleepLog } from '@/types';
 
 const STORAGE_KEY = 'serenity.state.v1';
+/** Set once the account's first name has been offered, so clearing it sticks. */
+const NAMED_KEY = 'serenity.named.v1';
 
 interface PersistedState {
   favorites: string[];
@@ -50,10 +54,14 @@ interface AppContextValue extends PersistedState {
   markPlayed: (id: string) => void;
   setSetting: (id: string, value: boolean) => void;
   completeOnboarding: () => void;
-  /** Appends a completed or part-finished sitting. */
-  recordSession: (record: SessionRecord) => void;
-  /** Swaps in the history merged with the reader's account (lib/cloud-sync). */
-  replaceSessions: (records: SessionRecord[]) => void;
+  /**
+   * Appends a completed or part-finished sitting, in storage before it
+   * returns. `interim` is a save made while it is still running: kept on the
+   * phone, and sent to the account only the first time.
+   */
+  recordSession: (record: SessionRecord, options?: { interim?: boolean }) => void;
+  /** Folds in the history from the reader's account (lib/cloud-sync). */
+  mergeSessions: (records: SessionRecord[]) => void;
   toggleFavoriteStory: (id: string) => void;
   isFavoriteStory: (id: string) => boolean;
   /** Writes or replaces the entry for that day. */
@@ -79,13 +87,14 @@ const defaultSettings = settingToggles.reduce<Record<string, boolean>>((acc, tog
 }, {});
 
 const initialState: PersistedState = {
-  favorites: ['open-heart', 'ocean-drift'],
-  recents: ['meditation-daily'],
+  // Nothing saved or played until the reader does it.
+  favorites: [],
+  recents: [],
   settings: defaultSettings,
   onboarded: false,
   reflections: [],
   sessions: [],
-  favoriteStories: ['lighthouse'],
+  favoriteStories: [],
   // Both start empty on purpose: a seeded night or score would be a number the
   // reader never gave, on a screen whose whole job is to report what they did.
   sleepLogs: [],
@@ -94,6 +103,24 @@ const initialState: PersistedState = {
   assessment: null,
   goalMinutes: DAILY_GOAL_MINUTES,
 };
+
+/** A stored copy laid over the current state, field by field, with only valid values taken. */
+function fromStored(current: PersistedState, parsed: Partial<PersistedState>): PersistedState {
+  return {
+    favorites: parsed.favorites ?? current.favorites,
+    recents: parsed.recents ?? current.recents,
+    settings: { ...current.settings, ...(parsed.settings ?? {}) },
+    onboarded: parsed.onboarded ?? current.onboarded,
+    reflections: parsed.reflections ?? current.reflections,
+    sessions: parsed.sessions ?? current.sessions,
+    favoriteStories: parsed.favoriteStories ?? current.favoriteStories,
+    sleepLogs: parsed.sleepLogs ?? current.sleepLogs,
+    ratings: parsed.ratings ?? current.ratings,
+    name: parsed.name ?? current.name,
+    assessment: parsed.assessment ?? current.assessment,
+    goalMinutes: validGoal(parsed.goalMinutes) ?? current.goalMinutes,
+  };
+}
 
 const AppContext = React.createContext<AppContextValue | null>(null);
 
@@ -104,23 +131,25 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   // Read once on mount so the server and first client render always agree.
   React.useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const raw = window.localStorage.getItem(personalKey(STORAGE_KEY));
       if (raw) {
         const parsed = JSON.parse(raw) as Partial<PersistedState>;
-        setState((current) => ({
-          favorites: parsed.favorites ?? current.favorites,
-          recents: parsed.recents ?? current.recents,
-          settings: { ...current.settings, ...(parsed.settings ?? {}) },
-          onboarded: parsed.onboarded ?? current.onboarded,
-          reflections: parsed.reflections ?? current.reflections,
-          sessions: parsed.sessions ?? current.sessions,
-          favoriteStories: parsed.favoriteStories ?? current.favoriteStories,
-          sleepLogs: parsed.sleepLogs ?? current.sleepLogs,
-          ratings: parsed.ratings ?? current.ratings,
-          name: parsed.name ?? current.name,
-          assessment: parsed.assessment ?? current.assessment,
-          goalMinutes: validGoal(parsed.goalMinutes) ?? current.goalMinutes,
-        }));
+        setState((current) => fromStored(current, parsed));
+      }
+
+      // The tour and the theme belong to the phone, whoever is signed in.
+      const device = readDevice();
+      setState((current) => ({
+        ...current,
+        onboarded: device.onboarded ?? current.onboarded,
+        settings: { ...current.settings, lightMode: device.lightMode ?? current.settings.lightMode },
+      }));
+
+      // Greets a reader by the name on their account, unless they chose one here.
+      const firstName = storedAccount()?.firstName;
+      if (firstName && !window.localStorage.getItem(personalKey(NAMED_KEY))) {
+        setState((current) => (current.name ? current : { ...current, name: firstName.slice(0, 40) }));
+        window.localStorage.setItem(personalKey(NAMED_KEY), '1');
       }
     } catch {
       // A blocked or unavailable store simply falls back to the seeded defaults.
@@ -128,39 +157,64 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setHydrated(true);
   }, []);
 
+  /*
+   * The app open twice (two tabs, or the installed app and a tab): each saves
+   * its whole state, so the last to save used to erase what the other had just
+   * saved. Taking in the other's save as it lands keeps both in step, and the
+   * next save here carries both changes.
+   */
+  React.useEffect(() => {
+    if (!hydrated) return undefined;
+    const key = personalKey(STORAGE_KEY);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== key || !event.newValue) return;
+      try {
+        const parsed = JSON.parse(event.newValue) as Partial<PersistedState>;
+        setState((current) => fromStored(current, parsed));
+      } catch {
+        // A damaged value from elsewhere is ignored; ours is still good.
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, [hydrated]);
+
   React.useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      window.localStorage.setItem(personalKey(STORAGE_KEY), JSON.stringify(state));
     } catch {
       // Persistence is a convenience here, never a requirement.
     }
   }, [state, hydrated]);
 
-  /*
-   * After local hydration, fetch the reader's ratings from Supabase (if they
-   * are signed in) and merge them in. Server ratings win over local ones so
-   * ratings from another device are always picked up. The local store is then
-   * overwritten with the merged result, so future cold-starts start with it.
-   */
   React.useEffect(() => {
-    if (!hydrated) return;
-    fetchMyRatings().then((serverRatings) => {
-      if (!serverRatings) return;
-      setState((current) => ({
-        ...current,
-        ratings: { ...current.ratings, ...serverRatings },
-      }));
-    });
-  }, [hydrated]);
+    if (hydrated) writeDevice({ onboarded: state.onboarded, lightMode: state.settings.lightMode === true });
+  }, [hydrated, state.onboarded, state.settings.lightMode]);
 
   /*
-   * The latest state, for the analytics events below. They are sent from the
-   * writers rather than from inside the state updaters, which React may run
-   * twice, so each event goes out once.
+   * The latest state, for the writers' side effects (analytics, sync). Those
+   * run outside the state updaters, which React may run twice, so each goes
+   * out once.
    */
   const stateRef = React.useRef(state);
   stateRef.current = state;
+
+  // Brings ratings level with the account on launch, and when a signal returns.
+  React.useEffect(() => {
+    if (!hydrated) return;
+    let cancelled = false;
+    const sync = () =>
+      void loadRatings(() => stateRef.current.ratings).then((ratings) => {
+        if (ratings && !cancelled) setState((current) => ({ ...current, ratings }));
+      });
+    sync();
+    window.addEventListener('online', sync);
+    return () => {
+      cancelled = true;
+      window.removeEventListener('online', sync);
+    };
+  }, [hydrated]);
 
   // Writers use functional updates, so they never need `state` as a dependency
   // and keep a stable identity for the life of the provider.
@@ -195,22 +249,26 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
    * app is backgrounded, and again when it finishes — and the later, longer
    * record simply replaces the earlier one instead of double-counting.
    */
-  const recordSession = React.useCallback((record: SessionRecord) => {
+  const recordSession = React.useCallback((record: SessionRecord, options?: { interim?: boolean }) => {
     // One event when a sitting first counts, and one when it runs to the end.
     const previous = stateRef.current.sessions.find((item) => item.id === record.id);
     const properties = { meditation_id: record.meditationId, seconds: record.seconds };
     if (!previous) track('session_recorded', properties);
     if (record.completed && !previous?.completed) track('session_completed', properties);
+    // Storage first: this may be the last code to run before the page is gone.
+    saveSessionNow(window.localStorage, personalKey(STORAGE_KEY), record);
     // To the reader's account too, when signed in. Repeat sends are harmless.
-    void pushSession(record);
-    setState((current) => ({
-      ...current,
-      sessions: [record, ...current.sessions.filter((item) => item.id !== record.id)].slice(0, 2000),
-    }));
+    if (!options?.interim || !previous) void pushSession(record);
+    setState((current) => ({ ...current, sessions: withSession(current.sessions, record) }));
   }, []);
 
-  const replaceSessions = React.useCallback((records: SessionRecord[]) => {
-    setState((current) => ({ ...current, sessions: records.slice(0, 2000) }));
+  // Merged into the history as it is now: a sitting may have been saved while
+  // the account was being asked.
+  const mergeSessions = React.useCallback((records: SessionRecord[]) => {
+    setState((current) => ({
+      ...current,
+      sessions: mergeSessionLists(current.sessions, records).slice(0, MAX_SESSIONS),
+    }));
   }, []);
 
   const toggleFavoriteStory = React.useCallback((id: string) => {
@@ -254,19 +312,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   /**
    * Tapping the score already given takes it back (toggle-to-clear).
    * The change is applied locally immediately, then synced to Supabase in the
-   * background — the UI never waits for the network.
+   * background (lib/ratings) — the UI never waits for the network.
    */
   const rateMeditation = React.useCallback((id: string, score: number) => {
-    if (stateRef.current.ratings[id] !== score) track('meditation_rated', { meditation_id: id, score });
+    const wanted = stateRef.current.ratings[id] === score ? null : score;
+    if (wanted !== null) track('meditation_rated', { meditation_id: id });
     setState((current) => {
       const next = { ...current.ratings };
-      const clearing = next[id] === score;
-      if (clearing) delete next[id];
-      else next[id] = score;
-      // Fire-and-forget: failures are silent; the local copy is authoritative.
-      void syncRating(id, clearing ? null : score);
+      if (wanted === null) delete next[id];
+      else next[id] = wanted;
       return { ...current, ratings: next };
     });
+    void queueRating(id, wanted);
   }, []);
 
   const setName = React.useCallback((name: string) => {
@@ -327,7 +384,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setSetting,
       completeOnboarding,
       recordSession,
-      replaceSessions,
+      mergeSessions,
       toggleFavoriteStory,
       saveReflection,
       removeReflection,
@@ -346,7 +403,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setSetting,
       completeOnboarding,
       recordSession,
-      replaceSessions,
+      mergeSessions,
       toggleFavoriteStory,
       saveReflection,
       removeReflection,

@@ -13,20 +13,30 @@ import { programs } from '@/data/programs';
 import { stories } from '@/data/stories';
 import { yogaSessions } from '@/data/yoga';
 import {
+  crisisReply,
   kapwaQuickReplies,
   kapwaWelcome,
   type KapwaAction,
   type KapwaReply,
 } from '@/data/kapwa';
-import { emergencyLine } from '@/data/safety-lines';
+import { crisisLines, emergencyLine } from '@/data/safety-lines';
 import { settingToggles } from '@/data/settings';
 import { appShortcuts } from '@/data/shortcuts';
 import { formatMinutesLabel } from '@/lib/format';
-import { replyTo } from '@/lib/kapwa';
+import {
+  heldReply,
+  replySignalsRisk,
+  replyTo,
+  safetyHold,
+  safetyKind,
+  type SafetyKind,
+} from '@/lib/kapwa';
+import { personalKey } from '@/lib/account-scope';
 import { buildHistory, kapwaAiEnabled, streamKapwaReply, warmUpKapwaAi } from '@/lib/kapwa-ai';
 import { buildKapwaContext, findSessionTitles, parseSessionLine } from '@/lib/kapwa-context';
 import { currentStreak } from '@/lib/session-stats';
 import { supportTrackEnabled } from '@/lib/support-track';
+import { useAutoGrow } from '@/hooks/use-auto-grow';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
@@ -35,6 +45,11 @@ interface ChatMessage {
   from: 'kapwa' | 'you';
   text: string;
   actions?: KapwaAction[];
+  /** Part of a crisis or medical exchange: never sent to the AI. */
+  private?: boolean;
+  /** On the reader's message: the risk seen in it, and when, for `safetyHold`. */
+  safety?: SafetyKind;
+  at?: number;
 }
 
 /** Kept on this phone only. */
@@ -43,8 +58,6 @@ const MAX_MESSAGES = 100;
 const MAX_LENGTH = 300;
 /** A short pause before Kapwa answers, so the reply reads as a reply. */
 const TYPING_MS = 700;
-/** Answered on the device with fixed replies, never by the AI. */
-const SAFETY_INTENTS = new Set(['crisis', 'medical-urgent']);
 
 function welcome(): ChatMessage {
   return { id: 'welcome', from: 'kapwa', text: kapwaWelcome.text, actions: kapwaWelcome.actions };
@@ -78,6 +91,7 @@ export function KapwaChat() {
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [hydrated, setHydrated] = React.useState(false);
   const [draft, setDraft] = React.useState('');
+  const inputRef = useAutoGrow(draft);
   const [typing, setTyping] = React.useState(false);
   const endRef = React.useRef<HTMLDivElement>(null);
   const timer = React.useRef<number | undefined>(undefined);
@@ -87,7 +101,7 @@ export function KapwaChat() {
 
   React.useEffect(() => {
     try {
-      const raw = window.localStorage.getItem(STORAGE_KEY);
+      const raw = window.localStorage.getItem(personalKey(STORAGE_KEY));
       const saved = raw ? (JSON.parse(raw) as ChatMessage[]) : [];
       setMessages(saved.length > 0 ? saved : [welcome()]);
     } catch {
@@ -107,7 +121,7 @@ export function KapwaChat() {
   React.useEffect(() => {
     if (!hydrated) return;
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(messages));
+      window.localStorage.setItem(personalKey(STORAGE_KEY), JSON.stringify(messages));
     } catch {
       // Without storage the chat simply starts fresh next time.
     }
@@ -127,19 +141,51 @@ export function KapwaChat() {
 
   const send = (value: string) => {
     const text = value.trim().slice(0, MAX_LENGTH);
-    if (!text || typing) return;
+    if (!text) return;
+
+    // Never make someone wait to be heard: a new message cuts short whatever
+    // Kapwa was in the middle of saying.
+    window.clearTimeout(timer.current);
+    aiRequest.current?.abort();
+    setStreamingId(null);
+
+    const now = Date.now();
+    const risk = safetyKind(text);
+    const held = safetyHold(messages, now);
+    const asked: ChatMessage = { id: `you-${now}`, from: 'you', text };
+    setDraft('');
+
+    // Crisis and medical replies are fixed, never go to the AI, and come at
+    // once: a pause would be lost if the reader left the screen during it.
+    // A medical sign during a crisis must not take the crisis lines away.
+    const kind = held === 'crisis' ? held : (risk ?? held);
+    if (kind) {
+      const answer = kind === risk ? replyTo(text) : heldReply(kind);
+      setTyping(false);
+      setMessages((current) =>
+        [
+          ...current,
+          // Only fresh risk restarts the hold, or it would never run out.
+          { ...asked, private: true, ...(risk ? { safety: risk, at: now } : {}) },
+          {
+            id: `kapwa-${now}`,
+            from: 'kapwa' as const,
+            text: answer.text,
+            actions: answer.actions,
+            private: true,
+          },
+        ].slice(-MAX_MESSAGES),
+      );
+      return;
+    }
 
     const turn = messages.filter((message) => message.from === 'you').length;
     const reply = replyTo(text, { turn, supportTrack: supportTrackEnabled });
 
-    setMessages((current) =>
-      [...current, { id: `you-${Date.now()}`, from: 'you' as const, text }].slice(-MAX_MESSAGES),
-    );
-    setDraft('');
+    setMessages((current) => [...current, asked].slice(-MAX_MESSAGES));
     setTyping(true);
 
-    // Crisis and medical replies are fixed and never go to the AI.
-    if (kapwaAiEnabled && !SAFETY_INTENTS.has(reply.intentId)) {
+    if (kapwaAiEnabled) {
       void sendToAi(text, reply);
       return;
     }
@@ -168,9 +214,9 @@ export function KapwaChat() {
     const actions = fallback.intentId === 'fallback' ? [] : fallback.actions;
     let started = false;
 
-    const show = (replyText: string, withActions?: KapwaAction[]) =>
+    const show = (replyText: string, withActions?: KapwaAction[], isPrivate?: boolean) =>
       setMessages((current) => {
-        const bubble: ChatMessage = { id, from: 'kapwa', text: replyText, actions: withActions };
+        const bubble: ChatMessage = { id, from: 'kapwa', text: replyText, actions: withActions, private: isPrivate };
         const exists = current.some((message) => message.id === id);
         return (exists
           ? current.map((message) => (message.id === id ? bubble : message))
@@ -202,7 +248,8 @@ export function KapwaChat() {
           .slice(0, 4)
           .map((sessionId) => ({ type: 'session', id: sessionId }));
         if (!parsed.text) throw new Error('empty reply');
-        show(parsed.text, picked.length > 0 ? picked : actions);
+        if (replySignalsRisk(parsed.text)) show(parsed.text, crisisReply.actions, true);
+        else show(parsed.text, picked.length > 0 ? picked : actions);
       }
     } catch {
       if (!controller.signal.aborted) show(fallback.text, fallback.actions);
@@ -229,7 +276,7 @@ export function KapwaChat() {
         // Written straight back too, in case Undo is tapped after leaving
         // this screen, when the save effect above is no longer mounted.
         try {
-          window.localStorage.setItem(STORAGE_KEY, JSON.stringify(previous));
+          window.localStorage.setItem(personalKey(STORAGE_KEY), JSON.stringify(previous));
         } catch {
           // Nothing more to do; the chat simply stays cleared.
         }
@@ -317,7 +364,7 @@ export function KapwaChat() {
         ) : null}
       </ol>
 
-      {hydrated && !typing ? (
+      {hydrated && !typing && !safetyHold(messages, Date.now()) ? (
         <div className="mt-4 flex flex-wrap gap-2 px-4">
           {kapwaQuickReplies.map((quick) => (
             <button
@@ -348,6 +395,7 @@ export function KapwaChat() {
         </label>
         <textarea
           id="kapwa-input"
+          ref={inputRef}
           rows={1}
           value={draft}
           maxLength={MAX_LENGTH}
@@ -363,7 +411,7 @@ export function KapwaChat() {
         />
         <button
           type="submit"
-          disabled={!draft.trim() || typing}
+          disabled={!draft.trim()}
           aria-label="Send"
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-aurora-blue text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
@@ -372,7 +420,16 @@ export function KapwaChat() {
       </form>
 
       <p className="mt-2 px-2 text-center text-caption leading-relaxed text-ink-muted">
-        Kapwa can’t give medical advice. In an emergency, call {emergencyLine.display}.
+        Kapwa can’t give medical advice. In crisis, call{' '}
+        {/* Always here: the one way to help that doesn’t rely on Kapwa understanding. */}
+        <a href={`tel:${crisisLines[2].dial}`} className="inline-block py-1 font-semibold text-ink underline">
+          {crisisLines[2].display}
+        </a>
+        . In an emergency, call{' '}
+        <a href={`tel:${emergencyLine.dial}`} className="inline-block py-1 font-semibold text-ink underline">
+          {emergencyLine.display}
+        </a>
+        .
       </p>
       </ChatDock>
     </div>

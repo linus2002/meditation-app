@@ -12,7 +12,7 @@ import { Screen, type ScreenKey } from './phone';
 
 const SCREENS: { key: ScreenKey; title: string; text: string }[] = [
   { key: 'home', title: 'Home', text: 'A slow breath, sessions picked for you, and quick ways in.' },
-  { key: 'meditations', title: 'Meditations', text: 'Favourites, programs, stories and sounds in one library.' },
+  { key: 'meditations', title: 'Meditations', text: 'Saved sessions, programs, stories and sounds in one library.' },
   { key: 'player', title: 'Guided player', text: 'A breathing orb paced to the session, with sound made on the phone.' },
   { key: 'kapwa', title: 'Kapwa', text: 'A built-in guide that points you to a session for how you feel.' },
   { key: 'yoga', title: 'Yoga', text: 'Gentle guided flows, one pose at a time, with a soft bell to move.' },

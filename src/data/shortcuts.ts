@@ -6,6 +6,7 @@ import {
   Heart,
   HeartHandshake,
   NotebookPen,
+  Sparkles,
   Timer,
   TimerReset,
   CalendarDays,
@@ -28,6 +29,12 @@ export interface Shortcut {
  * screen's menu and the Shortcuts section of Profile, so the two never drift.
  */
 export const appShortcuts: Shortcut[] = [
+  {
+    href: '/assessment',
+    label: 'Assessment',
+    description: 'A few questions, then sessions picked for how you are',
+    icon: Sparkles,
+  },
   {
     href: '/timer',
     label: 'Unguided timer',

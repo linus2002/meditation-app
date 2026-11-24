@@ -43,7 +43,7 @@ function UnsupportedScreen() {
         </span>
       </div>
 
-      <h1 className="mt-7 text-[1.5rem] font-bold leading-tight tracking-[-0.015em] text-ink">
+      <h1 className="mt-7 text-[1.5rem] font-semibold leading-tight tracking-[-0.015em] text-ink">
         Made for phones and tablets
       </h1>
 
@@ -52,7 +52,7 @@ function UnsupportedScreen() {
         on your phone or tablet, or narrow this window to 1024px or less.
       </p>
 
-      <p className="mt-7 text-label uppercase tracking-[0.18em] text-ink-faint">
+      <p className="mt-7 text-label tracking-[0.02em] text-ink-faint">
         Phone · Tablet · iPad
       </p>
     </main>

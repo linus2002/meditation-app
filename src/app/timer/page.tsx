@@ -6,6 +6,7 @@ import { Pause, Play, Square, X } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
+import { useBackGuard } from '@/hooks/use-back-guard';
 import { SessionComplete } from '@/components/session/session-complete';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { EdgeCurves, WaveLines } from '@/components/shared/decor';
@@ -138,10 +139,23 @@ export default function TimerPage() {
     { onPlay: resumeSit, onPause: () => countdown.pause() },
   );
 
+  // A sit's own sound never outlives the screen, however it is left. A
+  // soundscape the reader had on before opening the timer is left alone.
+  const startedSoundRef = React.useRef(false);
+  React.useEffect(
+    () => () => {
+      if (startedSoundRef.current) stop(1);
+    },
+    [stop],
+  );
+
   const begin = async () => {
     // Audio has to be unlocked by the gesture that starts the sit.
     await prime();
+    // "Silence" means silence: no soundscape left playing from elsewhere.
+    startedSoundRef.current = true;
     if (scape) void play(scape);
+    else stop(0.8);
     setPhase(warmupSeconds > 0 ? 'warmup' : 'running');
   };
 
@@ -153,8 +167,22 @@ export default function TimerPage() {
     setPhase('setup');
   };
 
+  // A paused sit is quiet: the sound stops with the clock and comes back with it.
+  const sitting = phase === 'warmup' || phase === 'running';
+  React.useEffect(() => {
+    if (!sitting || !scape) return;
+    if (countdown.running) void play(scape);
+    else stop(0.8);
+    // Follows the clock alone; play and stop are stable.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [countdown.running, sitting]);
+
   // Ending is asked, not done: the corner button sits where Back usually is.
   const [confirmingEnd, setConfirmingEnd] = React.useState(false);
+
+  // Back during a sit asks first, as the corner button does; Back again keeps going.
+  // A timed sit has no place to resume from, so leaving by accident would lose it.
+  useBackGuard(phase === 'warmup' || phase === 'running', () => (confirmingEnd ? keepGoing() : askToEnd()));
   const wasRunningRef = React.useRef(false);
   const askToEnd = () => {
     wasRunningRef.current = countdown.running;
@@ -238,7 +266,7 @@ export default function TimerPage() {
       ) : phase === 'done' ? (
         <div className="relative flex-1 px-5 pb-[clamp(18px,3.8vh,32px)] pt-6">
           <SessionComplete
-            minutes={minutes}
+            seconds={minutes * 60}
             againLabel="Sit again"
             // Through `begin`, so the chosen ambience starts again with the sit.
             onAgain={() => void begin()}

@@ -25,7 +25,7 @@ export function StatBlock({ label, value, suffix, size = 'time', className }: St
           className={cn(
             'leading-none tracking-[-0.02em] text-ink',
             size === 'hero'
-              ? 'text-[clamp(2rem,11.5vw,3.125rem)] font-bold'
+              ? 'text-[clamp(2rem,11.5vw,3.125rem)] font-semibold'
               : 'text-[clamp(1.25rem,6.8vw,1.75rem)] font-light',
           )}
         >

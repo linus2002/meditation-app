@@ -1,12 +1,15 @@
 'use client';
 
 import * as React from 'react';
-import { Check, PencilLine } from 'lucide-react';
+
+import { useToday } from '@/hooks/use-today';
+import { Check, PencilLine, Trash2 } from 'lucide-react';
+
+import { useUndo } from '@/components/layout/undo-toast';
 
 import { GradientButton } from '@/components/shared/gradient-button';
 import { Skeleton } from '@/components/shared/skeleton';
-import { toDateKey } from '@/lib/date';
-import { minutesAsleep } from '@/lib/sleep-stats';
+import { minutesAsleep, nightProblem } from '@/lib/sleep-stats';
 import { handleRovingKey } from '@/lib/roving';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
@@ -17,6 +20,7 @@ const QUALITY_LABELS = ['Rough', 'Broken', 'Fair', 'Good', 'Deep'];
 const DEFAULT_BEDTIME = '23:00';
 const DEFAULT_WAKE = '07:00';
 
+
 /**
  * Last night, written down.
  *
@@ -26,12 +30,12 @@ const DEFAULT_WAKE = '07:00';
  * the screen reports exactly those back.
  */
 export function SleepLogCard() {
-  const { sleepLogs, saveSleepLog, hydrated } = useApp();
+  const { sleepLogs, saveSleepLog, removeSleepLog, hydrated } = useApp();
+  const offerUndo = useUndo();
 
-  // Resolved on the client: these pages are prerendered, so the build date must
-  // not decide which night "last night" is.
-  const [today, setToday] = React.useState<string | null>(null);
-  React.useEffect(() => setToday(toDateKey(new Date())), []);
+  // Resolved on the client, and kept current: left open overnight, "last night"
+  // must move on rather than overwrite the night before.
+  const today = useToday();
 
   const existing = today ? sleepLogs.find((entry) => entry.date === today) : undefined;
 
@@ -55,12 +59,22 @@ export function SleepLogCard() {
   const duration =
     minutes === null ? null : `${Math.floor(minutes / 60)}h ${String(minutes % 60).padStart(2, '0')}m`;
 
+  const problem = nightProblem(minutes);
+
   const handleSave = () => {
-    if (!today || quality === null || minutes === null) return;
+    if (!today || quality === null || minutes === null || problem) return;
     saveSleepLog({ date: today, bedtime, wakeTime, quality, updatedAt: Date.now() });
     setEditing(false);
     setJustSaved(true);
     window.setTimeout(() => setJustSaved(false), 2600);
+  };
+
+  const handleDelete = () => {
+    if (!existing) return;
+    const night = existing;
+    removeSleepLog(night.date);
+    setEditing(false);
+    offerUndo({ message: 'Last night’s entry deleted', undo: () => saveSleepLog(night) });
   };
 
   if (!hydrated) {
@@ -90,6 +104,7 @@ export function SleepLogCard() {
             Edit
           </button>
         </div>
+
 
         {justSaved ? (
           <p className="mt-3 flex items-center gap-1.5 text-label leading-none text-ink-muted">
@@ -129,7 +144,11 @@ export function SleepLogCard() {
         </label>
       </div>
 
-      {duration ? (
+      {problem ? (
+        <p role="status" className="mt-2.5 text-label leading-snug text-ink-muted">
+          {problem}
+        </p>
+      ) : duration ? (
         <p className="mt-2.5 text-label leading-none text-ink-faint">
           That is {duration} in bed.
         </p>
@@ -182,7 +201,7 @@ export function SleepLogCard() {
       <div className="mt-4 flex items-center gap-2.5">
         <GradientButton
           onClick={handleSave}
-          disabled={quality === null || minutes === null}
+          disabled={quality === null || problem !== null}
           className="h-11 flex-1 text-body-sm"
         >
           {existing ? 'Update night' : 'Save night'}
@@ -197,6 +216,16 @@ export function SleepLogCard() {
           </button>
         ) : null}
       </div>
+      {existing ? (
+        <button
+          type="button"
+          onClick={handleDelete}
+          className="mt-3 flex items-center gap-1.5 rounded-full px-1 py-1 text-label font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        >
+          <Trash2 className="h-3.5 w-3.5" strokeWidth={1.8} />
+          Delete this night
+        </button>
+      ) : null}
     </div>
   );
 }

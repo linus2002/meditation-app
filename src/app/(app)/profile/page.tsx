@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ChevronRight, MessageCircleQuestion, User } from 'lucide-react';
 
 import { AccountCard } from '@/components/auth/account-card';
+import { DeleteAccount } from '@/components/auth/delete-account';
 import { InstallPrompt } from '@/components/layout/install-prompt';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { SectionTitle } from '@/components/shared/section-title';
@@ -35,6 +36,27 @@ export default function ProfilePage() {
   // through every keystroke.
   const [draftName, setDraftName] = React.useState('');
   React.useEffect(() => setDraftName(name), [name]);
+  // Leaving the screen mid-edit (Back, a tab, the phone's back gesture)
+  // unmounts the field without a blur, which used to drop what was typed. Kept
+  // here instead, and saved on the way out or when the app is put away.
+  const unsaved = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    const save = () => {
+      if (unsaved.current === null) return;
+      setName(unsaved.current);
+      unsaved.current = null;
+    };
+    const onHide = () => {
+      if (document.visibilityState === 'hidden') save();
+    };
+    document.addEventListener('visibilitychange', onHide);
+    window.addEventListener('pagehide', save);
+    return () => {
+      document.removeEventListener('visibilitychange', onHide);
+      window.removeEventListener('pagehide', save);
+      save();
+    };
+  }, [setName]);
   const { permission, mode: reminderMode, inApp, enable, disable } = useReminders();
   const supportUnread = useSupportUnread();
 
@@ -56,7 +78,7 @@ export default function ProfilePage() {
           ? 'Notifications are blocked for Serenity. Allow them in your phone’s settings to switch the reminders back on.'
           : 'Notifications are blocked for Serenity. Allow them in your browser or system settings to switch the reminders back on.'
         : reminderMode === 'web'
-          ? 'In a browser tab, reminders arrive while Serenity is open. Install it to your home screen for nudges that reach you with the app closed.'
+          ? 'In a browser, reminders arrive only while Serenity is open. The Android app can remind you with Serenity closed.'
           : null;
 
   // Resolved on the client: these pages are prerendered, so the build date
@@ -90,6 +112,13 @@ export default function ProfilePage() {
     { label: 'Sessions', value: ready ? String(totals.sessions) : '—' },
   ];
 
+  // Breathing haptics only where a phone can actually buzz: never on iPhone, which
+  // has no vibration for web pages, nor on a desktop with no motor to run.
+  const [canVibrate, setCanVibrate] = React.useState(false);
+  React.useEffect(() => {
+    setCanVibrate(typeof navigator.vibrate === 'function' && window.matchMedia('(pointer: coarse)').matches);
+  }, []);
+
   return (
     <div className="pb-4">
       {/*
@@ -107,7 +136,7 @@ export default function ProfilePage() {
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
-          <p className="truncate text-[1.125rem] font-bold leading-tight tracking-[-0.01em] text-ink">
+          <p className="truncate text-[1.125rem] font-semibold leading-tight tracking-[-0.01em] text-ink">
             {hydrated && name ? name : 'Your practice'}
           </p>
           <p className="mt-1 text-caption leading-snug text-ink-muted">
@@ -132,8 +161,14 @@ export default function ProfilePage() {
           maxLength={40}
           autoComplete="given-name"
           placeholder="Your first name"
-          onChange={(event) => setDraftName(event.target.value)}
-          onBlur={() => setName(draftName)}
+          onChange={(event) => {
+            setDraftName(event.target.value);
+            unsaved.current = event.target.value;
+          }}
+          onBlur={() => {
+            setName(draftName);
+            unsaved.current = null;
+          }}
           onKeyDown={(event) => {
             if (event.key === 'Enter') event.currentTarget.blur();
           }}
@@ -242,7 +277,7 @@ export default function ProfilePage() {
       <section className="mt-6 px-5">
         <SectionTitle>Preferences</SectionTitle>
         <ul className="mt-3 space-y-2.5">
-          {settingToggles.map((toggle) => {
+          {settingToggles.filter((toggle) => toggle.id !== 'haptics' || canVibrate).map((toggle) => {
             const Icon = toggle.icon;
             const stored = settings[toggle.id] ?? toggle.defaultOn;
 
@@ -351,6 +386,11 @@ export default function ProfilePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Last, and apart from everything else: it cannot be undone. */}
+      <section className="mt-8 px-5">
+        <DeleteAccount />
       </section>
     </div>
   );

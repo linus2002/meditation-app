@@ -1,3 +1,4 @@
+import { isThisReader } from '@/lib/account-scope';
 import { getSupabase } from '@/lib/supabase/client';
 import { isDeviceOnly, onResumeChange, type ResumeEntry, type ResumeMap } from '@/lib/resume';
 import type { SessionRecord } from '@/types';
@@ -17,13 +18,16 @@ import type { SessionRecord } from '@/types';
 const ID_PATTERN = /^[a-z0-9][a-z0-9-]{0,79}$/;
 const KEY_PATTERN = /^[a-z0-9][a-z0-9:-]{0,119}$/;
 
-/** The signed-in account's id, or null for a guest or an anonymous account. */
+/**
+ * The signed-in account's id, or null for a guest, an anonymous account, or
+ * an account this page does not belong to.
+ */
 export async function memberId(): Promise<string | null> {
   const client = getSupabase();
   if (!client) return null;
   const { data } = await client.auth.getSession();
   const user = data.session?.user;
-  return user && !user.is_anonymous && user.email ? user.id : null;
+  return user && !user.is_anonymous && user.email && isThisReader(user) ? user.id : null;
 }
 
 // ---- Sittings -------------------------------------------------------------
@@ -117,16 +121,12 @@ export function sessionsToSend(local: SessionRecord[], remote: SessionRecord[]):
 
 /**
  * Brings the account and this phone level. Returns the merged list for the
- * phone to keep, or null when there was nothing to sync with.
+ * phone to fold in, or null when there was nothing to sync with.
  *
- * `uploadLocal` is false when the phone's history belongs to someone else (a
- * different account was last signed in here), so it is never filed under
- * this account; their own history still comes down.
+ * `readLocal` is read once the account answers: a sitting saved while waiting
+ * would otherwise be left out, or sent up over its own newer copy.
  */
-export async function syncSessions(
-  local: SessionRecord[],
-  uploadLocal: boolean,
-): Promise<SessionRecord[] | null> {
+export async function syncSessions(readLocal: () => SessionRecord[]): Promise<SessionRecord[] | null> {
   try {
     const client = getSupabase();
     const userId = await memberId();
@@ -137,11 +137,13 @@ export async function syncSessions(
       .select('user_id,id,meditation_id,day,seconds,completed,started_at')
       .order('started_at', { ascending: false })
       .limit(2000);
-    if (error) return null;
+    // The session can change during the request; then this answer is someone else's.
+    if (error || (await memberId()) !== userId) return null;
     const remote = (data as SessionRow[]).map(fromRow);
+    const local = readLocal();
 
-    if (uploadLocal) await upsertSessions(userId, sessionsToSend(local, remote));
-    return mergeSessionLists(uploadLocal ? local : [], remote).slice(0, 2000);
+    await upsertSessions(userId, sessionsToSend(local, remote));
+    return mergeSessionLists(local, remote).slice(0, 2000);
   } catch {
     return null;
   }
@@ -179,9 +181,10 @@ async function upsertResume(userId: string, entries: ResumeMap): Promise<void> {
 export async function fetchResume(): Promise<ResumeMap | null> {
   try {
     const client = getSupabase();
-    if (!client || !(await memberId())) return null;
+    const userId = await memberId();
+    if (!client || !userId) return null;
     const { data, error } = await client.from('resume_points').select('item_key,position,saved_at');
-    if (error) return null;
+    if (error || (await memberId()) !== userId) return null;
     const map: ResumeMap = {};
     for (const row of data as Omit<ResumeRow, 'user_id'>[]) {
       map[row.item_key] = { seconds: row.position, savedAt: new Date(row.saved_at).getTime() };

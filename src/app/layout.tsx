@@ -68,11 +68,11 @@ export const viewport: Viewport = {
  *
  * AppProvider also does this, but only after hydration — which is too late: a
  * light-mode reader would watch the dark canvas paint and then flip. Reading
- * the same localStorage key from a blocking inline script is the only way to
+ * the phone's own key (see lib/account-scope) from a blocking inline script is the only way to
  * have the right colours on the very first frame. It is deliberately tiny and
  * swallows its own errors, since storage can be unavailable.
  */
-const themeScript = `try{var s=JSON.parse(localStorage.getItem('serenity.state.v1')||'{}');var l=s&&s.settings&&s.settings.lightMode;document.documentElement.dataset.theme=l?'light':'dark';if(l){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#FFFFFF');}}catch(e){}`;
+const themeScript = `try{var s=JSON.parse(localStorage.getItem('serenity.device.v1')||'null')||(JSON.parse(localStorage.getItem('serenity.state.v1')||'{}')||{}).settings;var l=s&&s.lightMode;document.documentElement.dataset.theme=l?'light':'dark';if(l){var m=document.querySelector('meta[name="theme-color"]');if(m)m.setAttribute('content','#FFFFFF');}}catch(e){}`;
 
 /*
  * Tracks whether the reader is moving with keys, so focus rings show for

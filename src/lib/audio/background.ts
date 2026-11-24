@@ -126,7 +126,8 @@ function sync() {
       // An older app without the lock-screen controls: the card just has no buttons.
     }
   }
-  const state = { holding: holds > 0, nowPlaying: shown()?.info ?? null };
+  // A release still in its grace counts as held, or a card leaving would stop the service early.
+  const state = { holding: holds > 0 || releaseTimer !== null, nowPlaying: shown()?.info ?? null };
   const key = JSON.stringify(state);
   if (key === lastSent) return;
   lastSent = key;
@@ -138,12 +139,26 @@ function sync() {
 }
 
 /**
- * Asks to stay alive, and returns the release. Holds overlap as one screen hands
- * over to another or a soundscape plays under a session, so the service runs
- * from the first hold to the last release (or while a card is still shown).
+ * How long the last release waits before letting the app go. Android refuses to
+ * start the service again from the lock screen, so a stop between one sound and
+ * the next (a mix moving on, a player flipping "not playing" a moment before it
+ * reports the end) would leave the next one unprotected for good.
  */
-export function holdBackground(): () => void {
+export const RELEASE_GRACE_MS = 3_000;
+
+let releaseTimer: ReturnType<typeof setTimeout> | null = null;
+/** Bridge holds still waiting for the next sound to take over. */
+const bridges = new Set<() => void>();
+
+function cancelPendingRelease() {
+  if (releaseTimer === null) return;
+  clearTimeout(releaseTimer);
+  releaseTimer = null;
+}
+
+function take(): () => void {
   holds += 1;
+  cancelPendingRelease();
   if (holds === 1) sync();
 
   let released = false;
@@ -151,8 +166,42 @@ export function holdBackground(): () => void {
     if (released) return;
     released = true;
     holds -= 1;
-    if (holds === 0) sync();
+    if (holds !== 0) return;
+    cancelPendingRelease();
+    releaseTimer = setTimeout(() => {
+      releaseTimer = null;
+      if (holds === 0) sync();
+    }, RELEASE_GRACE_MS);
   };
+}
+
+/**
+ * Asks to stay alive, and returns the release. Holds overlap as one screen hands
+ * over to another or a soundscape plays under a session, so the service runs
+ * from the first hold to the last release (or while a card is still shown).
+ */
+export function holdBackground(): () => void {
+  const release = take();
+  // Something is playing again, so any hand-over hold has done its job.
+  for (const bridge of [...bridges]) bridge();
+  return release;
+}
+
+/**
+ * Keeps the app alive across a hand-over, such as a mix moving to its next
+ * item while the screen is locked: until the next sound takes its own hold, or
+ * `maxMs` passes if it never does (it failed to load, say).
+ */
+export function bridgeHold(maxMs = 60_000): () => void {
+  const release = take();
+  const timer = setTimeout(() => end(), maxMs);
+  const end = () => {
+    if (!bridges.delete(end)) return;
+    clearTimeout(timer);
+    release();
+  };
+  bridges.add(end);
+  return end;
 }
 
 /**
@@ -180,6 +229,8 @@ export function claimLockScreen(priority: number, controls: NowPlayingControls) 
 /** For tests: forget everything between cases. */
 export function resetBackgroundForTests() {
   holds = 0;
+  cancelPendingRelease();
+  bridges.clear();
   entries.clear();
   nextId = 1;
   listening = false;

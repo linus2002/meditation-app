@@ -2,6 +2,7 @@
 
 import { Heart } from 'lucide-react';
 
+import { useUndo } from '@/components/layout/undo-toast';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
@@ -21,11 +22,23 @@ export function StoryFavoriteButton({
 }: StoryFavoriteButtonProps) {
   const { isFavoriteStory, toggleFavoriteStory, hydrated } = useApp();
   const saved = hydrated && isFavoriteStory(storyId);
+  const offerUndo = useUndo();
+
+  // As for sessions: on the Saved screen an unsaved story vanishes on the spot.
+  const toggle = () => {
+    toggleFavoriteStory(storyId);
+    if (saved) {
+      offerUndo({
+        message: `${title} removed from saved`,
+        undo: () => toggleFavoriteStory(storyId),
+      });
+    }
+  };
 
   return (
     <button
       type="button"
-      onClick={() => toggleFavoriteStory(storyId)}
+      onClick={toggle}
       aria-pressed={saved}
       aria-label={saved ? `Remove ${title} from saved` : `Save ${title}`}
       className={cn(

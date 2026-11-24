@@ -42,23 +42,31 @@ export function SleepChart({ nights }: { nights: SleepNight[] }) {
             >
               <span
                 className={cn(
-                  'text-label tabular-nums transition-opacity',
+                  'h-4 shrink-0 text-label leading-4 tabular-nums transition-opacity',
                   isActive ? 'text-ink opacity-100' : 'opacity-0',
                 )}
               >
                 {night.logged ? `${night.hours.toFixed(1)}h` : '—'}
               </span>
-              {night.logged ? (
-                <span
-                  className={cn(
-                    'w-full rounded-full bg-[linear-gradient(180deg,#1D9FDA_0%,#61A644_100%)] transition-all duration-500 ease-out',
-                    isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100',
-                  )}
-                  style={{ height: `${heightPercent}%` }}
-                />
-              ) : (
-                <span className="h-[3px] w-full rounded-full bg-overlay/15" />
-              )}
+              {/*
+                The bar's own track: its percentage is of this, not of the whole
+                column with the label in it, which squeezed every long night to
+                the same height.
+              */}
+              <span className="relative w-full flex-1">
+                {night.logged ? (
+                  <span
+                    data-bar
+                    className={cn(
+                      'absolute inset-x-0 bottom-0 rounded-full bg-[linear-gradient(180deg,#1D9FDA_0%,#61A644_100%)] transition-all duration-500 ease-out',
+                      isActive ? 'opacity-100' : 'opacity-70 group-hover:opacity-100',
+                    )}
+                    style={{ height: `${heightPercent}%` }}
+                  />
+                ) : (
+                  <span className="absolute inset-x-0 bottom-0 h-[3px] rounded-full bg-overlay/15" />
+                )}
+              </span>
             </button>
           );
         })}

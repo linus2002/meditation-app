@@ -42,7 +42,7 @@ describe('buildKapwaContext', () => {
     expect(finished).toContain(`${first.title} (`);
     expect(finished).not.toContain(`[${second.id}]`);
     expect(started).toContain(`[${second.id}]`);
-    expect(section('FAVOURITES')).toContain(`[${second.id}]`);
+    expect(section('SAVED')).toContain(`[${second.id}]`);
     expect(text).toContain('Current streak: 2 days.');
   });
 

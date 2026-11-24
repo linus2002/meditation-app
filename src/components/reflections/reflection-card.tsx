@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+
+import { useToday } from '@/hooks/use-today';
 import { Check, Lock, PencilLine } from 'lucide-react';
 
 import { WeightScale } from '@/components/reflections/weight-scale';
@@ -9,7 +11,6 @@ import { Skeleton } from '@/components/shared/skeleton';
 import {
   MAX_REFLECTION_LENGTH,
   promptForDate,
-  toDateKey,
   weightLabel,
 } from '@/data/reflections';
 import { cn } from '@/lib/utils';
@@ -23,10 +24,9 @@ import { useApp } from '@/providers/app-provider';
 export function ReflectionCard() {
   const { reflections, saveReflection, hydrated } = useApp();
 
-  // Resolved on the client only: the date key depends on the local clock, and
-  // reading it during render would risk a server/client mismatch.
-  const [today, setToday] = React.useState<string | null>(null);
-  React.useEffect(() => setToday(toDateKey(new Date())), []);
+  // Resolved on the client only, and kept current past midnight, so an entry
+  // written on a screen left open overnight goes under the right day.
+  const today = useToday();
 
   const existing = today ? reflections.find((entry) => entry.date === today) : undefined;
 

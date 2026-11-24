@@ -73,7 +73,7 @@ export function ScrollFrame({
   }, [pathname]);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} data-scroll-frame className={className}>
       {children}
     </div>
   );

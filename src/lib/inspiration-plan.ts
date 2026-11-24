@@ -1,3 +1,4 @@
+import { personalKey } from '@/lib/account-scope';
 import { addDaysToKey } from '@/lib/tz';
 import type { InspirationReason } from '@/lib/inspiration';
 
@@ -50,7 +51,7 @@ export function prunePlan(plan: InspirationPlan, todayKey: string): InspirationP
 
 export function readPlan(): InspirationPlan {
   try {
-    const raw = window.localStorage.getItem(PLAN_KEY);
+    const raw = window.localStorage.getItem(personalKey(PLAN_KEY));
     return raw ? (JSON.parse(raw) as InspirationPlan) : {};
   } catch {
     return {};
@@ -59,7 +60,7 @@ export function readPlan(): InspirationPlan {
 
 export function writePlan(plan: InspirationPlan): void {
   try {
-    window.localStorage.setItem(PLAN_KEY, JSON.stringify(plan));
+    window.localStorage.setItem(personalKey(PLAN_KEY), JSON.stringify(plan));
   } catch {
     // Without storage each screen re-decides; the words may simply differ.
   }

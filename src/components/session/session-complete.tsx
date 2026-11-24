@@ -16,8 +16,10 @@ import { useApp } from '@/providers/app-provider';
 import type { Meditation } from '@/types';
 
 interface SessionCompleteProps {
-  /** Minutes just sat. */
-  minutes: number;
+  /** Seconds credited to today: time actually heard, not the session's length. */
+  seconds: number;
+  /** Most of it was skipped, so it was not counted as finished. */
+  skipped?: boolean;
   againLabel: string;
   onAgain: () => void;
   /** Offered as the next thing to do, if there is one worth offering. */
@@ -36,13 +38,15 @@ interface SessionCompleteProps {
  * only appears if today's has not been written, so it never reads as a chore.
  */
 export function SessionComplete({
-  minutes,
+  seconds,
+  skipped = false,
   againLabel,
   onAgain,
   nextUp,
   rated,
   className,
 }: SessionCompleteProps) {
+  const minutes = Math.round(seconds / 60);
   const { sessions, reflections, ratings, rateMeditation, hydrated, goalMinutes } = useApp();
 
   // The local date is resolved on the client; these pages are prerendered.
@@ -69,10 +73,12 @@ export function SessionComplete({
           <Check className="h-7 w-7 text-white" strokeWidth={2.4} />
         </span>
 
-        <p className="mt-4 text-[clamp(1.625rem,8vw,2rem)] font-bold leading-none tracking-[-0.02em] text-ink">
-          {minutes} {minutes === 1 ? 'minute' : 'minutes'}
+        <p className="mt-4 text-[clamp(1.625rem,8vw,2rem)] font-semibold leading-none tracking-[-0.02em] text-ink">
+          {minutes >= 1 ? `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}` : skipped ? 'Skipped ahead' : 'Under a minute'}
         </p>
-        <p className="mt-2 text-caption leading-none text-ink-muted">added to today</p>
+        <p className="mt-2 text-caption leading-none text-ink-muted">
+          {!skipped ? 'added to today' : minutes >= 1 ? 'added to today · skipped parts don’t count' : 'Only the time you listen counts'}
+        </p>
       </div>
 
       {/* Where the day now stands. */}
@@ -113,10 +119,10 @@ export function SessionComplete({
         */}
       {hydrated && rated ? (
         <div className="mt-6 rounded-tile bg-surface p-4">
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex flex-col items-start gap-2">
             <div className="min-w-0">
               <p className="text-caption font-medium leading-tight text-ink">How was that?</p>
-              <p className="mt-0.5 truncate text-label leading-tight text-ink-faint">
+              <p className="mt-0.5 text-label leading-tight text-ink-faint">
                 {ratings[rated.id] ? 'Tap the same star to clear it.' : 'Only you ever see this.'}
               </p>
             </div>
@@ -124,6 +130,7 @@ export function SessionComplete({
               value={ratings[rated.id]}
               onChange={(score) => rateMeditation(rated.id, score)}
               label={`Rate ${rated.title}`}
+              className="-ml-2.5"
             />
           </div>
         </div>

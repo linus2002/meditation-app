@@ -1,13 +1,19 @@
 'use client';
 
+import * as React from 'react';
 import { ArrowDownToLine, Check, Loader2 } from 'lucide-react';
 
 import { useDownloads } from '@/hooks/use-downloads';
+import { artworkOnPage } from '@/lib/offline-downloads';
 import { cn } from '@/lib/utils';
 
 interface DownloadButtonProps {
   meditationId: string;
   title: string;
+  /** The session's recording, saved with it. */
+  track?: string;
+  /** The session's artwork sources, saved as this screen draws them. */
+  artwork?: string[];
   className?: string;
   size?: 'sm' | 'md';
 }
@@ -24,10 +30,20 @@ interface DownloadButtonProps {
 export function DownloadButton({
   meditationId,
   title,
+  track,
+  artwork = [],
   className,
   size = 'sm',
 }: DownloadButtonProps) {
-  const { support, isSaved, isBusy, save, remove } = useDownloads();
+  const { support, isSaved, isBusy, save, removeWithUndo, errorFor, dismissError } = useDownloads();
+  const error = errorFor(meditationId);
+
+  // Said where it was asked for, not only on the Downloads screen; it goes after a while.
+  React.useEffect(() => {
+    if (!error) return undefined;
+    const timer = window.setTimeout(dismissError, 6000);
+    return () => window.clearTimeout(timer);
+  }, [error, dismissError]);
 
   if (support !== 'available') return null;
 
@@ -36,6 +52,7 @@ export function DownloadButton({
   const dimension = size === 'sm' ? 'h-4 w-4' : 'h-[18px] w-[18px]';
 
   return (
+    <span className="relative flex">
     <button
       type="button"
       aria-pressed={saved}
@@ -47,7 +64,7 @@ export function DownloadButton({
             : `Save ${title} for offline`
       }
       disabled={busy}
-      onClick={() => (saved ? void remove(meditationId) : void save(meditationId))}
+      onClick={() => (saved ? removeWithUndo(meditationId, title) : void save(meditationId, [...(track ? [track] : []), ...artworkOnPage(artwork)]))}
       className={cn(
         'flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 hover:scale-110 active:scale-95 disabled:hover:scale-100',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
@@ -77,5 +94,14 @@ export function DownloadButton({
         />
       )}
     </button>
+    {error ? (
+      <span
+        role="alert"
+        className="absolute right-0 top-full z-20 mt-2 w-max max-w-[240px] rounded-xl bg-ink px-3 py-2 text-left text-label leading-snug text-canvas shadow-pill"
+      >
+        {error}
+      </span>
+    ) : null}
+    </span>
   );
 }

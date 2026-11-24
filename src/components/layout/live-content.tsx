@@ -26,6 +26,10 @@ const SAFE_SCREENS = new Set(['/home', '/meditations', '/sleep', '/yoga']);
  * background. A fresh copy is put on screen the next time the reader is on one
  * of the browse tabs, by redrawing the screens below with the new content;
  * playback and everything above (account, audio, settings) carry on untouched.
+ *
+ * "Next time" means arriving at one, never while on it: redrawing the screen
+ * someone is using stopped a sleep sound, reset its timer and lost a
+ * half-written sleep log, and closed an open menu or video on Home.
  */
 export function LiveContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -38,13 +42,7 @@ export function LiveContent({ children }: { children: React.ReactNode }) {
   const lastCheck = React.useRef(0);
 
   const offer = React.useCallback((next: Content) => {
-    if (!differsFromCurrent(next)) return;
-    if (safeRef.current) {
-      if (showContent(next)) setVersion((v) => v + 1);
-      pending.current = null;
-    } else {
-      pending.current = next;
-    }
+    if (differsFromCurrent(next)) pending.current = next;
   }, []);
 
   const check = React.useCallback(() => {
@@ -78,7 +76,8 @@ export function LiveContent({ children }: { children: React.ReactNode }) {
     };
   }, [check]);
 
-  // A copy that arrived mid-session waits for the next browse tab.
+  // A copy that arrived meanwhile goes on as a browse tab is arrived at, when
+  // that screen is being drawn afresh anyway.
   React.useEffect(() => {
     if (safe && pending.current) {
       const next = pending.current;

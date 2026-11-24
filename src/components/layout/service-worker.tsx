@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-
-import { useAudio } from '@/providers/audio-provider';
+import { usePathname } from 'next/navigation';
 
 /**
  * Registers the offline service worker and keeps the installed app current.
@@ -16,13 +15,14 @@ import { useAudio } from '@/providers/audio-provider';
  * An installed PWA is rarely reloaded by hand — it is opened, backgrounded and
  * opened again for weeks. So a new deploy is picked up on three occasions: when
  * the page loads, whenever the app returns to the foreground, and hourly while
- * it stays open. When the new worker takes over, the page reloads itself.
+ * it stays open. When the new worker takes over, the page reloads at the next
+ * change of screen: never under a session, a timer or a half-typed entry.
  */
 export function ServiceWorkerRegistrar() {
-  const { playing } = useAudio();
-
-  // Set when an update activated during playback, and the reload was held back.
+  const pathname = usePathname();
+  // Set when an update has taken over; the reload waits for a change of screen.
   const [reloadPending, setReloadPending] = React.useState(false);
+  const pendingFromRef = React.useRef<string | null>(null);
 
   React.useEffect(() => {
     if (process.env.NODE_ENV !== 'production') return;
@@ -40,14 +40,8 @@ export function ServiceWorkerRegistrar() {
     const takeOver = () => {
       if (!wasControlled || reloading) return;
       reloading = true;
-      // Audio survives nothing across a reload, so a session that is sounding
-      // gets to finish; the flag below reloads once it stops.
-      if (document.querySelector('[data-audio-playing="true"]')) {
-        reloading = false;
-        setReloadPending(true);
-        return;
-      }
-      window.location.reload();
+      pendingFromRef.current = window.location.pathname;
+      setReloadPending(true);
     };
 
     navigator.serviceWorker.addEventListener('controllerchange', takeOver);
@@ -89,12 +83,10 @@ export function ServiceWorkerRegistrar() {
     };
   }, []);
 
-  // The held-back reload, once the soundscape has gone quiet.
+  // Leaving a screen ends whatever was on it, so that is when to load the update.
   React.useEffect(() => {
-    if (reloadPending && !playing) window.location.reload();
-  }, [reloadPending, playing]);
+    if (reloadPending && pathname !== pendingFromRef.current) window.location.reload();
+  }, [reloadPending, pathname]);
 
-  // Read by the reload guard above — the effect runs outside React's tree and
-  // cannot see this component's props.
-  return <span hidden data-audio-playing={playing ? 'true' : 'false'} />;
+  return null;
 }

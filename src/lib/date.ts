@@ -12,6 +12,12 @@ export function toDateKey(date: Date): string {
 }
 
 /** Parses `YYYY-MM-DD` back into a local Date at midnight. */
+/** Milliseconds from `now` to the next local midnight. */
+export function msUntilNextDay(now: Date): number {
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  return next.getTime() - now.getTime();
+}
+
 export function fromDateKey(key: string): Date {
   const [year, month, day] = key.split('-').map(Number);
   return new Date(year, month - 1, day);

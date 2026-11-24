@@ -40,7 +40,7 @@ import { cn } from "@/lib/utils";
 import { useAudio } from "@/providers/audio-provider";
 
 const iconButton =
-  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70";
+  "flex h-11 w-8 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink disabled:opacity-30 disabled:hover:bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70";
 
 function details(mix: Mix): MixItemDetails[] {
   return mix.items

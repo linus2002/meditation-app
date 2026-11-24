@@ -223,6 +223,16 @@
    * `position: relative` sits in this layer so that an `absolute` utility on
    * the same element still wins.
    */
+  /*
+   * iPhone Safari zooms the page into any text field under 16px and leaves it
+   * zoomed. Fields on touch screens are set to 16px; desktop sizes are untouched.
+   */
+  @media (pointer: coarse) {
+    :is(input, textarea, select):is(.text-body-sm, .text-caption, .text-label) {
+      font-size: 16px;
+    }
+  }
+
   .tap-target {
     position: relative;
   }
@@ -243,14 +253,17 @@
     @apply bg-clip-text text-transparent;
   }
 
-  /* Faint hairline used between the deck and the "What Brings You Today ?" row. */
+  /*
+   * Faint hairline used between sections. Drawn in the overlay tint, which is
+   * white on the dark canvas and ink on the light one, so it shows in both.
+   */
   .hairline {
     background: linear-gradient(
       90deg,
-      rgba(255, 255, 255, 0) 0%,
-      rgba(255, 255, 255, 0.16) 12%,
-      rgba(255, 255, 255, 0.16) 88%,
-      rgba(255, 255, 255, 0) 100%
+      rgb(var(--overlay) / 0) 0%,
+      rgb(var(--overlay) / 0.16) 12%,
+      rgb(var(--overlay) / 0.16) 88%,
+      rgb(var(--overlay) / 0) 100%
     );
   }
 

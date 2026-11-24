@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { CloudOff, Loader2, Smartphone, Trash2 } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
-import { useUndo } from '@/components/layout/undo-toast';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { SectionTitle } from '@/components/shared/section-title';
 import { SkeletonList } from '@/components/shared/skeleton';
@@ -15,24 +14,9 @@ import { getMeditation } from '@/data/meditations';
 import { formatBytes } from '@/lib/offline-downloads';
 
 export default function DownloadsPage() {
-  const { support, loaded, sessions, totalLabel, error, isBusy, remove } = useDownloads();
-  const offerUndo = useUndo();
-
-  // An offline copy may be the only way to play in a hospital with no signal,
-  // and cannot be fetched back without one. So the row goes at once, but the
-  // copy itself is only deleted once the chance to undo has passed.
-  const [leaving, setLeaving] = React.useState<string[]>([]);
-  const removeCopy = (id: string, title: string) => {
-    setLeaving((current) => [...current, id]);
-    offerUndo({
-      message: `${title} removed from this device`,
-      undo: () => setLeaving((current) => current.filter((entry) => entry !== id)),
-      commit: () => void remove(id),
-    });
-  };
+  const { support, loaded, sessions, totalLabel, error, isBusy, removeWithUndo } = useDownloads();
 
   const saved = sessions
-    .filter((entry) => !leaving.includes(entry.id))
     .map((entry) => ({ entry, meditation: getMeditation(entry.id) }))
     .filter((row): row is { entry: typeof row.entry; meditation: NonNullable<typeof row.meditation> } =>
       Boolean(row.meditation),
@@ -50,16 +34,15 @@ export default function DownloadsPage() {
 
       <div className="mt-6 px-5">
         {/*
-         * The native case: the app ships its pages, code, and audio generation
-         * locally, so sessions always open and sound with no connection.
-         * Artwork streams from Sanity on first view and is cached once seen;
-         * offline before that, each image displays a blur preview.
+         * The native case: the app ships its pages, code and soundscapes, but
+         * session recordings stream from Sanity and there is no worker here to
+         * save them, so it says so rather than promise offline play.
          */}
         {support === 'bundled' ? (
           <EmptyState
             icon={<Smartphone className="h-6 w-6 text-ink-muted" strokeWidth={1.5} />}
-            title="Ready offline"
-            body="Sessions and audio are built into the app, so they always play without a connection. Artwork streams the first time you view a session and stays saved on your device."
+            title="Built into the app"
+            body="Session screens, the timer and the soundscapes work without a connection. Recorded sessions stream, so they need one; saving them for offline isn’t available in the app yet."
           />
         ) : support === 'unavailable' ? (
           <EmptyState
@@ -107,7 +90,7 @@ export default function DownloadsPage() {
                 <button
                   type="button"
                   disabled={isBusy(entry.id)}
-                  onClick={() => removeCopy(entry.id, meditation.title)}
+                  onClick={() => removeWithUndo(entry.id, meditation.title)}
                   aria-label={`Remove the offline copy of ${meditation.title}`}
                   className="relative z-10 tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                 >
@@ -144,34 +127,27 @@ export default function DownloadsPage() {
         <div className="mt-7 px-5">
           <SectionTitle>How offline works</SectionTitle>
           <p className="mt-3 rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
-            Serenity synthesises its soundscapes and voices directly on your device, so audio
-            works anywhere with no signal. Session pages and code are built into the app and never
-            need downloading.
+            Session screens and code are built into the app, and the soundscapes are made on your
+            device as they play, so those work anywhere. Recorded sessions stream from the internet
+            and need a connection.
           </p>
           <p className="mt-2.5 px-1 text-label leading-relaxed text-ink-faint">
-            To keep the app size small, artwork streams from the network the first time you open a
-            session and is kept in your device cache for offline use. If you open a new session with
-            no connection, it shows a soft blur preview and plays completely normally.
+            To keep the app size small, artwork streams the first time you open a session and is
+            kept on your device. Opened with no connection before that, it shows a soft blur
+            preview instead.
           </p>
         </div>
       ) : support === 'available' ? (
         <div className="mt-7 px-5">
           <SectionTitle>What a download holds</SectionTitle>
-          {/*
-           * Said plainly, because "download" usually means an audio file and
-           * here it does not. Every sound in Serenity is generated on the
-           * device as it plays, so the sound was never the part at risk.
-           */}
           <p className="mt-3 rounded-tile bg-surface px-4 py-3.5 text-caption leading-relaxed text-ink-muted">
-            Serenity makes every sound on your device as it plays, so the audio needs no
-            downloading and already works with no signal. A download saves the parts that do come
-            over the network — the session screen and its artwork — so the whole thing opens on a
-            plane, on the underground, or anywhere with nothing to connect to.
+            A download saves the session’s recording, its screen and its artwork, so it plays on a
+            plane, on the underground, or anywhere with nothing to connect to. The soundscapes
+            underneath are made on your device and need nothing.
           </p>
           <p className="mt-2.5 px-1 text-label leading-relaxed text-ink-faint">
-            Sessions share most of what they need, so the first download is the expensive one and
-            each session after it costs far less than its own size suggests. Downloads survive
-            app updates, and stay until you remove them.
+            Most of a download is its recording, a few megabytes each. Downloads survive app
+            updates, and stay until you remove them.
           </p>
         </div>
       ) : null}

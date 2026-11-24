@@ -141,6 +141,18 @@ export function monthGrid(year: number, month: number): (string | null)[][] {
   return weeks;
 }
 
+/** How long a past one-off stays on the calendar before it is tidied away. */
+const KEEP_PAST_DAYS = 30;
+
+/**
+ * Drops one-off schedules more than a month past. Without this they piled up
+ * for good, and the calendar stopped taking new ones at MAX_SCHEDULES.
+ */
+export function pruneSchedules(entries: ScheduledSession[], now: Date): ScheduledSession[] {
+  const oldest = toDateKey(addDays(now, -KEEP_PAST_DAYS));
+  return entries.filter((entry) => entry.repeat !== 'once' || entry.date >= oldest);
+}
+
 /** Reads stored schedules defensively: anything malformed is dropped. */
 export function parseSchedules(raw: string | null): ScheduledSession[] {
   if (!raw) return [];

@@ -1,6 +1,8 @@
 'use client';
 
 import * as React from 'react';
+
+import { recordStoryFinished } from '@/lib/story-finishes';
 import Image from 'next/image';
 import { ChevronsLeft, Moon } from 'lucide-react';
 
@@ -53,14 +55,17 @@ export interface StoryMixMode {
 
 export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }) {
   const goBack = useBack('/stories');
-  const { playMusic, pauseMusic, stopMusic, prime } = useAudio();
+  const { playMusic, pauseMusic, stopMusic, prime, stop: stopScape } = useAudio();
 
   const [savedLoop, toggleLoop] = useLoop('story');
   // In a mix, the mix decides what comes next, so a single story never repeats.
   const loop = mix ? false : savedLoop;
   const finishedRef = React.useRef(mix?.onFinished);
   finishedRef.current = mix?.onFinished;
-  const onEnded = React.useCallback(() => finishedRef.current?.(), []);
+  const onEnded = React.useCallback(() => {
+    recordStoryFinished(story.id);
+    finishedRef.current?.();
+  }, [story.id]);
   const narration = useStoryPlayer(story, loop, onEnded);
 
   const [music, setMusic] = React.useState(true);
@@ -174,6 +179,8 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
   // Started from the tap itself, so mobile browsers allow the music to play.
   const startNarration = async () => {
     await prime();
+    // A soundscape left playing from elsewhere would sound under the story.
+    stopScape(0.8);
     if (music) playMusic(musicSrc, MUSIC_LEVEL);
     narration.play();
   };
@@ -283,7 +290,7 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
         </h1>
         <p className="mt-2 text-caption leading-relaxed text-ink-muted">{story.description}</p>
         <p className="mt-1.5 text-label leading-none text-ink-faint">
-          Read by {story.voice}
+          Read by {story.voice}, an AI voice
         </p>
       </div>
 
@@ -333,7 +340,7 @@ export function StoryReader({ story, mix }: { story: Story; mix?: StoryMixMode }
               <span
                 className={cn(
                   'flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors',
-                  music ? 'bg-aurora-blue' : 'bg-overlay/12',
+                  music ? 'bg-aurora-blue' : 'bg-overlay/[0.12]',
                 )}
               >
                 <span

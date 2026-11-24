@@ -1,4 +1,6 @@
+import { AUTH_STORAGE_KEY, storedAccount, TEST_ACCOUNT, TEST_SESSION_KEY } from '@/lib/account-scope';
 import { getSupabase } from '@/lib/supabase/client';
+import { rememberGuestLikes } from '@/lib/video-likes';
 
 /**
  * Email sign-in with a one-time code, on the app's Supabase project.
@@ -56,11 +58,23 @@ export function authErrorText(error: unknown): string {
   }
 }
 
+/** Exported for its tests. */
+export function authErrorFrom(error: { message?: string; code?: string; status?: number }): AuthError {
+  return toError(error);
+}
+
 function toError(error: { message?: string; code?: string; status?: number }): AuthError {
   const message = error.message ?? '';
   if (/signups? not allowed|otp_disabled|user not found/i.test(`${message} ${error.code ?? ''}`)) {
     return new AuthError('no_account', message);
   }
+  // Before the code check below: an address the server rejects also says
+  // "invalid", and was reported as a wrong code.
+  if (error.code === 'email_address_invalid' || /email.*invalid|invalid.*email|validate email/i.test(message)) {
+    return new AuthError('invalid_email', message);
+  }
+  // Safari words a dropped connection "Load failed".
+  if (/fetch|network|load failed/i.test(message)) return new AuthError('offline', message);
   if (error.code === 'otp_expired' || /token has expired|invalid/i.test(message)) {
     return new AuthError('invalid_code', message);
   }
@@ -76,13 +90,9 @@ function toError(error: { message?: string; code?: string; status?: number }): A
   ) {
     return new AuthError('rate_limited', message);
   }
-  if (error.code === 'email_address_invalid' || /email.*invalid|invalid.*email/i.test(message)) {
-    return new AuthError('invalid_email', message);
-  }
   // The account service could not hand the email to the mail provider (see
   // the SMTP settings in Supabase): nothing the reader can fix by retyping.
   if (/error sending .*email/i.test(message)) return new AuthError('email_failed', message);
-  if (/fetch|network/i.test(message)) return new AuthError('offline', message);
   return new AuthError('unknown', message);
 }
 
@@ -91,10 +101,7 @@ function toError(error: { message?: string; code?: string; status?: number }): A
  * through without a real inbox. It never touches Supabase, and it exists only
  * in `npm run dev`: production and mobile builds compile it away.
  */
-export const TEST_ACCOUNT =
-  process.env.NODE_ENV === 'development'
-    ? { email: 'test@serenity.dev', code: '123456', firstName: 'Test' }
-    : null;
+export { TEST_ACCOUNT };
 
 function isTestAccount(email: string): boolean {
   return TEST_ACCOUNT !== null && normaliseEmail(email) === TEST_ACCOUNT.email;
@@ -104,8 +111,6 @@ function isTestAccount(email: string): boolean {
  * Whether the test account is signed in. Kept in sessionStorage so a reload in
  * `npm run dev` stays signed in, the way a real Supabase session does.
  */
-const TEST_SESSION_KEY = 'serenity.test-auth';
-
 function readTestSession(): boolean {
   try {
     return TEST_ACCOUNT !== null && window.sessionStorage.getItem(TEST_SESSION_KEY) === '1';
@@ -186,6 +191,8 @@ export async function verifyEmailCode(email: string, code: string): Promise<void
     setTestSignedIn(true);
     return;
   }
+  // A guest's likes are kept for the account this signs in to (lib/video-likes).
+  await rememberGuestLikes().catch(() => undefined);
   const { error } = await client().auth.verifyOtp({
     email: normaliseEmail(email),
     token: code.trim(),
@@ -199,30 +206,34 @@ export async function verifyEmailCode(email: string, code: string): Promise<void
  * account (as video likes create) has no email and counts as signed out here.
  */
 export async function accountEmail(): Promise<string | null> {
-  if (TEST_ACCOUNT && testSignedIn) return TEST_ACCOUNT.email;
-  const supabase = getSupabase();
-  if (!supabase) return null;
-  const { data } = await supabase.auth.getSession();
-  return data.session?.user.email ?? null;
+  // Read from the phone: asking Supabase tries to refresh an expired token,
+  // and with no signal that reads as signed out.
+  return storedAccount()?.email ?? null;
 }
 
-/** Signs this device out. The practice recorded on the phone stays. */
+/** How long sign-out waits for the server before finishing on the phone alone. */
+const SIGN_OUT_WAIT_MS = 3000;
+
+/**
+ * Signs this device out, and only this one. It works with no signal: on a
+ * shared phone, signing out is what hides this reader's data, so it cannot
+ * depend on the network. The data stays, under their account (lib/account-scope).
+ */
 export async function signOut(): Promise<void> {
   if (TEST_ACCOUNT && testSignedIn) {
     setTestSignedIn(false);
     return;
   }
-  const { error } = await client().auth.signOut();
-  if (error) throw toError(error);
+  const revoked = client()
+    .auth.signOut({ scope: 'local' })
+    .catch(() => undefined);
+  await Promise.race([revoked, new Promise((resolve) => setTimeout(resolve, SIGN_OUT_WAIT_MS))]);
+  try {
+    window.localStorage.removeItem(AUTH_STORAGE_KEY);
+  } catch {
+    // Blocked storage never held a session to remove.
+  }
+  notifyAuthChange();
 }
 
-/**
- * The first name given at sign-up, for the home greeting. Read from the
- * account itself, so it follows the reader to a new phone.
- */
-export async function accountFirstName(): Promise<string | null> {
-  if (TEST_ACCOUNT && testSignedIn) return TEST_ACCOUNT.firstName;
-  const { data } = await client().auth.getUser();
-  const value = data.user?.user_metadata?.first_name;
-  return typeof value === 'string' && value.trim() ? value.trim() : null;
-}
+

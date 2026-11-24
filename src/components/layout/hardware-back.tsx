@@ -4,6 +4,7 @@ import * as React from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { canGoBackInApp, isTabRoot, normalizePath } from '@/hooks/use-back';
+import { runBackGuard } from '@/lib/back-guard';
 import { useApp } from '@/providers/app-provider';
 
 /*
@@ -59,6 +60,8 @@ export function HardwareBack() {
         document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
         return;
       }
+      // A screen that must not be left by accident answers Back itself.
+      if (runBackGuard()) return;
       const path = normalizePath(pathnameRef.current);
 
       // Home is the bottom of the app. Back here leaves, whatever came before

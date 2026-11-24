@@ -36,6 +36,18 @@ export function minutesAsleep(bedtime: string, wakeTime: string): number | null 
   return end > start ? end - start : end + MINUTES_PER_DAY - start;
 }
 
+/** A night outside these bounds is a slip of the clock, not a night's sleep. */
+export const MIN_NIGHT_MINUTES = 30;
+export const MAX_NIGHT_MINUTES = 20 * 60;
+
+/** Why these times can't be saved, or null when they can. */
+export function nightProblem(minutes: number | null): string | null {
+  if (minutes === null) return 'Enter a bedtime and a wake time.';
+  if (minutes < MIN_NIGHT_MINUTES) return 'Bedtime and wake time are too close. Check both.';
+  if (minutes > MAX_NIGHT_MINUTES) return 'That’s more than 20 hours. Check AM and PM.';
+  return null;
+}
+
 export function hoursAsleep(log: SleepLog): number {
   return (minutesAsleep(log.bedtime, log.wakeTime) ?? 0) / 60;
 }

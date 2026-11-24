@@ -11,6 +11,8 @@
  * `support:<id>` for the other players. See `resumeKey`.
  */
 
+import { personalKey } from '@/lib/account-scope';
+
 const RESUME_KEY = 'serenity.resume.v1';
 
 /** Not worth resuming: barely started, or as good as finished. */
@@ -72,7 +74,7 @@ export function resumePoint(
 
 export function readAll(): ResumeMap {
   try {
-    const raw = window.localStorage.getItem(RESUME_KEY);
+    const raw = window.localStorage.getItem(personalKey(RESUME_KEY));
     return raw ? (JSON.parse(raw) as ResumeMap) : {};
   } catch {
     return {};
@@ -81,7 +83,7 @@ export function readAll(): ResumeMap {
 
 function writeAll(map: ResumeMap): void {
   try {
-    window.localStorage.setItem(RESUME_KEY, JSON.stringify(map));
+    window.localStorage.setItem(personalKey(RESUME_KEY), JSON.stringify(map));
   } catch {
     // Without storage a session simply starts from the top next time.
   }

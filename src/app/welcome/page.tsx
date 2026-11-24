@@ -171,7 +171,7 @@ export default function WelcomePage() {
       </div>
 
       {/* Where you are in the tour; each dot also jumps straight to its step. */}
-      <div className="pointer-events-none absolute inset-x-0 top-[var(--header-gap)] z-10 flex justify-center gap-1.5">
+      <div className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-gap)-19px)] z-10 flex justify-center">
         {steps.map((_, index) => (
           <button
             key={index}
@@ -179,11 +179,16 @@ export default function WelcomePage() {
             onClick={() => goTo(index)}
             aria-label={`Go to step ${index + 1}`}
             aria-current={index === step ? 'step' : undefined}
-            className={cn(
-              'pointer-events-auto h-1.5 rounded-full transition-all duration-300',
-              index === step ? 'w-5 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/70',
-            )}
-          />
+            // A 44px-tall target around a 6px dot.
+            className="group pointer-events-auto flex h-11 min-w-6 items-center justify-center px-[3px]"
+          >
+            <span
+              className={cn(
+                'block h-1.5 rounded-full transition-all duration-300',
+                index === step ? 'w-5 bg-white' : 'w-1.5 bg-white/40 group-hover:bg-white/70',
+              )}
+            />
+          </button>
         ))}
       </div>
     </div>

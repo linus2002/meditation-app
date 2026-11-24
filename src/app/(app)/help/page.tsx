@@ -4,6 +4,7 @@ import * as React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronRight, Loader2, MessageCircleQuestion, Plus, Send } from 'lucide-react';
 
+import { GuestHelp } from '@/components/help/guest-help';
 import { CHAT_END_CLASS, ChatDock } from '@/components/layout/chat-dock';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { GradientButton } from '@/components/shared/gradient-button';
@@ -13,6 +14,7 @@ import {
   createThread,
   getThread,
   listThreads,
+  newestTime,
   replyToThread,
   SUPPORT_CATEGORIES,
   syncThread,
@@ -23,8 +25,10 @@ import {
   type SupportThread,
 } from '@/lib/support';
 import { markSupportSeen } from '@/hooks/use-support-unread';
+import { useAccountStatus } from '@/hooks/use-account';
 import { accountEmail } from '@/lib/auth';
 import { useApp } from '@/providers/app-provider';
+import { useAutoGrow } from '@/hooks/use-auto-grow';
 import { cn } from '@/lib/utils';
 
 /**
@@ -390,6 +394,7 @@ function Conversation({ id }: { id: string }) {
   const [teamTyping, setTeamTyping] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
   const [draft, setDraft] = React.useState('');
+  const replyRef = useAutoGrow(draft);
   const [sendProblem, setSendProblem] = React.useState<string | null>(null);
   const endRef = React.useRef<HTMLDivElement>(null);
   const initials = useInitials();
@@ -405,12 +410,18 @@ function Conversation({ id }: { id: string }) {
   /** Messages there when the screen opened don't animate in; new ones do. */
   const firstIdsRef = React.useRef<Set<string> | null>(null);
   const tempRef = React.useRef(0);
+  /**
+   * The newest message time the server has sent us. Our own reply is left out:
+   * using it would skip anything the team sent in the moment before it.
+   */
+  const cursorRef = React.useRef<string | null>(null);
 
   const load = React.useCallback(async () => {
     try {
       const data = await getThread(id);
       setThread({ subject: data.thread.subject, status: data.thread.status, category: data.thread.category });
       firstIdsRef.current ??= new Set(data.messages.map((m) => m.id));
+      cursorRef.current = newestTime(cursorRef.current, data.messages);
       setMessages((current) => mergeMessages(current ?? [], data.messages));
       setProblem(null);
     } catch (error) {
@@ -424,9 +435,9 @@ function Conversation({ id }: { id: string }) {
     syncingRef.current = true;
     const typing = Boolean(draftRef.current.trim()) && Date.now() - lastKeyRef.current < TYPING_MS;
     if (typing) lastSignalRef.current = Date.now();
-    const newest = shown.filter((m) => !m.pending).at(-1)?.created_at ?? null;
     try {
-      const data = await syncThread(id, newest, typing);
+      const data = await syncThread(id, cursorRef.current, typing);
+      cursorRef.current = newestTime(cursorRef.current, data.messages);
       setMessages((current) => mergeMessages(current ?? [], data.messages));
       setTeamTyping(data.typing);
       setThread((current) => (current && current.status !== data.status ? { ...current, status: data.status } : current));
@@ -587,6 +598,7 @@ function Conversation({ id }: { id: string }) {
           </label>
           <textarea
             id="support-reply"
+            ref={replyRef}
             rows={1}
             value={draft}
             maxLength={MAX_BODY}
@@ -640,6 +652,16 @@ function HelpScreen() {
   const params = useSearchParams();
   const threadId = params.get('t');
   const composing = params.get('new') === '1';
+  const status = useAccountStatus();
+
+  if (status !== 'member') {
+    return (
+      <div className="flex flex-1 flex-col pb-6">
+        <ScreenHeader eyebrow="Serenity team" title="Help & support" />
+        {status === 'guest' ? <GuestHelp /> : <Skeleton className="mx-5 mt-6 h-[240px]" />}
+      </div>
+    );
+  }
 
   return (
     <div className={cn('flex flex-1 flex-col', threadId ? null : 'pb-6')}>

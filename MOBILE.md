@@ -101,14 +101,56 @@ Then in Android Studio:
 - Plug in a phone with **USB debugging** on (Settings → About phone → tap *Build
   number* 7 times → Developer options → USB debugging) and press **Run**. The app
   installs straight onto the device.
-- To share a test build: **Build → Build Bundle(s)/APK(s) → Build APK(s)**, then
-  send the `.apk` to anyone; they enable "install unknown apps" and open it.
+- To share a test build, run the **Android test APK** workflow and share `/get`
+  (set up Signing, below, first). Don't send round APKs built in Android Studio:
+  they carry that computer's debug key, so they can't update, or be updated by,
+  the one from `/get`.
 - To publish: **Build → Generate Signed Bundle** (`.aab`), then upload it in the
   [Google Play Console](https://play.google.com/console). One‑time **$25**
   registration. Review typically takes a few days.
 
 If a step complains about a missing tool, run `npx cap doctor` — it names exactly
 what is missing.
+
+### Signing
+
+Android only installs an update signed with the same key as the app already
+there. Otherwise the reader has to uninstall, which erases everything kept on
+the phone. So there is **one key, for good**. Keep it and its password in a
+password manager and in a second offline copy. If either is lost, installed
+copies can never be updated again.
+
+Set it up once, in PowerShell, from the repo folder. The key is created outside
+the repo, and the workflow refuses to build until all four values exist.
+
+```powershell
+$keytool = "C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe"
+$key = "$HOME\serenity-release.jks"
+
+# Stop if this file exists: it may already be the key.
+if (Test-Path $key) { throw "$key already exists" }
+
+# Asks you to choose a password, then for a name and organisation.
+& $keytool -genkeypair -keystore $key -storetype PKCS12 -alias serenity -keyalg RSA -keysize 4096 -validity 10000
+
+# Three secrets. The password one prompts, so it isn't left in your history.
+[Convert]::ToBase64String([IO.File]::ReadAllBytes($key)) | gh secret set ANDROID_KEYSTORE_BASE64
+gh secret set ANDROID_KEY_ALIAS --body serenity
+gh secret set ANDROID_KEYSTORE_PASSWORD
+
+# One variable: the key's public fingerprint. Copy the "SHA256:" value printed here.
+& $keytool -list -v -keystore $key -alias serenity
+gh variable set ANDROID_CERT_SHA256
+```
+
+The workflow then builds a signed release APK, numbers it higher each run, and
+publishes only if its fingerprint matches.
+
+**The first signed build cannot update the older test APKs**, because each of
+those had a throwaway key that no longer exists. Before sharing it, tell testers
+they must uninstall once, that this erases reflections, sleep logs, mixes,
+schedules and chats on that phone, and that only synced sessions, places, ratings
+and likes return on signing in.
 
 ### Reminders that arrive with the app closed
 

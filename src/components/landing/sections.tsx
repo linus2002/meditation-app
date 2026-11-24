@@ -34,9 +34,13 @@ import { Constellation } from './constellation';
 import { REVEAL, clamp, usePrefersReducedMotion, useReveal } from './motion';
 import { Phone } from './phone';
 
-/* Store links: swap in the real listings once they are live. */
-export const APP_STORE_URL = '#download';
-export const PLAY_STORE_URL = '#download';
+/*
+ * There are no store listings yet. Both buttons go to /get, which offers the
+ * same two ways in: the Android app as a download, and iOS from the Home
+ * Screen. The hash opens the matching steps there.
+ */
+export const IOS_URL = '/get#ios';
+export const ANDROID_URL = '/get#android';
 
 const BLUE = '#1EA0DA';
 
@@ -105,36 +109,36 @@ function AppleLogo({ className }: { className?: string }) {
   );
 }
 
-/** The four-colour Play triangle. */
-function PlayLogo({ className }: { className?: string }) {
+/** The Android robot's head, as on /get. */
+function AndroidLogo({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 22 24" aria-hidden="true" className={className}>
-      <path d="M1 .9 L12.3 12 L1 23.1 C.6 22.8.4 22.3.4 21.7 V2.3 C.4 1.7.6 1.2 1 .9 Z" fill="#4285F4" />
-      <path d="M1 .9 C1.5.5 2.2.4 3 .9 L16.2 8.4 L12.3 12 Z" fill="#34A853" />
-      <path d="M16.2 8.4 L20.4 10.8 C21.6 11.5 21.6 12.5 20.4 13.2 L16.2 15.6 L12.3 12 Z" fill="#FBBC04" />
-      <path d="M12.3 12 L16.2 15.6 L3 23.1 C2.2 23.6 1.5 23.5 1 23.1 Z" fill="#EA4335" />
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={className}>
+      <path d="M2.5 18.5a9.5 9.5 0 0 1 19 0z" fill="#3ddc84" />
+      <path d="M6.6 10.6 4.6 7.2M17.4 10.6l2-3.4" stroke="#3ddc84" strokeWidth="1.6" strokeLinecap="round" />
+      <circle cx="8.3" cy="14.6" r="1.1" fill="#000" />
+      <circle cx="15.7" cy="14.6" r="1.1" fill="#000" />
     </svg>
   );
 }
 
-/** The App Store and Google Play badges, drawn after the official artwork. */
+/** The two ways in, worded as on /get: there are no store listings yet. */
 function StoreButtons() {
   const badge =
-    'inline-flex h-[54px] items-center gap-2.5 rounded-[10px] bg-black pl-3.5 pr-5 text-white transition hover:-translate-y-0.5 hover:shadow-[0_16px_30px_-14px_rgba(0,0,0,0.6)] [font-family:-apple-system,BlinkMacSystemFont,"Helvetica_Neue",Arial,sans-serif]';
+    'inline-flex h-[54px] items-center gap-2.5 rounded-[10px] bg-black pl-3.5 pr-5 text-white transition hover:-translate-y-0.5 hover:shadow-[0_16px_30px_-14px_rgba(0,0,0,0.6)]';
   return (
     <div className="flex flex-wrap gap-3">
-      <a href={APP_STORE_URL} aria-label="Download on the App Store" className={badge}>
-        <AppleLogo className="h-[30px] w-[30px]" />
+      <a href={ANDROID_URL} className={cn(badge, 'border border-[#A6A6A6]')}>
+        <AndroidLogo className="h-[30px] w-[30px]" />
         <span className="flex flex-col leading-none">
-          <span className="text-[12px] font-medium tracking-[0.01em]">Download on the</span>
-          <span className="mt-[3px] text-[25px] font-semibold tracking-[-0.02em]">App Store</span>
+          <span className="text-[12px] font-medium">Download for</span>
+          <span className="mt-[3px] text-[22px] font-semibold">Android</span>
         </span>
       </a>
-      <a href={PLAY_STORE_URL} aria-label="Get it on Google Play" className={cn(badge, 'border border-[#A6A6A6]')}>
-        <PlayLogo className="h-[28px] w-[26px]" />
+      <a href={IOS_URL} className={badge}>
+        <AppleLogo className="h-[28px] w-[28px]" />
         <span className="flex flex-col leading-none">
-          <span className="text-[11px] font-medium tracking-[0.04em]">GET IT ON</span>
-          <span className="mt-[3px] text-[24px] font-medium tracking-[-0.01em]">Google Play</span>
+          <span className="text-[12px] font-medium">Download on</span>
+          <span className="mt-[3px] text-[22px] font-semibold">iOS</span>
         </span>
       </a>
     </div>
@@ -207,7 +211,7 @@ export function Hero() {
             </span>
           </h1>
           <p className="mt-7 max-w-[34rem] animate-rise-in text-[1.05rem] leading-[1.75] text-[#4A5B6B] [animation-delay:160ms]">
-            Getmeds Meditation is a calm companion for your phone. Guided sessions, breathing,
+            Serenity is a calm companion for your phone. Guided sessions, breathing,
             sleep sounds, stories and yoga, with your progress
             kept honestly on your own device.
           </p>
@@ -352,7 +356,7 @@ export function Measured({ counts }: { counts: LandingCounts }) {
   const stats = [
     { value: counts.meditations, label: 'Guided sessions' },
     { value: counts.programs, label: 'Programs' },
-    { value: counts.stories, label: 'Sleep stories' },
+    { value: counts.stories, label: 'Stories read aloud' },
     { value: counts.yoga, label: 'Yoga flows' },
   ];
   return (
@@ -401,10 +405,10 @@ const FEATURES = [
   { icon: Route, title: 'Programs', text: 'Multi-session journeys such as Sleep Mastery and Breath School, played in order.' },
   { icon: Wind, title: 'Breathing orb', text: 'Paced breath with a soft tone at each turn and gentle haptics where the phone allows.' },
   { icon: Moon, title: 'Sleep', text: 'A four-sound mixer, a wind-down timer that fades it out, and a nightly sleep log.' },
-  { icon: BookOpen, title: 'Stories read aloud', text: 'Original sleep stories narrated by the device voice, with skip, scrub and a sleep timer.' },
+  { icon: BookOpen, title: 'Stories read aloud', text: 'Original stories for sleep and calm, read by AI voices, with skip, scrub and a sleep timer.' },
   { icon: PersonStanding, title: 'Yoga', text: 'Gentle guided flows, one pose at a time, with a voice guide and a bell to move.' },
   { icon: Timer, title: 'Unguided timer', text: 'Sit for 3 to 60 minutes with interval bells, a settling pause and optional ambience.' },
-  { icon: MessageCircleHeart, title: 'Kapwa', text: 'A built-in guide that suggests a session for how you feel. Not a person, not an AI.' },
+  { icon: MessageCircleHeart, title: 'Kapwa', text: 'A guide that suggests a session for how you feel. Not a person or a therapist.' },
   { icon: PenLine, title: 'Daily reflection', text: 'One prompt a day, a sentence in reply and a note of how it sat. A record, not a score.' },
   { icon: Sparkles, title: 'Daily inspiration', text: 'One short line each morning, chosen for how your week has been going.' },
   { icon: Activity, title: 'Progress and streaks', text: 'Mindful minutes, a daily goal and your week, all from sittings you really did.' },
@@ -660,9 +664,9 @@ export function BreathSpotlight() {
             className="absolute inset-[18%] rounded-full bg-[radial-gradient(circle_at_35%_30%,#FFFFFF_0%,#E3F5FC_38%,#9AD8F1_75%,#5BBDE6_100%)] shadow-[0_0_80px_10px_rgba(255,255,255,0.45),inset_-20px_-30px_60px_rgba(14,110,160,0.35)] transition-transform [transition-duration:4000ms] ease-in-out"
             style={{ transform: `scale(${reduced ? 0.85 : phase.scale})` }}
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-[#0B5E86]" aria-live="polite">
-            <p className="text-[1.6rem] font-semibold tracking-[-0.02em]">{phase.label}</p>
-            <p className="mt-1 text-body-sm tabular-nums text-[#0B5E86]/70">{count}</p>
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-[#0B5E86]">
+            <p aria-live="polite" className="text-[1.6rem] font-semibold tracking-[-0.02em]">{phase.label}</p>
+            <p aria-hidden="true" className="mt-1 text-body-sm tabular-nums text-[#0B5E86]/70">{count}</p>
           </div>
         </div>
       </div>
@@ -817,7 +821,7 @@ const PROMISES = [
   {
     icon: WifiOff,
     title: 'Works offline',
-    text: 'Once installed, sessions, stories and the timer keep working with no signal, on a flight or in a waiting room.',
+    text: 'Once installed, sessions you save, the timer and the soundscapes keep working with no signal, on a flight or in a waiting room.',
   },
   {
     icon: AudioWaveform,
@@ -827,7 +831,7 @@ const PROMISES = [
   {
     icon: Lock,
     title: 'Your words stay yours',
-    text: 'Reflections, sleep notes and Kapwa chats are kept on the phone.',
+    text: 'Reflections and sleep notes are kept on the phone. Kapwa keeps its chats there too, and sends a message to our AI service only to write the reply.',
   },
 ];
 
@@ -838,7 +842,7 @@ export function Promises() {
       <div className="mx-auto max-w-6xl">
         <div className="text-center">
           <Eyebrow>Privacy</Eyebrow>
-          <SectionTitle className="mx-auto max-w-3xl">Calm that stays on your phone.</SectionTitle>
+          <SectionTitle className="mx-auto max-w-3xl">Calm that keeps your words private.</SectionTitle>
         </div>
         <div className="mt-10 grid gap-5 md:grid-cols-3">
           {PROMISES.map(({ icon: Icon, title, text }, i) => (

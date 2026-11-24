@@ -5,7 +5,7 @@ import { content } from '@/content';
 import { programs } from '@/data/programs';
 
 export const metadata: Metadata = {
-  title: 'Getmeds Meditation — Quiet your restless mind',
+  title: 'Serenity — Quiet your restless mind',
   description:
     'Guided meditations, breathing, sleep sounds, stories read aloud, yoga and Kapwa: a calm companion for your phone.',
 };

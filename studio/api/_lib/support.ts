@@ -389,17 +389,29 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       const body = text(payload.body, LIMITS.body);
       const adminName = text(payload.adminName, 80);
       if (!id || !body) return fail(400, 'Write a reply first.');
+      // If the person wrote something the team has not seen yet (it crossed
+      // with this reply), the conversation still waits for an answer to that.
+      // SET reads the row as it was, so admin_seen_at here is the old value.
       const [thread] = await db`
-        update support_threads
-        set status = 'answered', last_sender = 'admin', updated_at = now(),
-          last_admin_reply_at = now(), admin_seen_at = now(), admin_typing_at = null
-        where id = ${id} returning id`;
+        update support_threads t
+        set status = case when exists (
+              select 1 from support_messages m
+              where m.thread_id = t.id and m.sender = 'user'
+                and m.created_at > coalesce(t.admin_seen_at, 'epoch'::timestamptz)
+            ) then 'open' else 'answered' end,
+          last_sender = case when exists (
+              select 1 from support_messages m
+              where m.thread_id = t.id and m.sender = 'user'
+                and m.created_at > coalesce(t.admin_seen_at, 'epoch'::timestamptz)
+            ) then 'user' else 'admin' end,
+          updated_at = now(), last_admin_reply_at = now(), admin_seen_at = now(), admin_typing_at = null
+        where id = ${id} returning id, status`;
       if (!thread) return fail(404, 'Unknown conversation.');
       const [message] = await db`
         insert into support_messages (thread_id, sender, admin_name, body)
         values (${id}, 'admin', ${adminName}, ${body})
         returning id, sender, admin_name, body, created_at`;
-      return ok({ id, message });
+      return ok({ id, message, status: thread.status });
     }
 
     if (action === 'status') {
@@ -439,5 +451,11 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
     }
   }
 
-  return { whoIs, forUser, forAdmin, safely, configured: Boolean(sql) };
+  /** Every conversation a person ever started, and its messages: for deleting an account. */
+  async function eraseUser(userId: string): Promise<void> {
+    await ensureSchema();
+    await sql!`delete from support_threads where user_id = ${userId}`;
+  }
+
+  return { whoIs, forUser, forAdmin, safely, eraseUser, configured: Boolean(sql) };
 }

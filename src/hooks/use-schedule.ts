@@ -2,7 +2,8 @@
 
 import * as React from 'react';
 
-import { MAX_SCHEDULES, parseSchedules, type ScheduledSession } from '@/lib/schedule';
+import { personalKey } from '@/lib/account-scope';
+import { MAX_SCHEDULES, parseSchedules, pruneSchedules, type ScheduledSession } from '@/lib/schedule';
 
 /**
  * The reader's scheduled sessions, kept on this device. One shared store, so
@@ -18,7 +19,7 @@ const listeners = new Set<() => void>();
 function load(): ScheduledSession[] {
   if (cache) return cache;
   try {
-    cache = parseSchedules(window.localStorage.getItem(STORAGE_KEY));
+    cache = pruneSchedules(parseSchedules(window.localStorage.getItem(personalKey(STORAGE_KEY))), new Date());
   } catch {
     cache = [];
   }
@@ -28,7 +29,7 @@ function load(): ScheduledSession[] {
 function save(next: ScheduledSession[]) {
   cache = next;
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    window.localStorage.setItem(personalKey(STORAGE_KEY), JSON.stringify(next));
   } catch {
     // Kept for this visit even if storage is blocked.
   }
@@ -38,7 +39,7 @@ function save(next: ScheduledSession[]) {
 function subscribe(listener: () => void) {
   listeners.add(listener);
   const onStorage = (event: StorageEvent) => {
-    if (event.key !== STORAGE_KEY) return;
+    if (event.key !== personalKey(STORAGE_KEY)) return;
     cache = null;
     listener();
   };

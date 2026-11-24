@@ -18,7 +18,8 @@ interface AudioContextValue {
   setVolume: (value: number) => void;
   toggleMuted: () => void;
   /** Starts (or crossfades to) a soundscape. Resolves once audio is running. */
-  play: (id: SoundscapeId) => Promise<void>;
+  /** `level` below 1 sits the scape under a voice. */
+  play: (id: SoundscapeId, level?: number) => Promise<void>;
   /**
    * Unlocks the audio context from a user gesture without starting a bed —
    * needed when the only sounds are one-shots, like the timer's bells.
@@ -26,6 +27,8 @@ interface AudioContextValue {
   prime: () => Promise<void>;
   stop: (fadeSeconds?: number) => void;
   fadeOut: (seconds: number) => void;
+  /** Fades out, then stops: unless another sound is started or stopped first. */
+  fadeOutThenStop: (seconds: number) => void;
   /** Loops a music file under everything else, faded in to `level`. */
   playMusic: (src: string, level?: number) => void;
   /** Fades the music down and holds its place. */
@@ -130,19 +133,25 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
     });
   }, [volume, persist]);
 
+  // The pending stop of `fadeOutThenStop`; anything newer cancels it.
+  const fadeStopRef = React.useRef<number | undefined>(undefined);
+  const cancelFadeStop = () => window.clearTimeout(fadeStopRef.current);
+
   const play = React.useCallback(
-    async (id: SoundscapeId) => {
+    async (id: SoundscapeId, level?: number) => {
+      cancelFadeStop();
       const running = await audioEngine.resume();
       if (!running) return;
       // Re-assert the level in case a previous fade-out left the master down.
       audioEngine.setVolume(volume);
-      audioEngine.play(id);
+      audioEngine.play(id, level);
       setPlaying(id);
     },
     [volume],
   );
 
   const stop = React.useCallback((fadeSeconds?: number) => {
+    cancelFadeStop();
     audioEngine.stop(fadeSeconds);
     setPlaying(null);
   }, []);
@@ -199,6 +208,14 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
   );
   const duckMusic = React.useCallback((ducked: boolean) => audioEngine.duckMusic(ducked), []);
   const fadeOut = React.useCallback((seconds: number) => audioEngine.fadeOut(seconds), []);
+  const fadeOutThenStop = React.useCallback((seconds: number) => {
+    cancelFadeStop();
+    audioEngine.fadeOut(seconds);
+    fadeStopRef.current = window.setTimeout(() => {
+      audioEngine.stop(0.5);
+      setPlaying(null);
+    }, (seconds + 1) * 1000);
+  }, []);
   const bell = React.useCallback((frequency?: number) => audioEngine.bell(frequency), []);
   const breathCue = React.useCallback(
     (direction: 'in' | 'out') => audioEngine.breathCue(direction),
@@ -221,6 +238,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       stopMusic,
       duckMusic,
       fadeOut,
+      fadeOutThenStop,
       bell,
       breathCue,
     }),
@@ -239,6 +257,7 @@ export function AudioProvider({ children }: { children: React.ReactNode }) {
       stopMusic,
       duckMusic,
       fadeOut,
+      fadeOutThenStop,
       bell,
       breathCue,
     ],

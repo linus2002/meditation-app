@@ -455,6 +455,16 @@
         if (typeof iosDialog.showModal === 'function') iosDialog.showModal();
       });
       document.getElementById('close-ios').addEventListener('click', function () { iosDialog.close(); });
+
+      // From the landing page's buttons: #ios opens the steps (once the QR
+      // library has loaded); #android puts that button first, ready to tap.
+      if (window.location.hash === '#ios') {
+        window.addEventListener('load', function () { document.getElementById('ios').click(); });
+      } else if (window.location.hash === '#android') {
+        var androidBadge = document.getElementById('android');
+        actions.insertBefore(androidBadge, actions.firstElementChild);
+        androidBadge.focus({ preventScroll: true });
+      }
     })();
   </script>
 

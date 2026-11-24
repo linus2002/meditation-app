@@ -2,6 +2,7 @@ import type { Plugin } from 'vite';
 import { loadEnv } from 'vite';
 
 import { createAnalyticsHandler, pickEnv } from './api/_lib/analytics';
+import { refuseOthers } from './localGuard';
 
 /**
  * Lets the local Studio's Analytics tab ask PostHog and Supabase for numbers
@@ -20,6 +21,7 @@ export function posthogProxy(): Plugin {
       const handle = createAnalyticsHandler(env);
 
       server.middlewares.use('/posthog-api', async (req, res) => {
+        if (refuseOthers(req, res)) return;
         const reply = await handle(req.method ?? 'GET', req.url ?? '/', await readBody(req));
         res.statusCode = reply.status;
         res.setHeader('Content-Type', 'application/json');

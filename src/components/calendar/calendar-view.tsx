@@ -25,11 +25,13 @@ import {
 } from '@/lib/schedule';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
+import { useToday } from '@/hooks/use-today';
+import { readStoryFinishes, type StoryFinishes } from '@/lib/story-finishes';
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 const navButton =
-  'flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
+  'flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
 
 /** "Today", "Tomorrow", or "Friday, 20 November". */
 function dayHeading(key: string, today: string): string {
@@ -46,7 +48,8 @@ function dayHeading(key: string, today: string): string {
  * something new with a notification when it's due.
  */
 export function CalendarView() {
-  const today = toDateKey(new Date());
+  // Moves on at midnight, so a calendar left open overnight shows the right day.
+  const today = useToday() ?? toDateKey(new Date());
   const [cursor, setCursor] = React.useState(() => {
     const now = new Date();
     return { year: now.getFullYear(), month: now.getMonth() };
@@ -59,10 +62,8 @@ export function CalendarView() {
   const { permission, mode, inApp, allow } = useReminders();
   const offerUndo = useUndo();
 
-  const practisedDays = React.useMemo(
-    () => new Set(sessions.filter((s) => s.completed).map((s) => s.date)),
-    [sessions],
-  );
+  // Any recorded sitting counts as practice, as it does for the streak and Daily Activities.
+  const practisedDays = React.useMemo(() => new Set(sessions.map((s) => s.date)), [sessions]);
 
   const weeks = monthGrid(cursor.year, cursor.month);
   const monthTitle = new Date(cursor.year, cursor.month, 1).toLocaleDateString('en-US', {
@@ -82,15 +83,22 @@ export function CalendarView() {
 
   const dayPlan = schedulesOn(schedules, selected);
   const dayDone = sessions.filter((s) => s.completed && s.date === selected);
-  const doneIds = new Set(dayDone.map((s) => s.meditationId));
+  const dayMinutes = Math.round(
+    sessions.filter((s) => s.date === selected).reduce((total, s) => total + s.seconds, 0) / 60,
+  );
+  // Stories don't record sittings, so their own small log says which were finished.
+  const [storyFinishes, setStoryFinishes] = React.useState<StoryFinishes>({});
+  React.useEffect(() => setStoryFinishes(readStoryFinishes()), [today]);
+  const doneIds = new Set([...dayDone.map((s) => s.meditationId), ...(storyFinishes[selected] ?? [])]);
 
   const saveSchedule = async (entry: NewSchedule) => {
     // Inside the Save tap: the only moment a browser will show its prompt.
     if (permission === 'prompt') await allow();
-    add(entry);
+    if (!add(entry)) return false;
     setSelected(entry.date);
     const date = fromDateKey(entry.date);
     setCursor({ year: date.getFullYear(), month: date.getMonth() });
+    return true;
   };
 
   return (
@@ -186,7 +194,13 @@ export function CalendarView() {
           <h2 className="text-body-sm font-semibold text-ink">{dayHeading(selected, today)}</h2>
         </div>
 
-        {dayPlan.length === 0 && dayDone.length === 0 ? (
+        {dayMinutes > 0 ? (
+          <p className="mt-3 text-caption text-ink-muted">
+            Practised {dayMinutes} {dayMinutes === 1 ? 'minute' : 'minutes'} this day.
+          </p>
+        ) : null}
+
+        {dayPlan.length === 0 && practisedDays.has(selected) === false ? (
           <p className="mt-3 rounded-2xl bg-surface px-4 py-4 text-center text-caption leading-relaxed text-ink-muted">
             {selected < today ? 'Nothing was planned or practised this day.' : 'Nothing planned yet.'}
           </p>
@@ -244,7 +258,7 @@ export function CalendarView() {
 
         {dayDone.length > 0 ? (
           <>
-            <h3 className="mt-5 text-label font-medium uppercase tracking-wide text-ink-faint">Practised</h3>
+            <h3 className="mt-5 text-label font-semibold text-ink-faint">Practised</h3>
             <ul className="mt-2 space-y-1.5">
               {dayDone.map((record) => {
                 const title =

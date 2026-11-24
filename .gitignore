@@ -2,7 +2,9 @@ node_modules
 .next
 .next-mobile
 out
+.env
 .env*.local
+!.env.example
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
@@ -11,6 +13,7 @@ precache.json
 # Android signing keys and machine-specific SDK paths never belong in the repo.
 *.jks
 *.keystore
+*.p12
 local.properties
 
 # Sanity Studio build output and local cache.
@@ -36,3 +39,6 @@ media-backup/
 /public/letting-go-of-stress/
 # Library session recordings, the same way.
 /public/meditations/
+
+# Claude plugin working data (a local SQLite database), not part of the app.
+.claude/data/

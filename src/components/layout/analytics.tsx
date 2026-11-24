@@ -4,17 +4,10 @@ import * as React from 'react';
 import { usePathname } from 'next/navigation';
 import { BarChart3 } from 'lucide-react';
 
-import {
-  analyticsAvailable,
-  identifyUser,
-  initAnalytics,
-  resetUser,
-  setAnalyticsConsent,
-  syncRecordingForRoute,
-  track,
-} from '@/lib/analytics';
+import { takeJustSignedIn } from '@/lib/account-change';
+import { personalAccountId } from '@/lib/account-scope';
+import { analyticsAvailable, identifyUser, setAnalyticsConsent, track } from '@/lib/analytics';
 import { normalizePath } from '@/hooks/use-back';
-import { getSupabase } from '@/lib/supabase/client';
 import { useApp } from '@/providers/app-provider';
 
 /** Settings key for the reader's choice; also a toggle on Profile. */
@@ -23,55 +16,25 @@ export const ANALYTICS_SETTING = 'analytics';
 const ASKED_SETTING = 'analyticsAsked';
 
 /**
- * Keeps PostHog in step with the app: the reader's consent, the signed-in
- * account, and whether the current screen may be recorded. Renders the
- * one-time consent card on Home.
+ * Keeps PostHog in step with the app: this reader's consent, and their
+ * account. A change of account is a fresh page (lib/account-change), so
+ * neither can change hands underneath it. Renders the one-time consent card
+ * on Home.
  */
 export function Analytics() {
   const { hydrated, onboarded, settings, setSetting } = useApp();
   const pathname = usePathname() ?? '';
   const allowed = settings[ANALYTICS_SETTING] === true;
-  const allowedRef = React.useRef(allowed);
-  allowedRef.current = allowed;
 
   React.useEffect(() => {
     if (!hydrated) return;
-    initAnalytics();
     setAnalyticsConsent(allowed);
-    if (allowed) syncRecordingForRoute(window.location.pathname);
-  }, [hydrated, allowed]);
 
-  React.useEffect(() => {
-    syncRecordingForRoute(pathname);
-  }, [pathname]);
-
-  // Follows sign-in and sign-out. Anonymous accounts (video likes) are guests.
-  React.useEffect(() => {
-    if (!hydrated || !allowed) return;
-    const supabase = getSupabase();
-    if (!supabase) return;
-    // Supabase repeats SIGNED_IN whenever the tab regains focus, so a sign-in
-    // only counts when the account actually changes from what was last seen.
-    let lastUserId: string | null | undefined;
-    const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      const user = session?.user;
-      if (event === 'INITIAL_SESSION') {
-        // Whoever is already signed in when the app opens: not a new sign-in.
-        lastUserId = user && !user.is_anonymous ? user.id : null;
-      }
-      if (user && !user.is_anonymous) {
-        identifyUser(user.id);
-        if (event === 'SIGNED_IN' && lastUserId !== undefined && lastUserId !== user.id) {
-          track('signed_in');
-        }
-        lastUserId = user.id;
-      } else if (event === 'SIGNED_OUT') {
-        lastUserId = null;
-        track('signed_out');
-        resetUser(allowedRef.current);
-      }
-    });
-    return () => data.subscription.unsubscribe();
+    const signedIn = takeJustSignedIn();
+    const userId = personalAccountId();
+    if (!allowed || !userId) return;
+    identifyUser(userId);
+    if (signedIn) track('signed_in');
   }, [hydrated, allowed]);
 
   const ask =
@@ -93,7 +56,8 @@ export function Analytics() {
     <div
       role="dialog"
       aria-labelledby="analytics-consent-title"
-      className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+92px)] z-50 flex justify-center px-4"
+      // Hidden wherever the app itself is (the desktop gate in DeviceStage).
+      className="pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom,0px)+92px)] z-50 flex justify-center px-4 desktop:hidden"
     >
       <div className="pointer-events-auto w-full max-w-[398px] rounded-tile bg-surface px-4 py-3.5 shadow-pill">
         <div className="flex items-start gap-3.5">
@@ -105,8 +69,8 @@ export function Analytics() {
               Help improve Serenity?
             </p>
             <p className="mt-1 text-label leading-snug text-ink-muted">
-              Share how you move through the app, so we can see what helps. Your reflections,
-              answers and anything you type are never recorded. You can change this on Profile.
+              Share which screens you open and sessions you play. Your reflections, answers and
+              anything you type are never recorded. You can change this on Profile.
             </p>
           </div>
         </div>

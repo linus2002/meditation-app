@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   averageClock,
   formatClockMinutes,
+  nightProblem,
   hoursAsleep,
   minutesAsleep,
   parseClock,
@@ -179,5 +180,21 @@ describe('recentNights', () => {
     const nights = recentNights(logs, TODAY, 7);
     expect(nights[6].hours).toBe(8);
     expect(nights[5].hours).toBe(7);
+  });
+});
+
+describe('nightProblem', () => {
+  it('accepts an ordinary night, and a long one up to 20 hours', () => {
+    expect(nightProblem(minutesAsleep('23:00', '07:00'))).toBeNull();
+    expect(nightProblem(20 * 60)).toBeNull();
+  });
+
+  it('refuses no time asleep, or a few minutes', () => {
+    expect(nightProblem(minutesAsleep('23:00', '23:00'))).toMatch(/too close/);
+    expect(nightProblem(10)).toMatch(/too close/);
+  });
+
+  it('refuses more than 20 hours, which is usually AM and PM mixed up', () => {
+    expect(nightProblem(minutesAsleep('07:00', '05:00'))).toMatch(/20 hours/);
   });
 });

@@ -53,9 +53,15 @@ export function useYogaSession(
   const handlers = React.useRef({ onPoseStart, onPoseEnding, onFinish, onFrozen, onLoop, loop });
   handlers.current = { onPoseStart, onPoseEnding, onFinish, onFrozen, onLoop, loop };
 
-  /** Starts pose `next`, from its top or with only `remainingOverride` left. */
+  const runningRef = React.useRef(running);
+  runningRef.current = running;
+
+  /**
+   * Starts pose `next`, from its top or with only `remainingOverride` left.
+   * `run` false moves there paused, without its bell or cue: they come with Resume.
+   */
   const goTo = React.useCallback(
-    (requested: number, remainingOverride?: number) => {
+    (requested: number, remainingOverride?: number, run = true) => {
       let next = requested;
       if (next >= poses.length && handlers.current.loop && poses.length > 0) {
         handlers.current.onLoop?.();
@@ -71,9 +77,9 @@ export function useYogaSession(
       remainingRef.current = left;
       setIndex(next);
       setRemaining(left);
-      setRunning(true);
+      setRunning(run);
       setArmed((value) => value + 1);
-      handlers.current.onPoseStart?.(next);
+      if (run) handlers.current.onPoseStart?.(next);
     },
     [poses],
   );
@@ -117,7 +123,8 @@ export function useYogaSession(
     },
     [goTo],
   );
-  const skip = React.useCallback(() => goTo(indexRef.current + 1), [goTo]);
+  // Moving on while paused stays paused, so music, clock and voice don't part ways.
+  const skip = React.useCallback(() => goTo(indexRef.current + 1, undefined, runningRef.current), [goTo]);
   const pause = React.useCallback(() => setRunning(false), []);
   const resume = React.useCallback(() => setRunning(true), []);
 

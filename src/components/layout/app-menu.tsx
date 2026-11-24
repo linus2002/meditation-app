@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ChevronRight, Menu, Settings2, User } from 'lucide-react';
+import { ChevronRight, Menu, MessageCircleQuestion, Settings2, User } from 'lucide-react';
 
 import { IconButton } from '@/components/shared/icon-button';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
@@ -59,7 +59,8 @@ export function AppMenu() {
 
       <SheetContent
         side="left"
-        className="flex w-full max-w-none flex-col sm:max-w-none overflow-y-auto border-none bg-canvas px-4 pb-[calc(env(safe-area-inset-bottom,0px)+20px)] pt-[calc(env(safe-area-inset-top,0px)+20px)]"
+        // Within the app's 430px frame on a tablet, not across the whole window.
+        className="right-0 mx-auto flex w-full max-w-[430px] flex-col sm:max-w-[430px] overflow-y-auto border-none bg-canvas px-4 pb-[calc(env(safe-area-inset-bottom,0px)+20px)] pt-[calc(env(safe-area-inset-top,0px)+20px)]"
       >
         <SheetTitle className="sr-only">Menu</SheetTitle>
         <SheetDescription className="sr-only">Every screen in Serenity</SheetDescription>
@@ -105,6 +106,12 @@ export function AppMenu() {
             label="Profile and preferences"
             description="Your progress, light mode, reminders and sounds"
             icon={Settings2}
+          />
+          <MenuRow
+            href="/help"
+            label="Help & support"
+            description="Sign-in tips, or ask the Serenity team"
+            icon={MessageCircleQuestion}
           />
         </ul>
       </SheetContent>

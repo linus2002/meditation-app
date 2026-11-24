@@ -68,6 +68,10 @@ export function useNarration(
 
   const voiceRef = React.useRef<SpeechSynthesisVoice | null>(null);
   const stoppedRef = React.useRef(true);
+  /** The reading queued to start after cancel(); only ever one. */
+  const pendingRef = React.useRef<number | undefined>(undefined);
+  const indexRef = React.useRef(0);
+  indexRef.current = index;
   const segmentsRef = React.useRef(segments);
   segmentsRef.current = segments;
   const loopRef = React.useRef(loop);
@@ -111,6 +115,8 @@ export function useNarration(
     if (start >= list.length) {
       setSpeaking(false);
       setPaused(false);
+      // Play again starts from the top, not from the last sentence.
+      setIndex(0);
       stoppedRef.current = true;
       if (list.length > 0) endedRef.current?.();
       return;
@@ -148,6 +154,7 @@ export function useNarration(
   }, []);
 
   const stop = React.useCallback(() => {
+    window.clearTimeout(pendingRef.current);
     stoppedRef.current = true;
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
@@ -161,37 +168,48 @@ export function useNarration(
       if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
       stoppedRef.current = true;
       window.speechSynthesis.cancel();
-      // Chrome needs a beat after cancel() before the next speak() takes.
-      window.setTimeout(() => speakFrom(fromIndex ?? index), 60);
+      // Chrome needs a beat after cancel() before the next speak() takes. Only
+      // the latest request waits: quick seeks used to start several readings.
+      window.clearTimeout(pendingRef.current);
+      const from = fromIndex ?? indexRef.current;
+      pendingRef.current = window.setTimeout(() => speakFrom(from), 60);
     },
-    [speakFrom, index],
+    [speakFrom],
   );
 
+  /*
+   * Pause stops the voice, and Resume reads the sentence again from its start.
+   * speechSynthesis.pause() acts as cancel() on Chrome for Android, where the
+   * story then read on regardless.
+   */
   const pause = React.useCallback(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.pause();
+    window.clearTimeout(pendingRef.current);
+    stoppedRef.current = true;
+    window.speechSynthesis.cancel();
     setPaused(true);
   }, []);
 
   const resume = React.useCallback(() => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-    window.speechSynthesis.resume();
     setPaused(false);
-  }, []);
+    play(indexRef.current);
+  }, [play]);
 
-  /** Seeking restarts at the chosen sentence, and keeps playing if it was. */
+  /** Seeking moves to the chosen sentence: read from there if playing, kept there if paused. */
   const seekTo = React.useCallback(
     (next: number) => {
       const clamped = Math.min(Math.max(0, next), Math.max(0, segmentsRef.current.length - 1));
       setIndex(clamped);
-      if (speaking) play(clamped);
+      indexRef.current = clamped;
+      if (speaking && !paused) play(clamped);
     },
-    [speaking, play],
+    [speaking, paused, play],
   );
 
   // Narration must never outlive the screen.
   React.useEffect(() => {
     return () => {
+      window.clearTimeout(pendingRef.current);
       stoppedRef.current = true;
       if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
         window.speechSynthesis.cancel();

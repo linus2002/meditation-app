@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { queryTerms, searchLibrary } from '@/lib/search';
+import { editDistance, nearlyMatches, queryTerms, searchLibrary } from '@/lib/search';
 
 const ids = <T extends { id: string }>(items: T[]) => items.map((item) => item.id);
 
@@ -109,5 +109,49 @@ describe('searchLibrary', () => {
     const results = searchLibrary('the');
     const found = ids(results.meditations);
     expect(new Set(found).size).toBe(found.length);
+  });
+});
+
+describe('typos', () => {
+  it('counts a swapped pair of letters as one slip', () => {
+    expect(editDistance('breaht', 'breath')).toBe(1);
+    expect(editDistance('breth', 'breath')).toBe(1);
+  });
+
+  it('matches a near spelling of the start of a word', () => {
+    expect(nearlyMatches('breth', 'box breathing')).toBe(true);
+    expect(nearlyMatches('meditaton', 'a short meditation')).toBe(true);
+    expect(nearlyMatches('sleap', 'deep sleep')).toBe(true);
+  });
+
+  it('forgives a slip in a four-letter word', () => {
+    expect(nearlyMatches('rian', 'rain on glass')).toBe(true);
+  });
+
+  it('leaves three-letter words exact, where one slip makes another word', () => {
+    expect(nearlyMatches('cam', 'calm')).toBe(false);
+    expect(nearlyMatches('sea', 'tea')).toBe(false);
+  });
+
+  it('finds sessions through a typo', () => {
+    expect(ids(searchLibrary('breth').meditations)).toContain('box-breathing');
+    expect(searchLibrary('anxeity').total).toBeGreaterThan(0);
+  });
+
+  it('still ranks an exact match above a near one', () => {
+    const exact = searchLibrary('breathing').meditations;
+    expect(exact[0].title.toLowerCase()).toContain('breath');
+  });
+
+  it('does not turn nonsense into results', () => {
+    expect(searchLibrary('xylophone').total).toBe(0);
+    expect(searchLibrary('rain xylophone').total).toBe(0);
+  });
+});
+
+describe('screens without a tab', () => {
+  it('finds Help and the assessment by name', () => {
+    expect(searchLibrary('help').pages.map((page) => page.href)).toContain('/help');
+    expect(searchLibrary('assessment').pages.map((page) => page.href)).toContain('/assessment');
   });
 });

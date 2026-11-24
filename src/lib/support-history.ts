@@ -1,3 +1,4 @@
+import { personalKey } from '@/lib/account-scope';
 import type { SupportAppointment } from '@/lib/support-appointments';
 
 /**
@@ -51,7 +52,7 @@ export const emptySupportState: SupportState = { largeText: false, history: [], 
 
 export function readSupport(): SupportState {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = window.localStorage.getItem(personalKey(STORAGE_KEY));
     if (!raw) return emptySupportState;
     const parsed = JSON.parse(raw) as Partial<SupportState>;
     return {
@@ -66,7 +67,7 @@ export function readSupport(): SupportState {
 
 export function writeSupport(state: SupportState): void {
   try {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    window.localStorage.setItem(personalKey(STORAGE_KEY), JSON.stringify(state));
   } catch {
     // Private reference only; losing it costs nothing that matters.
   }

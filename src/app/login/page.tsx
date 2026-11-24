@@ -1,14 +1,15 @@
 'use client';
 
 import * as React from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Mail } from 'lucide-react';
 
 import { CreateAccountSheet, EmailSignInSheet } from '@/components/auth/auth-sheets';
 import { SerenityMark } from '@/components/onboarding/serenity-mark';
 import { GradientButton } from '@/components/shared/gradient-button';
-import { accountFirstName } from '@/lib/auth';
-import { useApp } from '@/providers/app-provider';
+import { followAccountChange } from '@/lib/account-change';
+import { safePath } from '@/lib/safe-path';
 
 type OpenSheet = 'email' | 'create' | null;
 
@@ -27,7 +28,6 @@ type OpenSheet = 'email' | 'create' | null;
  */
 export default function LoginPage() {
   const router = useRouter();
-  const { name, setName } = useApp();
   const [sheet, setSheet] = React.useState<OpenSheet>(null);
   const [prefill, setPrefill] = React.useState('');
 
@@ -36,7 +36,7 @@ export default function LoginPage() {
   const [next, setNext] = React.useState<string | null>(null);
   React.useEffect(() => {
     const value = new URLSearchParams(window.location.search).get('next');
-    if (value && value.startsWith('/') && !value.startsWith('//')) setNext(value);
+    setNext(safePath(value));
   }, []);
 
   const goHome = React.useCallback(() => router.replace('/home'), [router]);
@@ -49,19 +49,10 @@ export default function LoginPage() {
     window.setTimeout(() => setSheet(next), 320);
   };
 
-  const signedIn = async () => {
-    // Greets a returning reader by the name they gave when they signed up,
-    // unless this phone already has one.
-    if (!name) {
-      const first = await accountFirstName().catch(() => null);
-      if (first) setName(first);
-    }
-    goOn();
-  };
-
-  const created = (firstName: string) => {
-    if (firstName) setName(firstName);
-    goOn();
+  // A new account means a fresh page, which also picks up the name on it
+  // (see AppProvider). Writing the name here would save it as the guest's.
+  const signedIn = () => {
+    if (!followAccountChange()) goOn();
   };
 
   return (
@@ -108,12 +99,18 @@ export default function LoginPage() {
         <p className="mt-1.5 text-center text-label text-ink-muted">
           Guests can look around. Sign in to start sessions.
         </p>
+        <Link
+          href="/help"
+          className="mx-auto mt-4 block w-fit rounded-full px-3 py-1 text-label font-medium text-ink-muted underline underline-offset-2 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        >
+          Trouble signing in? Get help
+        </Link>
       </div>
 
       <EmailSignInSheet
         open={sheet === 'email'}
         onOpenChange={(open) => setSheet(open ? 'email' : null)}
-        onSignedIn={() => void signedIn()}
+        onSignedIn={signedIn}
         onCreateAccount={(email) => {
           setPrefill(email);
           switchTo('create');
@@ -123,7 +120,7 @@ export default function LoginPage() {
         open={sheet === 'create'}
         onOpenChange={(open) => setSheet(open ? 'create' : null)}
         initialEmail={prefill}
-        onCreated={created}
+        onCreated={signedIn}
         onUseEmailSignIn={() => switchTo('email')}
       />
     </div>

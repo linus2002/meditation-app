@@ -15,7 +15,14 @@ import { inspirationThemes, type InspirationReason } from '@/lib/inspiration';
 import { cn } from '@/lib/utils';
 import { addDays, toDateKey } from '@/lib/date';
 import { markInspirationSeen } from '@/lib/inspiration-seen';
-import { deliveredLog, sendTestNotification, type TestResult } from '@/lib/notifications';
+import {
+  deliveredLog,
+  openReminderTiming,
+  reminderTiming,
+  sendTestNotification,
+  type ReminderTiming,
+  type TestResult,
+} from '@/lib/notifications';
 import { dayKey, nextOccurrence, reminderDefinitions } from '@/lib/reminders';
 import { useApp } from '@/providers/app-provider';
 
@@ -103,6 +110,27 @@ export default function NotificationsPage() {
     );
   }, [hydrated, todayKey, resolve, history]);
 
+  // Android 12 and later may hold an alarm back up to an hour unless exact
+  // timing is allowed. Re-read on return, since it is switched in settings.
+  const [timing, setTiming] = React.useState<ReminderTiming | null>(null);
+  React.useEffect(() => {
+    let cancelled = false;
+    const refresh = () => {
+      void reminderTiming().then((value) => {
+        if (!cancelled) setTiming(value);
+      });
+    };
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+    refresh();
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      cancelled = true;
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
+
   const [testing, setTesting] = React.useState(false);
   const [testResult, setTestResult] = React.useState<TestResult | null>(null);
 
@@ -145,7 +173,7 @@ export default function NotificationsPage() {
               body:
                 mode === 'native'
                   ? 'Reminders are scheduled with your phone, so they arrive even when Serenity is closed.'
-                  : 'In a browser, reminders arrive while Serenity is open. Install it to your home screen for the best chance of seeing them.',
+                  : 'In a browser, reminders arrive only while Serenity is open, in a tab or from the home screen. The Android app can remind you with it closed.',
             };
 
   const StatusIcon = status.icon;
@@ -250,6 +278,22 @@ export default function NotificationsPage() {
               >
                 Allow notifications
               </GradientButton>
+            ) : null}
+
+            {granted && timing && !timing.exact && timing.canAsk ? (
+              <div className="mt-4 border-t border-overlay/10 pt-4">
+                <p className="text-caption leading-relaxed text-ink-muted">
+                  Your phone may hold a reminder back by up to an hour. To get them on the minute,
+                  allow Serenity to set alarms and reminders.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void openReminderTiming()}
+                  className="mt-3 flex h-11 w-full items-center justify-center rounded-full border border-overlay/15 text-body-sm font-medium text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                >
+                  Open phone settings
+                </button>
+              </div>
             ) : null}
           </div>
         )}

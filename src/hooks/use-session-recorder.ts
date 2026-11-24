@@ -6,11 +6,14 @@ import { MIN_RECORDED_SECONDS } from '@/data/stats';
 import { toDateKey } from '@/lib/date';
 import { useApp } from '@/providers/app-provider';
 
+/** The most a killed app can lose of a sitting already over the minimum. */
+const AUTOSAVE_MS = 15_000;
+
 export interface SessionRecorder {
   /** Keep this in step with the live clock; read by the flush listeners. */
   elapsedRef: React.MutableRefObject<number>;
   /** Writes the sitting. Safe to call repeatedly — the store upserts by id. */
-  commit: (completed: boolean) => void;
+  commit: (completed: boolean, interim?: boolean) => void;
   /** Marks the sitting finished so no later flush can downgrade it. */
   markFinished: () => void;
   /** Opens a new record, for a second sit on the same screen. */
@@ -26,6 +29,9 @@ export interface SessionRecorder {
  * is hidden, as well as on unmount. Repeat commits are harmless because the
  * store upserts on the sitting's id, and a later flush can never downgrade one
  * that already ran to the end.
+ *
+ * A killed app fires neither event, so a running sitting is also saved every
+ * few seconds.
  */
 export function useSessionRecorder(meditationId: string): SessionRecorder {
   const { recordSession } = useApp();
@@ -33,30 +39,42 @@ export function useSessionRecorder(meditationId: string): SessionRecorder {
   const elapsedRef = React.useRef(0);
   const startedAtRef = React.useRef(Date.now());
   const finishedRef = React.useRef(false);
+  const finishedSecondsRef = React.useRef(0);
+  const savedSecondsRef = React.useRef(0);
 
   const commit = React.useCallback(
-    (completed: boolean) => {
-      const seconds = Math.round(elapsedRef.current);
-      if (seconds < MIN_RECORDED_SECONDS) return;
+    (completed: boolean, interim = false) => {
+      // Once finished, the clock being rewound cannot shorten it.
+      const seconds = Math.max(Math.round(elapsedRef.current), finishedSecondsRef.current);
+      // A minimum keeps out a tap and a change of mind. One properly finished
+      // (picked up near its end, say) counts however short.
+      if (seconds <= 0 || (seconds < MIN_RECORDED_SECONDS && !finishedRef.current)) return;
+      savedSecondsRef.current = seconds;
 
-      recordSession({
-        id: `${meditationId}-${startedAtRef.current}`,
-        meditationId,
-        date: toDateKey(new Date(startedAtRef.current)),
-        seconds,
-        completed: completed || finishedRef.current,
-        startedAt: startedAtRef.current,
-      });
+      recordSession(
+        {
+          id: `${meditationId}-${startedAtRef.current}`,
+          meditationId,
+          date: toDateKey(new Date(startedAtRef.current)),
+          seconds,
+          completed: completed || finishedRef.current,
+          startedAt: startedAtRef.current,
+        },
+        { interim },
+      );
     },
     [recordSession, meditationId],
   );
 
   const markFinished = React.useCallback(() => {
     finishedRef.current = true;
+    finishedSecondsRef.current = Math.round(elapsedRef.current);
   }, []);
 
   const restart = React.useCallback(() => {
     finishedRef.current = false;
+    finishedSecondsRef.current = 0;
+    savedSecondsRef.current = 0;
     startedAtRef.current = Date.now();
     elapsedRef.current = 0;
   }, []);
@@ -72,10 +90,15 @@ export function useSessionRecorder(meditationId: string): SessionRecorder {
       if (document.visibilityState === 'hidden') flush();
     };
 
+    const autosave = window.setInterval(() => {
+      if (finishedRef.current || Math.round(elapsedRef.current) === savedSecondsRef.current) return;
+      commitRef.current(false, true);
+    }, AUTOSAVE_MS);
     window.addEventListener('pagehide', flush);
     document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
+      window.clearInterval(autosave);
       window.removeEventListener('pagehide', flush);
       document.removeEventListener('visibilitychange', onVisibility);
       flush();

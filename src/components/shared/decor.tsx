@@ -17,17 +17,17 @@ export function WaveLines({ className }: { className?: string }) {
     >
       <path
         d="M-30 176C40 176 86 116 150 82C214 48 286 44 420 78"
-        stroke="rgba(255,255,255,0.085)"
+        stroke="rgb(var(--overlay) / 0.085)"
         strokeWidth="1.1"
       />
       <path
         d="M-30 214C46 214 96 146 164 110C232 74 300 72 420 106"
-        stroke="rgba(255,255,255,0.06)"
+        stroke="rgb(var(--overlay) / 0.06)"
         strokeWidth="1.1"
       />
       <path
         d="M-30 250C52 250 108 176 178 138C248 100 312 100 420 134"
-        stroke="rgba(255,255,255,0.035)"
+        stroke="rgb(var(--overlay) / 0.035)"
         strokeWidth="1.1"
       />
     </svg>
@@ -76,12 +76,12 @@ export function EdgeCurves({ className }: { className?: string }) {
     >
       <path
         d="M132 -10C96 46 70 96 74 158C78 220 108 268 138 320"
-        stroke="rgba(255,255,255,0.07)"
+        stroke="rgb(var(--overlay) / 0.07)"
         strokeWidth="1.1"
       />
       <path
         d="M150 -10C112 52 84 104 88 166C92 228 124 276 154 328"
-        stroke="rgba(255,255,255,0.045)"
+        stroke="rgb(var(--overlay) / 0.045)"
         strokeWidth="1.1"
       />
     </svg>

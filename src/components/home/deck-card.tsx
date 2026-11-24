@@ -95,7 +95,7 @@ export function DeckCard({ card, slot, isFront, onBringToFront }: DeckCardProps)
       )}
 
       <div className="pointer-events-none relative z-0 px-5 pt-3">
-        <h2 className="text-[clamp(1.3125rem,6.9vw,1.6875rem)] font-normal leading-[1.16] tracking-[-0.015em] text-white drop-shadow-[0_1px_10px_rgba(0,0,0,0.18)]">
+        <h2 className="text-[clamp(1.3125rem,6.9vw,1.6875rem)] font-semibold leading-[1.16] tracking-[-0.015em] text-white drop-shadow-[0_1px_10px_rgba(0,0,0,0.18)]">
           {card.title}
         </h2>
         <p className="mt-0.5 text-[clamp(0.75rem,3.1vw,0.8125rem)] font-semibold leading-none text-white/95">{card.caption}</p>

@@ -12,7 +12,7 @@
  * build-time manifest, means the list is always right for the deployment that
  * served it.
  */
-const BUILD = 'mwq3r7mf';
+const BUILD = 'mwtaqpxc';
 const CACHE = `serenity-${BUILD}`;
 const MANIFEST = '/precache.json';
 const FALLBACK = '/offline';
@@ -41,11 +41,19 @@ const PINNED_INDEX = '/__pinned__';
  * the markup, where the same URLs appear inside escaped strings — `\"/_next/...
  * .css\"` — and a pattern that stops only at the quote swallows the backslash
  * before it. The result is a URL that 404s every time it is fetched.
+ *
+ * A match must also run to a file extension, with parentheses allowed inside
+ * the path: route groups put chunks under `app/(app)/...`, which a pattern
+ * stopping at `)` cut to `app/(app`, so those screens' code was never cached.
+ * And Next splits its page data across several script tags, sometimes in the
+ * middle of a URL, so a fragment with no extension is not a file at all.
  */
 function assetsFrom(html) {
   const found = new Set();
-  for (const match of html.matchAll(/["'(](\/_next\/static\/[^"')\\]+)["')\\]/g)) {
-    found.add(match[1]);
+  const pattern =
+    /\/_next\/static\/[^"'\s\\]+?\.(?:js|css|woff2?|ttf|otf|png|jpe?g|gif|webp|avif|svg|ico|json|txt|wasm)(?=["'\s\\)?#]|$)/g;
+  for (const match of html.matchAll(pattern)) {
+    found.add(match[0]);
   }
   return [...found];
 }
@@ -81,14 +89,29 @@ function imagesFrom(html) {
 }
 
 async function cacheIfOk(cache, url) {
-  try {
-    const response = await fetch(url, { cache: 'no-store' });
-    if (!response.ok) return null;
-    await cache.put(url, response.clone());
-    return response;
-  } catch {
-    return null;
+  // One retry: a single dropped request should not cost a whole update.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch(url, { cache: 'no-store' });
+      if (!response.ok) {
+        // An unread body holds its connection open; enough of them and every
+        // later request in the install waits for ever.
+        if (response.body) await response.body.cancel().catch(() => undefined);
+        continue;
+      }
+      await cache.put(url, response.clone());
+      return response;
+    } catch {
+      // Tried again, then reported as missing.
+    }
   }
+  return null;
+}
+
+/** Whether an earlier build's copy is already on this device. */
+async function hasEarlierBuild() {
+  const keys = await caches.keys();
+  return keys.some((key) => key.startsWith('serenity-') && key !== CACHE && key !== PINNED);
 }
 
 self.addEventListener('install', (event) => {
@@ -101,17 +124,41 @@ self.addEventListener('install', (event) => {
         const routes = manifest.routes || [];
         const assets = new Set(manifest.assets || []);
 
+        let missing = 0;
         await Promise.all(
           routes.map(async (route) => {
             const response = await cacheIfOk(cache, route);
-            if (!response) return;
+            if (!response) {
+              missing++;
+              return;
+            }
             // The chunks this page needs, read straight from its markup.
             for (const asset of assetsFrom(await response.text())) assets.add(asset);
           }),
         );
 
-        await Promise.all([...assets].map((asset) => cacheIfOk(cache, asset)));
-      } catch {
+        await Promise.all(
+          [...assets].map(async (asset) => {
+            const response = await cacheIfOk(cache, asset);
+            if (!response) missing++;
+            // The cached copy is all that's needed; let this one go.
+            else if (response.body) await response.body.cancel().catch(() => undefined);
+          }),
+        );
+
+        /*
+         * An update that arrived only in part must not take over: activating it
+         * deletes the earlier build's cache, and the installed app would then
+         * open offline with screens or code missing. Failing the install keeps
+         * the working copy, and the browser tries the update again on a later
+         * visit. A first install has nothing to protect, so it keeps what it got.
+         */
+        if (missing > 0 && (await hasEarlierBuild())) {
+          await caches.delete(CACHE);
+          throw new Error(`Update incomplete: ${missing} files missing`);
+        }
+      } catch (error) {
+        if (error && String(error.message).startsWith('Update incomplete')) throw error;
         // No manifest reachable — fall back to runtime caching alone.
       }
       // Take over without waiting for every tab to close. The page reloads
@@ -203,12 +250,21 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return;
 
-  // Video streams in byte ranges straight from the network. A cached full copy
-  // cannot answer a range request (Safari then refuses to play it), and caching
-  // tens of megabytes behind a home-screen rail would crowd out everything else.
-  if (request.destination === 'video' || request.headers.has('range')) return;
+  // Video streams in byte ranges straight from the network. Caching tens of
+  // megabytes behind a home-screen rail would crowd out everything else.
+  if (request.destination === 'video') return;
+
+  // A saved session's recording comes from Sanity's CDN: it is served from the
+  // saved copy when there is one (in byte ranges, as audio players ask), and
+  // otherwise straight from the network as before.
+  if (url.origin === SANITY_CDN) {
+    event.respondWith(savedOrNetwork(request));
+    return;
+  }
+
+  if (url.origin !== self.location.origin) return;
+  if (request.headers.has('range')) return;
 
   // The Android APK and the documentation PDF (offered on /get) are megabytes
   // each and must always be the newest copy, so they never touch a cache.
@@ -236,6 +292,87 @@ self.addEventListener('fetch', (event) => {
 /* ------------------------------------------------------------------ *
  * Saved sessions
  * ------------------------------------------------------------------ */
+
+const SANITY_CDN = 'https://cdn.sanity.io';
+
+/** Only the app's own artwork and Sanity's files are ever saved alongside a session. */
+function isSavableMedia(url) {
+  try {
+    const parsed = new URL(url, self.location.origin);
+    if (parsed.origin === SANITY_CDN) return true;
+    return parsed.origin === self.location.origin && parsed.pathname === '/_next/image';
+  } catch {
+    return false;
+  }
+}
+
+/** The bytes a Range header asks for, or null when it can't be answered. */
+function byteRange(header, size) {
+  const match = /^bytes=(\d*)-(\d*)$/.exec(header.trim());
+  if (!match || (match[1] === '' && match[2] === '')) return null;
+  let start;
+  let end;
+  if (match[1] === '') {
+    // "bytes=-500": the last 500 bytes.
+    start = Math.max(0, size - Number(match[2]));
+    end = size - 1;
+  } else {
+    start = Number(match[1]);
+    end = match[2] === '' ? size - 1 : Math.min(Number(match[2]), size - 1);
+  }
+  if (start >= size || end < start) return null;
+  return { start, end };
+}
+
+/**
+ * Answers from a saved copy, cutting out the bytes asked for.
+ *
+ * Audio elements ask for ranges ("bytes=0-", then wherever someone seeks), and
+ * Safari refuses a whole-file 200 in reply to one, so a range request gets a
+ * proper 206 cut from the stored file.
+ */
+async function savedOrNetwork(request) {
+  const saved = await (await caches.open(PINNED)).match(request.url);
+  if (!saved) return fetch(request);
+
+  const header = request.headers.get('range');
+  if (!header) return saved;
+
+  const blob = await saved.blob();
+  const range = byteRange(header, blob.size);
+  if (!range) {
+    return new Response(null, { status: 416, headers: { 'Content-Range': `bytes */${blob.size}` } });
+  }
+  return new Response(blob.slice(range.start, range.end + 1), {
+    status: 206,
+    headers: {
+      'Content-Type': saved.headers.get('Content-Type') || 'application/octet-stream',
+      'Content-Range': `bytes ${range.start}-${range.end}/${blob.size}`,
+      'Content-Length': String(range.end - range.start + 1),
+      'Accept-Ranges': 'bytes',
+    },
+  });
+}
+
+/*
+ * Saves and removals run one at a time. Each reads the manifest, works, then
+ * writes it back; two at once meant the second write erased the first
+ * session's entry, and that download quietly vanished from the list.
+ */
+let queue = Promise.resolve();
+function oneAtATime(task) {
+  const run = queue.then(task, task);
+  queue = run.catch(() => undefined);
+  return run;
+}
+
+/** Plain words for what went wrong, shown on the player. */
+function saveError(error) {
+  if (error && (error.name === 'QuotaExceededError' || /quota/i.test(String(error.message)))) {
+    return 'There isn’t room on this device to save it.';
+  }
+  return 'Part of this session couldn’t be downloaded. Check your connection and try again.';
+}
 
 /**
  * The pinned manifest.
@@ -274,8 +411,10 @@ async function pinUrl(cache, url) {
   const existing = await cache.match(url);
   if (existing) return (await existing.blob()).size;
 
-  const response = await fetch(url, { cache: 'no-store' });
-  if (!response.ok) return 0;
+  // Sanity's CDN allows this origin, so the copy is a readable whole file.
+  const crossOrigin = new URL(url, self.location.origin).origin !== self.location.origin;
+  const response = await fetch(url, crossOrigin ? { mode: 'cors', cache: 'no-store' } : { cache: 'no-store' });
+  if (response.status !== 200) throw new Error(`Could not fetch ${url}`);
 
   const size = (await response.clone().blob()).size;
   await cache.put(url, response);
@@ -289,7 +428,7 @@ async function pinUrl(cache, url) {
  * manifest, exactly as the install-time precache does — so the list is always
  * right for the deployment that answered, and cannot go stale.
  */
-async function pinSession(id, route) {
+async function pinSession(id, route, media) {
   const cache = await caches.open(PINNED);
 
   const response = await fetch(route, { cache: 'no-store' });
@@ -298,17 +437,32 @@ async function pinSession(id, route) {
   const html = await response.clone().text();
   const index = await readIndex(cache);
 
-  index.sizes[route] = (await response.clone().blob()).size;
-  await cache.put(route, response);
+  const owned = new Set();
+  for (const other of Object.values(index.sessions)) for (const url of other.urls) owned.add(url);
 
-  const urls = [route];
-  let bytes = index.sizes[route];
+  // The recording and artwork the page itself uses: the artwork is drawn after
+  // the page loads and the recording streams from Sanity, so neither is in the
+  // HTML read here.
+  const extra = (Array.isArray(media) ? media : []).filter(
+    (url) => typeof url === 'string' && isSavableMedia(url),
+  );
+  const urls = [...new Set([route, ...assetsFrom(html), ...imagesFrom(html), ...extra])];
+  const sizes = {};
 
-  for (const url of [...assetsFrom(html), ...imagesFrom(html)]) {
-    urls.push(url);
-    const size = await pinUrl(cache, url);
-    index.sizes[url] = size;
-    bytes += size;
+  try {
+    await cache.put(route, response.clone());
+    sizes[route] = (await response.blob()).size;
+    for (const url of urls.slice(1)) sizes[url] = await pinUrl(cache, url);
+  } catch (error) {
+    // Half a session is no use on a flight: take back what this save added.
+    for (const url of urls) if (!owned.has(url)) await cache.delete(url);
+    throw error;
+  }
+
+  let bytes = 0;
+  for (const url of urls) {
+    index.sizes[url] = sizes[url];
+    bytes += sizes[url];
   }
 
   // `bytes` is this session's whole footprint, shared chunks included — what it
@@ -381,16 +535,16 @@ self.addEventListener('message', (event) => {
 
   if (message.type === 'pin') {
     event.waitUntil(
-      pinSession(message.id, message.route)
+      oneAtATime(() => pinSession(message.id, message.route, message.media))
         .then((entry) => reply({ ok: true, entry }))
-        .catch((error) => reply({ ok: false, error: String(error && error.message) })),
+        .catch((error) => reply({ ok: false, error: saveError(error) })),
     );
     return;
   }
 
   if (message.type === 'unpin') {
     event.waitUntil(
-      unpinSession(message.id)
+      oneAtATime(() => unpinSession(message.id))
         .then(() => reply({ ok: true }))
         .catch((error) => reply({ ok: false, error: String(error && error.message) })),
     );

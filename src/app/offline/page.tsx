@@ -13,7 +13,7 @@ export default function OfflinePage() {
         <CloudOff className="h-6 w-6 text-ink-soft" strokeWidth={1.6} />
       </span>
 
-      <h1 className="mt-5 text-[1.375rem] font-bold leading-tight tracking-[-0.015em] text-ink">
+      <h1 className="mt-5 text-[1.375rem] font-semibold leading-tight tracking-[-0.015em] text-ink">
         No connection
       </h1>
       <p className="mx-auto mt-2.5 max-w-[260px] text-caption leading-relaxed text-ink-muted">
