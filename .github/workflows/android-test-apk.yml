@@ -24,23 +24,32 @@ jobs:
       NEXT_PUBLIC_POSTHOG_KEY: ${{ vars.NEXT_PUBLIC_POSTHOG_KEY }}
       NEXT_PUBLIC_POSTHOG_HOST: ${{ vars.NEXT_PUBLIC_POSTHOG_HOST }}
     steps:
-      # A build signed with any other key cannot update the installed app, and
-      # uninstalling to get past that erases the reader's data. So: no key, no APK.
-      - name: Check the signing key is set
+      # With the permanent key (MOBILE.md, "Signing") every build updates the
+      # last one in place. Without it the APK is signed with a throwaway key
+      # made fresh on this runner, so it cannot update an earlier build: testers
+      # must uninstall first, which erases what was kept only on the phone.
+      - name: Check for the signing key
+        id: signing
         env:
           KEYSTORE: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           FINGERPRINT: ${{ vars.ANDROID_CERT_SHA256 }}
         run: |
-          missing=0
+          missing=""
           for name in KEYSTORE PASSWORD ALIAS FINGERPRINT; do
-            if [ -z "${!name}" ]; then
-              echo "::error::Android signing is not set up (missing $name). See MOBILE.md, Signing."
-              missing=1
-            fi
+            [ -z "${!name}" ] && missing="$missing $name"
           done
-          exit $missing
+          if [ -z "$missing" ]; then
+            echo "permanent=true" >> "$GITHUB_OUTPUT"
+          elif [ "$missing" = " KEYSTORE PASSWORD ALIAS FINGERPRINT" ]; then
+            echo "permanent=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::No signing key set: this APK has a throwaway key and cannot update an earlier test build. Testers must uninstall first, losing data kept only on the phone. See MOBILE.md, Signing."
+          else
+            # Half set up is a mistake, not a choice: say which are missing.
+            echo "::error::Android signing is only partly set up (missing:$missing). See MOBILE.md, Signing."
+            exit 1
+          fi
 
       - uses: actions/checkout@v4
 
@@ -73,19 +82,28 @@ jobs:
       - name: Build and sign the APK
         working-directory: android
         env:
+          PERMANENT: ${{ steps.signing.outputs.permanent }}
           KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          SERENITY_KEYSTORE: ${{ runner.temp }}/serenity.jks
+          KEYSTORE_FILE: ${{ runner.temp }}/serenity.jks
           SERENITY_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           SERENITY_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
         run: |
-          trap 'rm -f "$SERENITY_KEYSTORE"' EXIT
-          printf '%s' "$KEYSTORE_BASE64" | tr -d '\r\n' | base64 -d > "$SERENITY_KEYSTORE"
+          if [ "$PERMANENT" = "true" ]; then
+            export SERENITY_KEYSTORE="$KEYSTORE_FILE"
+            trap 'rm -f "$SERENITY_KEYSTORE"' EXIT
+            printf '%s' "$KEYSTORE_BASE64" | tr -d '\r\n' | base64 -d > "$SERENITY_KEYSTORE"
+          else
+            # build.gradle then signs the release build with this runner's debug key.
+            export SERENITY_THROWAWAY_KEY=1
+          fi
           # Rises with every run. Renaming this workflow file restarts run_number: add an offset if you do.
           export SERENITY_VERSION_CODE=$((GITHUB_RUN_NUMBER + 1))
           chmod +x gradlew
           ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk ../serenity-test.apk
 
       - name: Check it carries the permanent key
+        if: steps.signing.outputs.permanent == 'true'
         env:
           EXPECTED: ${{ vars.ANDROID_CERT_SHA256 }}
         run: |
@@ -97,13 +115,16 @@ jobs:
             echo "::error::Signed with a different key from ANDROID_CERT_SHA256. Not publishing: installed copies could not update."
             exit 1
           fi
-          cp "$apk" serenity-test.apk
 
       - name: Publish to the test-build release
         env:
           GH_TOKEN: ${{ github.token }}
+          PERMANENT: ${{ steps.signing.outputs.permanent }}
         run: |
           notes="Test build of ${GITHUB_SHA::7} ($(date -u '+%Y-%m-%d %H:%M UTC')). For testing only: install with \"Install unknown apps\"."
+          if [ "$PERMANENT" != "true" ]; then
+            notes="$notes Uninstall any earlier Serenity test build first: this one cannot update it. Uninstalling erases reflections, sleep logs, mixes, schedules and chats kept on the phone; synced sessions, ratings and likes come back when you sign in."
+          fi
           if gh release view test-build >/dev/null 2>&1; then
             gh release edit test-build --notes "$notes" --prerelease
             gh release upload test-build serenity-test.apk --clobber

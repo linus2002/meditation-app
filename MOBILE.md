@@ -120,8 +120,15 @@ the phone. So there is **one key, for good**. Keep it and its password in a
 password manager and in a second offline copy. If either is lost, installed
 copies can never be updated again.
 
+**For now the test workflow runs without it.** With none of the four values
+set, it signs each APK with a throwaway key and says so in a warning and in the
+release notes: every new test build then needs testers to uninstall the last
+one first, which erases what was kept only on the phone. Set up all four and
+the workflow switches to the permanent key on its own (one last uninstall). With
+only some of them set it stops, since that is a mistake rather than a choice.
+
 Set it up once, in PowerShell, from the repo folder. The key is created outside
-the repo, and the workflow refuses to build until all four values exist.
+the repo.
 
 ```powershell
 $keytool = "C:\Program Files\Android\Android Studio\jbr\bin\keytool.exe"

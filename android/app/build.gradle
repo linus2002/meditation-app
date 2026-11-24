@@ -18,8 +18,9 @@ android {
         }
     }
     // The permanent key, given only through the environment, never the repo (MOBILE.md,
-    // "Signing"). Without it a release build is unsigned and won't install; debug builds
-    // don't need it.
+    // "Signing"). Without it a release build is unsigned and won't install, unless
+    // SERENITY_THROWAWAY_KEY is set: then it takes this machine's debug key, which
+    // cannot update a build signed with any other key. Debug builds don't need either.
     def keystorePath = System.getenv('SERENITY_KEYSTORE')
     signingConfigs {
         if (keystorePath) {
@@ -36,6 +37,8 @@ android {
         release {
             if (keystorePath) {
                 signingConfig signingConfigs.release
+            } else if (System.getenv('SERENITY_THROWAWAY_KEY')) {
+                signingConfig signingConfigs.debug
             }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
