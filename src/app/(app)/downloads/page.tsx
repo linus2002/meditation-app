@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { CloudOff, Loader2, Smartphone, Trash2 } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
-import { useUndo } from '@/components/layout/undo-toast';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { SectionTitle } from '@/components/shared/section-title';
 import { SkeletonList } from '@/components/shared/skeleton';
@@ -15,24 +14,9 @@ import { getMeditation } from '@/data/meditations';
 import { formatBytes } from '@/lib/offline-downloads';
 
 export default function DownloadsPage() {
-  const { support, loaded, sessions, totalLabel, error, isBusy, remove } = useDownloads();
-  const offerUndo = useUndo();
-
-  // An offline copy may be the only way to play in a hospital with no signal,
-  // and cannot be fetched back without one. So the row goes at once, but the
-  // copy itself is only deleted once the chance to undo has passed.
-  const [leaving, setLeaving] = React.useState<string[]>([]);
-  const removeCopy = (id: string, title: string) => {
-    setLeaving((current) => [...current, id]);
-    offerUndo({
-      message: `${title} removed from this device`,
-      undo: () => setLeaving((current) => current.filter((entry) => entry !== id)),
-      commit: () => void remove(id),
-    });
-  };
+  const { support, loaded, sessions, totalLabel, error, isBusy, removeWithUndo } = useDownloads();
 
   const saved = sessions
-    .filter((entry) => !leaving.includes(entry.id))
     .map((entry) => ({ entry, meditation: getMeditation(entry.id) }))
     .filter((row): row is { entry: typeof row.entry; meditation: NonNullable<typeof row.meditation> } =>
       Boolean(row.meditation),
@@ -106,7 +90,7 @@ export default function DownloadsPage() {
                 <button
                   type="button"
                   disabled={isBusy(entry.id)}
-                  onClick={() => removeCopy(entry.id, meditation.title)}
+                  onClick={() => removeWithUndo(entry.id, meditation.title)}
                   aria-label={`Remove the offline copy of ${meditation.title}`}
                   className="relative z-10 tap-target flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                 >

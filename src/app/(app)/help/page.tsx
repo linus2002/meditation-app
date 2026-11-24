@@ -28,6 +28,7 @@ import { markSupportSeen } from '@/hooks/use-support-unread';
 import { useAccountStatus } from '@/hooks/use-account';
 import { accountEmail } from '@/lib/auth';
 import { useApp } from '@/providers/app-provider';
+import { useAutoGrow } from '@/hooks/use-auto-grow';
 import { cn } from '@/lib/utils';
 
 /**
@@ -393,6 +394,7 @@ function Conversation({ id }: { id: string }) {
   const [teamTyping, setTeamTyping] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
   const [draft, setDraft] = React.useState('');
+  const replyRef = useAutoGrow(draft);
   const [sendProblem, setSendProblem] = React.useState<string | null>(null);
   const endRef = React.useRef<HTMLDivElement>(null);
   const initials = useInitials();
@@ -596,6 +598,7 @@ function Conversation({ id }: { id: string }) {
           </label>
           <textarea
             id="support-reply"
+            ref={replyRef}
             rows={1}
             value={draft}
             maxLength={MAX_BODY}

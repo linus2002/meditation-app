@@ -36,6 +36,7 @@ import { buildHistory, kapwaAiEnabled, streamKapwaReply, warmUpKapwaAi } from '@
 import { buildKapwaContext, findSessionTitles, parseSessionLine } from '@/lib/kapwa-context';
 import { currentStreak } from '@/lib/session-stats';
 import { supportTrackEnabled } from '@/lib/support-track';
+import { useAutoGrow } from '@/hooks/use-auto-grow';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
@@ -90,6 +91,7 @@ export function KapwaChat() {
   const [messages, setMessages] = React.useState<ChatMessage[]>([]);
   const [hydrated, setHydrated] = React.useState(false);
   const [draft, setDraft] = React.useState('');
+  const inputRef = useAutoGrow(draft);
   const [typing, setTyping] = React.useState(false);
   const endRef = React.useRef<HTMLDivElement>(null);
   const timer = React.useRef<number | undefined>(undefined);
@@ -393,6 +395,7 @@ export function KapwaChat() {
         </label>
         <textarea
           id="kapwa-input"
+          ref={inputRef}
           rows={1}
           value={draft}
           maxLength={MAX_LENGTH}

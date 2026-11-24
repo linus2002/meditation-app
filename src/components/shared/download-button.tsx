@@ -35,7 +35,7 @@ export function DownloadButton({
   className,
   size = 'sm',
 }: DownloadButtonProps) {
-  const { support, isSaved, isBusy, save, remove, errorFor, dismissError } = useDownloads();
+  const { support, isSaved, isBusy, save, removeWithUndo, errorFor, dismissError } = useDownloads();
   const error = errorFor(meditationId);
 
   // Said where it was asked for, not only on the Downloads screen; it goes after a while.
@@ -64,7 +64,7 @@ export function DownloadButton({
             : `Save ${title} for offline`
       }
       disabled={busy}
-      onClick={() => (saved ? void remove(meditationId) : void save(meditationId, [...(track ? [track] : []), ...artworkOnPage(artwork)]))}
+      onClick={() => (saved ? removeWithUndo(meditationId, title) : void save(meditationId, [...(track ? [track] : []), ...artworkOnPage(artwork)]))}
       className={cn(
         'flex shrink-0 items-center justify-center rounded-full transition-transform duration-200 hover:scale-110 active:scale-95 disabled:hover:scale-100',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',

@@ -2,6 +2,8 @@
 
 import * as React from 'react';
 
+import { useUndo } from '@/components/layout/undo-toast';
+
 import {
   downloadsSupport,
   formatBytes,
@@ -32,6 +34,11 @@ interface StoreState {
   error: string | null;
   /** The session the error is about, so its own button can say so. */
   failed: string | null;
+  /**
+   * Taken off by the reader but still on the device until the chance to undo
+   * has passed: shown everywhere as not saved.
+   */
+  leaving: string[];
 }
 
 let state: StoreState = {
@@ -40,6 +47,7 @@ let state: StoreState = {
   loaded: false,
   error: null,
   failed: null,
+  leaving: [],
 };
 
 const listeners = new Set<() => void>();
@@ -68,6 +76,10 @@ async function refresh(): Promise<void> {
     // screen simply reports nothing saved until it answers.
     setState({ loaded: true });
   }
+}
+
+function stopLeaving(id: string): void {
+  if (state.leaving.includes(id)) setState({ leaving: state.leaving.filter((entry) => entry !== id) });
 }
 
 async function run(id: string, action: () => Promise<void>, failure: string): Promise<void> {
@@ -101,11 +113,18 @@ export interface DownloadsApi {
   /** `media`: the recording and artwork addresses beyond the page (see saveSession). */
   save: (id: string, media?: string[]) => Promise<void>;
   remove: (id: string) => Promise<void>;
+  /**
+   * Takes a session off at once, with an Undo. An offline copy may be the only
+   * way to play somewhere with no signal and cannot be fetched back without
+   * one, so the files themselves go only once the Undo has passed.
+   */
+  removeWithUndo: (id: string, title: string) => void;
   refresh: () => Promise<void>;
 }
 
 export function useDownloads(): DownloadsApi {
   const snapshot = React.useSyncExternalStore(subscribe, () => state, () => serverSnapshot);
+  const offerUndo = useUndo();
 
   // Resolved on the client only: `downloadsSupport` reads navigator, which the
   // server render has no view of.
@@ -119,16 +138,38 @@ export function useDownloads(): DownloadsApi {
   return {
     support,
     loaded: snapshot.loaded,
-    sessions: snapshot.status.sessions,
+    sessions: snapshot.status.sessions.filter((entry) => !snapshot.leaving.includes(entry.id)),
     totalBytes: snapshot.status.bytes,
     totalLabel: formatBytes(snapshot.status.bytes),
     error: snapshot.error,
     errorFor: (id) => (snapshot.failed === id ? snapshot.error : null),
     dismissError: () => setState({ error: null, failed: null }),
-    isSaved: (id) => snapshot.status.sessions.some((entry) => entry.id === id),
+    isSaved: (id) =>
+      !snapshot.leaving.includes(id) && snapshot.status.sessions.some((entry) => entry.id === id),
     isBusy: (id) => snapshot.busy.includes(id),
-    save: (id, media) => run(id, () => saveSession(id, media), 'The session could not be saved.'),
+    // Saving one still waiting to go just keeps the copy already there.
+    save: (id, media) => {
+      if (state.leaving.includes(id)) {
+        stopLeaving(id);
+        return Promise.resolve();
+      }
+      return run(id, () => saveSession(id, media), 'The session could not be saved.');
+    },
     remove: (id) => run(id, () => removeSession(id), 'The session could not be removed.'),
+    removeWithUndo: (id, title) => {
+      if (!state.leaving.includes(id)) setState({ leaving: [...state.leaving, id] });
+      offerUndo({
+        message: `${title} removed from this device`,
+        undo: () => stopLeaving(id),
+        commit: () => {
+          // Saved again in the meantime: nothing to do.
+          if (!state.leaving.includes(id)) return;
+          void run(id, () => removeSession(id), 'The session could not be removed.').finally(() =>
+            stopLeaving(id),
+          );
+        },
+      });
+    },
     refresh,
   };
 }

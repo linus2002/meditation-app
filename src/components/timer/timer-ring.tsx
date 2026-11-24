@@ -41,7 +41,7 @@ export function TimerRing({ progress, className, children }: TimerRingProps) {
           cx={CENTER}
           cy={CENTER}
           r={RADIUS}
-          stroke="rgba(255,255,255,0.08)"
+          stroke="rgb(var(--overlay) / 0.08)"
           strokeWidth={STROKE}
         />
 

@@ -44,17 +44,21 @@ Decisions that follow directly from the artwork:
 - **No bottom navigation on `/activities`.** The reference shows that screen with a
   back chevron and no nav bar, so it lives outside the navigation route group and
   owns the full height of the frame.
-- **The nav carries exactly three icon-only destinations** (heart, cog, alarm), as
-  drawn. Discovery and saved sessions are reached from the header search control
-  and the deck card overflow menus rather than by adding nav items.
+- **The bottom bar has since grown to five labelled tabs:** Home, Meditations,
+  Kapwa (the raised middle button), Yoga and Sleep. Every other screen — the
+  timer, stories, Saved, Downloads, Mixes, the calendar, the assessment and
+  more — is in the home screen's menu, under Profile → Shortcuts, and in
+  search (`src/data/shortcuts.ts` is the one list all three read).
 - **Layout follows the reference; placeholder copy does not.** The reference's
   stand-in text (Lorem ipsum on the intro, the name "Sherman Whitaker", the
   "sessiom" typo, "Watch Complete sessions") has been replaced with real copy.
-  There are no accounts, so Home greets by time of day and Profile describes the
-  phone's own record rather than a named member.
-- **Dark surface only.** The reference shows a single dark treatment, so no theme
-  toggle is exposed. Light tokens exist in `globals.css` purely so the shadcn/ui
-  primitives stay well-formed.
+  Home greets by time of day and by the name the reader gives on Profile, if
+  any. Accounts are covered under **Accounts and the server** below.
+- **Dark by default, with a light mode.** The reference shows a dark treatment,
+  and that is what a new install gets. *Profile → Preferences → Light mode*
+  switches to the light tokens in `globals.css`. Hairlines, rings and hover
+  fills use the `overlay` tint, which is white on the dark canvas and ink on the
+  light one, so they show in both; never draw them in fixed white.
 - The deck cards keep the flat gradients as drawn — no photography behind them.
 - **The home screen has since been reordered at the author's request.** The
   greeting bar is now pinned to the top of the scrolling region, and the
@@ -117,8 +121,9 @@ Four steps at `/welcome`, shown once on a fresh install and never again.
    primary and an outlined secondary.
 2. A tilted grid of session artwork running off every edge, with the promise
    set over it.
-3. **New in Serenity** — Yoga, Circles, Kapwa and Daily inspiration, each an
-   icon and one line, over a soft blue and green glow.
+3. **What's in Serenity** — Meditations, Programs, Yoga, Kapwa, read-aloud
+   stories, sleep and soundscapes, mixes and the calendar, and daily
+   inspiration, each an icon and one line, over a soft blue and green glow.
 4. The original reference intro screen — headline weight mix, wave lines,
    leaning bars, gradient pill — unchanged. It was always an intro with a Get
    Started button, so this is where it belongs in the flow.
@@ -255,7 +260,6 @@ sleep, focus, self-kindness, hard-day, new-start, momentum.
 | Four or more days since the last sit | new-start — a welcome back, never guilt |
 | A streak of three days or more | momentum |
 | Themes the reader picked (Calm, Sleep, Focus, Self-kindness) | those themes |
-| The goal from the Circles questions | that goal |
 
 The best matches rotate by date, so the message is stable all day and changes
 the next. Passing moods only shape today's and tomorrow's message. With nothing
@@ -302,8 +306,8 @@ How it behaves:
   the text larger across the track. No breath holds, no cue tones, no
   vibration.
 - **No streaks anywhere in the track.** Listening goes into a private list
-  ("Just for you"), never into the app's streak, activity screen, daily goal
-  or a Circle.
+  ("Just for you"), never into the app's streak, activity screen or daily
+  goal.
 - **Built for the moment.** The two tired-day sessions are 2 and 5 minutes; the
   chemo-chair session is 30 minutes and offers to keep going; the steroid-night
   session fades away with no bell and does not keep the screen on.
@@ -344,8 +348,7 @@ How it behaves:
    ]
    ```
 
-Later: human-narrated audio for each session (recorded after review), and
-private cancer-support and caregiver Circles once invite-only circles exist.
+Later: human-narrated audio for each session, recorded after review.
 
 ## Accounts on a shared phone
 
@@ -406,7 +409,7 @@ To set it up:
 6. Set `NEXT_PUBLIC_KAPWA_AI=1` in `.env.local` and rebuild.
 
 - Covers stress, sleep, focus, low moods, anger, body tension, short on time,
-  getting started, and the way to Circles, the timer, stories, reminders and
+  getting started, and the way to the timer, stories, reminders and
   progress. Cancer-support replies appear only where that track is on.
 - The crisis and medical patterns (`src/data/kapwa-safety.ts`: English,
   Filipino, some Cebuano) are not clinically validated and cannot catch
@@ -539,11 +542,14 @@ iPhone 14, iPhone 15 Pro, iPhone 14 Pro Max, Galaxy S8/S20 and Pixel 7.
 
 ## Sound
 
-Every sound in the app is **synthesised in the browser with the Web Audio API** —
-there are no audio files in the repo. That was a deliberate call: bundling stock
-audio would mean shipping tracks whose contents could not be verified, plus tens
-of megabytes of binaries and a licence to honour. Synthesis is verifiable,
-license-free, works offline, and never audibly loops.
+Two kinds of sound. **Recorded guided sessions and story readings** are
+uploaded in Sanity and streamed from its CDN (`track` on a meditation, a
+recorded reading on a story); Downloads keeps a copy for offline. **Everything
+else** — soundscapes, bells, breath cues — is **synthesised in the browser with
+the Web Audio API**, so no ambient audio files ship in the repo: synthesis is
+verifiable, licence-free, works offline and never audibly loops. A session or
+story with no recording falls back to the breath-paced player or the device's
+own voice.
 
 `src/lib/audio/`
 
@@ -560,7 +566,9 @@ plays behind it.
 
 Where sound is used:
 
-- **Player** — the session's bed starts and stops with the transport. Under a
+- **Player** — play and pause, back and forward 10 seconds, and a scrubber;
+  `Space` or `K` play and pause from anywhere on the screen. The session's bed
+  starts and stops with the transport. Under a
   recorded voice it plays at about a third of its level so the words stay
   clear; "Ambient background" in Settings switches it off. There is no in-app
   volume or mute control: the phone's own volume buttons set the level (iOS
@@ -580,81 +588,80 @@ bell landing on a full bed from clipping. In development the engine is exposed a
 `window.__serenityAudio` for debugging; the guard strips it from production
 builds.
 
-To use recorded tracks instead, give `Meditation` an audio URL and swap the
-`engine.play()` body for an `<audio>` element or `AudioBufferSourceNode` — the
-provider API (`play` / `stop` / `fadeOut` / `setVolume`) would not change.
+A recording plays through an `<audio>` element beside the engine; the engine
+keeps the bed under it (`play(id, level)`).
 
 ## Screens beyond the reference
 
 These are not depicted in the artwork, so they are designed in the same language
 (same palette, radii, card treatment and type scale):
 
-- `/discover` — search, category filters, session list, mood grid
-- `/player/[id]` — breathing orb, transport, scrubber, session completion
-- `/sleep` — sleep summary tiles, per-night chart, wind-down timer, sleep sessions
-- `/favorites` — saved and recently played
-- `/profile` — account, weekly mindful minutes, preference toggles, shortcuts
+- `/meditations` — the library by mood, with programs, stories and yoga in tabs
+- `/discover` — category filters, session list, mood grid
+- `/search` — programs, sessions, stories, yoga, soundscapes and screens in one
+  search, forgiving a slip in words of four letters or more
+- `/player/[id]` — breathing orb or recorded guide, transport, scrubber,
+  session completion
+- `/sleep` — the night log (edit or delete last night), summary tiles,
+  per-night chart, wind-down timer, sleep sessions
+- `/favorites` — Saved: saved sessions and stories, and recently played
+- `/downloads`, `/mixes`, `/calendar`, `/reflections`, `/notifications`
+- `/help` — sign-in tips for guests; conversations with the Serenity team once
+  signed in
+- `/profile` — name, account, weekly mindful minutes, preferences, shortcuts
 
-## Circles
+Removing a saved item, an offline copy, a sleep entry, a reflection, a mix or a
+calendar entry offers **Undo** for eight seconds (`undo-toast.tsx`). An offline
+copy is only deleted once the Undo has passed, since it cannot be fetched back
+without a connection.
 
-Small groups — never more than twenty — that sit at the same time each day. It
-is the one feature that talks to a server: **Supabase** (Postgres, Auth and
-Realtime), called straight from the browser so it works in the static export
-and in the Capacitor apps alike. Everything else stays on the device.
+## Accounts and the server
 
-| Piece | Where |
-| --- | --- |
-| Schema, security rules, server functions, launch circles | `supabase/migrations/` |
-| Security tests (pgTAP) | `supabase/tests/circles_rls.test.sql` |
-| Pure logic — time zones, schedule, matching, streak, feed | `src/lib/circles/` (unit-tested) |
-| The only module that calls Supabase | `src/lib/circles/api.ts` |
-| Membership cache, local choices | `src/providers/circles-provider.tsx` |
-| Posting sits, circle reminders | `src/components/layout/circle-sync.tsx` |
-| Screens | `/circles`, `/circles/join`, `/circles/view?id=`, `/circles/live?id=` |
+Much of Serenity works for a guest, on the phone alone. An account is needed
+for the player, timer, yoga, stories, Kapwa, reflections, mixes, the calendar,
+the assessment and the cancer-support sessions (`MEMBER_ROUTES` in
+`src/components/layout/account-gate.tsx`). Help is open to everyone, since
+someone who can't sign in is who needs it most.
 
-**How it behaves**
+**Signing in** is by emailed code, with no password (`src/lib/auth.ts`):
+Create Account sends a code along with the reader's name, Sign in sends one to
+an existing account, and the code is typed into the app. The backend is
+**Supabase**, called straight from the app so it works in the static export
+and the Capacitor builds alike.
 
-- **Joining.** Three questions (goal, time of day, experience) suggest two or
-  three circles; the reader picks. The answers never leave the phone. Joining
-  creates an anonymous account — no email — and nothing is created for anyone
-  who never opens Circles.
-- **Live sessions.** "Synced" means a shared clock, not a shared stream: the
-  session starts at its scheduled instant for everyone, and a late arrival
-  starts where the others are. The room opens five minutes early and closes to
-  newcomers halfway through; after that the circle page offers a solo sit,
-  which still counts. Presence shows who is actually connected, nothing more.
-- **The feed** says who joined, who sat (never for how long) and each day's
-  one-line prompt answer. Answers can be hidden per person or reported; two
-  reports hide one.
-- **The streak belongs to the circle.** A day counts once three members — or
-  everyone, in a circle of fewer than three — have sat. Counted days are
-  latched on the server, so leaving never rewrites the past. No leaderboards,
-  no individual numbers, no "streak lost" messages.
-- **Reminders** arrive ten minutes before each session, when switched on.
-  Never after the start, never about anyone else's activity.
-- **Nothing is invented.** Circles launch empty and say "Be one of the first".
+What goes to the server, and nothing more:
+
+| Data | Where it is kept | Code |
+| --- | --- | --- |
+| Every sitting, and where each session was left | `practice_sessions`, `resume_points` | `src/lib/cloud-sync.ts` |
+| Session ratings | `meditation_ratings` | `src/lib/ratings.ts` |
+| Video likes (an anonymous account until sign-in) | `video_likes` | `src/lib/video-likes.ts` |
+| Kapwa AI replies, when switched on | `kapwa-chat` edge function | `src/lib/kapwa-ai.ts` |
+| Help conversations with the Serenity team | Studio's support API | `src/lib/support.ts` |
+
+The phone is always written first, so the app behaves the same offline; sync
+follows behind. Reflections, sleep logs, Saved, mixes and settings stay on the
+phone, kept per account (see **Accounts on a shared phone**).
 
 **Setting it up**
 
-1. Create a project at [supabase.com](https://supabase.com) (the Free plan is
-   enough to build and test; move to Pro before launch — Free projects pause
-   after a week of inactivity and have no backups).
+1. Create a project at [supabase.com](https://supabase.com) (move to Pro before
+   launch: Free projects pause after a week of inactivity and have no
+   backups).
 2. Copy `.env.example` to `.env.local` and fill in the project URL and the
-   **publishable** key (`sb_publishable_…`) from the **Connect** button at the
-   top of the dashboard, or *Settings → API Keys*. A legacy anon key also works.
-3. Apply the migrations — either `npx supabase link --project-ref <ref>` then
-   `npx supabase db push`, or paste the four files into the SQL editor in order.
-4. In the dashboard: *Authentication → Sign In / Providers* → enable
-   **Anonymous sign-ins**, and *Realtime → Settings* → turn **off** "Allow
-   public access" so the private-channel rules apply. Leave CAPTCHA **off** for
-   now: the app does not send a CAPTCHA token yet, so switching it on would
-   make every join fail. Adding Turnstile is a pre-launch task.
-5. Optional: `npx supabase start` and `npx supabase test db` (needs Docker) to
-   run the security tests locally.
+   **publishable** key (`sb_publishable_…`) from **Connect**, or *Settings →
+   API Keys*.
+3. `npx supabase link --project-ref <ref>`, then `npx supabase db push`.
+4. *Authentication → Sign In / Providers*: enable **Email** with OTP codes (set
+   *Email OTP Length* to match `NEXT_PUBLIC_AUTH_CODE_LENGTH`, default 6) and
+   **Anonymous sign-ins** (used for video likes).
 
-Without the two keys the app still builds and runs; Circles shows as not
-available. Launch circles are seeded for `Asia/Manila` and `Europe/London` —
-change them in the seed migration for the markets you actually launch in.
+Without the keys the app still builds and runs, as a guest-only app with no
+accounts or sync.
+
+Circles, the small groups that sat together each day, has been removed from
+the app. Its tables are still created by the five `circles_*` migrations and
+tested in `supabase/tests/circles_rls.test.sql`; nothing in the app reads them.
 
 ## Structure
 
@@ -662,38 +669,42 @@ change them in the seed migration for the markets you actually launch in.
 src/
   app/
     page.tsx              entry gate -> tour or home
-    welcome/              three-step first-run tour
+    welcome/              four-step first-run tour
+    login/                sign in and create account (emailed code)
     activities/           reference screen 3 (no bottom nav)
-    (app)/                routes that carry the bottom nav
-      home/ discover/ sleep/ favorites/ profile/
-    player/[id]/          full-screen session player
+    (app)/                routes that carry the bottom nav: home, meditations,
+                          kapwa, yoga, sleep, help, profile, favorites, ...
+    player/ timer/ yoga/ stories/ support/   full-screen players
   components/
     ui/                   shadcn/ui primitives
-    layout/               device gate, screen shell, nav, headers
-    home/ activities/ player/ sleep/ discover/ shared/
-  data/                   typed mock catalogue, stats, sleep, settings, photos, prompts
-  assets/images/          bundled photography + CREDITS.md
-  hooks/                  use-player, use-breath, use-countdown, use-narration,
-                          use-session-recorder, use-wake-lock
-  lib/audio/              Web Audio synthesis engine and soundscapes
-  lib/session-stats.ts    progress derived from recorded sittings
+    layout/               device gate, account gate, nav, menu, undo bar
+    home/ meditations/ player/ sleep/ kapwa/ help/ shared/ ...
+  content/                content.json, pulled from Sanity at build time
+  data/                   shapes the content for screens; settings, shortcuts
+  hooks/                  use-downloads, use-narration, use-session-recorder, ...
+  lib/                    audio engine, search, sync, auth, stats, reminders
+  providers/              app-provider (saved, recents, settings), audio-provider
+  types/                  shared domain types
 scripts/
   build-routes.mjs        generates the service worker's route list (prebuild)
-  providers/              app-provider (favorites, recents, settings), audio-provider
-  lib/                    cn, formatters, SVG arc geometry
-  types/                  shared domain types
+  sanity/                 content pull, import, narration and recordings
+supabase/
+  migrations/ functions/  database, row level security, kapwa-chat
+studio/                   Sanity Studio and the team's support and analytics API
 ```
 
 ## Behaviour
 
-All interactions are functional against local TypeScript data — no backend.
+Content is pulled from Sanity at build time, so browsing needs no server;
+accounts and sync are covered above.
 
 - Sessions play on a wall-clock timer (accurate through tab throttling); scrub,
-  skip ±15s, pause and resume all work. `Space` / `K` toggle playback.
+  skip ±10s, pause and resume all work. `Space` / `K` toggle playback.
 - The breathing orb derives its phase from the session clock, so the ring, the
   phase label and the countdown can never drift apart.
-- Favorites, recently played, preference toggles and the audio level persist to
-  `localStorage` and degrade to seeded defaults when storage is unavailable.
+- Saved items, recently played and preferences persist to `localStorage` (per
+  account) and fall back to defaults when storage is unavailable. There is no
+  in-app volume; the phone's buttons set it.
 - Sessions and sleep sounds are audible: see **Sound** above.
 - **Navigation is immediate.** Screens carry no entry animation, the bottom-nav
   highlight moves on tap rather than when the route commits, and destinations
