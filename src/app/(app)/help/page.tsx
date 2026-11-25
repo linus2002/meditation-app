@@ -19,6 +19,7 @@ import {
   SUPPORT_CATEGORIES,
   syncThread,
   supportErrorText,
+  takeHelpDraft,
   type SupportCategory,
   type SupportMessage,
   type SupportStatus,
@@ -259,6 +260,15 @@ function NewConcern() {
   const [category, setCategory] = React.useState<SupportCategory>(SUPPORT_CATEGORIES[0]);
   const [subject, setSubject] = React.useState('');
   const [body, setBody] = React.useState('');
+
+  // Started from Kapwa's "Report this reply": open with it filled in.
+  React.useEffect(() => {
+    const draft = takeHelpDraft();
+    if (!draft) return;
+    setCategory(draft.category);
+    setSubject(draft.subject);
+    setBody(draft.body);
+  }, []);
   const [sending, setSending] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
 

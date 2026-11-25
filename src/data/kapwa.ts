@@ -8,23 +8,44 @@
  * the AI (`lib/kapwa-ai`, switched on by NEXT_PUBLIC_KAPWA_AI) is off or
  * unreachable. These replies describe the keyword guide, not the AI.
  *
- * Session ids must exist in `src/data/meditations.ts` (a test checks).
+ * Session, yoga, story and sound ids must exist in the content (a test
+ * checks). The detailed answers to everyday questions are in
+ * `data/kapwa-topics`.
  */
 
+import { kapwaTopics } from '@/data/kapwa-topics';
+import { collectionIntents, lengthIntent, practiceFor, practiceIntents } from '@/lib/kapwa-knowledge';
+import { personalIntents } from '@/lib/kapwa-profile';
 import { crisisLines, emergencyLine, type SafetyLine } from '@/data/safety-lines';
+import type { SoundscapeId } from '@/lib/audio/soundscapes';
 
 export type KapwaAction =
   | { type: 'session'; id: string }
+  | { type: 'yoga'; id: string }
+  | { type: 'story'; id: string }
+  /** A sound to play in the Sleep tab's mixer. */
+  | { type: 'sound'; id: SoundscapeId }
+  /** A practice from the knowledge base, taught step by step in the chat when tapped. */
+  | { type: 'practice'; id: string }
+  /** Starts a practice as a timed, guided run in the chat (lib/kapwa-runner). */
+  | { type: 'run'; id: string }
   | { type: 'page'; href: string; label: string }
   | { type: 'call'; line: SafetyLine };
 
 export interface KapwaIntent {
   id: string;
-  /** Words or short phrases; matched whole, case and punctuation ignored. */
+  /**
+   * Words or short phrases, matched whole and in order; case, punctuation and
+   * small typos ignored. A phrase scores one point per word.
+   */
   keywords: string[];
   /** Rotated by turn, so repeating a question does not repeat the answer. */
   replies: string[];
   actions?: KapwaAction[];
+  /** Questions offered as buttons under this reply, to go on from it. */
+  suggestions?: string[];
+  /** A written answer that is given in full even when the AI is on. */
+  prepared?: boolean;
   /** Only offered where the cancer support track is switched on. */
   supportTrackOnly?: boolean;
 }
@@ -33,21 +54,26 @@ export interface KapwaReply {
   intentId: string;
   text: string;
   actions: KapwaAction[];
+  suggestions?: string[];
+  prepared?: boolean;
 }
 
 export const kapwaWelcome: KapwaReply = {
   intentId: 'welcome',
-  text: 'Hi, I’m Kapwa. I can help you find a session for how you’re feeling, or show you around Serenity. How are you today?',
+  text: 'Hi, I’m Kapwa. There’s no right way to start: tell me how you feel in a few words, or pick one of these. I can suggest a meditation, a gentle yoga session, a story or a sound that fits.',
   actions: [],
 };
 
-/** Tappable openers, shown under Kapwa's latest message. */
+/** Tappable openers, shown under the welcome and any reply without its own. */
 export const kapwaQuickReplies: string[] = [
-  'I feel stressed',
+  'I feel overwhelmed',
+  'I feel sad and heavy',
   'I can’t sleep',
-  'Help me focus',
-  'I’m new to meditation',
-  'What can you do?',
+  'I’m anxious about the future',
+  'I’m too hard on myself',
+  'I miss someone',
+  'Help me understand myself',
+  'Help me build a habit',
 ];
 
 /**
@@ -154,7 +180,29 @@ export const kapwaFallback: KapwaReply = {
   actions: [{ type: 'call', line: crisisLines[0] }],
 };
 
-export const kapwaIntents: KapwaIntent[] = [
+/**
+ * Each topic also offers one practice from the knowledge base to try right
+ * in the chat, first among its buttons.
+ */
+const topicsWithPractice: KapwaIntent[] = kapwaTopics.map((topic) => {
+  const practice = practiceFor(topic.id);
+  if (!practice) return topic;
+  return { ...topic, actions: [{ type: 'practice', id: practice.id }, ...(topic.actions ?? [])] };
+});
+
+/**
+ * Most specific first, so a tie goes to it: a length ("a 5 minute
+ * meditation"), a list ("breathing techniques"), a practice by name ("box
+ * breathing"), a detailed topic ("how do I stop overthinking"), and last the
+ * general replies ("stress").
+ */
+const intentsInOrder: KapwaIntent[] = [
+  // "Who am I", "my progress": about the reader, answered from their own data.
+  ...personalIntents,
+  lengthIntent,
+  ...collectionIntents,
+  ...practiceIntents,
+  ...topicsWithPractice,
   {
     id: 'greeting',
     keywords: ['hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening', 'kumusta'],
@@ -181,7 +229,7 @@ export const kapwaIntents: KapwaIntent[] = [
   {
     id: 'sleep',
     keywords: [
-      'sleep', 'asleep', 'insomnia', 'sleepless', 'awake', 'bedtime', 'night', 'tired', 'rest',
+      'sleep', 'asleep', 'insomnia', 'sleepless', 'awake', 'bedtime', 'tired', 'rest',
       'cant sleep', 'can’t sleep',
     ],
     replies: [
@@ -226,22 +274,11 @@ export const kapwaIntents: KapwaIntent[] = [
   {
     // Before `body`, so "my body is in pain" lands here on a tie.
     id: 'pain',
-    keywords: ['pain', 'painful', 'hurts', 'hurting', 'ache', 'aching', 'headache', 'sore', 'nausea', 'nauseous'],
+    keywords: ['pain', 'painful', 'hurts', 'hurting', 'ache', 'aching', 'headache', 'head hurts', 'sore', 'nausea', 'nauseous'],
     replies: [
       'I’m sorry you’re hurting. If the pain or sickness is new, severe or getting worse, please tell your care team. I can’t judge what it means. If it’s familiar and you’ve been told how to manage it, slow breathing can help you soften around it a little:',
     ],
     actions: [{ type: 'session', id: 'body-scan' }],
-  },
-  {
-    id: 'body',
-    keywords: ['body', 'tension', 'stiff', 'shoulders', 'relax', 'relaxed'],
-    replies: [
-      'Let’s check in with your body. This one moves your attention slowly from head to toe:',
-    ],
-    actions: [
-      { type: 'session', id: 'body-scan' },
-      { type: 'session', id: 'ocean-drift' },
-    ],
   },
   {
     id: 'short',
@@ -253,30 +290,10 @@ export const kapwaIntents: KapwaIntent[] = [
     ],
   },
   {
-    id: 'beginner',
-    keywords: [
-      'new', 'beginner', 'start', 'started', 'first time', 'how to meditate', 'how do i meditate',
-      'never meditated', 'learn',
-    ],
-    replies: [
-      'Welcome. Meditation is simply noticing your breath and gently coming back when your mind wanders — wandering is normal, not failing. Here’s a good first session:',
-    ],
-    actions: [
-      { type: 'session', id: 'free-your-mind' },
-      { type: 'session', id: 'midday-reset' },
-    ],
-  },
-  {
     id: 'timer',
     keywords: ['timer', 'silent', 'silence', 'unguided', 'bells', 'bell'],
     replies: ['For a quiet sit with just gentle bells, use the timer:'],
     actions: [{ type: 'page', href: '/timer', label: 'Open the timer' }],
-  },
-  {
-    id: 'stories',
-    keywords: ['story', 'stories', 'read', 'listen', 'bedtime story'],
-    replies: ['Stories are read aloud and made for drifting off:'],
-    actions: [{ type: 'page', href: '/stories', label: 'Browse stories' }],
   },
   {
     id: 'reminders',
@@ -285,12 +302,6 @@ export const kapwaIntents: KapwaIntent[] = [
       'You can set a daily reminder, a bedtime nudge and a daily inspiration message here:',
     ],
     actions: [{ type: 'page', href: '/notifications', label: 'Notifications' }],
-  },
-  {
-    id: 'progress',
-    keywords: ['progress', 'streak', 'stats', 'minutes', 'history', 'how am i doing'],
-    replies: ['Your streak, mindful minutes and weekly chart are on your profile:'],
-    actions: [{ type: 'page', href: '/profile', label: 'Open Profile' }],
   },
   {
     id: 'support',
@@ -305,7 +316,7 @@ export const kapwaIntents: KapwaIntent[] = [
     id: 'about',
     keywords: [
       'who are you', 'what are you', 'are you real', 'real person', 'human', 'ai', 'chatbot',
-      'robot', 'bot', 'kapwa',
+      'robot', 'bot',
     ],
     replies: [
       'I’m Kapwa, Serenity’s built-in guide. I’m not a person and I’m not an AI — I answer from a set of replies written for Serenity, so I understand simple things best. I’m also not a replacement for a doctor or therapist.',
@@ -315,7 +326,13 @@ export const kapwaIntents: KapwaIntent[] = [
     id: 'help',
     keywords: ['help', 'what can you do', 'options', 'menu', 'features'],
     replies: [
-      'I can suggest a session for stress, sleep, focus, low moods, anger or body tension, help you get started, and point you to the timer, stories, reminders or your progress. Just tell me how you feel.',
+      'I can help when you’re stressed, sad, can’t sleep, anxious about the future, hard on yourself, or going through something with someone. I can also help you understand yourself a little better, or build a calmer habit. For each, I’ll suggest something in Serenity that fits: a meditation, a gentle yoga session, a story or a sound. Just tell me how you feel, in any words.',
+    ],
+    actions: [
+      { type: 'page', href: '/meditations', label: 'Meditations' },
+      { type: 'page', href: '/yoga', label: 'Yoga' },
+      { type: 'page', href: '/stories', label: 'Stories' },
+      { type: 'page', href: '/sleep', label: 'Sounds' },
     ],
   },
   {
@@ -328,4 +345,14 @@ export const kapwaIntents: KapwaIntent[] = [
     keywords: ['bye', 'goodbye', 'good night', 'see you', 'later'],
     replies: ['Take care of yourself. Come back any time.'],
   },
+];
+
+/**
+ * The support track comes first where it is on: for someone in cancer
+ * treatment, "chemo tomorrow" is about the support space, not a general
+ * worry about tomorrow.
+ */
+export const kapwaIntents: KapwaIntent[] = [
+  ...intentsInOrder.filter((intent) => intent.supportTrackOnly),
+  ...intentsInOrder.filter((intent) => !intent.supportTrackOnly),
 ];

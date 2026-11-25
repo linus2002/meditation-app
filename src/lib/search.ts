@@ -7,6 +7,7 @@ import { appShortcuts, type Shortcut } from '@/data/shortcuts';
 import { stories } from '@/data/stories';
 import { yogaSessions, type YogaSession } from '@/data/yoga';
 import { soundscapeList, type SoundscapeMeta } from '@/lib/audio/soundscapes';
+import { editDistance } from '@/lib/edit-distance';
 import type { Meditation, Story } from '@/types';
 
 /**
@@ -101,30 +102,7 @@ export function queryTerms(query: string): string[] {
   return normalise(query).split(/\s+/).filter(Boolean);
 }
 
-/**
- * Edit distance between two short words, counting a swap of two neighbouring
- * letters as one slip ("brehte" is one away from "breathe", not two).
- */
-export function editDistance(a: string, b: string): number {
-  const rows = a.length + 1;
-  const cols = b.length + 1;
-  const d: number[][] = Array.from({ length: rows }, (_, i) => {
-    const row = new Array<number>(cols).fill(0);
-    row[0] = i;
-    return row;
-  });
-  for (let j = 0; j < cols; j++) d[0][j] = j;
-  for (let i = 1; i < rows; i++) {
-    for (let j = 1; j < cols; j++) {
-      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-      d[i][j] = Math.min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + cost);
-      if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) {
-        d[i][j] = Math.min(d[i][j], d[i - 2][j - 2] + 1);
-      }
-    }
-  }
-  return d[rows - 1][cols - 1];
-}
+export { editDistance } from '@/lib/edit-distance';
 
 /** How many slips a term of this length may carry and still count. */
 function slipsAllowed(term: string): number {

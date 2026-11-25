@@ -1,5 +1,9 @@
 'use client';
 
+import * as React from 'react';
+import { usePathname } from 'next/navigation';
+
+import { recordScreen } from '@/lib/activity-log';
 import { trackHistoryDepth } from '@/lib/history-depth';
 import { watchInstallPrompt } from '@/lib/install-prompt';
 
@@ -8,7 +12,15 @@ import { watchInstallPrompt } from '@/lib/install-prompt';
 trackHistoryDepth();
 watchInstallPrompt();
 
-/** Lets `useBack` tell a cold-opened screen from one reached inside the app. */
+/**
+ * Lets `useBack` tell a cold-opened screen from one reached inside the app,
+ * and notes each screen for Kapwa when the reader has allowed it
+ * (lib/activity-log; nothing is kept otherwise).
+ */
 export function NavigationTracker() {
+  const pathname = usePathname();
+  React.useEffect(() => {
+    if (pathname) recordScreen(pathname);
+  }, [pathname]);
   return null;
 }
