@@ -100,8 +100,10 @@
       line-height: 1.1;
     }
     .lede { margin: 0; color: var(--muted); font-size: 0.85rem; }
-    /* Two store badges side by side, the documentation button across both below them. */
+    /* Two store badges side by side, the documentation button across both, then the two videos side by side. */
     .actions { display: grid; grid-template-columns: repeat(2, max-content); gap: 6px; margin-top: 10px; }
+    /* Paired badges fill their column, so each pair lines up edge to edge. */
+    .actions > .badge:not(.badge-wide) { width: 100%; }
     .badge-wide { grid-column: 1 / -1; justify-content: flex-start; height: 48px; padding: 0 18px 0 14px; gap: 10px; }
 
     /* Store-badge style: black, compact, flat. */
@@ -253,7 +255,8 @@
     /* The video button is a <button>, so it needs the link badges' look spelled out. */
     button.badge { font: inherit; cursor: pointer; }
 
-    /* Promo video window: a portrait (9:16) player sized to the screen, with its own controls. */
+    /* Promo video window: a portrait (9:16) player sized to the screen, with its own controls.
+       The widescreen video uses the same window at 16:9 (.wide). */
     dialog.promo {
       width: fit-content; height: fit-content; max-width: none; max-height: none;
       padding: 0; border: 0; background: transparent; overflow: visible;
@@ -268,6 +271,10 @@
       overflow: hidden;
       background: #000;
       color: #fff;
+    }
+    dialog.promo.wide .promo-frame {
+      width: min(calc(100vw - 32px), calc((100vh - 136px) * 16 / 9));
+      aspect-ratio: 16 / 9;
     }
     .promo-frame:fullscreen, .promo-frame:-webkit-full-screen { width: 100%; height: 100%; border-radius: 0; aspect-ratio: auto; }
     .promo-frame video { display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
@@ -366,10 +373,17 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg>
             <span><small>Features &amp; guide</small><b>Serenity Documentation</b></span>
           </a>
-          <button type="button" class="badge badge-wide" id="promo-open" aria-haspopup="dialog">
-            <!-- Play. -->
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M10 8.5v7l6-3.5z" fill="#fff"/></svg>
-            <span><small>Watch the</small><b>Serenity Video</b></span>
+          <button type="button" class="badge promo-open" id="promo-open" aria-haspopup="dialog"
+            data-src="/get/serenity-promo.mp4" data-poster="/get/img/promo-poster.jpg" data-title="Serenity promo video, vertical">
+            <!-- Portrait screen with play. -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 9.5v5l4-2.5z" fill="#fff"/></svg>
+            <span><small>Watch · Vertical</small><b>Serenity Video</b></span>
+          </button>
+          <button type="button" class="badge promo-open" id="promo-open-wide" aria-haspopup="dialog"
+            data-src="/get/serenity-promo-wide.mp4" data-poster="/get/img/promo-wide-poster.jpg" data-title="Serenity promo video, widescreen" data-wide="">
+            <!-- Landscape screen with play. -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5.5" width="20" height="13" rx="2.5"/><path d="M10.5 9.5v5l4-2.5z" fill="#fff"/></svg>
+            <span><small>Watch · Widescreen</small><b>Serenity Video</b></span>
           </button>
         </div>
       </header>
@@ -574,13 +588,23 @@
         if (dialog.open) dialog.close();
       }
 
-      document.getElementById('promo-open').addEventListener('click', function () {
-        if (typeof dialog.showModal === 'function') dialog.showModal();
-        else dialog.setAttribute('open', '');
-        video.currentTime = 0;
-        // Started by the tap, so the browser allows it to play with sound.
-        void video.play().catch(function () {});
-        playButton.focus();
+      // Each video button loads its own file into the one window, shaped to match.
+      Array.prototype.forEach.call(document.querySelectorAll('.promo-open'), function (button) {
+        button.addEventListener('click', function () {
+          var src = button.getAttribute('data-src');
+          dialog.classList.toggle('wide', button.hasAttribute('data-wide'));
+          dialog.setAttribute('aria-label', button.getAttribute('data-title'));
+          if (video.getAttribute('src') !== src) {
+            video.setAttribute('poster', button.getAttribute('data-poster'));
+            video.setAttribute('src', src);
+          }
+          if (typeof dialog.showModal === 'function') dialog.showModal();
+          else dialog.setAttribute('open', '');
+          video.currentTime = 0;
+          // Started by the tap, so the browser allows it to play with sound.
+          void video.play().catch(function () {});
+          playButton.focus();
+        });
       });
       document.getElementById('promo-close').addEventListener('click', close);
       dialog.addEventListener('cancel', function (event) { event.preventDefault(); close(); });
