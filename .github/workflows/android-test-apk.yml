@@ -125,11 +125,23 @@ jobs:
           if [ "$PERMANENT" != "true" ]; then
             notes="$notes Uninstall any earlier Serenity test build first: this one cannot update it. Uninstalling erases reflections, sleep logs, mixes, schedules and chats kept on the phone; synced sessions, ratings and likes come back when you sign in."
           fi
-          if gh release view test-build >/dev/null 2>&1; then
-            gh release edit test-build --notes "$notes" --prerelease
-            gh release upload test-build serenity-test.apk --clobber
+          # GitHub's API now and then answers 502/503 for a moment. Try each call
+          # up to 5 times, waiting longer each time, before failing the run.
+          retry() {
+            for attempt in 1 2 3 4 5; do
+              "$@" && return 0
+              [ "$attempt" = 5 ] && return 1
+              echo "::warning::'$1 $2 $3' failed (attempt $attempt of 5); retrying in $((attempt * 10))s"
+              sleep $((attempt * 10))
+            done
+          }
+          if retry gh release view test-build >/dev/null 2>&1; then
+            # The APK first, then the notes, so the notes never name a build
+            # that didn't make it up.
+            retry gh release upload test-build serenity-test.apk --clobber
+            retry gh release edit test-build --notes "$notes" --prerelease
           else
-            gh release create test-build serenity-test.apk --title "Test build" --notes "$notes" --prerelease
+            retry gh release create test-build serenity-test.apk --title "Test build" --notes "$notes" --prerelease
           fi
 
       - name: Also keep it on the run page
