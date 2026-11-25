@@ -529,3 +529,19 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * The launch animation (components/layout/launch-splash). Hidden unless the
+ * script in <head> asked for it, so nothing flashes on an ordinary load.
+ */
+.launch-splash {
+  display: none;
+}
+html[data-splash] .launch-splash {
+  display: block;
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  background: #000;
+  cursor: pointer;
+}

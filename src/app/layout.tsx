@@ -6,12 +6,14 @@ import { Analytics } from '@/components/layout/analytics';
 import { CloudSync } from '@/components/layout/cloud-sync';
 import { StageGate } from '@/components/layout/stage-gate';
 import { HardwareBack } from '@/components/layout/hardware-back';
+import { LaunchSplash } from '@/components/layout/launch-splash';
 import { NavigationTracker } from '@/components/layout/navigation-tracker';
 import { UndoProvider } from '@/components/layout/undo-toast';
 import { LiveContent } from '@/components/layout/live-content';
 import { ReminderScheduler } from '@/components/layout/reminder-scheduler';
 import { ServiceWorkerRegistrar } from '@/components/layout/service-worker';
 import { SystemBars } from '@/components/layout/system-bars';
+import { LAUNCH_SPLASH_SCRIPT } from '@/lib/launch-splash';
 import { AppProvider } from '@/providers/app-provider';
 import { AudioProvider } from '@/providers/audio-provider';
 
@@ -91,6 +93,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script dangerouslySetInnerHTML={{ __html: inputScript }} />
+        {/* Decides, before the first paint, whether the launch animation plays. */}
+        <script dangerouslySetInnerHTML={{ __html: LAUNCH_SPLASH_SCRIPT }} />
       </head>
       <body className="bg-canvas font-sans text-ink antialiased">
         <AppProvider>
@@ -106,6 +110,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <HardwareBack />
             <SystemBars />
             <ServiceWorkerRegistrar />
+            <LaunchSplash />
             <ReminderScheduler />
             <Analytics />
             <CloudSync />
