@@ -62,7 +62,7 @@ export const settingToggles: SettingToggle[] = [
   {
     id: 'ambient',
     label: 'Ambient background',
-    description: 'Play the ambient bed behind guided sessions',
+    description: 'Background music during guided yoga',
     icon: Volume2,
     defaultOn: true,
   },

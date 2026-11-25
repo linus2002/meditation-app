@@ -40,9 +40,6 @@ export interface PlayerMixMode {
   onFinished: () => void;
 }
 
-/** The ambient bed's level under a recorded voice. */
-const UNDER_VOICE_LEVEL = 0.3;
-
 export function PlayerView({
   meditation,
   backdrop,
@@ -230,12 +227,12 @@ export function PlayerView({
   const scape = meditation.soundscape;
   const hasTrack = Boolean(meditation.track);
 
-  // With "Ambient background" on, the bed plays under every session: at full
-  // level when it is the only sound, and low under a recorded voice so the
-  // words stay clear. Off, sessions play with no bed at all.
+  // A session with a recording plays the recording alone: its music is the
+  // whole sound, with no rain, forest or ocean bed laid under it. Only a
+  // session without one gets the bed, when "Ambient background" is on.
   React.useEffect(() => {
-    if (isPlaying && ambientOn) {
-      void playAudio(scape, hasTrack ? UNDER_VOICE_LEVEL : 1);
+    if (isPlaying && ambientOn && !hasTrack) {
+      void playAudio(scape, 1);
     } else {
       stopAudio(1.2);
     }
@@ -486,9 +483,7 @@ export function PlayerView({
         <p className="mt-3 text-center text-label leading-relaxed text-ink-faint">
           {/* Without a recording, playback is breath cues over ambience. */}
           {hasTrack
-            ? ambientOn
-              ? 'Guided audio, with ambient sound'
-              : 'Guided audio, breath-paced'
+            ? 'Guided audio, breath-paced'
             : ambientOn
               ? 'Breath-paced, with ambient sound'
               : 'Breath-paced'}
