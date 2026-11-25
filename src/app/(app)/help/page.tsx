@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ChevronRight, Loader2, MessageCircleQuestion, Plus, Send } from 'lucide-react';
 
 import { GuestHelp } from '@/components/help/guest-help';
+import { AddPictureButton, MessagePictures, PictureTray, usePictures } from '@/components/help/support-pictures';
 import { CHAT_END_CLASS, ChatDock } from '@/components/layout/chat-dock';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { GradientButton } from '@/components/shared/gradient-button';
@@ -12,6 +13,7 @@ import { Skeleton } from '@/components/shared/skeleton';
 import {
   closeThread,
   createThread,
+  MAX_PICTURES,
   getThread,
   listThreads,
   newestTime,
@@ -271,8 +273,14 @@ function NewConcern() {
   }, []);
   const [sending, setSending] = React.useState(false);
   const [problem, setProblem] = React.useState<string | null>(null);
+  const pictures = usePictures();
 
-  const ready = subject.trim().length >= 3 && body.trim().length >= 1 && !sending;
+  // A screenshot can stand in for the message; the subject is still needed.
+  const ready =
+    subject.trim().length >= 3 &&
+    (body.trim().length >= 1 || pictures.ids.length > 0) &&
+    !pictures.busy &&
+    !sending;
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -280,7 +288,7 @@ function NewConcern() {
     setSending(true);
     setProblem(null);
     try {
-      const { id } = await createThread({ subject: subject.trim(), body: body.trim(), category });
+      const { id } = await createThread({ subject: subject.trim(), body: body.trim(), category, images: pictures.ids });
       // Replace the form in history, so Back from the conversation goes to the list.
       router.replace(`/help?t=${id}`);
     } catch (error) {
@@ -340,6 +348,25 @@ function NewConcern() {
       <p className="mt-1.5 text-right text-label text-ink-faint">
         {body.length}/{MAX_BODY}
       </p>
+
+      {/* Screenshots of the problem help the team see what you see. */}
+      <div className="mt-2 rounded-2xl border border-dashed border-overlay/[0.16] p-3">
+        <AddPictureButton
+          onPick={(files) => {
+            const left = pictures.add(files);
+            setProblem(left > 0 ? `Up to ${MAX_PICTURES} pictures per message.` : null);
+          }}
+          disabled={pictures.full || sending}
+          showLabel
+          label={pictures.pictures.length ? 'Add another picture' : 'Add a screenshot or photo'}
+          className="text-caption font-medium"
+        />
+        <p className="mt-1 text-label leading-snug text-ink-faint">
+          Up to {MAX_PICTURES}. Pictures are shrunk before sending, and only the Serenity team looks at them. Avoid
+          including passwords or other private details.
+        </p>
+        <PictureTray pictures={pictures.pictures} onRemove={pictures.remove} onRetry={pictures.retry} className="mt-3" />
+      </div>
 
       {problem ? (
         <div className="mt-3">
@@ -406,6 +433,7 @@ function Conversation({ id }: { id: string }) {
   const [draft, setDraft] = React.useState('');
   const replyRef = useAutoGrow(draft);
   const [sendProblem, setSendProblem] = React.useState<string | null>(null);
+  const pictures = usePictures();
   const endRef = React.useRef<HTMLDivElement>(null);
   const initials = useInitials();
 
@@ -497,7 +525,8 @@ function Conversation({ id }: { id: string }) {
   const send = async (event?: React.FormEvent) => {
     event?.preventDefault();
     const text = draft.trim();
-    if (!text) return;
+    const imageIds = pictures.ids;
+    if ((!text && imageIds.length === 0) || pictures.busy) return;
     // Show it at once, as messaging apps do; it settles when the server has it.
     const tempId = `sending-${++tempRef.current}`;
     const stand: ShownMessage = {
@@ -506,19 +535,24 @@ function Conversation({ id }: { id: string }) {
       admin_name: null,
       body: text,
       created_at: new Date().toISOString(),
+      images: pictures.shown,
       pending: true,
     };
+    const picked = pictures.pictures;
     setMessages((current) => [...(current ?? []), stand]);
     setDraft('');
+    pictures.clear();
     lastKeyRef.current = 0;
     setSendProblem(null);
     try {
-      const { message } = await replyToThread(id, text);
+      const { message } = await replyToThread(id, text, imageIds);
       setMessages((current) => mergeMessages((current ?? []).filter((m) => m.id !== tempId), [message]));
       setThread((current) => (current ? { ...current, status: 'open' } : current));
     } catch (error) {
       setMessages((current) => (current ?? []).filter((m) => m.id !== tempId));
       setDraft((current) => current || text);
+      // The pictures come back too, still uploaded, ready to send again.
+      if (picked.length) pictures.restore(picked);
       setSendProblem(supportErrorText(error));
     }
   };
@@ -584,7 +618,10 @@ function Conversation({ id }: { id: string }) {
                   {' · '}
                   {message.pending ? 'Sending…' : when(message.created_at)}
                 </p>
-                <p className="mt-2 whitespace-pre-wrap break-words text-body-sm leading-relaxed">{message.body}</p>
+                {message.body ? (
+                  <p className="mt-2 whitespace-pre-wrap break-words text-body-sm leading-relaxed">{message.body}</p>
+                ) : null}
+                {message.images?.length ? <MessagePictures images={message.images} mine={mine} /> : null}
               </div>
               {mine ? <UserAvatar initials={initials} /> : null}
             </li>
@@ -602,7 +639,16 @@ function Conversation({ id }: { id: string }) {
 
       {/* The reply box stays at the foot of the screen, above the tab bar. */}
       <ChatDock>
+        <PictureTray pictures={pictures.pictures} onRemove={pictures.remove} onRetry={pictures.retry} className="mb-2" />
         <form className="flex items-end gap-2" onSubmit={send}>
+          <AddPictureButton
+            onPick={(files) => {
+              const left = pictures.add(files);
+              setSendProblem(left > 0 ? `Up to ${MAX_PICTURES} pictures per message.` : null);
+            }}
+            disabled={pictures.full}
+            className="h-11 w-11 rounded-full bg-surface"
+          />
           <label htmlFor="support-reply" className="sr-only">
             Your reply
           </label>
@@ -630,7 +676,7 @@ function Conversation({ id }: { id: string }) {
           />
           <button
             type="submit"
-            disabled={!draft.trim()}
+            disabled={(!draft.trim() && pictures.ids.length === 0) || pictures.busy}
             aria-label="Send"
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-aurora-blue text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >

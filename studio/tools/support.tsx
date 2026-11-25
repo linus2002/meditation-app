@@ -55,6 +55,8 @@ interface Message {
   admin_name: string | null;
   body: string;
   created_at: string;
+  /** Pictures sent with it (screenshots, mostly), stored in Sanity. */
+  images?: { url: string; width: number; height: number }[];
   /** A reply shown at once, before the server has confirmed it. */
   pending?: boolean;
 }
@@ -507,9 +509,39 @@ function SupportTool() {
                             {mine ? message.admin_name ?? 'Serenity team' : detail.thread.user_email ?? 'User'} ·{' '}
                             {message.pending ? 'Sending…' : new Date(message.created_at).toLocaleString()}
                           </Text>
-                          <Text size={1} style={{ whiteSpace: 'pre-wrap' }}>
-                            {message.body}
-                          </Text>
+                          {message.body ? (
+                            <Text size={1} style={{ whiteSpace: 'pre-wrap' }}>
+                              {message.body}
+                            </Text>
+                          ) : null}
+                          {message.images && message.images.length > 0 ? (
+                            <Flex gap={2} wrap="wrap">
+                              {message.images.map((image, index) => (
+                                <a
+                                  key={image.url}
+                                  href={image.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title="Open the full picture in a new tab"
+                                >
+                                  <img
+                                    src={`${image.url}?w=480&fit=max&auto=format`}
+                                    alt={`Picture ${index + 1} sent by the user`}
+                                    loading="lazy"
+                                    style={{
+                                      display: 'block',
+                                      maxWidth: 220,
+                                      maxHeight: 280,
+                                      borderRadius: 8,
+                                      border: '1px solid var(--card-border-color)',
+                                      objectFit: 'contain',
+                                      background: 'var(--card-muted-bg-color, #0001)',
+                                    }}
+                                  />
+                                </a>
+                              ))}
+                            </Flex>
+                          ) : null}
                         </Stack>
                       </Card>
                     </Flex>

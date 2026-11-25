@@ -61,13 +61,24 @@ export interface SupportThread {
   last_sender: 'user' | 'admin' | null;
 }
 
+/** A picture sent with a message, stored in Sanity. `url` may be a local preview while sending. */
+export interface SupportImage {
+  url: string;
+  width: number;
+  height: number;
+}
+
 export interface SupportMessage {
   id: string;
   sender: 'user' | 'admin';
   admin_name: string | null;
   body: string;
   created_at: string;
+  images?: SupportImage[];
 }
+
+/** Pictures one message may carry; the server holds the same limit. */
+export const MAX_PICTURES = 3;
 
 export class SupportError extends Error {
   constructor(
@@ -124,7 +135,21 @@ export function getThread(id: string) {
   });
 }
 
-export function createThread(input: { subject: string; body: string; category: SupportCategory }) {
+/**
+ * Sends one picture (already shrunk, as a JPEG data URL) ahead of the message
+ * it belongs to. The returned id goes with the message; a picture never sent
+ * is cleared by the server after a day.
+ */
+export function uploadSupportPicture(data: string) {
+  return call<{ image: SupportImage & { id: string } }>({ action: 'upload', data });
+}
+
+export function createThread(input: {
+  subject: string;
+  body: string;
+  category: SupportCategory;
+  images?: string[];
+}) {
   return call<{ id: string }>({ action: 'create', ...input, platform: platform() });
 }
 
@@ -142,8 +167,8 @@ export function syncThread(id: string, after: string | null, typing: boolean) {
   });
 }
 
-export function replyToThread(id: string, body: string) {
-  return call<{ id: string; message: SupportMessage }>({ action: 'reply', id, body });
+export function replyToThread(id: string, body: string, images: string[] = []) {
+  return call<{ id: string; message: SupportMessage }>({ action: 'reply', id, body, images });
 }
 
 export function closeThread(id: string) {

@@ -17,7 +17,7 @@ export function supportProxy(): Plugin {
   return {
     name: 'serenity-support-proxy',
     configureServer(server) {
-      const env = pickSupportEnv(loadEnv('development', process.cwd(), ['DATABASE_', 'POSTGRES_', 'SUPABASE_']), process.env);
+      const env = pickSupportEnv(loadEnv('development', process.cwd(), ['DATABASE_', 'POSTGRES_', 'SUPABASE_', 'SANITY_API_']), process.env);
       const support = createSupport(env);
 
       server.middlewares.use('/support-api', async (req, res) => {

@@ -1,5 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 
+import { createSanityImages, decodeImage, IMAGE_LIMITS } from './support-images.js';
+
 /**
  * Help & support: people raise a concern in the app, and the team answers it
  * from the Studio's Support tab. The conversations live in a Neon Postgres
@@ -22,6 +24,9 @@ import { neon } from '@neondatabase/serverless';
  *   SUPABASE_URL               the app's Supabase project address
  *   SUPABASE_SERVICE_ROLE_KEY  used only to ask Supabase who a sign-in belongs
  *                              to; already set for the Analytics tab.
+ *   SANITY_API_WRITE_TOKEN     an Editor token for the Sanity project, used only
+ *                              to store and delete pictures sent with a message
+ *                              (support-images.ts). Without it, pictures are off.
  *
  * The tables are created on first use, so there is no migration to run.
  */
@@ -31,6 +36,7 @@ export const SUPPORT_ENV_NAMES = [
   'POSTGRES_URL',
   'SUPABASE_URL',
   'SUPABASE_SERVICE_ROLE_KEY',
+  'SANITY_API_WRITE_TOKEN',
 ] as const;
 
 export type SupportEnv = Partial<Record<(typeof SUPPORT_ENV_NAMES)[number], string>>;
@@ -70,6 +76,14 @@ const TYPING_SECONDS = 6;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+/** The ids of pictures uploaded for a message, as sent by the app: at most a few, all well-formed. */
+function imageIds(value: unknown): string[] | null {
+  if (value === undefined || value === null) return [];
+  if (!Array.isArray(value) || value.length > IMAGE_LIMITS.perMessage) return null;
+  const ids = value.filter((id): id is string => typeof id === 'string' && UUID.test(id));
+  return ids.length === value.length ? [...new Set(ids)] : null;
+}
+
 /** The variables above, from any source (process.env, Vite's loadEnv). */
 export function pickSupportEnv(...sources: Record<string, string | undefined>[]): SupportEnv {
   const out: SupportEnv = {};
@@ -102,8 +116,9 @@ function text(value: unknown, max: number): string | null {
 /** A tagged-template query function: Neon's, or a stand-in for tests. */
 type Sql = (strings: TemplateStringsArray, ...values: unknown[]) => Promise<Record<string, any>[]>;
 
-export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
+export function createSupport(env: SupportEnv, overrides: { sql?: Sql; fetch?: typeof fetch } = {}) {
   const url = env.DATABASE_URL || env.POSTGRES_URL;
+  const images = createSanityImages(env.SANITY_API_WRITE_TOKEN, overrides.fetch);
   const sql: Sql | null = overrides.sql ?? (url ? (neon(url) as unknown as Sql) : null);
   const supabaseUrl = env.SUPABASE_URL?.replace(/\/$/, '');
   const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
@@ -142,6 +157,20 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       // When each side last pressed a key, for the "typing…" dots.
       await sql`alter table support_threads add column if not exists user_typing_at timestamptz`;
       await sql`alter table support_threads add column if not exists admin_typing_at timestamptz`;
+      // Pictures sent with messages. The file is in Sanity; this says whose it is
+      // and which message it went with (none yet while it is being written).
+      await sql`create table if not exists support_images (
+        id uuid primary key default gen_random_uuid(),
+        user_id text not null,
+        asset_id text not null,
+        url text not null,
+        width int not null default 0,
+        height int not null default 0,
+        message_id uuid references support_messages(id) on delete set null,
+        created_at timestamptz not null default now()
+      )`;
+      await sql`create index if not exists support_images_message on support_images (message_id)`;
+      await sql`create index if not exists support_images_user on support_images (user_id, created_at desc)`;
     };
     ready ??= (async () => {
       try {
@@ -183,18 +212,67 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
     return user;
   }
 
+  /**
+   * Joins the person's own unsent pictures to a message they just wrote, and
+   * returns that message as the app shows it, pictures included.
+   */
+  async function attach(userId: string, messageId: string, ids: string[]) {
+    const db = sql!;
+    if (ids.length > 0) {
+      await db`
+        update support_images set message_id = ${messageId}
+        where id = any(${ids}::uuid[]) and user_id = ${userId} and message_id is null`;
+    }
+    const [message] = await db`
+      select id, sender, admin_name, body, created_at,
+        coalesce((select json_agg(json_build_object('url', i.url, 'width', i.width, 'height', i.height) order by i.created_at)
+          from support_images i where i.message_id = support_messages.id), '[]'::json) as images
+      from support_messages where id = ${messageId}`;
+    return message;
+  }
+
+  /** Pictures someone picked but never sent, cleared from Sanity and the table. */
+  async function clearUnsent(userId: string): Promise<void> {
+    const db = sql!;
+    const stale = await db`
+      select id, asset_id from support_images
+      where user_id = ${userId} and message_id is null
+        and created_at < now() - make_interval(hours => ${IMAGE_LIMITS.orphanHours})`;
+    if (stale.length === 0) return;
+    await images.remove(stale.map((row) => row.asset_id as string));
+    await db`delete from support_images where id = any(${stale.map((row) => row.id as string)}::uuid[])`;
+  }
+
   /** What the app may do, always limited to the person's own conversations. */
   async function forUser(user: SupportUser, payload: Record<string, unknown>): Promise<Reply> {
     await ensureSchema();
     const db = sql!;
     const action = payload.action;
 
+    if (action === 'upload') {
+      if (!images.configured) return fail(503, 'Sending pictures isn’t set up yet.');
+      const decoded = decodeImage(payload.data);
+      if ('error' in decoded) return fail(400, decoded.error);
+      const [{ count }] = await db`
+        select count(*)::int as count from support_images
+        where user_id = ${user.id} and created_at > now() - interval '1 day'`;
+      if (count >= IMAGE_LIMITS.perDay) return fail(429, 'You’ve sent a lot of pictures today. Please try again tomorrow.');
+      // Tidy first, so abandoned pictures don't linger in Sanity.
+      await clearUnsent(user.id).catch(() => {});
+      const stored = await images.upload(decoded.bytes, decoded.type);
+      const [row] = await db`
+        insert into support_images (user_id, asset_id, url, width, height)
+        values (${user.id}, ${stored.assetId}, ${stored.url}, ${stored.width}, ${stored.height})
+        returning id, url, width, height`;
+      return ok({ image: row });
+    }
+
     if (action === 'list') {
       const threads = await db`
         select t.id, t.subject, t.category, t.status, t.created_at, t.updated_at,
           (t.last_admin_reply_at is not null
             and t.last_admin_reply_at > coalesce(t.user_seen_at, 'epoch'::timestamptz)) as unread,
-          m.body as last_body, m.sender as last_sender
+          coalesce(nullif(m.body, ''), 'Sent a picture') as last_body, m.sender as last_sender
         from support_threads t
         left join lateral (
           select body, sender from support_messages
@@ -215,7 +293,10 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
         returning id, subject, category, status, created_at, updated_at`;
       if (!thread) return fail(404, 'Unknown conversation.');
       const messages = await db`
-        select id, sender, admin_name, body, created_at from support_messages
+        select id, sender, admin_name, body, created_at,
+              coalesce((select json_agg(json_build_object('url', i.url, 'width', i.width, 'height', i.height) order by i.created_at)
+              from support_images i where i.message_id = support_messages.id), '[]'::json) as images
+            from support_messages
         where thread_id = ${id} order by created_at`;
       return ok({ thread, messages });
     }
@@ -238,18 +319,27 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       // repeat; the app ignores ids it already has.
       const messages = after
         ? await db`
-            select id, sender, admin_name, body, created_at from support_messages
+            select id, sender, admin_name, body, created_at,
+              coalesce((select json_agg(json_build_object('url', i.url, 'width', i.width, 'height', i.height) order by i.created_at)
+              from support_images i where i.message_id = support_messages.id), '[]'::json) as images
+            from support_messages
             where thread_id = ${id} and created_at >= ${after}::timestamptz order by created_at`
         : await db`
-            select id, sender, admin_name, body, created_at from support_messages
+            select id, sender, admin_name, body, created_at,
+              coalesce((select json_agg(json_build_object('url', i.url, 'width', i.width, 'height', i.height) order by i.created_at)
+              from support_images i where i.message_id = support_messages.id), '[]'::json) as images
+            from support_messages
             where thread_id = ${id} order by created_at`;
       return ok({ status: thread.status, typing: thread.other_typing, messages });
     }
 
     if (action === 'create') {
       const subject = text(payload.subject, LIMITS.subject);
-      const body = text(payload.body, LIMITS.body);
-      if (!subject || !body) return fail(400, 'Add a subject and a message.');
+      const ids = imageIds(payload.images);
+      if (!ids) return fail(400, `Send up to ${IMAGE_LIMITS.perMessage} pictures at a time.`);
+      // A picture can say it all; a message is then optional.
+      const body = text(payload.body, LIMITS.body) ?? (ids.length > 0 ? '' : null);
+      if (!subject || body === null) return fail(400, 'Add a subject and a message.');
       const category = CATEGORIES.find((c) => c === payload.category) ?? 'Other';
       const platform = text(payload.platform, 40);
       const [{ count }] = await db`
@@ -266,14 +356,17 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
         )
         insert into support_messages (thread_id, sender, body)
         select id, 'user', ${body} from t
-        returning thread_id as id`;
+        returning thread_id as id, id as message_id`;
+      await attach(user.id, created.message_id, ids);
       return ok({ id: created.id });
     }
 
     if (action === 'reply') {
       const id = typeof payload.id === 'string' && UUID.test(payload.id) ? payload.id : null;
-      const body = text(payload.body, LIMITS.body);
-      if (!id || !body) return fail(400, 'Write a message first.');
+      const ids = imageIds(payload.images);
+      if (!ids) return fail(400, `Send up to ${IMAGE_LIMITS.perMessage} pictures at a time.`);
+      const body = text(payload.body, LIMITS.body) ?? (ids.length > 0 ? '' : null);
+      if (!id || body === null) return fail(400, 'Write a message first.');
       const [{ count }] = await db`
         select count(*)::int as count from support_messages m
         join support_threads t on t.id = m.thread_id
@@ -287,9 +380,10 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
         where id = ${id} and user_id = ${user.id}
         returning id`;
       if (!thread) return fail(404, 'Unknown conversation.');
-      const [message] = await db`
+      const [inserted] = await db`
         insert into support_messages (thread_id, sender, body) values (${id}, 'user', ${body})
-        returning id, sender, admin_name, body, created_at`;
+        returning id`;
+      const message = await attach(user.id, inserted.id, ids);
       return ok({ id, message });
     }
 
@@ -331,7 +425,7 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
         select t.id, t.user_email, t.subject, t.category, t.status, t.platform, t.last_sender,
           t.created_at, t.updated_at,
           (t.last_sender = 'user' and t.updated_at > coalesce(t.admin_seen_at, 'epoch'::timestamptz)) as unread,
-          m.body as last_body,
+          coalesce(nullif(m.body, ''), 'Sent a picture') as last_body,
           (select count(*)::int from support_messages where thread_id = t.id) as message_count
         from support_threads t
         left join lateral (
@@ -356,7 +450,10 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
         returning id, user_id, user_email, subject, category, status, platform, created_at, updated_at`;
       if (!thread) return fail(404, 'Unknown conversation.');
       const messages = await db`
-        select id, sender, admin_name, body, created_at from support_messages
+        select id, sender, admin_name, body, created_at,
+              coalesce((select json_agg(json_build_object('url', i.url, 'width', i.width, 'height', i.height) order by i.created_at)
+              from support_images i where i.message_id = support_messages.id), '[]'::json) as images
+            from support_messages
         where thread_id = ${id} order by created_at`;
       return ok({ thread, messages });
     }
@@ -376,10 +473,16 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       const after = since(payload.after);
       const messages = after
         ? await db`
-            select id, sender, admin_name, body, created_at from support_messages
+            select id, sender, admin_name, body, created_at,
+              coalesce((select json_agg(json_build_object('url', i.url, 'width', i.width, 'height', i.height) order by i.created_at)
+              from support_images i where i.message_id = support_messages.id), '[]'::json) as images
+            from support_messages
             where thread_id = ${id} and created_at >= ${after}::timestamptz order by created_at`
         : await db`
-            select id, sender, admin_name, body, created_at from support_messages
+            select id, sender, admin_name, body, created_at,
+              coalesce((select json_agg(json_build_object('url', i.url, 'width', i.width, 'height', i.height) order by i.created_at)
+              from support_images i where i.message_id = support_messages.id), '[]'::json) as images
+            from support_messages
             where thread_id = ${id} order by created_at`;
       return ok({ status: thread.status, typing: thread.other_typing, messages });
     }
@@ -410,7 +513,7 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       const [message] = await db`
         insert into support_messages (thread_id, sender, admin_name, body)
         values (${id}, 'admin', ${adminName}, ${body})
-        returning id, sender, admin_name, body, created_at`;
+        returning id, sender, admin_name, body, created_at, '[]'::json as images`;
       return ok({ id, message, status: thread.status });
     }
 
@@ -438,6 +541,7 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
       return await run();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      if (message === 'images-not-configured') return fail(503, 'Sending pictures isn’t set up yet.');
       if (message === 'not-configured') {
         return fail(503, 'Support isn’t set up yet: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY is missing.');
       }
@@ -454,6 +558,10 @@ export function createSupport(env: SupportEnv, overrides: { sql?: Sql } = {}) {
   /** Every conversation a person ever started, and its messages: for deleting an account. */
   async function eraseUser(userId: string): Promise<void> {
     await ensureSchema();
+    // Their pictures first: once the rows are gone, nothing says which files were theirs.
+    const pictures = await sql!`select asset_id from support_images where user_id = ${userId}`;
+    await images.remove(pictures.map((row) => row.asset_id as string));
+    await sql!`delete from support_images where user_id = ${userId}`;
     await sql!`delete from support_threads where user_id = ${userId}`;
   }
 

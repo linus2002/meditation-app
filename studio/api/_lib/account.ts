@@ -43,7 +43,7 @@ function json(status: number, body: unknown): Response {
 }
 
 export function createAccountDeletion(env: AccountEnv, overrides: { sql?: Sql; fetch?: typeof fetch } = {}) {
-  const support = createSupport(env, { sql: overrides.sql });
+  const support = createSupport(env, { sql: overrides.sql, fetch: overrides.fetch });
   const http = overrides.fetch ?? fetch;
   const supabaseUrl = env.SUPABASE_URL?.replace(/\/$/, '');
   const serviceKey = env.SUPABASE_SERVICE_ROLE_KEY;
