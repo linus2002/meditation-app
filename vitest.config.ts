@@ -20,7 +20,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
-    include: ['src/**/*.test.ts'],
+    include: ['src/**/*.test.ts', 'studio-tests/**/*.test.ts'],
     // Deterministic by construction: anything date-dependent takes the date as
     // an argument rather than reading the clock, so there is nothing to retry.
     retry: 0,

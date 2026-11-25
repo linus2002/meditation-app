@@ -1,29 +1,17 @@
+/*
+ * Tests for the Studio's support server (studio/api). They live outside src/
+ * so the app's own type check, which runs on Vercel without the Studio's
+ * packages installed, never follows them into studio/.
+ */
 import { describe, expect, it } from 'vitest';
 
-import { createSupport } from '../../studio/api/_lib/support';
-import { createSanityImages, decodeImage, IMAGE_LIMITS, sniff } from '../../studio/api/_lib/support-images';
-import { fitWithin, thumbnailUrl } from '@/lib/support-picture';
+import { createSupport } from '../studio/api/_lib/support';
+import { createSanityImages, decodeImage, IMAGE_LIMITS, sniff } from '../studio/api/_lib/support-images';
 
 const JPEG = Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, 0, 16, 74, 70, 73, 70]);
 const PNG = Uint8Array.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0, 0, 0, 13]);
 const WEBP = new TextEncoder().encode('RIFF\0\0\0\0WEBPVP8 ');
 const b64 = (bytes: Uint8Array) => Buffer.from(bytes).toString('base64');
-
-describe('preparing a picture on the phone', () => {
-  it('shrinks the longest side to the limit, keeping the shape', () => {
-    expect(fitWithin(1170, 2532)).toEqual({ width: 739, height: 1600 });
-    expect(fitWithin(4000, 3000)).toEqual({ width: 1600, height: 1200 });
-    expect(fitWithin(800, 600)).toEqual({ width: 800, height: 600 });
-    expect(fitWithin(0, 10)).toEqual({ width: 0, height: 0 });
-  });
-
-  it('asks Sanity for a smaller copy, and leaves local previews alone', () => {
-    expect(thumbnailUrl('https://cdn.sanity.io/images/p/d/abc-10x10.jpg')).toBe(
-      'https://cdn.sanity.io/images/p/d/abc-10x10.jpg?w=480&fit=max&auto=format',
-    );
-    expect(thumbnailUrl('blob:http://localhost/123')).toBe('blob:http://localhost/123');
-  });
-});
 
 describe('checking a picture on the server', () => {
   it('knows JPEG, PNG and WebP by their first bytes', () => {
