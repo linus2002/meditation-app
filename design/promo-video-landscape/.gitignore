@@ -1,0 +1,3 @@
+build/
+# The finished 26 MB render stays out of git; the web copy is public/get/serenity-promo-wide.mp4.
+*.mp4

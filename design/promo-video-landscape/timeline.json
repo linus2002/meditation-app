@@ -1,0 +1,252 @@
+{
+  "fps": 30,
+  "duration": 21.0,
+  "width": 1920,
+  "height": 1080,
+  "bpm": 120,
+  "scenes": [
+    {
+      "id": "logo-intro",
+      "start": 0.0,
+      "end": 2.0
+    },
+    {
+      "id": "phone",
+      "start": 2.0,
+      "end": 4.5
+    },
+    {
+      "id": "whip",
+      "start": 4.5,
+      "end": 5.0
+    },
+    {
+      "id": "list",
+      "start": 5.0,
+      "end": 7.5
+    },
+    {
+      "id": "grid",
+      "start": 7.5,
+      "end": 9.5
+    },
+    {
+      "id": "tagline",
+      "start": 9.5,
+      "end": 13.5
+    },
+    {
+      "id": "collapse",
+      "start": 13.5,
+      "end": 14.5
+    },
+    {
+      "id": "lockup",
+      "start": 14.5,
+      "end": 18.5
+    },
+    {
+      "id": "outro",
+      "start": 18.5,
+      "end": 21.0
+    }
+  ],
+  "vo": [
+    {
+      "id": "l1",
+      "at": 0.35
+    },
+    {
+      "id": "l2",
+      "at": 3.3
+    },
+    {
+      "id": "l3",
+      "at": 5.1
+    },
+    {
+      "id": "l4",
+      "at": 7.65
+    },
+    {
+      "id": "l5",
+      "at": 9.85
+    },
+    {
+      "id": "l6",
+      "at": 12.25
+    }
+  ],
+  "sfx": [
+    {
+      "type": "swell",
+      "at": 0.0,
+      "len": 0.7,
+      "gain": 0.4
+    },
+    {
+      "type": "pop",
+      "at": 0.45,
+      "gain": 0.35,
+      "pitch": 0.8
+    },
+    {
+      "type": "chime",
+      "at": 0.45,
+      "gain": 0.3
+    },
+    {
+      "type": "whoosh",
+      "at": 0.92,
+      "len": 0.5,
+      "gain": 0.35
+    },
+    {
+      "type": "zoom",
+      "at": 1.45,
+      "len": 0.6,
+      "gain": 0.45
+    },
+    {
+      "type": "spin",
+      "at": 2.0,
+      "len": 0.8,
+      "gain": 0.4
+    },
+    {
+      "type": "whoosh",
+      "at": 2.65,
+      "len": 0.55,
+      "gain": 0.45
+    },
+    {
+      "type": "swipe",
+      "at": 3.25,
+      "gain": 0.35
+    },
+    {
+      "type": "tap",
+      "at": 3.95,
+      "gain": 0.5
+    },
+    {
+      "type": "reverse",
+      "at": 4.0,
+      "len": 0.5,
+      "gain": 0.4
+    },
+    {
+      "type": "bloom",
+      "at": 4.05,
+      "gain": 0.35
+    },
+    {
+      "type": "whoosh",
+      "at": 4.42,
+      "len": 0.55,
+      "gain": 0.6
+    },
+    {
+      "type": "impact",
+      "at": 5.0,
+      "gain": 0.65
+    },
+    {
+      "type": "pop",
+      "at": 5.2,
+      "gain": 0.28,
+      "pitch": 1.0
+    },
+    {
+      "type": "pop",
+      "at": 5.3,
+      "gain": 0.28,
+      "pitch": 1.12
+    },
+    {
+      "type": "pop",
+      "at": 5.4,
+      "gain": 0.28,
+      "pitch": 1.26
+    },
+    {
+      "type": "pop",
+      "at": 5.5,
+      "gain": 0.28,
+      "pitch": 1.4
+    },
+    {
+      "type": "swipe",
+      "at": 5.65,
+      "gain": 0.3
+    },
+    {
+      "type": "whoosh",
+      "at": 7.25,
+      "len": 0.5,
+      "gain": 0.5
+    },
+    {
+      "type": "pop",
+      "at": 7.6,
+      "gain": 0.28,
+      "pitch": 1.0
+    },
+    {
+      "type": "pop",
+      "at": 7.72,
+      "gain": 0.28,
+      "pitch": 1.19
+    },
+    {
+      "type": "pop",
+      "at": 7.84,
+      "gain": 0.28,
+      "pitch": 1.34
+    },
+    {
+      "type": "swipe",
+      "at": 8.45,
+      "gain": 0.3
+    },
+    {
+      "type": "whoosh",
+      "at": 9.15,
+      "len": 0.6,
+      "gain": 0.35
+    },
+    {
+      "type": "shine",
+      "at": 10.35,
+      "gain": 0.18
+    },
+    {
+      "type": "shine",
+      "at": 12.55,
+      "gain": 0.18
+    },
+    {
+      "type": "whoosh",
+      "at": 13.05,
+      "len": 0.5,
+      "gain": 0.4
+    },
+    {
+      "type": "softrise",
+      "at": 13.35,
+      "len": 0.65,
+      "gain": 0.45
+    },
+    {
+      "type": "softhit",
+      "at": 14.0,
+      "gain": 0.75
+    },
+    {
+      "type": "softhit",
+      "at": 15.05,
+      "gain": 0.35,
+      "pitch": 1.5
+    }
+  ]
+}
