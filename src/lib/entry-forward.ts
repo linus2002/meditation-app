@@ -20,6 +20,20 @@ export async function exportedPageExists(
   }
 }
 
+/**
+ * The address as the app's build names it. The phone's build stores each page
+ * as `/home/index.txt`, so the router must be sent to `/home/`: asked for
+ * `/home` it fetches `/home.txt`, which isn't there, reloads, lands back here,
+ * and the loop guard then showed "This page isn't here". That was what
+ * everyone saw after signing in, since sign-in reloads the app at `/home`.
+ */
+export function withTrailingSlash(pathname: string): string {
+  if (pathname.endsWith('/')) return pathname;
+  // A file (sw.js, a picture) keeps its name.
+  if (/\.[a-z0-9]+$/i.test(pathname.slice(pathname.lastIndexOf('/') + 1))) return pathname;
+  return `${pathname}/`;
+}
+
 const FORWARD_KEY = 'serenity.entry.forward.v1';
 /** A second forward to the same place this soon means the first never arrived. */
 export const FORWARD_LOOP_MS = 15_000;

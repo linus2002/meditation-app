@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { FORWARD_LOOP_MS, allowForward, exportedPageExists } from '@/lib/entry-forward';
+import { FORWARD_LOOP_MS, allowForward, exportedPageExists, withTrailingSlash } from '@/lib/entry-forward';
 
 function memoryStorage() {
   const data = new Map<string, string>();
@@ -48,5 +48,21 @@ describe('allowForward', () => {
 
   it('goes ahead without storage', () => {
     expect(allowForward('/player/x', 1_000, null)).toBe(true);
+  });
+});
+
+describe('withTrailingSlash', () => {
+  // The phone's build keeps /home/index.txt; asked for /home the router fetched
+  // /home.txt, reloaded, and showed "This page isn't here" after sign-in.
+  it('adds the slash the phone’s build needs to a page address', () => {
+    expect(withTrailingSlash('/home')).toBe('/home/');
+    expect(withTrailingSlash('/player/body-scan')).toBe('/player/body-scan/');
+  });
+
+  it('leaves an address that already has it, and files, alone', () => {
+    expect(withTrailingSlash('/home/')).toBe('/home/');
+    expect(withTrailingSlash('/')).toBe('/');
+    expect(withTrailingSlash('/sw.js')).toBe('/sw.js');
+    expect(withTrailingSlash('/get/serenity.apk')).toBe('/get/serenity.apk');
   });
 });
