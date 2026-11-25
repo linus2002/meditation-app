@@ -2,6 +2,7 @@ import type { KapwaAction, KapwaIntent, KapwaReply } from '@/data/kapwa';
 import { practiceKinds, practices, type Practice, type PracticeKind } from '@/data/kapwa-knowledge';
 import { allSessions, getMeditation } from '@/data/meditations';
 import type { CategorySlug, Meditation } from '@/types';
+import { t, tr, type KapwaLanguage } from '@/lib/kapwa-i18n';
 
 /**
  * Finding things in Kapwa's knowledge base (data/kapwa-knowledge) and in the
@@ -127,40 +128,41 @@ function dedupe(actions: KapwaAction[]): KapwaAction[] {
 // ─── Writing replies ────────────────────────────────────────────────────────
 
 function stepTime(seconds: number): string {
-  if (seconds < 60) return `${seconds} sec`;
-  const minutes = Math.round(seconds / 60);
-  return `${minutes} min`;
+  if (seconds < 60) return t('{seconds} sec', { seconds });
+  return t('{minutes} min', { minutes: Math.round(seconds / 60) });
 }
 
-/** A practice, written out for the chat. */
+/** A practice, written out for the chat, in the language Kapwa is speaking. */
 export function practiceText(practice: Practice): string {
+  const title = t(practice.title);
   if (practice.kind === 'education') {
-    return `${practice.title}\n\n${practice.steps.map((step) => step.text).join('\n\n')}`;
+    return `${title}\n\n${practice.steps.map((step) => t(step.text)).join('\n\n')}`;
   }
 
   const heading =
     practice.kind === 'journaling'
-      ? `${practice.title}\n${practice.summary} Take about ${practice.minutes} minutes, and answer only the ones that speak to you.`
-      : `${practice.title} · about ${practice.minutes} min\n${practice.summary}`;
+      ? `${title}\n${t(practice.summary)} ${t('Take about {minutes} minutes, and answer only the ones that speak to you.', { minutes: practice.minutes })}`
+      : `${t('{title} · about {minutes} min', { title, minutes: practice.minutes })}\n${t(practice.summary)}`;
 
   const steps = practice.steps
-    .map((step, index) => `${index + 1}. ${step.text}${step.seconds && practice.kind !== 'journaling' ? ` (${stepTime(step.seconds)})` : ''}`)
+    .map((step, index) => `${index + 1}. ${t(step.text)}${step.seconds && practice.kind !== 'journaling' ? ` (${stepTime(step.seconds)})` : ''}`)
     .join('\n');
 
-  const caution = practice.caution ? `\n\nTake care: ${practice.caution}` : '';
+  const caution = practice.caution ? `\n\n${t('Take care: {caution}', { caution: t(practice.caution) })}` : '';
 
   const closing =
     practice.kind === 'journaling'
-      ? 'You can write your answers in Reflections; they stay on your phone.'
-      : 'Afterwards, notice how you feel. If you’d like a voice to guide you, these in Serenity go with it:';
+      ? t('You can write your answers in Reflections; they stay on your phone.')
+      : t('Afterwards, notice how you feel. If you’d like a voice to guide you, these in Serenity go with it:');
 
   return `${heading}\n\n${steps}${caution}\n\n${closing}`;
 }
 
 /** What the button for a practice says, under any reply. */
-export function practiceLabel(practice: Practice): string {
-  if (practice.kind === 'education') return `Read: ${practice.title}`;
-  return `Try: ${practice.title} · ${practice.minutes} min`;
+export function practiceLabel(practice: Practice, lang: KapwaLanguage = 'en'): string {
+  const title = tr(lang, practice.title);
+  if (practice.kind === 'education') return tr(lang, 'Read: {title}', { title });
+  return tr(lang, 'Try: {title} · {minutes} min', { title, minutes: practice.minutes });
 }
 
 /** What tapping a practice sends, so it reads in the chat as the reader asking. */
@@ -245,12 +247,17 @@ export function enrichReply(reply: KapwaReply, message: string): KapwaReply {
   if (reply.intentId === LENGTH_INTENT) {
     const minutes = targetMinutes(length, 5)!;
     const found = suggestSessions({ minutes, count: MAX_ACTIONS });
-    const asked = length.minutes ? `about ${length.minutes} minutes` : length.feel === 'long' ? 'something longer' : 'something short';
+    const asked = length.minutes
+      ? t('about {minutes} minutes', { minutes: length.minutes })
+      : t(length.feel === 'long' ? 'something longer' : 'something short');
     return {
       ...reply,
       text: found.length
-        ? `Here are meditations in Serenity for ${asked}. Each one is guided, so you can simply press play and follow along. If none feels right, you can also sit in silence with the timer and gentle bells.`
-        : 'I couldn’t find a session of that length right now. The timer lets you sit for exactly as long as you like, with gentle bells.',
+        ? t(
+            'Here are meditations in Serenity for {asked}. Each one is guided, so you can simply press play and follow along. If none feels right, you can also sit in silence with the timer and gentle bells.',
+            { asked },
+          )
+        : t('I couldn’t find a session of that length right now. The timer lets you sit for exactly as long as you like, with gentle bells.'),
       actions: [...found.map(sessionAction), { type: 'page', href: '/timer', label: 'Open the timer' }],
     };
   }

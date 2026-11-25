@@ -25,6 +25,8 @@ export interface Example {
   /** The right answer, or any of several. */
   intent: string | string[];
   split: Split;
+  /** Written in Filipino or Hindi (Devanagari or Hinglish); English when absent. */
+  lang?: 'fil' | 'hi';
 }
 
 type Intent = string | string[];
@@ -48,6 +50,11 @@ function set(intent: Intent, train: string[], validation: string[], round1Test: 
 /** Held-back test examples: written before the engine changes they measure, and never tuned against. */
 function heldOut(intent: Intent, ...texts: string[]): Example[] {
   return texts.map((text) => ({ text, intent, split: 'test' as const }));
+}
+
+/** Examples in another language: `validation` to tune against, `test` held back. */
+function inLanguage(lang: 'fil' | 'hi', split: 'validation' | 'test', intent: Intent, ...texts: string[]): Example[] {
+  return texts.map((text) => ({ text, intent, split, lang }));
 }
 
 export const dataset: Example[] = [
@@ -505,4 +512,97 @@ export const dataset: Example[] = [
     'what is the meaning of the word ephemeral', 'write a poem about cars', 'where is the nearest bank', 'what year is it'),
   ...heldOut('crisis', 'i want to end my life', 'i feel like killing myself', 'i dont want to be alive', 'i might hurt myself tonight'),
   ...heldOut('medical-urgent', 'i have a high fever', 'my chest hurts and i cant breathe'),
+
+  // ─── Filipino and Taglish (26 Nov 2026) ───────────────────────────────────
+  // Written before any Filipino keywords existed. Tune against `validation`
+  // only; `test` is held back for reporting.
+  ...inLanguage('fil', 'validation', 'overwhelmed', 'sobrang dami kong iniisip at ginagawa'),
+  ...inLanguage('fil', 'validation', 'calm-now', 'tulungan mo akong kumalma'),
+  ...inLanguage('fil', 'validation', 'overthinking', 'hindi ko mapigilan mag-isip ng sobra'),
+  ...inLanguage('fil', 'validation', 'sleep-tonight', 'hindi ako makatulog'),
+  ...inLanguage('fil', 'validation', 'sad-no-reason', 'malungkot ako ngayon'),
+  ...inLanguage('fil', 'validation', 'lonely', 'pakiramdam ko mag-isa ako'),
+  ...inLanguage('fil', 'validation', 'worry-tomorrow', 'kinakabahan ako para bukas'),
+  ...inLanguage('fil', 'validation', 'not-good-enough', 'pakiramdam ko hindi ako sapat'),
+  ...inLanguage('fil', 'validation', 'missing-someone', 'miss na miss ko na siya'),
+  ...inLanguage('fil', 'validation', 'breathing-exercise', 'turuan mo ako ng breathing exercise'),
+  ...inLanguage('fil', 'validation', 'mental-exhaustion', 'pagod na pagod ang isip ko'),
+  ...inLanguage('fil', 'validation', 'greeting', 'magandang gabi'),
+  ...inLanguage('fil', 'validation', 'thanks', 'salamat po'),
+  ...inLanguage('fil', 'validation', 'crisis', 'gusto ko nang mawala sa mundo'),
+  ...inLanguage('fil', 'validation', 'medical-urgent', 'nahihirapan akong huminga'),
+  ...inLanguage('fil', 'validation', 'fallback', 'saan ang pinakamalapit na mall'),
+
+  ...inLanguage('fil', 'test', 'overwhelmed', 'parang sasabog na ako sa dami ng gawain', 'overwhelmed na overwhelmed ako ngayon'),
+  ...inLanguage('fil', 'test', 'calm-now', 'kinakabahan ako ng sobra pakalmahin mo ako', 'nagpa-panic ako ngayon'),
+  ...inLanguage('fil', 'test', 'overthinking', 'lagi akong nag-o-overthink', 'paulit ulit kong iniisip yung mga bagay'),
+  ...inLanguage('fil', 'test', 'sleep-tonight', 'di ako makatulog ngayong gabi', 'gising pa rin ako hirap matulog'),
+  ...inLanguage('fil', 'test', 'sad-no-reason', 'nalulungkot ako ng walang dahilan', 'ang bigat ng pakiramdam ko'),
+  ...inLanguage('fil', 'test', 'lonely', 'nag-iisa ako lagi'),
+  ...inLanguage('fil', 'test', ['lonely', 'misunderstood'], 'walang nakakaintindi sakin ang lonely ko'),
+  ...inLanguage('fil', 'test', 'worry-tomorrow', 'nag-aalala ako sa mangyayari bukas'),
+  ...inLanguage('fil', 'test', 'fear-failing', 'takot akong magkamali at mabigo'),
+  ...inLanguage('fil', 'test', ['not-good-enough', 'comparison'], 'hindi ako kasing galing ng iba'),
+  ...inLanguage('fil', 'test', 'not-good-enough', 'kulang ako lagi'),
+  ...inLanguage('fil', 'test', 'missing-someone', 'namimiss ko ang nanay ko'),
+  ...inLanguage('fil', 'test', 'hard-on-self', 'masyado akong mahigpit sa sarili ko'),
+  ...inLanguage('fil', 'test', 'breathing-exercise', 'gabayan mo ako sa paghinga'),
+  ...inLanguage('fil', 'test', ['mental-exhaustion', 'emotionally-drained'], 'drained na drained na ako'),
+  ...inLanguage('fil', 'test', 'greeting', 'kumusta ka', 'magandang umaga'),
+  ...inLanguage('fil', 'test', 'thanks', 'maraming salamat'),
+  ...inLanguage('fil', 'test', 'goodbye', 'paalam na'),
+  ...inLanguage('fil', 'test', 'help', 'ano ang kaya mong gawin'),
+  ...inLanguage('fil', 'test', 'about', 'tao ka ba'),
+  ...inLanguage('fil', 'test', 'sounds', 'gusto kong makinig ng tunog ng ulan'),
+  ...inLanguage('fil', 'test', 'yoga', 'gusto kong mag-yoga'),
+  ...inLanguage('fil', 'test', 'bedtime-story', 'kuwentuhan mo ako bago matulog'),
+  ...inLanguage('fil', 'test', 'practice:box-breathing', 'paano gawin ang box breathing'),
+  ...inLanguage('fil', 'test', 'me:who', 'sino ako'),
+  ...inLanguage('fil', 'test', 'crisis', 'gusto ko nang mamatay', 'ayoko nang mabuhay', 'naisip kong saktan ang sarili ko'),
+  ...inLanguage('fil', 'test', 'medical-urgent', 'masakit ang dibdib ko at hirap akong huminga', 'mataas ang lagnat ko'),
+  ...inLanguage('fil', 'test', 'fallback', 'anong oras na', 'magkano ang bigas ngayon', 'sino ang presidente'),
+
+  // ─── Hindi, in Devanagari and in Hinglish (26 Nov 2026) ───────────────────
+  ...inLanguage('hi', 'validation', 'overwhelmed', 'सब कुछ बहुत ज़्यादा लग रहा है'),
+  ...inLanguage('hi', 'validation', 'calm-now', 'मुझे शांत होने में मदद करो'),
+  ...inLanguage('hi', 'validation', 'overthinking', 'main bahut zyada sochta hoon'),
+  ...inLanguage('hi', 'validation', 'sleep-tonight', 'मुझे नींद नहीं आ रही'),
+  ...inLanguage('hi', 'validation', 'sad-no-reason', 'मैं उदास हूँ'),
+  ...inLanguage('hi', 'validation', 'lonely', 'main akela mehsoos karta hoon'),
+  ...inLanguage('hi', 'validation', 'worry-tomorrow', 'kal ki chinta ho rahi hai'),
+  ...inLanguage('hi', 'validation', 'not-good-enough', 'मैं काफ़ी अच्छा नहीं हूँ'),
+  ...inLanguage('hi', 'validation', 'missing-someone', 'mujhe uski yaad aa rahi hai'),
+  ...inLanguage('hi', 'validation', 'breathing-exercise', 'saans lene ki exercise batao'),
+  ...inLanguage('hi', 'validation', 'mental-exhaustion', 'मेरा दिमाग थक गया है'),
+  ...inLanguage('hi', 'validation', 'greeting', 'namaste'),
+  ...inLanguage('hi', 'validation', 'thanks', 'धन्यवाद'),
+  ...inLanguage('hi', 'validation', 'crisis', 'मैं अपनी जान लेना चाहता हूँ'),
+  ...inLanguage('hi', 'validation', 'medical-urgent', 'saans lene mein dikkat ho rahi hai'),
+  ...inLanguage('hi', 'validation', 'fallback', 'train kab aayegi'),
+
+  ...inLanguage('hi', 'test', 'overwhelmed', 'mujhe bahut overwhelmed feel ho raha hai', 'एक साथ इतना कुछ हो रहा है कि संभल नहीं रहा'),
+  ...inLanguage('hi', 'test', 'calm-now', 'mujhe ghabrahat ho rahi hai shant karo', 'मेरा दिल बहुत तेज़ धड़क रहा है'),
+  ...inLanguage('hi', 'test', 'overthinking', 'मैं हर बात को बहुत ज़्यादा सोचता हूँ', 'dimaag mein baatein ghoomti rehti hain'),
+  ...inLanguage('hi', 'test', 'sleep-tonight', 'neend nahi aa rahi aaj raat', 'रात भर जागता रहता हूँ'),
+  ...inLanguage('hi', 'test', 'sad-no-reason', 'bina wajah udaas lag raha hai', 'मन बहुत भारी है'),
+  ...inLanguage('hi', 'test', 'lonely', 'मुझे बहुत अकेलापन लगता है'),
+  ...inLanguage('hi', 'test', 'worry-tomorrow', 'मुझे कल के बारे में चिंता हो रही है'),
+  ...inLanguage('hi', 'test', 'fear-failing', 'मुझे असफल होने का डर है', 'fail hone se darr lagta hai'),
+  ...inLanguage('hi', 'test', 'not-good-enough', 'lagta hai main kisi layak nahi hoon'),
+  ...inLanguage('hi', 'test', 'missing-someone', 'मुझे अपनी माँ की बहुत याद आती है'),
+  ...inLanguage('hi', 'test', 'breathing-exercise', 'मुझे सांस लेने का अभ्यास सिखाओ'),
+  ...inLanguage('hi', 'test', ['mental-exhaustion', 'emotionally-drained'], 'dimaag thak gaya hai'),
+  ...inLanguage('hi', 'test', 'greeting', 'नमस्ते', 'namaste kapwa'),
+  ...inLanguage('hi', 'test', 'thanks', 'shukriya'),
+  ...inLanguage('hi', 'test', 'goodbye', 'alvida', 'फिर मिलेंगे'),
+  ...inLanguage('hi', 'test', 'help', 'तुम क्या कर सकते हो'),
+  ...inLanguage('hi', 'test', 'about', 'kya tum insaan ho'),
+  ...inLanguage('hi', 'test', 'sounds', 'बारिश की आवाज़ सुनाओ'),
+  ...inLanguage('hi', 'test', 'yoga', 'मुझे योग करना है'),
+  ...inLanguage('hi', 'test', 'bedtime-story', 'sone se pehle ek kahani sunao'),
+  ...inLanguage('hi', 'test', 'practice:box-breathing', 'box breathing kaise karte hain'),
+  ...inLanguage('hi', 'test', 'me:who', 'मैं कौन हूँ'),
+  ...inLanguage('hi', 'test', 'crisis', 'मैं मरना चाहता हूँ', 'main khudkushi karna chahti hoon', 'मुझे जीने की कोई वजह नहीं दिखती', 'khud ko nuksan pahunchana chahta hoon'),
+  ...inLanguage('hi', 'test', 'medical-urgent', 'सीने में दर्द है और सांस नहीं आ रही', 'mujhe tez bukhar hai'),
+  ...inLanguage('hi', 'test', 'fallback', 'आज मौसम कैसा है', 'cricket ka score kya hai', 'पिज़्ज़ा कहाँ मिलेगा'),
 ];

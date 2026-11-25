@@ -19,7 +19,8 @@ import {
   type ProfileEffects,
 } from '@/lib/kapwa-profile';
 import { kapwaTopics } from '@/data/kapwa-topics';
-import { answer, matchWords, rankIntents, safetyKind, type RankedIntent } from '@/lib/kapwa';
+import { answer, matchWords, rankIntents, safetyKind, safetyReplyIn, type RankedIntent } from '@/lib/kapwa';
+import { currentLanguage, replyPhrasesIn, sourceOf, speaking, t, type KapwaLanguage } from '@/lib/kapwa-i18n';
 import {
   enrichReply,
   getPractice,
@@ -98,6 +99,8 @@ export interface DialogueContext {
   profile?: KapwaProfile;
   /** Whether they let Kapwa use their activity; undefined until asked. */
   personal?: PersonalConsent;
+  /** The language to reply in; English when absent. Messages are understood in any of them. */
+  lang?: KapwaLanguage;
 }
 
 // ─── Wording ────────────────────────────────────────────────────────────────
@@ -117,11 +120,22 @@ const ENOUGH = 'That’s enough for now';
 const TALK = 'I’d like to talk';
 const LISTEN = 'Something calming to listen to';
 
+/** A practice's name inside a sentence: "box breathing", or its translation. */
+const named = (practice: Practice) => ({
+  practice: currentLanguage() === 'en' ? lower(practice.title) : t(practice.title),
+  minutes: practice.minutes,
+});
+
+/**
+ * Everything Kapwa says around its answers. Written in English; a reply is
+ * put into the reader's language as it leaves `converse`, and lines with
+ * blanks are translated where they are filled in.
+ */
 const lines = {
   offerPractice: (practice: Practice) => [
-    `Would you like to try ${lower(practice.title)} together now? It takes about ${practice.minutes} min.`,
-    `Shall we try ${lower(practice.title)} right here? It’s about ${practice.minutes} min.`,
-    `If you’d like, we can do ${lower(practice.title)} together now. About ${practice.minutes} min. Shall we?`,
+    t('Would you like to try {practice} together now? It takes about {minutes} min.', named(practice)),
+    t('Shall we try {practice} right here? It’s about {minutes} min.', named(practice)),
+    t('If you’d like, we can do {practice} together now. About {minutes} min. Shall we?', named(practice)),
   ],
   afterPractice: [
     'Take your time with it. When you’ve finished, tell me how you feel.',
@@ -150,8 +164,8 @@ const lines = {
     'It sounds like this is really hard right now. If you’ve been feeling this way for a while, talking to someone you trust or a professional can make a real difference. In the meantime, here’s something gentler to try.',
   ],
   tryInstead: (practice: Practice) => [
-    `Would you like to try ${lower(practice.title)} instead? It’s about ${practice.minutes} min.`,
-    `Shall we try ${lower(practice.title)} instead? About ${practice.minutes} min.`,
+    t('Would you like to try {practice} instead? It’s about {minutes} min.', named(practice)),
+    t('Shall we try {practice} instead? About {minutes} min.', named(practice)),
   ],
   howDoYouFeel: [
     'Well done for taking that time. How do you feel now, compared with before?',
@@ -190,7 +204,10 @@ const lines = {
     'No problem. Could you tell me a little more, in your own words? Or pick one of these.',
     'Okay. What would describe it better? A few words is fine.',
   ],
-  didYouMean: (label: string) => [`Just to check I understood: did you mean “${label}”?`, `Did you mean “${label}”?`],
+  didYouMean: (label: string) => [
+    t('Just to check I understood: did you mean “{label}”?', { label: t(label) }),
+    t('Did you mean “{label}”?', { label: t(label) }),
+  ],
   whichOne: [
     'I can help with either of these. Which is closer to how you feel?',
     'I want to get this right for you. Which of these fits better?',
@@ -216,7 +233,7 @@ export type ReplyKind = 'yes' | 'no' | 'better' | 'worse' | 'another' | 'shorter
  * a longer phrase beats a shorter one, so "not better" is worse, not better,
  * and "yes it helped" is better, not just yes.
  */
-const REPLY_PHRASES: [ReplyKind, string[]][] = [
+export const REPLY_PHRASES: [ReplyKind, string[]][] = [
   ['worse', [
     'not better', 'no better', 'didnt help', 'did not help', 'doesnt help', 'not helping', 'didnt work', 'did not work',
     'the same', 'about the same', 'still', 'worse', 'no change', 'nothing changed', 'not much', 'not working',
@@ -247,6 +264,9 @@ const REPLY_PHRASES: [ReplyKind, string[]][] = [
   ]],
 ];
 
+/** The same kinds of short reply in Filipino and Hindi ("oo", "haan", "theek hai"), added to the English. */
+const ALL_REPLY_PHRASES: [ReplyKind, string[]][] = REPLY_PHRASES.map(([kind, phrases]) => [kind, [...phrases, ...replyPhrasesIn(kind)]]);
+
 /** Longer than this, a message says more than a short reply does. */
 const SHORT_REPLY_WORDS = 8;
 
@@ -255,7 +275,7 @@ export function readReply(message: string): { kind: ReplyKind; score: number } |
   const words = matchWords(message);
   if (words.length === 0 || words.length > SHORT_REPLY_WORDS) return null;
   let best: { kind: ReplyKind; score: number } | null = null;
-  for (const [kind, phrases] of REPLY_PHRASES) {
+  for (const [kind, phrases] of ALL_REPLY_PHRASES) {
     for (const phrase of phrases) {
       // Exact words only: "good" mustn't be read into "goodbye", nor "ok" into "okra".
       const parts = matchWords(phrase);
@@ -578,7 +598,7 @@ function withState(reply: KapwaReply, ranked: RankedIntent | undefined, context:
     let actions = reply.actions;
     let text = reply.text;
     if (repeated) {
-      text = `${pick(lines.again, turn)}\n\n${text}`;
+      text = `${t(pick(lines.again, turn))}\n\n${t(text)}`;
       if (practice) actions = [practiceAction(practice), ...actions.filter((action) => action.type !== 'practice')];
     }
     if (!practice) return { ...reply, text, actions, memory: { state: 'understanding', intentId, topicId: intentId } };
@@ -597,7 +617,8 @@ function withState(reply: KapwaReply, ranked: RankedIntent | undefined, context:
   }
   if (intentId === 'greeting') {
     const name = context.profile?.name;
-    const text = name ? reply.text.replace(/^(Hi there|Hello again)\./, `$1, ${name}.`) : reply.text;
+    // "Hi there, Ana." The wording with a name is its own line to translate.
+    const text = name ? t(reply.text.replace(/^(Hi there|Hello again)\./, '$1, {name}.'), { name }) : reply.text;
     return { ...reply, text, memory: { state: 'greeting', intentId } };
   }
   if (intentId === 'thanks' || intentId === 'goodbye') return { ...reply, memory: { state: 'closing', intentId } };
@@ -658,21 +679,33 @@ const TIE_ASK_BELOW = 2;
  * topics fit equally, and otherwise the honest fallback.
  */
 export function converse(message: string, context: DialogueContext = {}): DialogueTurn {
+  return speaking(context.lang ?? 'en', () => {
+    // A translated button, tapped or typed out, is read as the English it shows.
+    const reply = respond(sourceOf(message) ?? message, context);
+    // Fixed lines translate as they leave; lines with blanks already have.
+    return { ...reply, text: t(reply.text), ...(reply.followUp ? { followUp: t(reply.followUp) } : {}) };
+  });
+}
+
+function respond(message: string, context: DialogueContext): DialogueTurn {
   const turn = context.turn ?? 0;
   const last = context.last;
 
   const risk = safetyKind(message);
   if (risk) {
-    const reply = risk === 'crisis' ? crisisReply : medicalUrgentReply;
+    // Translated, with the English underneath while the translation is in beta.
+    const reply = safetyReplyIn(risk === 'crisis' ? crisisReply : medicalUrgentReply, currentLanguage());
     return { ...reply, prepared: true, memory: { state: 'safety', intentId: reply.intentId } };
   }
 
   // "Call me Ana": remembered as the name the app uses.
   const given = readGivenName(message);
   if (given) {
-    const greeting = pick([`Nice to meet you, ${given}. I’ll call you that from now on.`, `Hello, ${given}. I’ll remember that.`], turn);
+    const greeting = pick(['Nice to meet you, {name}. I’ll call you that from now on.', 'Hello, {name}. I’ll remember that.'], turn);
     return {
-      ...say(`${greeting} How are you feeling today?`, { state: 'understanding', intentId: 'name-given' }, { suggestions: kapwaQuickReplies }),
+      ...say(`${t(greeting, { name: given })} ${t('How are you feeling today?')}`, { state: 'understanding', intentId: 'name-given' }, {
+        suggestions: kapwaQuickReplies,
+      }),
       effects: { name: given },
     };
   }

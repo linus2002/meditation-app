@@ -6,6 +6,7 @@ import { getYogaSession } from '@/data/yoga';
 import { summariseSleep } from '@/lib/sleep-stats';
 import { currentStreak, lifetimeTotals } from '@/lib/session-stats';
 import { suggestSessions } from '@/lib/kapwa-knowledge';
+import { currentLanguage, languageInfo, t } from '@/lib/kapwa-i18n';
 import type { CategorySlug, SessionRecord, SleepLog } from '@/types';
 
 /**
@@ -95,28 +96,53 @@ export interface ProfileEffects {
 
 /** "Call me Ana", "my name is Ana": the name, tidied, or null. */
 export function readGivenName(message: string): string | null {
-  const found = message.match(/\b(?:my name is|my names|my name's|call me|i'm called|im called|i am called)\s+([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ' -]{0,29})/i);
+  return englishOrFilipinoName(message) ?? hindiName(message);
+}
+
+/** Words that follow "call me" or "ako si" without being a name. */
+const NOT_A_NAME = /^(not|so|very|just|really|a|an|the|no|none|secret|na|ay|lang|po|ba|nahi|hai|kya|nga)$/i;
+
+function englishOrFilipinoName(message: string): string | null {
+  // English, then Filipino ("tawagin mo akong Ana", "ako si Ana", "ang pangalan ko ay Ana"),
+  // then Hinglish ("mera naam Ana hai", "mujhe Ana bulao").
+  const found = message.match(
+    /\b(?:my name is|my names|my name's|call me|i'm called|im called|i am called|tawagin mo (?:akong|ako na|ako)|ako si|pangalan ko ay|pangalan ko|mera naam|mujhe)\s+([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ' -]{0,29})/i,
+  );
   if (!found) return null;
-  const name = found[1].trim().split(/\s+/).slice(0, 2).join(' ').replace(/[^A-Za-zÀ-ÿ' -]/g, '');
-  if (!name || /^(not|so|very|just|really|a|an|the|no|none|secret)$/i.test(name.split(' ')[0])) return null;
+  // "mujhe" names someone only as "mujhe Ana bulao", not in "mujhe neend nahi aa rahi".
+  if (/^mujhe\s/i.test(found[0]) && !/\b(bulao|bulaiye|bulana|kaho|kahiye)\b/i.test(message)) return null;
+  const words = found[1].trim().split(/\s+/).filter((word) => !/^(hai|hoon|bulao|bulaiye|kaho|kahiye|po|na)$/i.test(word));
+  const name = words.slice(0, 2).join(' ').replace(/[^A-Za-zÀ-ÿ' -]/g, '');
+  if (!name || NOT_A_NAME.test(name.split(' ')[0])) return null;
   return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+/** "मेरा नाम अना है", "मुझे अना बुलाओ": a name written in Devanagari. */
+function hindiName(message: string): string | null {
+  const found = message.match(/(?:मेरा नाम|मुझे)\s+(\p{Script=Devanagari}+)(?:\s+(?:है|बुलाओ|बुलाइए|कहो|कहिए))/u);
+  if (!found || /^(बहुत|नहीं|कुछ)$/.test(found[1])) return null;
+  return found[1];
 }
 
 // ─── Reading the data ───────────────────────────────────────────────────────
 
 const DAY = 24 * 60 * 60 * 1000;
 
-/** "today at 9:14 pm", "yesterday at 7:02 am", "3 days ago", "on 12 Nov". */
+/**
+ * "today at 9:14 pm", "yesterday at 7:02 am", "3 days ago", "on 12 Nov", in
+ * the language Kapwa is speaking.
+ */
 export function when(at: number, now: number): string {
+  const locale = languageInfo(currentLanguage()).locale;
   const date = new Date(at);
   const today = new Date(now);
   const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-  const time = date.toLocaleTimeString('en', { hour: 'numeric', minute: '2-digit' }).toLowerCase();
-  if (at >= startOfToday) return `today at ${time}`;
-  if (at >= startOfToday - DAY) return `yesterday at ${time}`;
+  const time = date.toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' }).toLowerCase();
+  if (at >= startOfToday) return t('today at {time}', { time });
+  if (at >= startOfToday - DAY) return t('yesterday at {time}', { time });
   const days = Math.floor((startOfToday - at) / DAY) + 1;
-  if (days < 7) return `${days} days ago`;
-  return `on ${date.toLocaleDateString('en', { day: 'numeric', month: 'short' })}`;
+  if (days < 7) return t('{days} days ago', { days });
+  return t('on {date}', { date: date.toLocaleDateString(locale, { day: 'numeric', month: 'short' }) });
 }
 
 const SCREEN_NAMES: Record<string, string> = {
@@ -130,17 +156,17 @@ const SCREEN_NAMES: Record<string, string> = {
 /** What a screen is called, from its path; null for screens not worth naming (Kapwa itself, sign-in). */
 export function screenName(path: string): string | null {
   const clean = path.split(/[?#]/)[0].replace(/\/$/, '') || '/';
-  if (SCREEN_NAMES[clean]) return SCREEN_NAMES[clean];
+  if (SCREEN_NAMES[clean]) return t(SCREEN_NAMES[clean]);
   const [, kind, id] = clean.split('/');
   if (kind === 'player' && id) return getMeditation(id)?.title ?? null;
-  if (kind === 'yoga' && id) return getYogaSession(id) ? `${getYogaSession(id)!.title} (yoga)` : null;
-  if (kind === 'stories' && id) return getStory(id) ? `${getStory(id)!.title} (story)` : null;
+  if (kind === 'yoga' && id) return getYogaSession(id) ? t('{title} (yoga)', { title: getYogaSession(id)!.title }) : null;
+  if (kind === 'stories' && id) return getStory(id) ? t('{title} (story)', { title: getStory(id)!.title }) : null;
   if (kind === 'programs' && id) return programs.find((program) => program.id === id)?.title ?? null;
   return null;
 }
 
 function title(session: SessionRecord): string {
-  return getMeditation(session.meditationId)?.title ?? 'a session';
+  return getMeditation(session.meditationId)?.title ?? t('a session');
 }
 
 const minutesOf = (seconds: number) => Math.max(1, Math.round(seconds / 60));
@@ -161,6 +187,8 @@ const CATEGORY_WORDS: Record<CategorySlug, string> = {
   focus: 'focus', sleep: 'sleep', anxiety: 'calming anxiety', happiness: 'kindness and gratitude', relaxation: 'relaxation', breathing: 'breathing',
 };
 
+const categoryWords = (category: CategorySlug) => t(CATEGORY_WORDS[category]);
+
 function minutesToday(sessions: SessionRecord[], now: number): number {
   const day = new Date(now);
   const key = `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
@@ -168,6 +196,8 @@ function minutesToday(sessions: SessionRecord[], now: number): number {
 }
 
 // ─── Replies ────────────────────────────────────────────────────────────────
+// Written in English, each sentence translated as it is filled in. Buttons
+// stay in English here; the chat shows them translated.
 
 export interface PersonalAnswer {
   text: string;
@@ -179,8 +209,8 @@ const PRIVACY = 'All of this is on your phone; I only read it to answer you.';
 
 function who(profile: KapwaProfile): PersonalAnswer {
   const lines: string[] = [];
-  lines.push(profile.name ? `You’re ${profile.name}.` : 'I don’t know your name yet. You can tell me: “call me …”.');
-  lines.push(profile.email ? `You’re signed in as ${profile.email}.` : 'You’re using Serenity as a guest.');
+  lines.push(profile.name ? t('You’re {name}.', { name: profile.name }) : t('I don’t know your name yet. You can tell me: “call me …”.'));
+  lines.push(profile.email ? t('You’re signed in as {email}.', { email: profile.email }) : t('You’re using Serenity as a guest.'));
   const { sessions } = profile;
   if (sessions.length) {
     const totals = lifetimeTotals(sessions);
@@ -188,20 +218,25 @@ function who(profile: KapwaProfile): PersonalAnswer {
     const streak = currentStreak(sessions, new Date(profile.now));
     const category = favouriteCategory(sessions);
     lines.push(
-      `You started ${when(first.startedAt, profile.now)}, and since then you’ve done ${totals.sessions} ${totals.sessions === 1 ? 'session' : 'sessions'}: ${totals.minutes} mindful minutes in all.`,
+      t(
+        totals.sessions === 1
+          ? 'You started {when}, and since then you’ve done {sessions} session: {minutes} mindful minutes in all.'
+          : 'You started {when}, and since then you’ve done {sessions} sessions: {minutes} mindful minutes in all.',
+        { when: when(first.startedAt, profile.now), sessions: totals.sessions, minutes: totals.minutes },
+      ),
     );
-    if (streak > 0) lines.push(`You’re on a ${streak}-day streak.`);
-    if (category) lines.push(`You come back most often for ${CATEGORY_WORDS[category]}.`);
-    lines.push(`Your last session was ${title(sessions[0])}, ${when(sessions[0].startedAt, profile.now)}.`);
+    if (streak > 0) lines.push(t('You’re on a {days}-day streak.', { days: streak }));
+    if (category) lines.push(t('You come back most often for {category}.', { category: categoryWords(category) }));
+    lines.push(t('Your last session was {title}, {when}.', { title: title(sessions[0]), when: when(sessions[0].startedAt, profile.now) }));
   } else {
-    lines.push('You haven’t done a session yet. Whenever you’re ready, I can suggest a first one.');
+    lines.push(t('You haven’t done a session yet. Whenever you’re ready, I can suggest a first one.'));
   }
-  lines.push(`Your daily goal is ${profile.goalMinutes} minutes.`);
+  lines.push(t('Your daily goal is {minutes} minutes.', { minutes: profile.goalMinutes }));
   if (profile.favorites.length + profile.favoriteStories.length) {
-    lines.push(`You’ve saved ${profile.favorites.length + profile.favoriteStories.length} sessions and stories.`);
+    lines.push(t('You’ve saved {count} sessions and stories.', { count: profile.favorites.length + profile.favoriteStories.length }));
   }
   return {
-    text: `${lines.join(' ')}\n\n${PRIVACY}`,
+    text: `${lines.join(' ')}\n\n${t(PRIVACY)}`,
     actions: [{ type: 'page', href: '/profile', label: 'Open Profile' }],
     suggestions: ['What did I do last time?', 'How am I doing?', 'What should I do today?'],
   };
@@ -214,22 +249,24 @@ function last(profile: KapwaProfile): PersonalAnswer {
   if (sessions.length) {
     const latest = sessions[0];
     const meditation = getMeditation(latest.meditationId);
-    const how = latest.completed
-      ? `and listened to the end (${minutesOf(latest.seconds)} min)`
-      : `and stopped after ${minutesOf(latest.seconds)} min`;
-    parts.push(`Your last session was ${title(latest)}, ${when(latest.startedAt, now)}, ${how}.`);
+    const vars = { title: title(latest), when: when(latest.startedAt, now), minutes: minutesOf(latest.seconds) };
+    parts.push(
+      latest.completed
+        ? t('Your last session was {title}, {when}, and you listened to the end ({minutes} min).', vars)
+        : t('Your last session was {title}, {when}, and you stopped after {minutes} min.', vars),
+    );
     if (meditation) actions.push({ type: 'session', id: meditation.id });
     const before = sessions.slice(1, 3).map((session) => `${title(session)} (${when(session.startedAt, now)})`);
-    if (before.length) parts.push(`Before that: ${before.join(', and ')}.`);
+    if (before.length) parts.push(t('Before that: {sessions}.', { sessions: before.join(t(', and ')) }));
   } else {
-    parts.push('You haven’t finished a session yet.');
+    parts.push(t('You haven’t finished a session yet.'));
   }
-  if (profile.previousVisitAt) parts.push(`Before today’s visit, you last opened Serenity ${when(profile.previousVisitAt, now)}.`);
+  if (profile.previousVisitAt) parts.push(t('Before today’s visit, you last opened Serenity {when}.', { when: when(profile.previousVisitAt, now) }));
   const screens = [...new Set(profile.screens.map((screen) => screenName(screen.path)).filter((name): name is string => Boolean(name)))].slice(0, 5);
-  if (screens.length) parts.push(`Recently you opened: ${screens.join(', ')}.`);
-  if (!sessions.length && !screens.length && !profile.previousVisitAt) parts.push('There’s nothing else for me to look back on yet.');
+  if (screens.length) parts.push(t('Recently you opened: {screens}.', { screens: screens.join(', ') }));
+  if (!sessions.length && !screens.length && !profile.previousVisitAt) parts.push(t('There’s nothing else for me to look back on yet.'));
   return {
-    text: `${parts.join(' ')}\n\n${PRIVACY}`,
+    text: `${parts.join(' ')}\n\n${t(PRIVACY)}`,
     actions,
     suggestions: ['How am I doing?', 'What should I do today?'],
   };
@@ -239,7 +276,9 @@ function progress(profile: KapwaProfile): PersonalAnswer {
   const { sessions, now, goalMinutes } = profile;
   if (!sessions.length) {
     return {
-      text: `No sessions yet, and that’s fine: everyone starts at zero. Your daily goal is ${goalMinutes} minutes. Even three minutes today would be a good start.`,
+      text: t('No sessions yet, and that’s fine: everyone starts at zero. Your daily goal is {minutes} minutes. Even three minutes today would be a good start.', {
+        minutes: goalMinutes,
+      }),
       actions: [{ type: 'session', id: 'free-your-mind' }, { type: 'page', href: '/profile', label: 'Open Profile' }],
       suggestions: ['I’m new to meditation', 'What should I do today?'],
     };
@@ -252,13 +291,18 @@ function progress(profile: KapwaProfile): PersonalAnswer {
   );
   const goal =
     today >= goalMinutes
-      ? `You’ve met today’s goal of ${goalMinutes} minutes, with ${today}. Well done.`
+      ? t('You’ve met today’s goal of {goal} minutes, with {today}. Well done.', { goal: goalMinutes, today })
       : today > 0
-        ? `Today you’ve done ${today} of your ${goalMinutes} minutes.`
-        : `You haven’t sat today yet; your goal is ${goalMinutes} minutes.`;
-  const streakLine = streak > 0 ? `You’re on a ${streak}-day streak. ` : '';
+        ? t('Today you’ve done {today} of your {goal} minutes.', { goal: goalMinutes, today })
+        : t('You haven’t sat today yet; your goal is {goal} minutes.', { goal: goalMinutes });
+  const streakLine = streak > 0 ? `${t('You’re on a {days}-day streak.', { days: streak })} ` : '';
+  const totalsLine = t('This week: {week} minutes. In all: {sessions} sessions and {minutes} minutes.', {
+    week,
+    sessions: totals.sessions,
+    minutes: totals.minutes,
+  });
   return {
-    text: `${streakLine}${goal} This week: ${week} minutes. In all: ${totals.sessions} sessions and ${totals.minutes} minutes.\n\nProgress here isn’t a race; coming back is what counts.`,
+    text: `${streakLine}${goal} ${totalsLine}\n\n${t('Progress here isn’t a race; coming back is what counts.')}`,
     actions: [{ type: 'page', href: '/profile', label: 'See your chart' }],
     suggestions: ['What should I do today?', 'What did I do last time?'],
   };
@@ -267,19 +311,26 @@ function progress(profile: KapwaProfile): PersonalAnswer {
 function sleep(profile: KapwaProfile): PersonalAnswer {
   if (!profile.sleepLogs.length) {
     return {
-      text: 'You haven’t logged any nights yet. In the Sleep tab you can note when you went to bed and woke up, and I can tell you how your nights are going.',
+      text: t('You haven’t logged any nights yet. In the Sleep tab you can note when you went to bed and woke up, and I can tell you how your nights are going.'),
       actions: [{ type: 'page', href: '/sleep', label: 'Open Sleep' }],
       suggestions: ['Help me fall asleep tonight', 'Help me build a night routine'],
     };
   }
   const summary = summariseSleep(profile.sleepLogs, new Date(profile.now), 7);
-  const hours =
-    summary.averageHours !== null
-      ? `about ${Math.floor(summary.averageHours)} h ${Math.round((summary.averageHours % 1) * 60)} min`
-      : null;
-  const parts = [`You’ve logged ${summary.nights} ${summary.nights === 1 ? 'night' : 'nights'} this past week.`];
-  if (hours) parts.push(`On average you slept ${hours}.`);
-  if (summary.bedtime) parts.push(`You usually went to bed around ${summary.bedtime}.`);
+  const parts = [
+    t(summary.nights === 1 ? 'You’ve logged {nights} night this past week.' : 'You’ve logged {nights} nights this past week.', {
+      nights: summary.nights,
+    }),
+  ];
+  if (summary.averageHours !== null) {
+    parts.push(
+      t('On average you slept about {hours} h {minutes} min.', {
+        hours: Math.floor(summary.averageHours),
+        minutes: Math.round((summary.averageHours % 1) * 60),
+      }),
+    );
+  }
+  if (summary.bedtime) parts.push(t('You usually went to bed around {time}.', { time: summary.bedtime }));
   return {
     text: parts.join(' '),
     actions: [{ type: 'page', href: '/sleep', label: 'Open Sleep' }],
@@ -292,13 +343,18 @@ function saved(profile: KapwaProfile): PersonalAnswer {
   const stories = profile.favoriteStories.filter((id) => getStory(id));
   if (!sessions.length && !stories.length) {
     return {
-      text: 'You haven’t saved anything yet. Tap the heart on any session or story to keep it here.',
+      text: t('You haven’t saved anything yet. Tap the heart on any session or story to keep it here.'),
       actions: [{ type: 'page', href: '/meditations', label: 'Browse meditations' }],
       suggestions: ['What should I do today?'],
     };
   }
+  const sessionCount = t(sessions.length === 1 ? '{count} session' : '{count} sessions', { count: sessions.length });
+  const storyCount = t(stories.length === 1 ? '{count} story' : '{count} stories', { count: stories.length });
+  const counted = stories.length
+    ? t('You’ve saved {sessions} and {stories}. Here are some:', { sessions: sessionCount, stories: storyCount })
+    : t('You’ve saved {sessions}. Here are some:', { sessions: sessionCount });
   return {
-    text: `You’ve saved ${sessions.length} ${sessions.length === 1 ? 'session' : 'sessions'}${stories.length ? ` and ${stories.length} ${stories.length === 1 ? 'story' : 'stories'}` : ''}. Here are some:`,
+    text: counted,
     actions: [
       ...sessions.slice(0, 3).map((id): KapwaAction => ({ type: 'session', id })),
       ...stories.slice(0, 1).map((id): KapwaAction => ({ type: 'story', id })),
@@ -320,15 +376,18 @@ function suggest(profile: KapwaProfile): PersonalAnswer {
   const left = Math.max(3, profile.goalMinutes - today);
   const picks = suggestSessions({ categories, minutes: Math.min(left, 17), exclude: played, count: 2 });
   const reason = night
-    ? 'It’s late, so something to help you wind down.'
+    ? t('It’s late, so something to help you wind down.')
     : morning
-      ? 'It’s morning, so something to start the day clear.'
+      ? t('It’s morning, so something to start the day clear.')
       : usual
-        ? `You often come back for ${CATEGORY_WORDS[usual]}, so here’s something new in that.`
-        : 'Here’s something gentle to try.';
-  const goal = today >= profile.goalMinutes ? ' You’ve already met today’s goal, so this is a bonus.' : ` About ${left} minutes would meet today’s goal.`;
+        ? t('You often come back for {category}, so here’s something new in that.', { category: categoryWords(usual) })
+        : t('Here’s something gentle to try.');
+  const goal =
+    today >= profile.goalMinutes
+      ? t('You’ve already met today’s goal, so this is a bonus.')
+      : t('About {minutes} minutes would meet today’s goal.', { minutes: left });
   return {
-    text: `${reason}${goal} I’ve left out what you played recently:`,
+    text: `${reason} ${goal} ${t('I’ve left out what you played recently:')}`,
     actions: [...picks.map((session): KapwaAction => ({ type: 'session', id: session.id })), ...(night ? [{ type: 'yoga', id: 'bedtime-yoga' } as KapwaAction] : [])],
     suggestions: ['Something shorter', 'Show me breathing techniques'],
   };
@@ -354,6 +413,6 @@ export function personalReply(intentId: string, profile: KapwaProfile): Personal
 
 /** What Kapwa says about the reader without reading their activity: only the name, which they gave the app to use. */
 export function withoutActivity(profile: KapwaProfile | undefined): string {
-  const name = profile?.name ? `You’re ${profile.name}. ` : '';
-  return `${name}I’m not using your activity right now, so I can’t look at your sessions or screens. If you’d like me to, say “use my activity”. It stays on your phone.`;
+  const name = profile?.name ? `${t('You’re {name}.', { name: profile.name })} ` : '';
+  return `${name}${t('I’m not using your activity right now, so I can’t look at your sessions or screens. If you’d like me to, say “use my activity”. It stays on your phone.')}`;
 }

@@ -1,6 +1,7 @@
 /**
  * The wider net around Kapwa's crisis and medical word lists (`data/kapwa`):
- * word endings, common typos, and Filipino and Cebuano.
+ * word endings, common typos, Filipino and Cebuano, and Hindi (Devanagari and
+ * Hinglish).
  *
  * Read against text prepared by `safetyText` (lib/kapwa): lower case, no
  * apostrophes or punctuation ("don't" is "dont"), "wanna" written out. They
@@ -121,6 +122,39 @@ export const crisisPatterns: RegExp[] = [
   /laslas/,
   /hik(o|u)g\b/,
   /bigti\b/,
+
+  // Hindi, in Devanagari. Read after `foldScripts`: no nukta (ज़ is ज, ड़ is
+  // ड) and chandrabindu as anusvara (हूँ is हूं). JavaScript's \b only knows
+  // English letters, so these use plain spaces instead.
+  /आत्म ?हत्या|खुदकुशी|सुसाइड/,
+  /(मरना|मर जाना|मरने|मर जाने) (चाहत|का मन|का दिल|की इच्छा)/,
+  /मर (जाऊं|जाउं|जाऊ|जाता तो|जाती तो)/,
+  /जान (दे दूं|दे दूंगा|दे दूंगी|देना चाहत|लेना चाहत|ले लूं|ले लूंगा|ले लूंगी|देने का|लेने का)/,
+  /(जीना|जीने|जिंदा रहना|जिंदा रहने) (नहीं|नही) चाहत/,
+  /जीने (की|का) (कोई )?(वजह|कारण|मतलब|मकसद|इच्छा|मन|दिल) (नहीं|नही)/,
+  /(खुद|अपने आप) को (मार|खत्म|नुकसान|चोट|काट|जला|हानि)/,
+  /(जिंदगी|जीवन) (खत्म|समाप्त) (कर|करना|करने)/,
+  /सब (कुछ )?खत्म कर (दूं|दूंगा|दूंगी|देना चाहत)/,
+  /फांसी (लगा|लगाना|लगाने|लगा लूं)|(नस|कलाई) काट|जहर (खा|पी)/,
+  /(सारी|बहुत सारी|सब) (गोलियां|गोलियाँ) (खा|निगल)/,
+  /(बोझ हूं|बोझ हूँ|बोझ बन गया|बोझ बन गई)/,
+  /(मौत|मृत्यु) (चाहिए|चाहत|आ जाए)/,
+  /(कोई )?(उम्मीद|आशा) (नहीं बची|बाकी नहीं|खत्म हो गई)/,
+
+  // Hindi in English letters (Hinglish), spelled the many ways people type it.
+  /\b(khudkushi|khudkhushi|aatmhatya|atmhatya|aatm hatya)\b/,
+  /\b(marna|mar jana|mar jaana|marne|mar jaane) (chahta|chahti|chahte|chahata|chahati|ka man|ka mann|ka dil)\b/,
+  /\bmar (jaun|jaau|jaaun|jau|jaoon)\b/,
+  /\b(jeena|jina|jeene|jine|zinda rehna|zinda rehne) (nahi|nhi|nahin|nai) (chahta|chahti|chahte)\b/,
+  /\b(jeene|jine) (ki|ka) (koi )?(wajah|vajah|wajeh|karan|matlab|maksad|man|mann|dil|ichha) (nahi|nhi|nahin|nai)\b/,
+  /\bkhud ko (maar|mar|khatam|khatm|khtm|nuksan|nuksaan|nukshan|nuksan pahunch|chot|hurt|kaat|kat|jala)/,
+  /\b(apni )?jaan (dena|lena|de dun|le lun|de doon|le loon|de dunga|le lunga|de dungi|le lungi|dene ka|lene ka)\b/,
+  /\b(zindagi|jindagi|zindgi|jeevan|jivan) (khatam|khatm|khtm|samapt) (kar|karna|karne|kardu|kar du|kar doon)/,
+  /\b(sab|sabkuch|sab kuch) khatam kar (du|doon|dun|dunga|dungi|dena)\b/,
+  /\b(phansi|fansi) (laga|lagana|lagaun|lagalu|lga)|\b(nas|nase|kalai) kaat|\b(zeher|zehar|jahar|jeher|zahar) (kha|pi|pee)/,
+  /\b(saari|sari|bahut saari|bahut sari|sab) (goliyan|goliya|pills|tablets) (kha|nigal)/,
+  /\b(bojh|boj) (hoon|hu|hun|ban gaya|ban gayi)\b/,
+  /\b(maut|mout) (chahiye|chahta|chahti|aa jaye)\b/,
 ];
 
 export const medicalUrgentPatterns: RegExp[] = [
@@ -163,4 +197,18 @@ export const medicalUrgentPatterns: RegExp[] = [
   /\b(sumusuka|umuubo)( \w+){0,2} dugo\b/,
   /himatay/,
   /k(u|o)mbuls/,
+
+  // Hindi, in Devanagari (folded, as above).
+  /(सीने|छाती) (में|मे) (दर्द|जकडन|भारीपन|दबाव)/,
+  /(सांस|श्वास) (नहीं|नही|लेने में|लेने मे|फूल|रुक)|दम घुट/,
+  /बुखार|बेहोश|लकवा|दिल का दौरा|दौरा (पड|आया)/,
+  /(खून|रक्त) (की उल्टी|खांसी|आ रहा|बह रहा)|(उल्टी|खांसी) (में|मे) (खून|रक्त)/,
+  /(लगातार|बार बार) उल्टी/,
+
+  // Hinglish.
+  /\b(seene|sine|seena|chhati|chati|chaati) (me|mein|main|mai|mei) (dard|jakdan|bhari|dabav|dabaav)/,
+  /\b(saans|sans|saas|swas) (nahi|nhi|nahin|nai|lene me|lene mein|lene main|phool|ruk)|\bdam ghut/,
+  /\b(bukhar|bukhaar|bukar)\b|\bbehosh|\blakwa\b|\bdil ka daura\b|\b(daura|dora) (pad|pada|padaa|aaya|aya)\b/,
+  /\b(khoon|khun) (ki ulti|aa raha|aa rha|nikal|beh)|\b(ulti|khansi) (me|mein) (khoon|khun)\b/,
+  /\b(lagatar|baar baar|bar bar) ulti\b/,
 ];

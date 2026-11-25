@@ -120,6 +120,28 @@ const CRISIS = [
   'gusto ko nang tapusin lahat',
   'ayaw ko nang magising bukas',
   'sana hindi na lang ako pinanganak',
+  // Hindi, in Devanagari and in Hinglish.
+  'मैं मरना चाहता हूँ',
+  'मैं मरना चाहती हूं',
+  'मैं आत्महत्या के बारे में सोच रहा हूँ',
+  'मुझे ख़ुदकुशी करनी है',
+  'अब जीना नहीं चाहता',
+  'जीने की कोई वजह नहीं है',
+  'मैं खुद को नुकसान पहुँचाना चाहती हूँ',
+  'मैं अपनी जान ले लूंगा',
+  'सब कुछ खत्म कर दूँ',
+  'मैं सबके लिए बोझ हूँ',
+  'काश मैं मर जाऊँ',
+  'main marna chahta hoon',
+  'mujhe mar jana hai, marne ka mann hai',
+  'main khudkushi kar lunga',
+  'jeena nahi chahti ab',
+  'jeene ki koi wajah nahi',
+  'khud ko khatam karna chahta hu',
+  'apni jaan lena chahta hoon',
+  'zindagi khatam kar dunga',
+  'saari goliyan kha lunga',
+  'main sab pe bojh hoon',
 ];
 
 const URGENT = [
@@ -162,6 +184,18 @@ const URGENT = [
   'blood when I cough',
   'my baby is burning up',
   'I think it is a stroke',
+  'सीने में दर्द हो रहा है',
+  'छाती में भारीपन है',
+  'साँस नहीं आ रही',
+  'मुझे तेज़ बुखार है',
+  'वो बेहोश हो गया',
+  'खून की उल्टी हो रही है',
+  'seene mein dard hai',
+  'saans nahi aa rahi',
+  'saans lene mein takleef',
+  'bukhar 103 hai',
+  'papa behosh ho gaye',
+  'dil ka daura pada',
 ];
 
 /** Everyday speech that must keep getting an everyday answer. */
@@ -198,6 +232,16 @@ const ORDINARY = [
   'I am cutting back on coffee',
   'I want this session to be over quickly',
   'I am done with work for today',
+  'मुझे सांस लेने का अभ्यास सिखाओ',
+  'saans lene ki exercise batao',
+  'meri jaan, good night',
+  'sir dard ki goli kha li',
+  'mujhe neend nahi aa rahi',
+  'मुझे नींद नहीं आ रही',
+  'thak gaya hoon kaam se',
+  'मन बहुत भारी है',
+  'jeene ka maza aa gaya',
+  'मैं बहुत थक गई हूँ',
 ];
 
 describe('Kapwa safety', () => {

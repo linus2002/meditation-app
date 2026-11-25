@@ -11,6 +11,7 @@ import {
 } from '@/data/kapwa';
 import { crisisPatterns, medicalUrgentPatterns } from '@/data/kapwa-safety';
 import { editDistance } from '@/lib/edit-distance';
+import { hasTranslation, tr, type KapwaLanguage } from '@/lib/kapwa-i18n';
 import { enrichReply } from '@/lib/kapwa-knowledge';
 
 /**
@@ -27,12 +28,28 @@ import { enrichReply } from '@/lib/kapwa-knowledge';
  * answered with a meditation.
  */
 
+/**
+ * Hindi in Devanagari is spelled more than one way: "हूँ" and "हूं", "ज़्यादा"
+ * and "ज्यादा". Read alike: chandrabindu as anusvara, nukta dropped, and the
+ * invisible joiners some keyboards add removed. Latin accents go too.
+ */
+export function foldScripts(text: string): string {
+  return text
+    .normalize('NFKD')
+    .replace(/[̀-़ͯ‌‍]/g, '')
+    .replace(/ँ/g, 'ं');
+}
+
+/** Anything but a letter or digit, in any script: English, Filipino and Hindi alike. */
+const NOT_A_LETTER = /[^\p{L}\p{M}\p{N}]+/gu;
+const NOT_A_LETTER_OR_APOSTROPHE = /[^\p{L}\p{M}\p{N}'\s]/gu;
+
 /** Lower case, curly apostrophes straightened, other punctuation to spaces. */
 export function normalise(text: string): string {
-  return text
+  return foldScripts(text)
     .toLowerCase()
     .replace(/[’‘]/g, "'")
-    .replace(/[^a-z0-9'\s]/g, ' ')
+    .replace(NOT_A_LETTER_OR_APOSTROPHE, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -49,12 +66,10 @@ function contains(normalised: string, keyword: string): boolean {
 
 /** The plainer form the safety patterns are read against. */
 export function safetyText(text: string): string {
-  return text
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
+  return foldScripts(text)
     .toLowerCase()
     .replace(/['’‘`]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(NOT_A_LETTER, ' ')
     .trim()
     .replace(/\bwanna\b/g, 'want to')
     .replace(/\bwant 2\b/g, 'want to')
@@ -100,6 +115,17 @@ export function safetyHold(messages: FlaggedMessage[], now: number): SafetyKind 
   return recent.length > 0 ? 'medical-urgent' : null;
 }
 
+/**
+ * A crisis or medical reply in the reader's language. While the translations
+ * are in beta, the English follows it, so the one reply that matters most
+ * can't be lost to a clumsy translation. The numbers to call are buttons,
+ * the same in every language.
+ */
+export function safetyReplyIn(reply: KapwaReply, lang: KapwaLanguage): KapwaReply {
+  if (lang === 'en' || !hasTranslation(lang, reply.text)) return reply;
+  return { ...reply, text: `${tr(lang, reply.text)}\n\n${tr(lang, 'In English:')}\n${reply.text}` };
+}
+
 /** The reply to a message typed during `safetyHold` that shows no new risk of its own. */
 export function heldReply(kind: SafetyKind): KapwaReply {
   return kind === 'crisis' ? crisisFollowUpReply : medicalUrgentReply;
@@ -117,7 +143,7 @@ export function replySignalsRisk(reply: string): boolean {
  * Chat shorthand, read as the words it stands for. Applied to keywords too,
  * so "I’m" in a keyword and "im" or "i m" typed both arrive as "i am".
  */
-const SHORTHAND: Record<string, string> = {
+export const SHORTHAND: Record<string, string> = {
   u: 'you', ya: 'you', ur: 'your', yr: 'your', r: 'are', im: 'i am', ive: 'i have',
   idk: 'i dont know', dunno: 'dont know', rn: 'right now', atm: 'right now', tn: 'tonight',
   tonite: 'tonight', '2nite': 'tonight', '2night': 'tonight', nite: 'night', pls: 'please', plz: 'please',
@@ -128,6 +154,16 @@ const SHORTHAND: Record<string, string> = {
   min: 'minutes', mins: 'minutes', minute: 'minutes', hrs: 'hours', alot: 'a lot', feelin: 'feeling',
   nothin: 'nothing', everythin: 'everything', anythin: 'anything', mediation: 'meditation',
   wat: 'what', wut: 'what', y: 'why', hw: 'how', hlp: 'help', mysef: 'myself', myslef: 'myself',
+  // Filipino text speak.
+  di: 'hindi', hnd: 'hindi', hndi: 'hindi', nde: 'hindi', aq: 'ako', nmn: 'naman', kc: 'kasi',
+  xa: 'siya', sya: 'siya', pde: 'pwede', pwd: 'pwede', lng: 'lang',
+  // Hinglish: Hindi typed in English letters is spelled many ways.
+  nhi: 'nahi', nahin: 'nahi', nai: 'nahi', nhin: 'nahi', muje: 'mujhe', mjhe: 'mujhe', mujhey: 'mujhe',
+  bhot: 'bahut', bht: 'bahut', bohot: 'bahut', bahot: 'bahut', jyada: 'zyada', jada: 'zyada', zada: 'zyada',
+  ziada: 'zyada', zyda: 'zyada', mai: 'main', hu: 'hoon', hun: 'hoon', hoo: 'hoon',
+  rha: 'raha', rhi: 'rahi', rhe: 'rahe', kr: 'kar', krna: 'karna', kro: 'karo',
+  // Devanagari "नहीं" is often typed without its nasal mark.
+  नही: 'नहीं', नहि: 'नहीं',
 };
 
 /**
@@ -160,12 +196,10 @@ function keywordWords(keyword: string): string[] {
 
 /** A message made ready for keyword matching: tidied, apostrophes gone, shorthand read out. */
 export function matchWords(text: string): string[] {
-  const plain = text
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
+  const plain = foldScripts(text)
     .toLowerCase()
     .replace(/['’‘`]/g, '')
-    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(NOT_A_LETTER, ' ')
     .replace(/\bcan not\b/g, 'cant')
     .replace(/\bi m\b/g, 'im')
     .trim();
