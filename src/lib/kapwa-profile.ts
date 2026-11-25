@@ -79,6 +79,12 @@ export const personalIntents: KapwaIntent[] = [
   intent('suggest', [
     'what should i do today', 'recommend something for me', 'something for me', 'for me today', 'pick something for me',
     'what do you suggest', 'surprise me', 'what should i listen to', 'what should i try', 'recommend me',
+    // The plain ways people ask, which used to fall through to "I didn't understand".
+    'suggest', 'suggestion', 'suggestions', 'any suggestions', 'recommend', 'recommendation', 'recommendations',
+    'what can you suggest', 'what do you recommend', 'what would you recommend', 'can you suggest',
+    'suggest a session', 'suggest a meditation', 'suggest something', 'recommend a session', 'recommend a meditation',
+    'what sessions', 'which session', 'which meditation', 'what meditation should i', 'give me a session',
+    'give me a meditation', 'where do i start', 'what should i play',
   ]),
   intent('allow', ['use my activity', 'you can use my activity', 'look at my activity', 'allow my activity', 'read my activity']),
   intent('forbid', [

@@ -213,8 +213,8 @@ const lines = {
     'I want to get this right for you. Which of these fits better?',
   ],
   stillUnclear: [
-    'Sorry, I still didn’t catch that. Could you put it another way, in a few simple words? Or pick one of these. If you’re in danger or thinking of hurting yourself, please call the crisis line now.',
-    'I’m still not following, and that’s on me, not you. Try one or two words about how you feel, like “stressed” or “can’t sleep”. If you’re in danger, please call the crisis line now.',
+    'Sorry, I still didn’t catch that. Could you put it another way, in a few simple words? Or pick one of these.',
+    'I’m still not following, and that’s on me, not you. Try one or two words about how you feel, like “stressed” or “can’t sleep”.',
   ],
   again: [
     'We touched on this earlier, so here it is again, with something different to try this time.',

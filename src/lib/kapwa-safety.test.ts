@@ -264,8 +264,14 @@ describe('Kapwa safety', () => {
 });
 
 describe('when nothing matches', () => {
-  it('still leaves a crisis line to call', () => {
-    expect(replyTo('purple elephants on bicycles').actions.some((action) => action.type === 'call')).toBe(true);
+  // A message Kapwa didn't follow is almost never a crisis; showing a hotline
+  // every time read as alarming. Crisis words still get the numbers to call.
+  it('answers without a hotline, but a crisis message still gets one', () => {
+    const unclear = replyTo('purple elephants on bicycles');
+    expect(unclear.intentId).toBe('fallback');
+    expect(unclear.actions.some((action) => action.type === 'call')).toBe(false);
+    expect(unclear.text).not.toMatch(/crisis line/i);
+    expect(replyTo('I want to die').actions.some((action) => action.type === 'call')).toBe(true);
   });
 });
 

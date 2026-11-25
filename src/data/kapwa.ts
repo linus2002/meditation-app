@@ -176,9 +176,11 @@ export const medicalUrgentReply: KapwaReply = {
 
 export const kapwaFallback: KapwaReply = {
   intentId: 'fallback',
-  text: 'I’m not sure I understood — I know simple things best. I can help with stress, sleep, focus, feeling low, getting started, or finding your way around Serenity. If you’re in danger or thinking of hurting yourself, please call the crisis line now.',
-  // The word lists will always miss someone. This is what they get instead of a dead end.
-  actions: [{ type: 'call', line: crisisLines[0] }],
+  text: 'I’m not sure I understood — I know simple things best. I can help with stress, sleep, focus, feeling low, getting started, or finding your way around Serenity.',
+  // No hotline here: a message Kapwa didn't follow is almost never a crisis, and
+  // showing one each time read as alarming. Crisis words get their own reply
+  // with the numbers to call (kapwa-safety), before anything reaches this.
+  actions: [],
 };
 
 /**
