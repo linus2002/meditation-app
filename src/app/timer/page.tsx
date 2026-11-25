@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Pause, Play, Square, X } from 'lucide-react';
 
 import { ScreenHeader } from '@/components/layout/screen-header';
+import { BeforeMood, useSitMood } from '@/components/mood/session-mood';
 import { EndSessionPrompt } from '@/components/session/end-session-prompt';
 import { useBackGuard } from '@/hooks/use-back-guard';
 import { SessionComplete } from '@/components/session/session-complete';
@@ -149,7 +150,10 @@ export default function TimerPage() {
     [stop],
   );
 
+  const sitMood = useSitMood();
   const begin = async () => {
+    // Sitting again straight from the end screen is a new sitting, with its own moods.
+    if (phaseRef.current === 'done') sitMood.renew();
     // Audio has to be unlocked by the gesture that starts the sit.
     await prime();
     // "Silence" means silence: no soundscape left playing from elsewhere.
@@ -271,6 +275,7 @@ export default function TimerPage() {
             // Through `begin`, so the chosen ambience starts again with the sit.
             onAgain={() => void begin()}
             nextUp={suggestNext(undefined, 'breathing')}
+            mood={{ pairId: sitMood.pairId, meditationId: UNGUIDED_ID }}
           />
         </div>
       ) : (
@@ -316,7 +321,9 @@ export default function TimerPage() {
             className="mt-5"
           />
 
-          <GradientButton onClick={begin} className="mt-7 h-[clamp(52px,7.2vh,58px)] w-full">
+          <BeforeMood pairId={sitMood.pairId} meditationId={UNGUIDED_ID} className="mt-6" />
+
+          <GradientButton onClick={begin} className="mt-6 h-[clamp(52px,7.2vh,58px)] w-full">
             Begin
           </GradientButton>
 

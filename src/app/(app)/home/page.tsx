@@ -5,6 +5,7 @@ import { AssessmentCard } from '@/components/home/assessment-card';
 import { CategoryDeck } from '@/components/home/category-deck';
 import { GreetingHeader } from '@/components/home/greeting-header';
 import { HomeSection } from '@/components/home/home-section';
+import { MoodCheckin } from '@/components/home/mood-checkin';
 import { ProgramRail } from '@/components/home/program-rail';
 import { RecommendedRail } from '@/components/home/recommended-rail';
 import { TodayRail } from '@/components/home/today-rail';
@@ -19,6 +20,8 @@ export default function HomePage() {
   return (
     <div className="pb-4">
       <GreetingHeader />
+
+      <MoodCheckin />
 
       <HomeSection title="Recommended">
         <RecommendedRail />

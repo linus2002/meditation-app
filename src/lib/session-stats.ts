@@ -1,4 +1,12 @@
-import { addDays, dayOfMonth, lastNDayKeys, toDateKey, weekdayInitial } from '@/lib/date';
+import {
+  addDays,
+  dayOfMonth,
+  fromDateKey,
+  lastNDayKeys,
+  startOfWeek,
+  toDateKey,
+  weekdayInitial,
+} from '@/lib/date';
 import type { DaySummary, SessionRecord } from '@/types';
 
 /** Seconds -> "01:15". Hours and minutes, matching the clock figures. */
@@ -56,27 +64,128 @@ export function recentDays(
   return lastNDayKeys(today, count).map((key) => summariseDay(sessions, key, goalMinutes));
 }
 
+/** Missed days a week that a streak carries over without breaking. */
+export const REST_DAYS_PER_WEEK = 1;
+
+export interface StreakDetail {
+  /** Days sat in the current run. Rest days hold it; they don't add to it. */
+  days: number;
+  /** The missed days the run was carried over, newest first. */
+  restDays: string[];
+  /** Whether this week's rest day is still unused. */
+  restLeftThisWeek: boolean;
+}
+
 /**
- * Consecutive days ending today. If nothing has been recorded yet today the
- * streak still counts from yesterday — a streak that resets at midnight, before
- * you have had a chance to sit, would just be a nag.
+ * The current run of days sat, made gentle in two ways.
+ *
+ * Today never breaks it: a streak that resets at midnight, before you have had
+ * a chance to sit, would just be a nag. And one missed day a week (Monday to
+ * Sunday) is taken as a rest day, so a single busy day doesn't wipe out weeks
+ * of practice. A second miss in the same week ends the run.
+ *
+ * Derived from the sittings alone, so there is nothing stored to drift.
  */
+export function streakDetail(sessions: SessionRecord[], today: Date): StreakDetail {
+  const thisWeek = toDateKey(startOfWeek(today));
+  const restsIn = (week: string, used: string[]) =>
+    used.filter((day) => toDateKey(startOfWeek(fromDateKey(day))) === week).length;
+
+  if (sessions.length === 0) return { days: 0, restDays: [], restLeftThisWeek: true };
+
+  const sat = new Set(sessions.map((session) => session.date));
+  const first = [...sat].sort()[0];
+  const restDays: string[] = [];
+  let days = 0;
+  let oldestSat: string | null = null;
+
+  // Today only counts once it has a sitting in it.
+  let cursor = sat.has(toDateKey(today)) ? today : addDays(today, -1);
+  while (toDateKey(cursor) >= first) {
+    const key = toDateKey(cursor);
+    if (sat.has(key)) {
+      days += 1;
+      oldestSat = key;
+    } else {
+      const week = toDateKey(startOfWeek(cursor));
+      if (restsIn(week, restDays) >= REST_DAYS_PER_WEEK) break;
+      restDays.push(key);
+    }
+    cursor = addDays(cursor, -1);
+  }
+
+  // Rest days only count when they bridge to a day sat; trailing ones at the
+  // far end of the run bridged nothing.
+  const bridging = oldestSat === null ? [] : restDays.filter((day) => day > (oldestSat as string));
+
+  return {
+    days,
+    restDays: bridging,
+    restLeftThisWeek: restsIn(thisWeek, bridging) < REST_DAYS_PER_WEEK,
+  };
+}
+
+/** Days in the current run; see `streakDetail` for how rest days work. */
 export function currentStreak(sessions: SessionRecord[], today: Date): number {
+  return streakDetail(sessions, today).days;
+}
+
+/** The days-a-week goal until the reader picks one. */
+export const WEEKLY_GOAL_DAYS = 3;
+export const WEEKLY_GOAL_OPTIONS = [1, 2, 3, 4, 5, 6, 7] as const;
+
+export interface WeekProgress {
+  /** Monday of this week. */
+  start: string;
+  /** Monday to Sunday: whether each day has a sitting, and whether it's still ahead. */
+  days: { key: string; label: string; sat: boolean; future: boolean }[];
+  daysSat: number;
+  goal: number;
+  met: boolean;
+}
+
+/** This week, Monday to Sunday, against the days-a-week goal. */
+export function weekProgress(sessions: SessionRecord[], today: Date, goal: number): WeekProgress {
+  const monday = startOfWeek(today);
+  const todayKey = toDateKey(today);
+  const sat = new Set(sessions.map((session) => session.date));
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const key = toDateKey(addDays(monday, index));
+    return { key, label: weekdayInitial(key), sat: sat.has(key), future: key > todayKey };
+  });
+  const daysSat = days.filter((day) => day.sat).length;
+  return { start: toDateKey(monday), days, daysSat, goal, met: daysSat >= goal };
+}
+
+/** "2 of 3 days this week", or "4 days this week" once past the goal. */
+export function weekLine(week: Pick<WeekProgress, 'daysSat' | 'goal'>): string {
+  const days = (count: number) => `${count} ${count === 1 ? 'day' : 'days'}`;
+  return week.daysSat > week.goal
+    ? `${days(week.daysSat)} this week`
+    : `${week.daysSat} of ${days(week.goal)} this week`;
+}
+
+/**
+ * Weeks in a row the goal was met. This week joins the count once it is met;
+ * until then the run is counted from last week, so it isn't lost on a Monday.
+ */
+export function weeksInARow(sessions: SessionRecord[], today: Date, goal: number): number {
   if (sessions.length === 0) return 0;
+  const first = [...sessions.map((session) => session.date)].sort()[0];
+  const daysIn = (monday: Date) => {
+    const start = toDateKey(monday);
+    const end = toDateKey(addDays(monday, 6));
+    return new Set(sessions.filter((s) => s.date >= start && s.date <= end).map((s) => s.date)).size;
+  };
 
-  const days = new Set(sessions.map((session) => session.date));
-  let cursor = today;
-  if (!days.has(toDateKey(cursor))) {
-    cursor = addDays(cursor, -1);
-    if (!days.has(toDateKey(cursor))) return 0;
+  let monday = startOfWeek(today);
+  if (daysIn(monday) < goal) monday = addDays(monday, -7);
+  let weeks = 0;
+  while (toDateKey(addDays(monday, 6)) >= first && daysIn(monday) >= goal) {
+    weeks += 1;
+    monday = addDays(monday, -7);
   }
-
-  let streak = 0;
-  while (days.has(toDateKey(cursor))) {
-    streak += 1;
-    cursor = addDays(cursor, -1);
-  }
-  return streak;
+  return weeks;
 }
 
 export function lifetimeTotals(sessions: SessionRecord[]): {

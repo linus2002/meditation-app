@@ -90,6 +90,28 @@ export interface SessionRecord {
   startedAt: number;
 }
 
+/**
+ * When a mood was given: a check-in on its own, or either side of a sitting.
+ * Before and after a sitting share a `pairId`, so the difference can be read.
+ */
+export type MoodContext = 'checkin' | 'before' | 'after';
+
+export interface MoodEntry {
+  /** Unique per entry. Before and after use `${pairId}:before` / `:after`. */
+  id: string;
+  /** Local calendar date, `YYYY-MM-DD`. */
+  date: string;
+  /** Epoch ms when it was given. */
+  at: number;
+  /** 1-5, from Struggling to Great. How the reader says they feel, nothing more. */
+  score: number;
+  context: MoodContext;
+  /** Joins a "before" to its "after". */
+  pairId?: string;
+  /** The session sat, when there was one. */
+  meditationId?: string;
+}
+
 /** Everything the activities screen shows for one day, all derived. */
 export interface DaySummary {
   date: string;

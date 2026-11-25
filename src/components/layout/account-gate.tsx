@@ -20,6 +20,7 @@ const MEMBER_ROUTES = [
   '/timer',
   '/yoga/',
   '/activities',
+  '/insights',
   '/stories/',
   '/support/',
   '/reflections',

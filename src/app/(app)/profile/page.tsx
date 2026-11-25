@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ChevronRight, MessageCircleQuestion, User } from 'lucide-react';
+import { ChartNoAxesColumn, ChevronRight, MessageCircleQuestion, User } from 'lucide-react';
 
 import { AccountCard } from '@/components/auth/account-card';
 import { DeleteAccount } from '@/components/auth/delete-account';
@@ -20,7 +20,16 @@ import { useSupportUnread } from '@/hooks/use-support-unread';
 import { formatDuration } from '@/lib/format';
 import { reminderDefinitions } from '@/lib/reminders';
 import { handleRovingKey } from '@/lib/roving';
-import { currentStreak, firstSessionDate, lifetimeTotals, weeklyMinutes } from '@/lib/session-stats';
+import {
+  firstSessionDate,
+  lifetimeTotals,
+  streakDetail,
+  weekLine,
+  weekProgress,
+  weeklyMinutes,
+  weeksInARow,
+  WEEKLY_GOAL_OPTIONS,
+} from '@/lib/session-stats';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
@@ -29,8 +38,18 @@ const reminderIds = new Set(reminderDefinitions.map((entry) => entry.id));
 
 
 export default function ProfilePage() {
-  const { settings, setSetting, sessions, hydrated, name, setName, goalMinutes, setGoalMinutes } =
-    useApp();
+  const {
+    settings,
+    setSetting,
+    sessions,
+    hydrated,
+    name,
+    setName,
+    goalMinutes,
+    setGoalMinutes,
+    weeklyGoalDays,
+    setWeeklyGoalDays,
+  } = useApp();
 
   // Edited locally and saved on blur or Enter, so the greeting does not flicker
   // through every keystroke.
@@ -97,9 +116,18 @@ export default function ProfilePage() {
       ? first.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
       : null;
   }, [sessions]);
-  const streak = React.useMemo(
-    () => (today ? currentStreak(sessions, today) : 0),
+  const streakInfo = React.useMemo(
+    () => (today ? streakDetail(sessions, today) : null),
     [sessions, today],
+  );
+  const streak = streakInfo?.days ?? 0;
+  const thisWeek = React.useMemo(
+    () => (today ? weekProgress(sessions, today, weeklyGoalDays) : null),
+    [sessions, today, weeklyGoalDays],
+  );
+  const weekRun = React.useMemo(
+    () => (today ? weeksInARow(sessions, today, weeklyGoalDays) : 0),
+    [sessions, today, weeklyGoalDays],
   );
 
   // Keeps every bar visible in an empty week rather than collapsing the chart.
@@ -235,6 +263,46 @@ export default function ProfilePage() {
       </section>
 
       <section className="mt-6 px-5">
+        <SectionTitle>Weekly Goal</SectionTitle>
+        <div className="mt-3 rounded-tile bg-surface p-4">
+          <p id="weekly-goal-label" className="text-label leading-snug text-ink-muted">
+            Days a week you’d like to sit
+          </p>
+          <div role="radiogroup" aria-labelledby="weekly-goal-label" className="mt-2.5 flex flex-wrap gap-2">
+            {WEEKLY_GOAL_OPTIONS.map((days, index) => {
+              const selected = hydrated && weeklyGoalDays === days;
+              return (
+                <button
+                  key={days}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  aria-label={`${days} ${days === 1 ? 'day' : 'days'} a week`}
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setWeeklyGoalDays(days)}
+                  onKeyDown={(event) =>
+                    handleRovingKey(event, index, WEEKLY_GOAL_OPTIONS.length, (next) =>
+                      setWeeklyGoalDays(WEEKLY_GOAL_OPTIONS[next]),
+                    )
+                  }
+                  className={cn(
+                    'h-9 min-w-9 rounded-full px-3 text-caption font-medium transition-colors duration-150',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+                    selected ? 'bg-aurora-blue text-white' : 'bg-overlay/[0.06] text-ink-muted hover:text-ink',
+                  )}
+                >
+                  {days}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-3 text-label leading-relaxed text-ink-faint">
+            One missed day a week is a rest day: it won’t break your streak.
+          </p>
+        </div>
+      </section>
+
+      <section className="mt-6 px-5">
         <SectionTitle actionHref="/activities" actionLabel="Details">
           This Week
         </SectionTitle>
@@ -265,6 +333,38 @@ export default function ProfilePage() {
               </span>
             ))}
           </div>
+          {thisWeek ? (
+            <div className="mt-4 border-t border-overlay/[0.08] pt-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-caption font-medium leading-tight text-ink">
+                  {weekLine(thisWeek)}
+                </p>
+                <div className="flex gap-1" aria-hidden="true">
+                  {thisWeek.days.map((day) => (
+                    <span
+                      key={day.key}
+                      className={cn(
+                        'h-2 w-2 rounded-full',
+                        day.sat ? 'bg-aurora-blue' : day.future ? 'bg-overlay/10' : 'bg-overlay/25',
+                      )}
+                    />
+                  ))}
+                </div>
+              </div>
+              <p className="mt-1.5 text-label leading-snug text-ink-muted">
+                {thisWeek.met
+                  ? weekRun >= 2
+                    ? `Goal met, ${weekRun} weeks in a row.`
+                    : 'Weekly goal met.'
+                  : `${thisWeek.goal - thisWeek.daysSat} more ${thisWeek.goal - thisWeek.daysSat === 1 ? 'day' : 'days'} to meet your goal.`}
+                {streakInfo && streakInfo.days > 0
+                  ? streakInfo.restLeftThisWeek
+                    ? ' Your rest day this week is still free.'
+                    : ' This week’s rest day kept your streak going.'
+                  : ''}
+              </p>
+            </div>
+          ) : null}
           {totals.sessions === 0 ? (
             <p className="mt-3 text-label leading-relaxed text-ink-faint">
               Nothing logged yet. Finish a session and it appears here.
@@ -272,6 +372,22 @@ export default function ProfilePage() {
           ) : null}
         </div>
         )}
+
+        <Link
+          href="/insights"
+          className="mt-2.5 flex items-center gap-3.5 rounded-tile bg-surface px-4 py-3.5 transition-transform duration-200 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+        >
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-overlay/[0.06]">
+            <ChartNoAxesColumn className="h-[17px] w-[17px] text-ink-soft" strokeWidth={1.7} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-body-sm font-medium leading-tight text-ink">Monthly insights</span>
+            <span className="mt-0.5 block text-label leading-snug text-ink-muted">
+              Your month, your mood, and how you sleep
+            </span>
+          </span>
+          <ChevronRight className="h-4 w-4 text-ink-faint" strokeWidth={1.8} />
+        </Link>
       </section>
 
       <section className="mt-6 px-5">

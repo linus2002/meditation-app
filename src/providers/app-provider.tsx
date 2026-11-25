@@ -9,8 +9,10 @@ import { track } from '@/lib/analytics';
 import type { AssessmentAnswers } from '@/lib/assessment';
 import { mergeSessionLists, pushSession } from '@/lib/cloud-sync';
 import { loadRatings, queueRating } from '@/lib/ratings';
+import { validMoods, withMood } from '@/lib/moods';
 import { MAX_SESSIONS, saveSessionNow, withSession } from '@/lib/session-store';
-import type { Reflection, SessionRecord, SleepLog } from '@/types';
+import { WEEKLY_GOAL_DAYS, WEEKLY_GOAL_OPTIONS } from '@/lib/session-stats';
+import type { MoodEntry, Reflection, SessionRecord, SleepLog } from '@/types';
 
 const STORAGE_KEY = 'serenity.state.v1';
 /** Set once the account's first name has been offered, so clearing it sticks. */
@@ -37,6 +39,14 @@ interface PersistedState {
   assessment: { answers: AssessmentAnswers; completedAt: string } | null;
   /** The reader's daily mindful-minutes goal, one of DAILY_GOAL_OPTIONS. */
   goalMinutes: number;
+  /** Days a week the reader aims to sit, one of WEEKLY_GOAL_OPTIONS. */
+  weeklyGoalDays: number;
+  /** Check-ins and before/after moods, newest first. Kept on this phone only. */
+  moods: MoodEntry[];
+}
+
+function validWeeklyGoal(value: unknown): number | null {
+  return typeof value === 'number' && (WEEKLY_GOAL_OPTIONS as readonly number[]).includes(value) ? value : null;
 }
 
 /** Only an offered goal is kept, so a stale or hand-edited value can't stick. */
@@ -79,6 +89,10 @@ interface AppContextValue extends PersistedState {
   setName: (name: string) => void;
   completeAssessment: (answers: AssessmentAnswers) => void;
   setGoalMinutes: (minutes: number) => void;
+  setWeeklyGoalDays: (days: number) => void;
+  /** Writes or replaces the mood with that id. */
+  logMood: (entry: MoodEntry) => void;
+  removeMood: (id: string) => void;
 }
 
 const defaultSettings = settingToggles.reduce<Record<string, boolean>>((acc, toggle) => {
@@ -102,6 +116,8 @@ const initialState: PersistedState = {
   name: '',
   assessment: null,
   goalMinutes: DAILY_GOAL_MINUTES,
+  weeklyGoalDays: WEEKLY_GOAL_DAYS,
+  moods: [],
 };
 
 /** A stored copy laid over the current state, field by field, with only valid values taken. */
@@ -119,6 +135,8 @@ function fromStored(current: PersistedState, parsed: Partial<PersistedState>): P
     name: parsed.name ?? current.name,
     assessment: parsed.assessment ?? current.assessment,
     goalMinutes: validGoal(parsed.goalMinutes) ?? current.goalMinutes,
+    weeklyGoalDays: validWeeklyGoal(parsed.weeklyGoalDays) ?? current.weeklyGoalDays,
+    moods: validMoods(parsed.moods) ?? current.moods,
   };
 }
 
@@ -345,6 +363,22 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setState((current) => ({ ...current, goalMinutes: goal }));
   }, []);
 
+  const setWeeklyGoalDays = React.useCallback((days: number) => {
+    const goal = validWeeklyGoal(days);
+    if (goal === null) return;
+    setState((current) => ({ ...current, weeklyGoalDays: goal }));
+  }, []);
+
+  const logMood = React.useCallback((entry: MoodEntry) => {
+    // Only that a mood was given and when, never what it was.
+    if (!stateRef.current.moods.some((item) => item.id === entry.id)) track('mood_logged', { context: entry.context });
+    setState((current) => ({ ...current, moods: withMood(current.moods, entry) }));
+  }, []);
+
+  const removeMood = React.useCallback((id: string) => {
+    setState((current) => ({ ...current, moods: current.moods.filter((entry) => entry.id !== id) }));
+  }, []);
+
   const removeReflection = React.useCallback((date: string) => {
     setState((current) => ({
       ...current,
@@ -394,6 +428,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setName,
       completeAssessment,
       setGoalMinutes,
+      setWeeklyGoalDays,
+      logMood,
+      removeMood,
     }),
     [
       state,
@@ -413,6 +450,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       setName,
       completeAssessment,
       setGoalMinutes,
+      setWeeklyGoalDays,
+      logMood,
+      removeMood,
     ],
   );
 

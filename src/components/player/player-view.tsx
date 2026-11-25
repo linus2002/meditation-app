@@ -7,6 +7,7 @@ import { ChevronsLeft } from 'lucide-react';
 import { ResumeNote } from '@/components/session/resume-note';
 import { BreathingOrb } from '@/components/player/breathing-orb';
 import { PlaybackControls } from '@/components/player/playback-controls';
+import { BeforeMood, useSitMood } from '@/components/mood/session-mood';
 import { SessionComplete } from '@/components/session/session-complete';
 import { SessionScrubber } from '@/components/player/session-scrubber';
 import { AddToMixButton } from '@/components/mixes/add-to-mix-button';
@@ -361,7 +362,9 @@ export function PlayerView({
 
   // Starting over from the completion panel opens a fresh record and rewinds.
   // Defined during render so it always holds the current transport handlers.
+  const sitMood = useSitMood();
   const sitAgain = () => {
+    sitMood.renew();
     void prime();
     startTrack(0);
     offsetRef.current = 0;
@@ -445,6 +448,7 @@ export function PlayerView({
             onAgain={sitAgain}
             nextUp={nextUp}
             rated={meditation}
+            mood={inMix ? null : { pairId: sitMood.pairId, meditationId: meditation.id }}
           />
         </div>
       ) : (
@@ -494,6 +498,11 @@ export function PlayerView({
       </div>
 
       <div className="relative px-7 pb-[clamp(18px,3.8vh,32px)]">
+        {/* Asked once, before the first press of play, and never in a mix. */}
+        {!startedRef.current && !inMix ? (
+          <BeforeMood pairId={sitMood.pairId} meditationId={meditation.id} className="mb-3" />
+        ) : null}
+
         {resumedAt !== null ? (
           <ResumeNote
             label={formatClock(resumedAt)}

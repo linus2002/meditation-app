@@ -9,6 +9,7 @@ describe('isMemberRoute', () => {
       '/timer',
       '/yoga/sun-salutation',
       '/activities',
+      '/insights',
       '/stories/lighthouse',
       '/support/two-minutes',
       '/reflections',

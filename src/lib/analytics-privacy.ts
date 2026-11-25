@@ -18,6 +18,7 @@ const ALLOWED_EVENTS = new Set([
   'session_completed',
   'reflection_saved',
   'sleep_logged',
+  'mood_logged',
   'meditation_rated',
   'assessment_completed',
 ]);

@@ -97,13 +97,19 @@ describe('currentStreak', () => {
     expect(currentStreak(sessions, TODAY)).toBe(2);
   });
 
-  it('is broken by a missed day, not bridged', () => {
+  it('carries one missed day a week over as a rest day', () => {
     const sessions = [sit('2026-09-09', 10), sit('2026-09-07', 10)];
+    expect(currentStreak(sessions, TODAY)).toBe(2);
+  });
+
+  it('is broken by a second missed day in the same week', () => {
+    // Tue 8 and Mon 7 both missed: one rest day a week, not two.
+    const sessions = [sit('2026-09-09', 10), sit('2026-09-05', 10)];
     expect(currentStreak(sessions, TODAY)).toBe(1);
   });
 
-  it('is zero once two days have gone by', () => {
-    expect(currentStreak([sit('2026-09-07', 10)], TODAY)).toBe(0);
+  it('is zero after two missed days in one week', () => {
+    expect(currentStreak([sit('2026-09-05', 10)], TODAY)).toBe(0);
   });
 
   it('counts a day once however many times you sat', () => {

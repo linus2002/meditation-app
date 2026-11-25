@@ -5,12 +5,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Check, Flame } from 'lucide-react';
 
+import { AfterMood } from '@/components/mood/session-mood';
 import { ReflectionCard } from '@/components/reflections/reflection-card';
 import { GradientButton } from '@/components/shared/gradient-button';
 import { RatingStars } from '@/components/shared/rating-stars';
 import { toDateKey } from '@/lib/date';
 import { formatMinutesLabel } from '@/lib/format';
-import { currentStreak, summariseDay } from '@/lib/session-stats';
+import { streakDetail, summariseDay, weekLine, weekProgress } from '@/lib/session-stats';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 import type { Meditation } from '@/types';
@@ -26,6 +27,8 @@ interface SessionCompleteProps {
   nextUp?: Meditation | null;
   /** The session just finished, when there is one — the timer has none. */
   rated?: Meditation | null;
+  /** The sitting's before/after pair, to ask how the reader feels now. */
+  mood?: { pairId: string; meditationId?: string } | null;
   className?: string;
 }
 
@@ -44,10 +47,11 @@ export function SessionComplete({
   onAgain,
   nextUp,
   rated,
+  mood,
   className,
 }: SessionCompleteProps) {
   const minutes = Math.round(seconds / 60);
-  const { sessions, reflections, ratings, rateMeditation, hydrated, goalMinutes } = useApp();
+  const { sessions, reflections, ratings, rateMeditation, hydrated, goalMinutes, weeklyGoalDays } = useApp();
 
   // The local date is resolved on the client; these pages are prerendered.
   const [today, setToday] = React.useState<string | null>(null);
@@ -58,8 +62,12 @@ export function SessionComplete({
     [sessions, today, goalMinutes],
   );
   const streak = React.useMemo(
-    () => (today ? currentStreak(sessions, new Date()) : 0),
+    () => (today ? streakDetail(sessions, new Date()).days : 0),
     [sessions, today],
+  );
+  const week = React.useMemo(
+    () => (today ? weekProgress(sessions, new Date(), weeklyGoalDays) : null),
+    [sessions, today, weeklyGoalDays],
   );
 
   const reflectionWritten = today ? reflections.some((entry) => entry.date === today) : true;
@@ -109,8 +117,17 @@ export function SessionComplete({
               </p>
             ) : null}
           </div>
+
+          {week ? (
+            <p className="mt-3 border-t border-overlay/[0.08] pt-3 text-label leading-snug text-ink-muted">
+              {weekLine(week).replace(/^./, (first) => first.toUpperCase())}
+              {week.met ? '. Weekly goal met.' : '.'}
+            </p>
+          ) : null}
         </div>
       ) : null}
+
+      {hydrated && mood ? <AfterMood pairId={mood.pairId} meditationId={mood.meditationId} className="mt-6" /> : null}
 
       {/*
         * The only place a rating is asked for, and only for a guided session —

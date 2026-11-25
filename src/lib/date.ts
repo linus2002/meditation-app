@@ -29,6 +29,13 @@ export function addDays(date: Date, days: number): Date {
   return next;
 }
 
+/** The Monday that starts the week holding `date`, at local midnight. */
+export function startOfWeek(date: Date): Date {
+  const day = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  // getDay: Sunday 0 … Saturday 6. Weeks here run Monday to Sunday.
+  return addDays(day, -((day.getDay() + 6) % 7));
+}
+
 /** The `count` most recent day keys, oldest first, ending on `end`. */
 export function lastNDayKeys(end: Date, count: number): string[] {
   return Array.from({ length: count }, (_, index) =>
