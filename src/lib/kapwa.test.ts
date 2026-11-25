@@ -20,8 +20,8 @@ describe('replyTo', () => {
   });
 
   it('ignores case and punctuation', () => {
-    expect(replyTo("CAN'T SLEEP!!!").intentId).toBe('sleep');
-    expect(replyTo('I can’t sleep').intentId).toBe('sleep');
+    expect(replyTo("CAN'T SLEEP!!!").intentId).toBe('sleep-tonight');
+    expect(replyTo('I can’t sleep').intentId).toBe('sleep-tonight');
   });
 
   it('matches whole words only', () => {

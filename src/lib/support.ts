@@ -21,6 +21,32 @@ export const SUPPORT_CATEGORIES = [
 ] as const;
 export type SupportCategory = (typeof SUPPORT_CATEGORIES)[number];
 
+/**
+ * A message started elsewhere (Kapwa's "Report this reply"), for the Help
+ * screen's new-concern form to open with. Kept for this tab only, and
+ * removed once read.
+ */
+export const HELP_DRAFT_KEY = 'serenity.help.draft';
+
+export interface HelpDraft {
+  category: SupportCategory;
+  subject: string;
+  body: string;
+}
+
+export function takeHelpDraft(): HelpDraft | null {
+  try {
+    const raw = window.sessionStorage.getItem(HELP_DRAFT_KEY);
+    window.sessionStorage.removeItem(HELP_DRAFT_KEY);
+    if (!raw) return null;
+    const draft = JSON.parse(raw) as Partial<HelpDraft>;
+    const category = SUPPORT_CATEGORIES.find((option) => option === draft.category) ?? SUPPORT_CATEGORIES[0];
+    return { category, subject: String(draft.subject ?? '').slice(0, 120), body: String(draft.body ?? '').slice(0, 2000) };
+  } catch {
+    return null;
+  }
+}
+
 export type SupportStatus = 'open' | 'answered' | 'closed';
 
 export interface SupportThread {

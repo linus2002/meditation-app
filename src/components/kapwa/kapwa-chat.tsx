@@ -2,27 +2,30 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Phone, Send, Trash2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { AudioLines, BookOpen, Flag, Leaf, PersonStanding, Phone, Play, Send, Trash2 } from 'lucide-react';
 
 import { CHAT_END_CLASS, ChatDock } from '@/components/layout/chat-dock';
 import { ScreenHeader } from '@/components/layout/screen-header';
 import { useUndo } from '@/components/layout/undo-toast';
 import { KapwaIcon } from '@/components/kapwa/kapwa-icon';
+import { PracticeRunner } from '@/components/kapwa/practice-runner';
 import { allSessions, getMeditation, meditations } from '@/data/meditations';
 import { programs } from '@/data/programs';
-import { stories } from '@/data/stories';
-import { yogaSessions } from '@/data/yoga';
+import { getStory, stories } from '@/data/stories';
+import { getYogaSession, yogaSessions } from '@/data/yoga';
 import {
   crisisReply,
   kapwaQuickReplies,
   kapwaWelcome,
   type KapwaAction,
-  type KapwaReply,
 } from '@/data/kapwa';
-import { crisisLines, emergencyLine } from '@/data/safety-lines';
 import { settingToggles } from '@/data/settings';
 import { appShortcuts } from '@/data/shortcuts';
+import { soundscapes } from '@/lib/audio/soundscapes';
 import { formatMinutesLabel } from '@/lib/format';
+import { estimatedMinutes } from '@/lib/story';
+import { totalSeconds } from '@/lib/yoga';
 import {
   heldReply,
   replySignalsRisk,
@@ -31,9 +34,15 @@ import {
   safetyKind,
   type SafetyKind,
 } from '@/lib/kapwa';
-import { personalKey } from '@/lib/account-scope';
+import { personalKey, storedAccount } from '@/lib/account-scope';
+import { readActivity, readConsent, setConsent } from '@/lib/activity-log';
 import { buildHistory, kapwaAiEnabled, streamKapwaReply, warmUpKapwaAi } from '@/lib/kapwa-ai';
 import { buildKapwaContext, findSessionTitles, parseSessionLine } from '@/lib/kapwa-context';
+import { converse, type DialogueMemory, type DialogueTurn } from '@/lib/kapwa-dialogue';
+import { getPractice, practiceAsk, practiceLabel } from '@/lib/kapwa-knowledge';
+import type { KapwaProfile, PersonalConsent } from '@/lib/kapwa-profile';
+import { canRun } from '@/lib/kapwa-runner';
+import { HELP_DRAFT_KEY } from '@/lib/support';
 import { currentStreak } from '@/lib/session-stats';
 import { supportTrackEnabled } from '@/lib/support-track';
 import { useAutoGrow } from '@/hooks/use-auto-grow';
@@ -45,6 +54,10 @@ interface ChatMessage {
   from: 'kapwa' | 'you';
   text: string;
   actions?: KapwaAction[];
+  /** Questions to go on with, offered as buttons while this is the latest reply. */
+  suggestions?: string[];
+  /** On Kapwa's messages: where the conversation stands, so the next message is read in context. */
+  memory?: DialogueMemory;
   /** Part of a crisis or medical exchange: never sent to the AI. */
   private?: boolean;
   /** On the reader's message: the risk seen in it, and when, for `safetyHold`. */
@@ -56,22 +69,37 @@ interface ChatMessage {
 const STORAGE_KEY = 'serenity.kapwa.v1';
 const MAX_MESSAGES = 100;
 const MAX_LENGTH = 300;
-/** A short pause before Kapwa answers, so the reply reads as a reply. */
-const TYPING_MS = 700;
+/**
+ * A brief pause before Kapwa answers, just long enough to read as a reply.
+ * The answer itself takes a few milliseconds; this is the only wait.
+ */
+const TYPING_MS = 250;
+/** And before the one question that follows an answer, so it reads as its own message. */
+const FOLLOW_UP_MS = 450;
 
-function welcome(): ChatMessage {
-  return { id: 'welcome', from: 'kapwa', text: kapwaWelcome.text, actions: kapwaWelcome.actions };
+/** Kapwa's first message, by name when the reader has given one. */
+function welcome(name?: string): ChatMessage {
+  const text = name ? kapwaWelcome.text.replace(/^Hi, I’m Kapwa\./, `Hi ${name}, I’m Kapwa.`) : kapwaWelcome.text;
+  return { id: 'welcome', from: 'kapwa', text, actions: kapwaWelcome.actions };
 }
 
+
 /**
- * Chat with Kapwa, Serenity's guide. With NEXT_PUBLIC_KAPWA_AI=1, replies
- * come from the AI via `lib/kapwa-ai`; otherwise (and as the fallback, and
- * always for crisis or medical messages) from `lib/kapwa` on the device.
- * The conversation history is stored on the device only.
+ * Chat with Kapwa, Serenity's guide. Replies come from the dialogue manager
+ * (`lib/kapwa-dialogue`) on the device, which reads each message against
+ * where the conversation stands. With NEXT_PUBLIC_KAPWA_AI set, messages it
+ * has no written answer for go to the AI (`lib/kapwa-ai`). Crisis and
+ * medical messages never do. The conversation is stored on the device only.
  */
 export function KapwaChat() {
   const offerUndo = useUndo();
-  const { sessions, favorites } = useApp();
+  const router = useRouter();
+  const app = useApp();
+  const { sessions, favorites } = app;
+  /** Whether the reader lets Kapwa use their activity; asked the first time it matters. */
+  const [consent, setConsentState] = React.useState<PersonalConsent>(undefined);
+  /** The practice being guided in time, if any. */
+  const [running, setRunning] = React.useState<string | null>(null);
   /** What the AI knows about the app and this reader's progress. */
   const appContext = React.useMemo(
     () =>
@@ -103,12 +131,42 @@ export function KapwaChat() {
     try {
       const raw = window.localStorage.getItem(personalKey(STORAGE_KEY));
       const saved = raw ? (JSON.parse(raw) as ChatMessage[]) : [];
-      setMessages(saved.length > 0 ? saved : [welcome()]);
+      setMessages(saved.length > 0 ? saved : [welcome(app.name)]);
     } catch {
-      setMessages([welcome()]);
+      setMessages([welcome(app.name)]);
     }
+    setConsentState(readConsent());
     setHydrated(true);
+    // Read once, on opening; the name only shapes the first greeting.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  /** The reader's own data on this phone, read fresh for each message. */
+  const profile = (): KapwaProfile => {
+    const activity = readActivity();
+    return {
+      name: app.name,
+      email: storedAccount()?.email,
+      sessions: app.sessions,
+      favorites: app.favorites,
+      favoriteStories: app.favoriteStories,
+      goalMinutes: app.goalMinutes,
+      sleepLogs: app.sleepLogs,
+      reflections: app.reflections.length,
+      screens: activity.screens,
+      previousVisitAt: activity.previousVisitAt,
+      now: Date.now(),
+    };
+  };
+
+  /** Applies what a reply asks of the chat: the reader's consent, or the name they gave. */
+  const applyEffects = (effects: DialogueTurn['effects']) => {
+    if (effects?.consent) {
+      setConsent(effects.consent);
+      setConsentState(effects.consent);
+    }
+    if (effects?.name) app.setName(effects.name);
+  };
 
   // A local model can take minutes to load, so start before the first message.
   const warmedUp = React.useRef(false);
@@ -129,7 +187,7 @@ export function KapwaChat() {
 
   React.useEffect(() => {
     endRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
-  }, [messages.length, typing]);
+  }, [messages.length, typing, running]);
 
   React.useEffect(
     () => () => {
@@ -173,6 +231,7 @@ export function KapwaChat() {
             text: answer.text,
             actions: answer.actions,
             private: true,
+            memory: { state: 'safety' as const, intentId: answer.intentId },
           },
         ].slice(-MAX_MESSAGES),
       );
@@ -180,24 +239,53 @@ export function KapwaChat() {
     }
 
     const turn = messages.filter((message) => message.from === 'you').length;
-    const reply = replyTo(text, { turn, supportTrack: supportTrackEnabled });
+    const lastKapwa = [...messages].reverse().find((message) => message.from === 'kapwa');
+    const reply = converse(text, {
+      last: lastKapwa?.memory,
+      earlier: messages.flatMap((message) => (message.memory ? [message.memory.intentId] : [])),
+      turn,
+      supportTrack: supportTrackEnabled,
+      profile: profile(),
+      personal: consent,
+    });
+    applyEffects(reply.effects);
+    setRunning(null);
 
     setMessages((current) => [...current, asked].slice(-MAX_MESSAGES));
     setTyping(true);
 
-    if (kapwaAiEnabled) {
+    // A written answer to a common question is given as written, even with
+    // the AI on: it is checked, consistent and instant.
+    if (kapwaAiEnabled && !reply.prepared) {
       void sendToAi(text, reply);
       return;
     }
 
+    const add = (message: ChatMessage) => setMessages((current) => [...current, message].slice(-MAX_MESSAGES));
     timer.current = window.setTimeout(() => {
-      setMessages((current) =>
-        [
-          ...current,
-          { id: `kapwa-${Date.now()}`, from: 'kapwa' as const, text: reply.text, actions: reply.actions },
-        ].slice(-MAX_MESSAGES),
-      );
-      setTyping(false);
+      add({
+        id: `kapwa-${Date.now()}`,
+        from: 'kapwa',
+        text: reply.text,
+        actions: reply.actions,
+        suggestions: reply.suggestions,
+        memory: reply.memory,
+      });
+      if (!reply.followUp) {
+        setTyping(false);
+        return;
+      }
+      // The one question that follows, as its own message.
+      timer.current = window.setTimeout(() => {
+        add({
+          id: `kapwa-${Date.now()}-next`,
+          from: 'kapwa',
+          text: reply.followUp!,
+          suggestions: reply.suggestions,
+          memory: reply.memory,
+        });
+        setTyping(false);
+      }, FOLLOW_UP_MS);
     }, TYPING_MS);
   };
 
@@ -206,7 +294,7 @@ export function KapwaChat() {
    * which sessions and screens to offer underneath it, and is the whole reply
    * if the AI can't answer (offline, over quota, or any error).
    */
-  const sendToAi = async (text: string, fallback: KapwaReply) => {
+  const sendToAi = async (text: string, fallback: DialogueTurn) => {
     const controller = new AbortController();
     aiRequest.current?.abort();
     aiRequest.current = controller;
@@ -214,9 +302,17 @@ export function KapwaChat() {
     const actions = fallback.intentId === 'fallback' ? [] : fallback.actions;
     let started = false;
 
-    const show = (replyText: string, withActions?: KapwaAction[], isPrivate?: boolean) =>
+    const show = (replyText: string, withActions?: KapwaAction[], isPrivate?: boolean, suggestions?: string[]) =>
       setMessages((current) => {
-        const bubble: ChatMessage = { id, from: 'kapwa', text: replyText, actions: withActions, private: isPrivate };
+        const bubble: ChatMessage = {
+          id,
+          from: 'kapwa',
+          text: replyText,
+          actions: withActions,
+          suggestions,
+          private: isPrivate,
+          memory: isPrivate ? { state: 'safety', intentId: 'crisis' } : fallback.memory,
+        };
         const exists = current.some((message) => message.id === id);
         return (exists
           ? current.map((message) => (message.id === id ? bubble : message))
@@ -249,10 +345,10 @@ export function KapwaChat() {
           .map((sessionId) => ({ type: 'session', id: sessionId }));
         if (!parsed.text) throw new Error('empty reply');
         if (replySignalsRisk(parsed.text)) show(parsed.text, crisisReply.actions, true);
-        else show(parsed.text, picked.length > 0 ? picked : actions);
+        else show(parsed.text, picked.length > 0 ? picked : actions, false, fallback.suggestions);
       }
     } catch {
-      if (!controller.signal.aborted) show(fallback.text, fallback.actions);
+      if (!controller.signal.aborted) show(fallback.text, fallback.actions, false, fallback.suggestions);
     } finally {
       if (aiRequest.current === controller) aiRequest.current = null;
       if (!controller.signal.aborted) {
@@ -262,13 +358,61 @@ export function KapwaChat() {
     }
   };
 
+  /** A guided run ended: ask how it went, as Kapwa does after any practice. */
+  const finishRun = (practiceId: string, completed: boolean) => {
+    setRunning(null);
+    const lastKapwa = [...messages].reverse().find((message) => message.from === 'kapwa');
+    const reply = converse('done', {
+      last: { state: 'exercise', intentId: `practice:${practiceId}`, practiceId, topicId: lastKapwa?.memory?.topicId },
+      turn: messages.length,
+    });
+    // Stopped early: no "well done", just permission and the same question.
+    const text = completed ? reply.text : 'That’s fine; stopping is always allowed. How are you feeling now?';
+    setMessages((current) =>
+      [
+        ...current,
+        {
+          id: `kapwa-${Date.now()}`,
+          from: 'kapwa' as const,
+          text,
+          suggestions: reply.suggestions,
+          memory: reply.memory,
+        },
+      ].slice(-MAX_MESSAGES),
+    );
+  };
+
+  /** Opens Help with a report about one of Kapwa's replies, ready to edit and send. */
+  const report = (message: ChatMessage) => {
+    try {
+      window.sessionStorage.setItem(
+        HELP_DRAFT_KEY,
+        JSON.stringify({
+          category: 'Something isn’t working',
+          subject: 'A Kapwa reply',
+          body: `Kapwa said:\n“${message.text.slice(0, 600)}”\n\nWhat was wrong or unhelpful:\n`,
+        }),
+      );
+    } catch {
+      // Help still opens, with an empty form.
+    }
+    router.push('/help?new=1');
+  };
+
+  const toggleActivity = () => {
+    const next = consent === 'yes' ? 'no' : 'yes';
+    setConsent(next);
+    setConsentState(next);
+  };
+
   const clear = () => {
     window.clearTimeout(timer.current);
     aiRequest.current?.abort();
     setStreamingId(null);
     setTyping(false);
     const previous = messages;
-    setMessages([welcome()]);
+    setRunning(null);
+    setMessages([welcome(app.name)]);
     offerUndo({
       message: 'Chat cleared',
       undo: () => {
@@ -310,6 +454,20 @@ export function KapwaChat() {
             ? 'An AI guide — not a person or a therapist. Messages are sent to our AI service to reply, and the chat history is kept on this phone.'
             : 'A simple built-in guide — not a person or an AI. Your chat stays on this phone.'}
         </p>
+        {hydrated && consent ? (
+          <p className="mt-1 text-label leading-relaxed text-ink-faint">
+            {consent === 'yes'
+              ? 'Kapwa can see your sessions and recent screens on this phone. '
+              : 'Kapwa isn’t using your activity. '}
+            <button
+              type="button"
+              onClick={toggleActivity}
+              className="inline-block py-1 font-semibold text-ink-soft underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+            >
+              {consent === 'yes' ? 'Turn off' : 'Turn on'}
+            </button>
+          </p>
+        ) : null}
       </div>
 
       <ol aria-live="polite" className="mt-5 space-y-3 px-4">
@@ -327,9 +485,24 @@ export function KapwaChat() {
                 {message.actions && message.actions.length > 0 ? (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {message.actions.map((action) => (
-                      <ActionLink key={actionKey(action)} action={action} />
+                      <ActionLink
+                        key={actionKey(action)}
+                        action={action}
+                        onAsk={send}
+                        onRun={(id) => setRunning(id)}
+                      />
                     ))}
                   </div>
+                ) : null}
+                {message.id !== 'welcome' && !message.id.endsWith('-next') ? (
+                  <button
+                    type="button"
+                    onClick={() => report(message)}
+                    className="mt-1 flex items-center gap-1 py-1 text-label text-ink-faint transition-colors hover:text-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+                  >
+                    <Flag className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
+                    Report this reply
+                  </button>
                 ) : null}
               </div>
             </li>
@@ -364,9 +537,19 @@ export function KapwaChat() {
         ) : null}
       </ol>
 
-      {hydrated && !typing && !safetyHold(messages, Date.now()) ? (
+      {running && getPractice(running) ? (
+        <div className="mt-4">
+          <PracticeRunner
+            key={running}
+            practice={getPractice(running)!}
+            onFinish={(completed) => finishRun(running, completed)}
+          />
+        </div>
+      ) : null}
+
+      {hydrated && !typing && !running && !safetyHold(messages, Date.now()) ? (
         <div className="mt-4 flex flex-wrap gap-2 px-4">
-          {kapwaQuickReplies.map((quick) => (
+          {chipsFor(messages).map((quick) => (
             <button
               key={quick}
               type="button"
@@ -418,34 +601,72 @@ export function KapwaChat() {
           <Send className="h-[18px] w-[18px]" strokeWidth={1.8} />
         </button>
       </form>
-
-      <p className="mt-2 px-2 text-center text-caption leading-relaxed text-ink-muted">
-        Kapwa can’t give medical advice. In crisis, call{' '}
-        {/* Always here: the one way to help that doesn’t rely on Kapwa understanding. */}
-        <a href={`tel:${crisisLines[2].dial}`} className="inline-block py-1 font-semibold text-ink underline">
-          {crisisLines[2].display}
-        </a>
-        . In an emergency, call{' '}
-        <a href={`tel:${emergencyLine.dial}`} className="inline-block py-1 font-semibold text-ink underline">
-          {emergencyLine.display}
-        </a>
-        .
-      </p>
       </ChatDock>
     </div>
   );
 }
 
-function actionKey(action: KapwaAction): string {
-  if (action.type === 'session') return action.id;
-  if (action.type === 'page') return action.href;
-  return `tel:${action.line.dial}`;
+/**
+ * The buttons under the chat: what the latest reply suggests asking next,
+ * or the openers when it suggests nothing (the welcome, a simple reply).
+ */
+function chipsFor(messages: ChatMessage[]): string[] {
+  const latest = messages[messages.length - 1];
+  if (latest?.from === 'kapwa' && latest.suggestions && latest.suggestions.length > 0) return latest.suggestions;
+  return kapwaQuickReplies;
 }
 
-/** A tap-to-go button under one of Kapwa's replies. */
-function ActionLink({ action }: { action: KapwaAction }) {
+function actionKey(action: KapwaAction): string {
+  if (action.type === 'page') return action.href;
+  if (action.type === 'call') return `tel:${action.line.dial}`;
+  return `${action.type}:${action.id}`;
+}
+
+/**
+ * A button under one of Kapwa's replies: most go somewhere in the app; a
+ * practice asks Kapwa for it, so its steps are shown right in the chat.
+ */
+function ActionLink({
+  action,
+  onAsk,
+  onRun,
+}: {
+  action: KapwaAction;
+  onAsk: (text: string) => void;
+  onRun: (practiceId: string) => void;
+}) {
   const className =
     'rounded-full bg-overlay/[0.06] px-3.5 py-2 text-caption font-medium text-ink transition-colors hover:bg-overlay/[0.1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70';
+
+  if (action.type === 'run') {
+    const practice = getPractice(action.id);
+    if (!practice || !canRun(practice)) return null;
+    return (
+      <button
+        type="button"
+        onClick={() => onRun(practice.id)}
+        className={cn(className, 'flex items-center gap-1.5 bg-aurora-blue text-white hover:bg-aurora-blue/90')}
+      >
+        <Play className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
+        Start, guided · {practice.minutes} min
+      </button>
+    );
+  }
+
+  if (action.type === 'practice') {
+    const practice = getPractice(action.id);
+    if (!practice) return null;
+    return (
+      <button
+        type="button"
+        onClick={() => onAsk(practiceAsk(practice))}
+        className={cn(className, 'flex items-center gap-1.5 bg-aurora-blue/15 hover:bg-aurora-blue/25')}
+      >
+        <Leaf className="h-3.5 w-3.5 shrink-0" strokeWidth={1.9} aria-hidden="true" />
+        {practiceLabel(practice)}
+      </button>
+    );
+  }
 
   if (action.type === 'call') {
     // Full width and tall: this is the one action that has to be easy to hit.
@@ -474,13 +695,55 @@ function ActionLink({ action }: { action: KapwaAction }) {
     );
   }
 
-  const meditation = getMeditation(action.id);
-  if (!meditation) return null;
+  const target = actionTarget(action);
+  if (!target) return null;
 
   return (
-    <Link href={`/player/${meditation.id}`} className={cn(className, 'flex items-center gap-1.5')}>
-      <span aria-hidden="true">▶</span>
-      {meditation.title} · {formatMinutesLabel(meditation.durationSeconds)}
+    <Link href={target.href} className={cn(className, 'flex items-center gap-1.5')}>
+      <target.Icon className="h-3.5 w-3.5 shrink-0" strokeWidth={1.9} aria-hidden="true" />
+      <span className="sr-only">{target.kind}: </span>
+      {target.label}
     </Link>
   );
+}
+
+/** Where a meditation, yoga, story or sound button goes, and what it says. Null once removed from the content. */
+function actionTarget(
+  action: Extract<KapwaAction, { type: 'session' | 'yoga' | 'story' | 'sound' }>,
+): { href: string; label: string; kind: string; Icon: typeof Play } | null {
+  if (action.type === 'session') {
+    const meditation = getMeditation(action.id);
+    if (!meditation) return null;
+    return {
+      href: `/player/${meditation.id}`,
+      label: `${meditation.title} · ${formatMinutesLabel(meditation.durationSeconds)}`,
+      kind: 'Meditation',
+      Icon: Play,
+    };
+  }
+  if (action.type === 'yoga') {
+    const session = getYogaSession(action.id);
+    if (!session) return null;
+    return {
+      href: `/yoga/${session.id}`,
+      label: `${session.title} · ${formatMinutesLabel(totalSeconds(session.poses))}`,
+      kind: 'Yoga',
+      Icon: PersonStanding,
+    };
+  }
+  if (action.type === 'story') {
+    const found = getStory(action.id);
+    if (!found) return null;
+    return {
+      href: `/stories/${found.id}`,
+      // As the story cards show it.
+      label: `${found.title} · ${estimatedMinutes(found)} Min.`,
+      kind: 'Story',
+      Icon: BookOpen,
+    };
+  }
+  const meta = soundscapes[action.id];
+  if (!meta) return null;
+  // The Sleep tab's mixer is where every sound is played.
+  return { href: '/sleep', label: `${meta.name} sound`, kind: 'Sound', Icon: AudioLines };
 }

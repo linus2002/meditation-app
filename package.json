@@ -20,7 +20,8 @@
     "content:pull": "node scripts/sanity/pull.mjs",
     "content:narrate": "node scripts/sanity/narrate.mjs",
     "music:compose": "node scripts/music/compose.mjs",
-    "content:recordings": "node scripts/sanity/recordings.mjs"
+    "content:recordings": "node scripts/sanity/recordings.mjs",
+    "kapwa:eval": "vite-node --config vitest.config.ts scripts/kapwa/evaluate.ts"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
