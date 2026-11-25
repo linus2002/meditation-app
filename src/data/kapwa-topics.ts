@@ -343,7 +343,7 @@ export const kapwaTopics: KapwaIntent[] = [
   topic({
     id: 'release-thoughts',
     keywords: [
-      'release the thoughts', 'release thoughts', 'release my thoughts', 'unload my thoughts', 'thoughts ive been carrying',
+      'release the thoughts', 'release todays thoughts', 'release today’s thoughts', 'release thoughts', 'release my thoughts', 'unload my thoughts', 'thoughts ive been carrying',
       'carrying today', 'carrying',
       'release', 'let go of today', 'let go of the day', 'unload', 'put the day down', 'end of the day',
     ],

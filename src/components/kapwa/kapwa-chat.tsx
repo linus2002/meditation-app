@@ -32,8 +32,16 @@ import {
   replyTo,
   safetyHold,
   safetyKind,
+  safetyReplyIn,
   type SafetyKind,
 } from '@/lib/kapwa';
+import {
+  isKapwaLanguage,
+  kapwaLanguages,
+  languageFromLocale,
+  tr,
+  type KapwaLanguage,
+} from '@/lib/kapwa-i18n';
 import { personalKey, storedAccount } from '@/lib/account-scope';
 import { readActivity, readConsent, setConsent } from '@/lib/activity-log';
 import { buildHistory, kapwaAiEnabled, streamKapwaReply, warmUpKapwaAi } from '@/lib/kapwa-ai';
@@ -67,6 +75,8 @@ interface ChatMessage {
 
 /** Kept on this phone only. */
 const STORAGE_KEY = 'serenity.kapwa.v1';
+/** The language Kapwa replies in, on this phone. */
+const LANGUAGE_KEY = 'serenity.kapwa.language.v1';
 const MAX_MESSAGES = 100;
 const MAX_LENGTH = 300;
 /**
@@ -77,10 +87,36 @@ const TYPING_MS = 250;
 /** And before the one question that follows an answer, so it reads as its own message. */
 const FOLLOW_UP_MS = 450;
 
-/** Kapwa's first message, by name when the reader has given one. */
-function welcome(name?: string): ChatMessage {
-  const text = name ? kapwaWelcome.text.replace(/^Hi, I’m Kapwa\./, `Hi ${name}, I’m Kapwa.`) : kapwaWelcome.text;
+/** Kapwa's first message, by name when the reader has given one, in their language. */
+function welcome(name: string | undefined, lang: KapwaLanguage): ChatMessage {
+  const text = name
+    ? tr(lang, kapwaWelcome.text.replace(/^Hi, I’m Kapwa\./, 'Hi {name}, I’m Kapwa.'), { name })
+    : tr(lang, kapwaWelcome.text);
   return { id: 'welcome', from: 'kapwa', text, actions: kapwaWelcome.actions };
+}
+
+/** What Kapwa says on switching language, in the new one; for a beta language, what that means. */
+const SWITCHED: Record<KapwaLanguage, string[]> = {
+  en: ['Okay, I’ll reply in English from now on.'],
+  fil: [
+    'Okay, I’ll reply in Filipino from now on.',
+    'My Filipino is new and hasn’t been checked by a native speaker yet. If something sounds wrong, tap “Report this reply”. Crisis replies also show the English.',
+  ],
+  hi: [
+    'Okay, I’ll reply in Hindi from now on.',
+    'My Hindi is new and hasn’t been checked by a native speaker yet. If something sounds wrong, tap “Report this reply”. Crisis replies also show the English.',
+  ],
+};
+
+/** The language saved on this phone, or the phone's own when Kapwa hasn't been told. */
+function storedLanguage(): KapwaLanguage {
+  try {
+    const saved = window.localStorage.getItem(personalKey(LANGUAGE_KEY));
+    if (isKapwaLanguage(saved)) return saved;
+  } catch {
+    // Unreadable storage: fall back to the phone's language.
+  }
+  return languageFromLocale(typeof navigator === 'undefined' ? undefined : navigator.language);
 }
 
 
@@ -100,6 +136,8 @@ export function KapwaChat() {
   const [consent, setConsentState] = React.useState<PersonalConsent>(undefined);
   /** The practice being guided in time, if any. */
   const [running, setRunning] = React.useState<string | null>(null);
+  /** The language Kapwa replies in. Messages are understood in any of them. */
+  const [lang, setLang] = React.useState<KapwaLanguage>('en');
   /** What the AI knows about the app and this reader's progress. */
   const appContext = React.useMemo(
     () =>
@@ -128,12 +166,14 @@ export function KapwaChat() {
   const [streamingId, setStreamingId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
+    const language = storedLanguage();
+    setLang(language);
     try {
       const raw = window.localStorage.getItem(personalKey(STORAGE_KEY));
       const saved = raw ? (JSON.parse(raw) as ChatMessage[]) : [];
-      setMessages(saved.length > 0 ? saved : [welcome(app.name)]);
+      setMessages(saved.length > 0 ? saved : [welcome(app.name, language)]);
     } catch {
-      setMessages([welcome(app.name)]);
+      setMessages([welcome(app.name, language)]);
     }
     setConsentState(readConsent());
     setHydrated(true);
@@ -197,7 +237,11 @@ export function KapwaChat() {
     [],
   );
 
-  const send = (value: string) => {
+  /**
+   * Sends a message to Kapwa. A tapped button passes `shown`: the translated
+   * words the reader sees in their bubble, while Kapwa reads the English.
+   */
+  const send = (value: string, shown?: string) => {
     const text = value.trim().slice(0, MAX_LENGTH);
     if (!text) return;
 
@@ -210,7 +254,7 @@ export function KapwaChat() {
     const now = Date.now();
     const risk = safetyKind(text);
     const held = safetyHold(messages, now);
-    const asked: ChatMessage = { id: `you-${now}`, from: 'you', text };
+    const asked: ChatMessage = { id: `you-${now}`, from: 'you', text: shown ?? text };
     setDraft('');
 
     // Crisis and medical replies are fixed, never go to the AI, and come at
@@ -218,7 +262,7 @@ export function KapwaChat() {
     // A medical sign during a crisis must not take the crisis lines away.
     const kind = held === 'crisis' ? held : (risk ?? held);
     if (kind) {
-      const answer = kind === risk ? replyTo(text) : heldReply(kind);
+      const answer = safetyReplyIn(kind === risk ? replyTo(text) : heldReply(kind), lang);
       setTyping(false);
       setMessages((current) =>
         [
@@ -247,6 +291,7 @@ export function KapwaChat() {
       supportTrack: supportTrackEnabled,
       profile: profile(),
       personal: consent,
+      lang,
     });
     applyEffects(reply.effects);
     setRunning(null);
@@ -256,7 +301,8 @@ export function KapwaChat() {
 
     // A written answer to a common question is given as written, even with
     // the AI on: it is checked, consistent and instant.
-    if (kapwaAiEnabled && !reply.prepared) {
+    // The AI is asked in English, so it only answers when Kapwa speaks English.
+    if (kapwaAiEnabled && lang === 'en' && !reply.prepared) {
       void sendToAi(text, reply);
       return;
     }
@@ -365,9 +411,10 @@ export function KapwaChat() {
     const reply = converse('done', {
       last: { state: 'exercise', intentId: `practice:${practiceId}`, practiceId, topicId: lastKapwa?.memory?.topicId },
       turn: messages.length,
+      lang,
     });
     // Stopped early: no "well done", just permission and the same question.
-    const text = completed ? reply.text : 'That’s fine; stopping is always allowed. How are you feeling now?';
+    const text = completed ? reply.text : tr(lang, 'That’s fine; stopping is always allowed. How are you feeling now?');
     setMessages((current) =>
       [
         ...current,
@@ -399,6 +446,29 @@ export function KapwaChat() {
     router.push('/help?new=1');
   };
 
+  /** Replies in another language from now on; the chat so far stays as it was said. */
+  const chooseLanguage = (next: KapwaLanguage) => {
+    if (next === lang) return;
+    setLang(next);
+    try {
+      window.localStorage.setItem(personalKey(LANGUAGE_KEY), next);
+    } catch {
+      // Kept for this visit only.
+    }
+    window.clearTimeout(timer.current);
+    setTyping(false);
+    setMessages((current) => {
+      // Nothing said yet but hello: say hello again, in the new language.
+      if (current.length === 1 && current[0].id === 'welcome') return [welcome(app.name, next)];
+      const note: ChatMessage = {
+        id: `kapwa-${Date.now()}-language`,
+        from: 'kapwa',
+        text: SWITCHED[next].map((line) => tr(next, line)).join(' '),
+      };
+      return [...current, note].slice(-MAX_MESSAGES);
+    });
+  };
+
   const toggleActivity = () => {
     const next = consent === 'yes' ? 'no' : 'yes';
     setConsent(next);
@@ -412,9 +482,9 @@ export function KapwaChat() {
     setTyping(false);
     const previous = messages;
     setRunning(null);
-    setMessages([welcome(app.name)]);
+    setMessages([welcome(app.name, lang)]);
     offerUndo({
-      message: 'Chat cleared',
+      message: tr(lang, 'Chat cleared'),
       undo: () => {
         setMessages(previous);
         // Written straight back too, in case Undo is tapped after leaving
@@ -431,13 +501,13 @@ export function KapwaChat() {
   return (
     <div className="flex flex-1 flex-col">
       <ScreenHeader
-        eyebrow="Your Serenity guide"
+        eyebrow={tr(lang, 'Your Serenity guide')}
         title="Kapwa"
         action={
           <button
             type="button"
             onClick={clear}
-            aria-label="Clear chat"
+            aria-label={tr(lang, 'Clear chat')}
             className="-mt-1.5 tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >
             <Trash2 className="h-[18px] w-[18px]" strokeWidth={1.7} />
@@ -452,19 +522,39 @@ export function KapwaChat() {
         <p className="mt-2 text-label leading-relaxed text-ink-faint">
           {kapwaAiEnabled
             ? 'An AI guide — not a person or a therapist. Messages are sent to our AI service to reply, and the chat history is kept on this phone.'
-            : 'A simple built-in guide — not a person or an AI. Your chat stays on this phone.'}
+            : tr(lang, 'A simple built-in guide — not a person or an AI. Your chat stays on this phone.')}
         </p>
+        <div role="group" aria-label={tr(lang, 'Kapwa’s language')} className="mt-3 flex flex-wrap justify-center gap-1.5">
+          {kapwaLanguages.map((language) => (
+            <button
+              key={language.id}
+              type="button"
+              lang={language.id}
+              aria-pressed={lang === language.id}
+              onClick={() => chooseLanguage(language.id)}
+              className={cn(
+                'rounded-full px-3 py-1.5 text-caption transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70',
+                lang === language.id
+                  ? 'bg-aurora-blue font-semibold text-white'
+                  : 'border border-overlay/15 text-ink-soft hover:bg-overlay/[0.05] hover:text-ink',
+              )}
+            >
+              {language.name}
+              {language.beta ? <span className="ml-1 text-[0.7rem] font-normal opacity-80">Beta</span> : null}
+            </button>
+          ))}
+        </div>
         {hydrated && consent ? (
           <p className="mt-1 text-label leading-relaxed text-ink-faint">
             {consent === 'yes'
-              ? 'Kapwa can see your sessions and recent screens on this phone. '
-              : 'Kapwa isn’t using your activity. '}
+              ? `${tr(lang, 'Kapwa can see your sessions and recent screens on this phone.')} `
+              : `${tr(lang, 'Kapwa isn’t using your activity.')} `}
             <button
               type="button"
               onClick={toggleActivity}
               className="inline-block py-1 font-semibold text-ink-soft underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
-              {consent === 'yes' ? 'Turn off' : 'Turn on'}
+              {tr(lang, consent === 'yes' ? 'Turn off' : 'Turn on')}
             </button>
           </p>
         ) : null}
@@ -488,6 +578,7 @@ export function KapwaChat() {
                       <ActionLink
                         key={actionKey(action)}
                         action={action}
+                        lang={lang}
                         onAsk={send}
                         onRun={(id) => setRunning(id)}
                       />
@@ -501,7 +592,7 @@ export function KapwaChat() {
                     className="mt-1 flex items-center gap-1 py-1 text-label text-ink-faint transition-colors hover:text-ink-soft focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
                   >
                     <Flag className="h-3 w-3" strokeWidth={1.8} aria-hidden="true" />
-                    Report this reply
+                    {tr(lang, 'Report this reply')}
                   </button>
                 ) : null}
               </div>
@@ -523,7 +614,7 @@ export function KapwaChat() {
             </span>
             <p
               className="flex gap-1 rounded-2xl rounded-bl-md bg-surface px-4 py-3.5"
-              aria-label="Kapwa is typing"
+              aria-label={tr(lang, 'Kapwa is typing')}
             >
               {[0, 1, 2].map((dot) => (
                 <span
@@ -542,6 +633,7 @@ export function KapwaChat() {
           <PracticeRunner
             key={running}
             practice={getPractice(running)!}
+            lang={lang}
             onFinish={(completed) => finishRun(running, completed)}
           />
         </div>
@@ -553,10 +645,10 @@ export function KapwaChat() {
             <button
               key={quick}
               type="button"
-              onClick={() => send(quick)}
+              onClick={() => send(quick, tr(lang, quick))}
               className="rounded-full border border-overlay/15 px-3.5 py-2 text-caption text-ink-soft transition-colors hover:bg-overlay/[0.05] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
             >
-              {quick}
+              {tr(lang, quick)}
             </button>
           ))}
         </div>
@@ -574,7 +666,7 @@ export function KapwaChat() {
         }}
       >
         <label htmlFor="kapwa-input" className="sr-only">
-          Message Kapwa
+          {tr(lang, 'Message Kapwa')}
         </label>
         <textarea
           id="kapwa-input"
@@ -589,13 +681,13 @@ export function KapwaChat() {
               send(draft);
             }
           }}
-          placeholder="Tell Kapwa how you feel…"
+          placeholder={tr(lang, 'Tell Kapwa how you feel…')}
           className="max-h-32 min-h-[44px] flex-1 resize-none rounded-2xl bg-surface px-4 py-3 text-body-sm leading-snug text-ink placeholder:text-ink-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         />
         <button
           type="submit"
           disabled={!draft.trim()}
-          aria-label="Send"
+          aria-label={tr(lang, 'Send')}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-aurora-blue text-white shadow-pill transition-opacity disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <Send className="h-[18px] w-[18px]" strokeWidth={1.8} />
@@ -628,11 +720,14 @@ function actionKey(action: KapwaAction): string {
  */
 function ActionLink({
   action,
+  lang,
   onAsk,
   onRun,
 }: {
   action: KapwaAction;
-  onAsk: (text: string) => void;
+  lang: KapwaLanguage;
+  /** Asks Kapwa in English, showing the reader's own words. */
+  onAsk: (text: string, shown: string) => void;
   onRun: (practiceId: string) => void;
 }) {
   const className =
@@ -648,7 +743,7 @@ function ActionLink({
         className={cn(className, 'flex items-center gap-1.5 bg-aurora-blue text-white hover:bg-aurora-blue/90')}
       >
         <Play className="h-3.5 w-3.5 shrink-0" strokeWidth={2} aria-hidden="true" />
-        Start, guided · {practice.minutes} min
+        {tr(lang, 'Start, guided · {minutes} min', { minutes: practice.minutes })}
       </button>
     );
   }
@@ -659,11 +754,11 @@ function ActionLink({
     return (
       <button
         type="button"
-        onClick={() => onAsk(practiceAsk(practice))}
+        onClick={() => onAsk(practiceAsk(practice), tr(lang, practiceAsk(practice)))}
         className={cn(className, 'flex items-center gap-1.5 bg-aurora-blue/15 hover:bg-aurora-blue/25')}
       >
         <Leaf className="h-3.5 w-3.5 shrink-0" strokeWidth={1.9} aria-hidden="true" />
-        {practiceLabel(practice)}
+        {practiceLabel(practice, lang)}
       </button>
     );
   }
@@ -680,7 +775,7 @@ function ActionLink({
       >
         <Phone className="h-[18px] w-[18px] shrink-0" strokeWidth={1.8} aria-hidden="true" />
         <span className="flex min-w-0 flex-col">
-          <span className="text-body-sm text-ink-soft">Call {label}</span>
+          <span className="text-body-sm text-ink-soft">{tr(lang, 'Call {label}', { label: tr(lang, label) })}</span>
           <span className="text-[1rem] font-semibold tabular-nums">{display}</span>
         </span>
       </a>
@@ -690,12 +785,12 @@ function ActionLink({
   if (action.type === 'page') {
     return (
       <Link href={action.href} className={className}>
-        {action.label}
+        {tr(lang, action.label)}
       </Link>
     );
   }
 
-  const target = actionTarget(action);
+  const target = actionTarget(action, lang);
   if (!target) return null;
 
   return (
@@ -710,14 +805,16 @@ function ActionLink({
 /** Where a meditation, yoga, story or sound button goes, and what it says. Null once removed from the content. */
 function actionTarget(
   action: Extract<KapwaAction, { type: 'session' | 'yoga' | 'story' | 'sound' }>,
+  lang: KapwaLanguage,
 ): { href: string; label: string; kind: string; Icon: typeof Play } | null {
+  // Titles come from the content, in English; the kind is Kapwa's own word.
   if (action.type === 'session') {
     const meditation = getMeditation(action.id);
     if (!meditation) return null;
     return {
       href: `/player/${meditation.id}`,
       label: `${meditation.title} · ${formatMinutesLabel(meditation.durationSeconds)}`,
-      kind: 'Meditation',
+      kind: tr(lang, 'Meditation'),
       Icon: Play,
     };
   }
@@ -727,7 +824,7 @@ function actionTarget(
     return {
       href: `/yoga/${session.id}`,
       label: `${session.title} · ${formatMinutesLabel(totalSeconds(session.poses))}`,
-      kind: 'Yoga',
+      kind: tr(lang, 'Yoga'),
       Icon: PersonStanding,
     };
   }
@@ -738,12 +835,12 @@ function actionTarget(
       href: `/stories/${found.id}`,
       // As the story cards show it.
       label: `${found.title} · ${estimatedMinutes(found)} Min.`,
-      kind: 'Story',
+      kind: tr(lang, 'Story'),
       Icon: BookOpen,
     };
   }
   const meta = soundscapes[action.id];
   if (!meta) return null;
   // The Sleep tab's mixer is where every sound is played.
-  return { href: '/sleep', label: `${meta.name} sound`, kind: 'Sound', Icon: AudioLines };
+  return { href: '/sleep', label: tr(lang, '{name} sound', { name: tr(lang, meta.name) }), kind: tr(lang, 'Sound'), Icon: AudioLines };
 }

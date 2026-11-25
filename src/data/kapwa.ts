@@ -17,6 +17,7 @@ import { kapwaTopics } from '@/data/kapwa-topics';
 import { collectionIntents, lengthIntent, practiceFor, practiceIntents } from '@/lib/kapwa-knowledge';
 import { personalIntents } from '@/lib/kapwa-profile';
 import { crisisLines, emergencyLine, type SafetyLine } from '@/data/safety-lines';
+import { keywordsIn } from '@/lib/kapwa-i18n';
 import type { SoundscapeId } from '@/lib/audio/soundscapes';
 
 export type KapwaAction =
@@ -355,4 +356,8 @@ const intentsInOrder: KapwaIntent[] = [
 export const kapwaIntents: KapwaIntent[] = [
   ...intentsInOrder.filter((intent) => intent.supportTrackOnly),
   ...intentsInOrder.filter((intent) => !intent.supportTrackOnly),
-];
+].map((intent) => {
+  // The same intent in Filipino and Hindi: "di makatulog", "नींद नहीं आ रही".
+  const more = keywordsIn(intent.id);
+  return more.length ? { ...intent, keywords: [...intent.keywords, ...more] } : intent;
+});

@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Pause, Play, Square } from 'lucide-react';
 
 import type { Practice } from '@/data/kapwa-knowledge';
+import { tr, type KapwaLanguage } from '@/lib/kapwa-i18n';
 import { planSeconds, runnerAt, runnerPlan } from '@/lib/kapwa-runner';
 import { cn } from '@/lib/utils';
 
@@ -25,9 +26,12 @@ function breathScale(plan: { text: string }[], index: number): string {
  */
 export function PracticeRunner({
   practice,
+  lang = 'en',
   onFinish,
 }: {
   practice: Practice;
+  /** The language to show the steps in. The breathing circle follows the English, so it can't drift. */
+  lang?: KapwaLanguage;
   /** Called once: `completed` when it ran to the end, otherwise stopped early. */
   onFinish: (completed: boolean) => void;
 }) {
@@ -88,13 +92,15 @@ export function PracticeRunner({
 
   const left = Math.max(0, Math.ceil(total - elapsed));
   const clock = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+  const title = tr(lang, practice.title);
+  const leftLabel = tr(lang, '{clock} left', { clock });
 
   return (
-    <section aria-label={`${practice.title}, guided`} className="mx-4 rounded-3xl bg-surface p-5 shadow-pill">
+    <section aria-label={tr(lang, '{title}, guided', { title })} className="mx-4 rounded-3xl bg-surface p-5 shadow-pill">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-body-sm font-semibold text-ink">{practice.title}</h2>
-        <span className="text-caption tabular-nums text-ink-muted" aria-label={`${clock} left`}>
-          {clock} left
+        <h2 className="text-body-sm font-semibold text-ink">{title}</h2>
+        <span className="text-caption tabular-nums text-ink-muted" aria-label={leftLabel}>
+          {leftLabel}
         </span>
       </div>
 
@@ -110,7 +116,7 @@ export function PracticeRunner({
           />
         ) : null}
         <p aria-live="polite" className="min-h-[3.5rem] text-body leading-relaxed text-ink">
-          {step.text}
+          {tr(lang, step.text)}
         </p>
       </div>
 
@@ -118,7 +124,7 @@ export function PracticeRunner({
         <div className="h-full rounded-full bg-aurora-blue transition-[width] duration-200" style={{ width: `${(elapsed / total) * 100}%` }} />
       </div>
       <p className="mt-2 text-caption tabular-nums text-ink-muted">
-        Step {index + 1} of {plan.length} · {Math.ceil(stepLeft)} s
+        {tr(lang, 'Step {step} of {steps} · {seconds} s', { step: index + 1, steps: plan.length, seconds: Math.ceil(stepLeft) })}
       </p>
 
       <div className="mt-4 flex gap-2">
@@ -128,7 +134,7 @@ export function PracticeRunner({
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-overlay/[0.08] text-body-sm font-medium text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           {paused ? <Play className="h-4 w-4" aria-hidden="true" /> : <Pause className="h-4 w-4" aria-hidden="true" />}
-          {paused ? 'Resume' : 'Pause'}
+          {tr(lang, paused ? 'Resume' : 'Pause')}
         </button>
         <button
           type="button"
@@ -136,7 +142,7 @@ export function PracticeRunner({
           className="flex h-11 flex-1 items-center justify-center gap-2 rounded-full bg-overlay/[0.08] text-body-sm font-medium text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
         >
           <Square className="h-4 w-4" aria-hidden="true" />
-          Stop
+          {tr(lang, 'Stop')}
         </button>
       </div>
     </section>

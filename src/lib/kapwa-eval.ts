@@ -22,6 +22,7 @@ export interface Result {
 
 export interface SplitReport {
   split: Split;
+  lang: 'en' | 'fil' | 'hi';
   /** Supported messages answered with a right intent. */
   intentAccuracy: number;
   intentTotal: number;
@@ -45,8 +46,9 @@ export function judge(example: Example): Result {
 
 const share = (results: Result[]) => (results.length ? results.filter((result) => result.correct).length / results.length : 1);
 
-export function evaluate(split: Split, examples: Example[] = dataset): SplitReport {
-  const results = examples.filter((example) => example.split === split).map(judge);
+/** One split in one language: English unless `lang` says otherwise. */
+export function evaluate(split: Split, examples: Example[] = dataset, lang: 'en' | 'fil' | 'hi' = 'en'): SplitReport {
+  const results = examples.filter((example) => example.split === split && (example.lang ?? 'en') === lang).map(judge);
   const kind = (result: Result) => {
     const want = expected(result.example);
     if (want.some((intent) => SAFETY.has(intent))) return 'safety';
@@ -56,6 +58,7 @@ export function evaluate(split: Split, examples: Example[] = dataset): SplitRepo
   const of = (name: string) => results.filter((result) => kind(result) === name);
   return {
     split,
+    lang,
     intentAccuracy: share(of('intent')),
     intentTotal: of('intent').length,
     unknownHandling: share(of('unknown')),
