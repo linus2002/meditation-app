@@ -250,6 +250,8 @@
     }
     @keyframes nudge { 50% { transform: translateY(5px); } }
     @media (prefers-reduced-motion: reduce) { .share-hint { animation: none; } }
+    dialog p.sha { margin-top: 10px; font-size: 0.75rem; line-height: 1.4; }
+    .sha code { display: block; margin-top: 2px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.72rem; color: var(--ink); word-break: break-all; user-select: all; }
     .not-android { margin-top: 12px; padding: 10px 12px; border-radius: 12px; background: #eef1f4; font-size: 0.88rem; }
 
     /* The video button is a <button>, so it needs the link badges' look spelled out. */
@@ -400,6 +402,8 @@
       <li><span>If Android asks, tap <b>Settings</b>, turn on <b>Allow from this source</b>, then go back.</span></li>
       <li><span>Tap <b>Install</b>, then <b>Open</b>. Serenity is now in your app drawer.</span></li>
     </ol>
+    <!-- Update with each new test build: the release asset's digest. -->
+    <p class="sha">SHA-256 <code>bd8040cbafd1522478d2c59f8b88a112b8f42cbe8fe6dc416c89c4ee11a3de01</code></p>
     <div class="dialog-actions">
       <a href="/get/serenity.apk" download="Serenity.apk">Download again</a>
       <button type="button" id="close-steps">Done</button>
