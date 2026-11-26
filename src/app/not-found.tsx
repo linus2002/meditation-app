@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Compass } from 'lucide-react';
 
+import { NotFoundBack } from '@/components/layout/not-found-back';
+
 /**
  * Any address the app does not have: a mistyped link, or a session removed
  * since a reminder or a shared link pointed at it.
@@ -8,6 +10,7 @@ import { Compass } from 'lucide-react';
 export default function NotFound() {
   return (
     <div className="flex min-h-full flex-1 flex-col items-center justify-center bg-canvas px-8 text-center">
+      <NotFoundBack />
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-overlay/[0.06]">
         <Compass className="h-6 w-6 text-ink-soft" strokeWidth={1.6} aria-hidden="true" />
       </span>

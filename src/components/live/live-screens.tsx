@@ -27,6 +27,7 @@ function Gone({ what }: { what: string }) {
       <p className="text-body-sm text-ink-muted">This {what} is no longer available.</p>
       <Link
         href="/home"
+        replace
         className="rounded-full bg-overlay/[0.08] px-5 py-2.5 text-body-sm font-medium text-ink transition-colors hover:bg-overlay/[0.12]"
       >
         Back to home

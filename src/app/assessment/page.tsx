@@ -103,8 +103,10 @@ export default function AssessmentPage() {
           <p className="text-center text-caption font-medium text-ink-muted">
             Question {step + 1} of {TOTAL}
           </p>
+          {/* Replaces, so Back from home doesn't reopen the questions. */}
           <Link
             href="/home"
+            replace
             aria-label="Close assessment"
             className="tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
           >

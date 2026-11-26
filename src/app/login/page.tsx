@@ -8,6 +8,7 @@ import { Mail } from 'lucide-react';
 import { CreateAccountSheet, EmailSignInSheet } from '@/components/auth/auth-sheets';
 import { SerenityMark } from '@/components/onboarding/serenity-mark';
 import { GradientButton } from '@/components/shared/gradient-button';
+import { useBack } from '@/hooks/use-back';
 import { followAccountChange } from '@/lib/account-change';
 import { safePath } from '@/lib/safe-path';
 
@@ -21,7 +22,7 @@ type OpenSheet = 'email' | 'create' | null;
  *
  * A guest may browse, but starting a session, the timer, yoga, a story or any
  * personal tool needs an account (see AccountGate). Skip goes to the home
- * screen to browse. Arriving with `?next=/player/x`, as a guest who tried to
+ * screen to browse, or back to the screen they were on when sent here. Arriving with `?next=/player/x`, as a guest who tried to
  * start something does, comes back to it once signed in.
  *
  * Pinned to the dark palette, like the tour before it.
@@ -39,7 +40,9 @@ export default function LoginPage() {
     setNext(safePath(value));
   }, []);
 
-  const goHome = React.useCallback(() => router.replace('/home'), [router]);
+  // Browsing on: back to where they were when a session asked them to sign in
+  // (the yoga list, say), or home straight after the tour.
+  const goHome = useBack('/home');
   const goOn = React.useCallback(() => router.replace(next ?? '/home'), [router, next]);
 
   // Opening one sheet closes the other; the short pause lets the first slide

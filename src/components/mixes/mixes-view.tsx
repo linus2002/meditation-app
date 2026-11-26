@@ -222,6 +222,7 @@ function MixDetail({ id }: { id: string }) {
           This mix may have been deleted.{" "}
           <Link
             href="/mixes"
+            replace
             className="font-medium text-ink underline underline-offset-2"
           >
             See your mixes

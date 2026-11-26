@@ -60,7 +60,8 @@ const iconButton =
 export function YogaPlayer({ session }: { session: YogaSession }) {
   // The session's own colour, as on its tile, tints the top of this page.
   const color = yogaColor(session.id);
-  const goBack = useBack();
+  // Opened from a reminder or a link, Back goes to the yoga list.
+  const goBack = useBack('/yoga');
   const { settings, setSetting } = useApp();
   const voiceGuide = settings.yogaVoice ?? true;
   const { bell, stop, prime, playMusic, pauseMusic, stopMusic, duckMusic } = useAudio();

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 
+import { BackButton } from '@/components/shared/back-button';
+
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -14,7 +16,9 @@ export const metadata: Metadata = {
  */
 export default function AccountDeletionPage() {
   return (
-    <main className="min-h-full bg-canvas px-6 pb-12 pt-[calc(env(safe-area-inset-top,0px)+40px)] text-ink">
+    <main className="min-h-full bg-canvas px-6 pb-12 pt-[calc(env(safe-area-inset-top,0px)+16px)] text-ink">
+      {/* Opened from Profile, Back returns there; opened from a store listing, it goes to Profile too. */}
+      <BackButton fallbackHref="/profile" className="-ml-2.5 mb-3" />
       <h1 className="text-[1.5rem] font-semibold leading-tight">Delete your Serenity account</h1>
 
       <ol className="mt-6 list-decimal space-y-2 pl-5 text-body-sm leading-relaxed text-ink-soft">
@@ -38,6 +42,7 @@ export default function AccountDeletionPage() {
 
       <Link
         href="/profile"
+        replace
         className="mt-8 inline-flex h-12 items-center rounded-full bg-aurora-blue px-6 text-body-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         Go to Profile

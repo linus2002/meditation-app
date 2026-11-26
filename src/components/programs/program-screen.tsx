@@ -17,7 +17,7 @@ export function ProgramScreen({ program }: { program: Program }) {
 
   return (
     <div className="pb-6">
-      <ScreenHeader eyebrow="Free program" title={program.title} />
+      <ScreenHeader eyebrow="Free program" title={program.title} fallbackHref="/meditations" />
 
       <div className="mt-5 px-5">
         <div className="relative aspect-[16/9] overflow-hidden rounded-[20px]">

@@ -195,8 +195,11 @@ export function SessionComplete({
         {againLabel}
       </GradientButton>
 
+      {/* In place of the finished session: Back from progress would otherwise
+          reopen the player at its start, not this screen. */}
       <Link
         href="/activities"
+        replace
         className="mt-3 block w-full rounded-full py-2 text-center text-caption font-medium text-ink-muted transition-colors hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
       >
         See your progress

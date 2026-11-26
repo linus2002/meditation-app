@@ -1,8 +1,9 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { ChevronsLeft } from 'lucide-react';
 
-import { useBack } from '@/hooks/use-back';
+import { isTabRoot, useBack } from '@/hooks/use-back';
 import { cn } from '@/lib/utils';
 
 interface ScreenHeaderProps {
@@ -12,26 +13,37 @@ interface ScreenHeaderProps {
   /** Optional slot rendered on the right, opposite the back control. */
   action?: React.ReactNode;
   className?: string;
+  /** Where Back goes when this screen was the first one opened (a reminder, a link). */
+  fallbackHref?: string;
 }
 
 /**
  * The header from the activities screen: a double-chevron back control on the
  * left, sitting slightly above a centred eyebrow and title stack.
+ *
+ * The bottom-bar tabs (Kapwa, Yoga, Sleep) get no back control: like Home and
+ * Meditations they are where you go, not somewhere to go back from, and the
+ * control there disagreed with Android's Back, which goes home from a tab.
  */
-export function ScreenHeader({ eyebrow, title, action, className }: ScreenHeaderProps) {
-  const goBack = useBack();
+export function ScreenHeader({ eyebrow, title, action, className, fallbackHref }: ScreenHeaderProps) {
+  const goBack = useBack(fallbackHref);
+  const onTab = isTabRoot(usePathname());
 
   return (
     <header className={cn('relative px-4 pt-[calc(var(--header-gap)-1px)]', className)}>
       <div className="grid grid-cols-[36px_1fr_36px] items-start gap-2">
-        <button
-          type="button"
-          onClick={goBack}
-          aria-label="Go back"
-          className="-mt-1.5 tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
-        >
-          <ChevronsLeft className="h-[22px] w-[22px]" strokeWidth={1.75} />
-        </button>
+        {onTab ? (
+          <span aria-hidden="true" />
+        ) : (
+          <button
+            type="button"
+            onClick={goBack}
+            aria-label="Go back"
+            className="-mt-1.5 tap-target flex h-9 w-9 items-center justify-center rounded-full text-ink-muted transition-colors hover:bg-overlay/[0.06] hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus/70"
+          >
+            <ChevronsLeft className="h-[22px] w-[22px]" strokeWidth={1.75} />
+          </button>
+        )}
 
         <div className="flex min-w-0 flex-col items-center gap-[5px] text-center">
           {eyebrow ? (
