@@ -302,9 +302,9 @@
 }
 
 /*
- * Onboarding motion. Text marked `.reveal` waits invisible until its step is
- * the one on screen, then rises into place; `--reveal-delay` staggers the lines.
- * Leaving the step removes the animation, so swiping back plays it again.
+ * Onboarding motion. Text marked `.reveal` waits invisible until its step
+ * slides into view, then rises into place; `--reveal-delay` staggers the lines.
+ * It stays once shown, so a step being left keeps its text as it slides away.
  */
 .reveal {
   opacity: 0;

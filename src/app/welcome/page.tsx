@@ -9,10 +9,15 @@ import {
   WelcomeIntro,
   WelcomeLibrary,
 } from '@/components/onboarding/welcome-steps';
+import { dotAt, easeInOutCubic, glideMs, stepsInView } from '@/lib/slides';
 import { cn } from '@/lib/utils';
 import { useApp } from '@/providers/app-provider';
 
 const STEP_COUNT = 4;
+
+function reducedMotion(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+}
 
 /**
  * The first-run tour: four steps, shown once — the mark, the library, what's
@@ -22,8 +27,12 @@ const STEP_COUNT = 4;
  * step at a time, so they can be swiped left and right as well as moved on with
  * each step's own button. Touch and trackpads scroll it natively; a mouse can
  * drag it too, since browsers never scroll on a mouse drag by themselves.
- * Whichever step is on screen is marked `data-active`, which is what plays its
- * text in (see `.reveal`).
+ *
+ * Moving on by a button, a dot or a mouse drag glides the strip with an eased
+ * motion of its own (lib/slides): the browser's own smooth scroll is quick and
+ * abrupt on Android. A step's text rises in as soon as the step slides into
+ * view, not at the halfway point, and stays once shown, so nothing vanishes
+ * mid-slide. The dots follow the strip as it moves.
  *
  * Finishing or skipping sets `onboarded`, which persists to localStorage — so
  * it appears on a fresh install and never again, on the web or inside the
@@ -38,6 +47,7 @@ export default function WelcomePage() {
   const router = useRouter();
   const { completeOnboarding } = useApp();
   const trackRef = React.useRef<HTMLDivElement>(null);
+  const dotRefs = React.useRef<(HTMLSpanElement | null)[]>([]);
   const [step, setStep] = React.useState(0);
 
   const finish = React.useCallback(() => {
@@ -45,36 +55,110 @@ export default function WelcomePage() {
     router.replace('/login');
   }, [completeOnboarding, router]);
 
-  const goTo = React.useCallback((index: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    track.scrollTo({ left: index * track.clientWidth, behavior: 'smooth' });
+  /* The steps whose text has played in. A step joins as it comes into view and
+     stays, so leaving one never blanks its text halfway through the slide. */
+  const [seen, setSeen] = React.useState<readonly number[]>([0]);
+  const seenRef = React.useRef(new Set<number>([0]));
+  const markSeen = React.useCallback((indices: number[]) => {
+    const fresh = indices.filter((index) => !seenRef.current.has(index));
+    if (fresh.length === 0) return;
+    for (const index of fresh) seenRef.current.add(index);
+    setSeen([...seenRef.current]);
   }, []);
 
   /*
    * Whether the strip has come to rest. A frame whose width is not a whole
    * number of pixels can stop a fraction short of a step, leaving a hairline of
    * the neighbouring step along the edge; once the strip settles, every step
-   * but the current one is hidden so that sliver never shows.
+   * but the current one is hidden so that sliver never shows. Shown again the
+   * moment a move begins, so the incoming step is never a frame late.
    */
   const [settled, setSettled] = React.useState(true);
   const settleTimer = React.useRef<number | undefined>(undefined);
   React.useEffect(() => () => window.clearTimeout(settleTimer.current), []);
+  const unsettle = React.useCallback(() => {
+    window.clearTimeout(settleTimer.current);
+    setSettled(false);
+  }, []);
 
-  // The step is read off the scroll position, so a swipe and a button press
-  // land in the same place and the dots always agree with what is on screen.
+  // The later steps' photos are hidden until their step moves in, so the
+  // browser would decode them in the middle of the first glide and drop frames.
+  // Decoding them now, while the first step is read, keeps that glide smooth.
+  React.useEffect(() => {
+    const images = trackRef.current?.querySelectorAll('img') ?? [];
+    for (const image of images) {
+      if (image.complete) void image.decode?.().catch(() => {});
+      else image.addEventListener('load', () => void image.decode?.().catch(() => {}), { once: true });
+    }
+  }, []);
+
+  // The glide in progress, if any.
+  const glide = React.useRef<number | undefined>(undefined);
+  const stopGlide = React.useCallback(() => {
+    if (glide.current === undefined) return;
+    cancelAnimationFrame(glide.current);
+    glide.current = undefined;
+    if (trackRef.current) trackRef.current.style.scrollSnapType = '';
+  }, []);
+  React.useEffect(() => stopGlide, [stopGlide]);
+
+  const goTo = React.useCallback(
+    (index: number) => {
+      const track = trackRef.current;
+      if (!track) return;
+      stopGlide();
+      const width = track.clientWidth;
+      const from = track.scrollLeft;
+      const to = index * width;
+      if (width === 0 || Math.abs(to - from) < 1) return;
+      // The arriving step's text starts as the glide does, rising while it slides in.
+      markSeen([index]);
+      if (reducedMotion()) {
+        track.scrollLeft = to;
+        return;
+      }
+      unsettle();
+      // Snapping would fight each frame's position, so it waits until the step has landed.
+      track.style.scrollSnapType = 'none';
+      const duration = glideMs((to - from) / width);
+      const start = performance.now();
+      const frame = (now: number) => {
+        const t = Math.min(1, (now - start) / duration);
+        track.scrollLeft = from + (to - from) * easeInOutCubic(t);
+        if (t < 1) {
+          glide.current = requestAnimationFrame(frame);
+        } else {
+          glide.current = undefined;
+          track.style.scrollSnapType = '';
+        }
+      };
+      glide.current = requestAnimationFrame(frame);
+    },
+    [markSeen, stopGlide, unsettle],
+  );
+
+  // Where the strip is, read on every scroll frame: the step (for the dots and
+  // screen readers), the text to bring in, and the dots, drawn straight onto
+  // the page so they move with the strip without a render a frame.
   const onScroll = React.useCallback(() => {
     const track = trackRef.current;
     if (!track || track.clientWidth === 0) return;
-    setStep(Math.round(track.scrollLeft / track.clientWidth));
-    setSettled(false);
-    window.clearTimeout(settleTimer.current);
+    const position = track.scrollLeft / track.clientWidth;
+    setStep(Math.min(STEP_COUNT - 1, Math.max(0, Math.round(position))));
+    markSeen(stepsInView(position, STEP_COUNT));
+    dotRefs.current.forEach((dot, index) => {
+      if (!dot) return;
+      const { width, opacity } = dotAt(position, index);
+      dot.style.width = `${width}px`;
+      dot.style.opacity = String(opacity);
+    });
+    unsettle();
     settleTimer.current = window.setTimeout(() => setSettled(true), 150);
-  }, []);
+  }, [markSeen, unsettle]);
 
   /*
    * Mouse dragging. The strip follows the pointer with snapping switched off,
-   * then settles on the neighbouring step once the drag passes a threshold.
+   * then glides on to the neighbouring step once the drag passes a threshold.
    * The pointer is only captured once it has actually moved, so a plain click
    * still reaches the buttons; a click that ends a drag is swallowed.
    */
@@ -85,7 +169,11 @@ export default function WelcomePage() {
 
   const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     const track = trackRef.current;
-    if (event.pointerType !== 'mouse' || event.button !== 0 || !track) return;
+    if (!track) return;
+    // A finger on the strip takes over from any glide, and the neighbours show at once.
+    stopGlide();
+    unsettle();
+    if (event.pointerType !== 'mouse' || event.button !== 0) return;
     drag.current = {
       startX: event.clientX,
       startLeft: track.scrollLeft,
@@ -117,14 +205,16 @@ export default function WelcomePage() {
     const dx = event.clientX - state.startX;
     const threshold = track.clientWidth * 0.15;
     const shift = dx < -threshold ? 1 : dx > threshold ? -1 : 0;
-    goTo(Math.min(STEP_COUNT - 1, Math.max(0, state.from + shift)));
+    const target = Math.min(STEP_COUNT - 1, Math.max(0, state.from + shift));
+    goTo(target);
+    // Already there (a drag back to where it began): snapping simply returns.
+    if (glide.current === undefined) track.style.scrollSnapType = '';
 
     justDragged.current = true;
-    // Snapping comes back once the smooth scroll has landed on the step.
+    // Long enough for the click that ends this drag, which comes just after.
     window.setTimeout(() => {
-      track.style.scrollSnapType = '';
       justDragged.current = false;
-    }, 450);
+    }, 100);
   };
 
   const steps = [
@@ -143,6 +233,7 @@ export default function WelcomePage() {
         onPointerMove={onPointerMove}
         onPointerUp={endDrag}
         onPointerCancel={endDrag}
+        onWheel={stopGlide}
         onClickCapture={(event) => {
           if (justDragged.current) {
             event.preventDefault();
@@ -159,7 +250,7 @@ export default function WelcomePage() {
             aria-roledescription="slide"
             aria-label={`Step ${index + 1} of ${STEP_COUNT}`}
             aria-hidden={index !== step}
-            data-active={index === step}
+            data-active={seen.includes(index)}
             className={cn(
               'rail relative h-full w-full shrink-0 snap-start snap-always overflow-y-auto',
               settled && index !== step && 'invisible',
@@ -172,24 +263,30 @@ export default function WelcomePage() {
 
       {/* Where you are in the tour; each dot also jumps straight to its step. */}
       <div className="pointer-events-none absolute inset-x-0 top-[calc(var(--header-gap)-19px)] z-10 flex justify-center">
-        {steps.map((_, index) => (
-          <button
-            key={index}
-            type="button"
-            onClick={() => goTo(index)}
-            aria-label={`Go to step ${index + 1}`}
-            aria-current={index === step ? 'step' : undefined}
-            // A 44px-tall target around a 6px dot.
-            className="group pointer-events-auto flex h-11 min-w-6 items-center justify-center px-[3px]"
-          >
-            <span
-              className={cn(
-                'block h-1.5 rounded-full transition-all duration-300',
-                index === step ? 'w-5 bg-white' : 'w-1.5 bg-white/40 group-hover:bg-white/70',
-              )}
-            />
-          </button>
-        ))}
+        {steps.map((_, index) => {
+          // Where it starts. Fixed, so a render never undoes the size onScroll drew.
+          const { width, opacity } = dotAt(0, index);
+          return (
+            <button
+              key={index}
+              type="button"
+              onClick={() => goTo(index)}
+              aria-label={`Go to step ${index + 1}`}
+              aria-current={index === step ? 'step' : undefined}
+              // A 44px-tall target around a 6px dot.
+              className="group pointer-events-auto flex h-11 min-w-6 items-center justify-center px-[3px]"
+            >
+              <span
+                ref={(element) => {
+                  dotRefs.current[index] = element;
+                }}
+                // Sized from the strip's position as it moves (onScroll).
+                style={{ width, opacity }}
+                className="block h-1.5 rounded-full bg-white"
+              />
+            </button>
+          );
+        })}
       </div>
     </div>
   );
