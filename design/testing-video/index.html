@@ -1,0 +1,87 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Serenity Testing</title>
+<style>
+  @font-face { font-family: 'Poppins'; src: url('/src/assets/fonts/poppins-latin-300-normal.woff2') format('woff2'); font-weight: 300; }
+  @font-face { font-family: 'Poppins'; src: url('/src/assets/fonts/poppins-latin-400-normal.woff2') format('woff2'); font-weight: 400; }
+  @font-face { font-family: 'Poppins'; src: url('/src/assets/fonts/poppins-latin-500-normal.woff2') format('woff2'); font-weight: 500; }
+  @font-face { font-family: 'Poppins'; src: url('/src/assets/fonts/poppins-latin-600-normal.woff2') format('woff2'); font-weight: 600; }
+  :root { --mist: #F4F5F9; --blue: #1D9FDA; --green: #61A644; --mid: #181A2E; --teal: #10739A; --night: #0B0D1F; }
+  html, body { margin: 0; padding: 0; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--night); font-family: 'Poppins', sans-serif; color: #fff; -webkit-font-smoothing: antialiased; }
+  #cam { position: absolute; inset: 0; }
+  .layer { position: absolute; inset: 0; }
+  .abs { position: absolute; }
+  .c { display: inline-block; white-space: pre; will-change: transform, opacity, filter; }
+  .w { display: inline-block; will-change: transform, opacity, filter; }
+  .grad { background: linear-gradient(95deg, #3DBDF5 0%, #1D9FDA 40%, #61A644 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  /* hud */
+  .hud { position: absolute; inset: 0; pointer-events: none; font-size: 19px; font-weight: 500; letter-spacing: 0.02em; }
+  .hud .br { position: absolute; width: 28px; height: 28px; border-color: currentColor; border-style: solid; border-width: 0; }
+  .hud .t { position: absolute; white-space: nowrap; display: flex; gap: 30px; align-items: center; }
+  .hud .dim { opacity: 0.55; font-weight: 400; }
+  .hud .sq { display: inline-block; width: 12px; height: 12px; border: 2px solid currentColor; box-sizing: border-box; margin-right: 5px; }
+  .hud .sq.on { background: currentColor; }
+  .hud .bar { position: absolute; left: 36px; bottom: 34px; height: 2px; background: currentColor; }
+
+  /* intro */
+  .scene { position: absolute; inset: 0; overflow: hidden; }
+  .word { position: absolute; left: 0; right: 0; text-align: center; font-weight: 600; letter-spacing: -0.035em; line-height: 1; white-space: nowrap; }
+  .tile { position: absolute; width: 96px; height: 96px; }
+  .row { position: absolute; left: 160px; display: flex; align-items: center; height: 60px; }
+  .row .n { width: 54px; font-size: 20px; font-weight: 500; color: var(--blue); }
+  .row .l { width: 300px; font-size: 30px; font-weight: 400; color: var(--mid); }
+  .row .curve { width: 70px; height: 50px; }
+  .track { position: absolute; height: 2px; background: rgba(24,26,46,0.18); }
+  .track::after { content: ''; position: absolute; right: 0; top: -9px; width: 2px; height: 20px; background: rgba(24,26,46,0.4); }
+  .dot { position: absolute; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 50%; }
+
+  /* body */
+  .glow { position: absolute; border-radius: 50%; pointer-events: none; }
+  .eyebrow { font-size: 28px; font-weight: 500; color: #7FD0F5; display: flex; align-items: center; gap: 16px; white-space: nowrap; }
+  .eyebrow .live { width: 14px; height: 14px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 0 rgba(97,166,68,0.6); }
+  .title { font-size: 84px; font-weight: 600; line-height: 1.08; letter-spacing: -0.025em; white-space: nowrap; }
+  .lead { font-size: 34px; font-weight: 300; line-height: 1.45; color: rgba(255,255,255,0.78); }
+  .card { position: absolute; border-radius: 30px; background: rgba(255,255,255,0.06); border: 1.5px solid rgba(255,255,255,0.12); box-shadow: 0 30px 70px rgba(0,0,0,0.35); box-sizing: border-box; }
+  .pill { display: inline-flex; align-items: center; gap: 16px; padding: 18px 30px; border-radius: 22px; font-size: 30px; font-weight: 500; white-space: nowrap; background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.14); }
+  .ic { display: flex; align-items: center; justify-content: center; border-radius: 22px; flex: none; }
+  .step { display: flex; align-items: center; gap: 18px; font-size: 27px; font-weight: 400; color: rgba(255,255,255,0.85); white-space: nowrap; }
+  .step b { display: flex; align-items: center; justify-content: center; width: 42px; height: 42px; border-radius: 50%; font-size: 21px; font-weight: 600; background: rgba(255,255,255,0.1); flex: none; }
+  .feat { display: flex; align-items: center; gap: 22px; font-size: 32px; font-weight: 500; white-space: nowrap; height: 62px; }
+  .feat .fd { width: 14px; height: 14px; border-radius: 50%; background: rgba(255,255,255,0.35); flex: none; }
+  .chk { position: absolute; display: flex; align-items: center; gap: 26px; font-size: 32px; font-weight: 400; white-space: nowrap; }
+  .chk .box { width: 58px; height: 58px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.3); box-sizing: border-box; display: flex; align-items: center; justify-content: center; flex: none; }
+  .node { position: absolute; width: 230px; text-align: center; }
+  .node .ring { width: 104px; height: 104px; margin: 0 auto; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.06); border: 3px solid rgba(255,255,255,0.2); box-sizing: border-box; }
+  .node .lb { margin-top: 20px; font-size: 25px; font-weight: 500; line-height: 1.3; color: rgba(255,255,255,0.88); }
+  .bubble { position: absolute; padding: 24px 32px; border-radius: 30px; font-size: 30px; font-weight: 400; line-height: 1.4; max-width: 640px; box-sizing: border-box; }
+  .url { display: inline-flex; align-items: center; gap: 18px; padding: 20px 34px; border-radius: 40px; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.16); font-size: 34px; font-weight: 500; white-space: nowrap; }
+
+  /* phone */
+  .pw { position: absolute; left: 0; top: 0; width: 632px; height: 1332px; transform-style: preserve-3d; transform-origin: 50% 50%; }
+  .slab { position: absolute; inset: 0; border-radius: 100px; }
+  .front { position: absolute; inset: 0; border-radius: 100px; padding: 5px; box-sizing: border-box; backface-visibility: hidden;
+    background: linear-gradient(135deg, #f1f2f5 0%, #8b8e97 18%, #e9eaee 34%, #6f727b 52%, #d8dae0 70%, #7d808a 86%, #eceef2 100%); }
+  .bezel { position: absolute; inset: 5px; border-radius: 95px; background: #050507; }
+  .screen { position: absolute; left: 11px; top: 11px; width: 600px; height: 1300px; border-radius: 84px; overflow: hidden; background: #000; }
+  .status { position: absolute; left: 0; top: 0; width: 600px; height: 63px; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: 6px 46px 0 62px; box-sizing: border-box; font-weight: 600; font-size: 24px; color: #fff; }
+  .status .icons { display: flex; gap: 9px; align-items: center; }
+  .si { position: absolute; left: 0; top: 0; width: 600px; height: 1300px; }
+  .si .bleed { position: absolute; left: 0; top: 0; width: 600px; height: 64px; background-size: 600px 40000px; }
+  .si img { position: absolute; left: 0; top: 63px; width: 600px; height: 1237px; }
+  .island { position: absolute; left: 50%; top: 26px; width: 176px; height: 50px; margin-left: -88px; border-radius: 26px; background: #000; z-index: 30; }
+  .glare { position: absolute; inset: 0; border-radius: 100px; pointer-events: none; z-index: 40; mix-blend-mode: screen;
+    background: linear-gradient(115deg, rgba(255,255,255,0) 30%, rgba(255,255,255,0.10) 44%, rgba(255,255,255,0.02) 52%, rgba(255,255,255,0) 60%); background-size: 300% 100%; }
+
+  #grain { position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay; pointer-events: none; background-size: 360px 360px; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="stage"><div id="cam"></div></div>
+<script src="comp.js"></script>
+</body>
+</html>

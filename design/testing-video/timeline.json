@@ -1,0 +1,576 @@
+{
+ "fps": 30,
+ "width": 1920,
+ "height": 1080,
+ "duration": 117.83333333333333,
+ "bpm": 120,
+ "introEnd": 15.6,
+ "bodyStart": 15.95,
+ "chapters": [
+  {
+   "id": "intro",
+   "label": "01 \u2014 intro",
+   "at": 0.0
+  },
+  {
+   "id": "welcome",
+   "label": "02 \u2014 welcome",
+   "at": 15.6
+  },
+  {
+   "id": "install",
+   "label": "03 \u2014 getting started",
+   "at": 33.957
+  },
+  {
+   "id": "features",
+   "label": "04 \u2014 what you can do",
+   "at": 44.958
+  },
+  {
+   "id": "test",
+   "label": "05 \u2014 what to test",
+   "at": 77.14
+  },
+  {
+   "id": "feedback",
+   "label": "06 \u2014 feedback",
+   "at": 85.378
+  },
+  {
+   "id": "close",
+   "label": "07 \u2014 thank you",
+   "at": 105.606
+  }
+ ],
+ "vo": [
+  {
+   "id": "welcome",
+   "at": 15.95,
+   "dur": 10.255,
+   "text": "Hello, everyone! Serenity, our meditation and wellbeing app, is now open for internal testing at Getmeds Incorporated and 2MG Incorporated."
+  },
+  {
+   "id": "benefits",
+   "at": 27.005,
+   "dur": 6.552,
+   "text": "It helps you manage stress, sleep better, and build healthier routines. And during testing, it's completely free."
+  },
+  {
+   "id": "install",
+   "at": 34.357,
+   "dur": 10.201,
+   "text": "To install it, open the link in this announcement. On Android, download and install the app. On iPhone, open it in Safari and add Serenity to your Home Screen."
+  },
+  {
+   "id": "meditate",
+   "at": 45.358,
+   "dur": 4.691,
+   "text": "Inside, you'll find guided meditations, programs, and a meditation timer,"
+  },
+  {
+   "id": "breathe",
+   "at": 50.269,
+   "dur": 3.507,
+   "text": "breathing exercises like box breathing and four-seven-eight,"
+  },
+  {
+   "id": "sleep",
+   "at": 53.996,
+   "dur": 2.696,
+   "text": "sleep stories, ambient sounds, and a sleep timer,"
+  },
+  {
+   "id": "yoga",
+   "at": 56.912,
+   "dur": 2.053,
+   "text": "and gentle, voice-guided yoga."
+  },
+  {
+   "id": "kapwa",
+   "at": 59.765,
+   "dur": 6.846,
+   "text": "Talk to Kapwa, your wellness companion, in English, Filipino, or Hindi. Filipino and Hindi are still in beta."
+  },
+  {
+   "id": "track",
+   "at": 67.411,
+   "dur": 9.329,
+   "text": "Track your mood, your goals, and a gentle streak, and see your monthly insights. Plus reflections, favorites, sound mixes, offline downloads, and reminders."
+  },
+  {
+   "id": "test",
+   "at": 77.54,
+   "dur": 7.438,
+   "text": "Please test everything: the features, the design, the speed, the content, Kapwa's replies, and how it runs on your phone."
+  },
+  {
+   "id": "feedback",
+   "at": 85.778,
+   "dur": 8.078,
+   "text": "To send feedback, go to Profile, Help and Support, then Raise a Concern. Describe it, attach up to three screenshots, and submit."
+  },
+  {
+   "id": "shots",
+   "at": 94.656,
+   "dur": 5.008,
+   "text": "Keep screenshots original and full-screen, and leave out passwords or private details."
+  },
+  {
+   "id": "it",
+   "at": 100.464,
+   "dur": 4.742,
+   "text": "The IT Department reviews every message, and will reply right in the app."
+  },
+  {
+   "id": "close",
+   "at": 106.006,
+   "dur": 7.216,
+   "text": "No experience needed. Explore at your own pace, and tell us honestly what you think. Let's make Serenity better, together!"
+  }
+ ],
+ "beats": {
+  "company1": 23.026,
+  "company2": 24.871,
+  "free": 31.1,
+  "benefit1": 27.679,
+  "benefit2": 28.549,
+  "benefit3": 29.592,
+  "android": 37.549,
+  "iphone": 40.244,
+  "programs": 47.848,
+  "timer": 48.877,
+  "sleeptimer": 55.952,
+  "langs": 62.386,
+  "beta": 64.207,
+  "streak": 69.304,
+  "insights": 71.098,
+  "extras": 72.175,
+  "t1": 79.181,
+  "t2": 80.042,
+  "t3": 80.779,
+  "t4": 81.456,
+  "t5": 82.009,
+  "t6": 83.3,
+  "f1": 87.201,
+  "f2": 87.764,
+  "f3": 89.205,
+  "f4": 90.269,
+  "f5": 91.083,
+  "f6": 93.338,
+  "dont": 97.313,
+  "reply": 103.307,
+  "pace": 107.227,
+  "together": 110.954,
+  "endcard": 113.422
+ },
+ "sfx": [
+  {
+   "type": "tick",
+   "at": 0.1,
+   "gain": 0.3,
+   "count": 3
+  },
+  {
+   "type": "swell",
+   "at": 0.2,
+   "len": 1.2,
+   "gain": 0.35
+  },
+  {
+   "type": "pop",
+   "at": 1.05,
+   "gain": 0.3,
+   "pitch": 0.9
+  },
+  {
+   "type": "zoom",
+   "at": 1.2,
+   "len": 0.3,
+   "gain": 0.4
+  },
+  {
+   "type": "impact",
+   "at": 1.5,
+   "gain": 0.55
+  },
+  {
+   "type": "whoosh",
+   "at": 2.85,
+   "len": 0.3,
+   "gain": 0.35
+  },
+  {
+   "type": "swipe",
+   "at": 3.0,
+   "gain": 0.35
+  },
+  {
+   "type": "tick",
+   "at": 3.1,
+   "gain": 0.25,
+   "count": 6
+  },
+  {
+   "type": "whoosh",
+   "at": 3.25,
+   "len": 1.2,
+   "gain": 0.25
+  },
+  {
+   "type": "pop",
+   "at": 5.4,
+   "gain": 0.35,
+   "pitch": 0.8
+  },
+  {
+   "type": "pop",
+   "at": 5.9,
+   "gain": 0.28,
+   "pitch": 1.0
+  },
+  {
+   "type": "pop",
+   "at": 6.3,
+   "gain": 0.28,
+   "pitch": 1.12
+  },
+  {
+   "type": "pop",
+   "at": 6.7,
+   "gain": 0.28,
+   "pitch": 1.26
+  },
+  {
+   "type": "pop",
+   "at": 7.1,
+   "gain": 0.28,
+   "pitch": 1.5
+  },
+  {
+   "type": "zoom",
+   "at": 7.25,
+   "len": 0.3,
+   "gain": 0.4
+  },
+  {
+   "type": "whoosh",
+   "at": 7.6,
+   "len": 1.2,
+   "gain": 0.3
+  },
+  {
+   "type": "zoom",
+   "at": 8.7,
+   "len": 0.3,
+   "gain": 0.35
+  },
+  {
+   "type": "softrise",
+   "at": 9.0,
+   "len": 1.4,
+   "gain": 0.3
+  },
+  {
+   "type": "thud",
+   "at": 10.5,
+   "gain": 0.5
+  },
+  {
+   "type": "thud",
+   "at": 10.75,
+   "gain": 0.45
+  },
+  {
+   "type": "thud",
+   "at": 11.0,
+   "gain": 0.5
+  },
+  {
+   "type": "thud",
+   "at": 11.25,
+   "gain": 0.45
+  },
+  {
+   "type": "swipe",
+   "at": 11.5,
+   "gain": 0.35
+  },
+  {
+   "type": "thud",
+   "at": 12.0,
+   "gain": 0.5
+  },
+  {
+   "type": "softhit",
+   "at": 12.5,
+   "gain": 0.7
+  },
+  {
+   "type": "whoosh",
+   "at": 12.8,
+   "len": 0.5,
+   "gain": 0.3
+  },
+  {
+   "type": "whoosh",
+   "at": 15.2,
+   "len": 0.5,
+   "gain": 0.4
+  },
+  {
+   "type": "pop",
+   "at": 23.026,
+   "gain": 0.25,
+   "pitch": 1.0
+  },
+  {
+   "type": "pop",
+   "at": 24.871,
+   "gain": 0.25,
+   "pitch": 1.2
+  },
+  {
+   "type": "whoosh",
+   "at": 26.654999999999998,
+   "len": 0.5,
+   "gain": 0.25
+  },
+  {
+   "type": "pop",
+   "at": 27.679,
+   "gain": 0.22,
+   "pitch": 1.0
+  },
+  {
+   "type": "pop",
+   "at": 28.549,
+   "gain": 0.22,
+   "pitch": 1.12
+  },
+  {
+   "type": "pop",
+   "at": 29.592,
+   "gain": 0.22,
+   "pitch": 1.26
+  },
+  {
+   "type": "softhit",
+   "at": 31.200000000000003,
+   "gain": 0.35,
+   "pitch": 1.6
+  },
+  {
+   "type": "whoosh",
+   "at": 33.957,
+   "len": 0.5,
+   "gain": 0.25
+  },
+  {
+   "type": "tick",
+   "at": 34.557,
+   "gain": 0.18,
+   "count": 8
+  },
+  {
+   "type": "pop",
+   "at": 37.549,
+   "gain": 0.25,
+   "pitch": 1.0
+  },
+  {
+   "type": "pop",
+   "at": 40.244,
+   "gain": 0.25,
+   "pitch": 1.2
+  },
+  {
+   "type": "whoosh",
+   "at": 44.958,
+   "len": 0.5,
+   "gain": 0.3
+  },
+  {
+   "type": "swipe",
+   "at": 47.848,
+   "gain": 0.2
+  },
+  {
+   "type": "swipe",
+   "at": 48.877,
+   "gain": 0.2
+  },
+  {
+   "type": "swipe",
+   "at": 50.169,
+   "gain": 0.2
+  },
+  {
+   "type": "swipe",
+   "at": 53.896,
+   "gain": 0.2
+  },
+  {
+   "type": "swipe",
+   "at": 56.812,
+   "gain": 0.2
+  },
+  {
+   "type": "swipe",
+   "at": 59.665,
+   "gain": 0.2
+  },
+  {
+   "type": "pop",
+   "at": 62.386,
+   "gain": 0.22,
+   "pitch": 1.0
+  },
+  {
+   "type": "pop",
+   "at": 62.836000000000006,
+   "gain": 0.22,
+   "pitch": 1.19
+  },
+  {
+   "type": "pop",
+   "at": 63.286,
+   "gain": 0.22,
+   "pitch": 1.34
+  },
+  {
+   "type": "swipe",
+   "at": 67.311,
+   "gain": 0.2
+  },
+  {
+   "type": "pop",
+   "at": 69.304,
+   "gain": 0.22,
+   "pitch": 1.1
+  },
+  {
+   "type": "pop",
+   "at": 71.098,
+   "gain": 0.22,
+   "pitch": 1.25
+  },
+  {
+   "type": "whoosh",
+   "at": 77.14,
+   "len": 0.5,
+   "gain": 0.25
+  },
+  {
+   "type": "tap",
+   "at": 79.331,
+   "gain": 0.3
+  },
+  {
+   "type": "tap",
+   "at": 80.19200000000001,
+   "gain": 0.3
+  },
+  {
+   "type": "tap",
+   "at": 80.929,
+   "gain": 0.3
+  },
+  {
+   "type": "tap",
+   "at": 81.60600000000001,
+   "gain": 0.3
+  },
+  {
+   "type": "tap",
+   "at": 82.159,
+   "gain": 0.3
+  },
+  {
+   "type": "tap",
+   "at": 83.45,
+   "gain": 0.3
+  },
+  {
+   "type": "whoosh",
+   "at": 85.378,
+   "len": 0.5,
+   "gain": 0.25
+  },
+  {
+   "type": "pop",
+   "at": 87.25099999999999,
+   "gain": 0.22,
+   "pitch": 1.0
+  },
+  {
+   "type": "pop",
+   "at": 87.814,
+   "gain": 0.22,
+   "pitch": 1.1
+  },
+  {
+   "type": "pop",
+   "at": 89.255,
+   "gain": 0.22,
+   "pitch": 1.2000000000000002
+  },
+  {
+   "type": "pop",
+   "at": 90.319,
+   "gain": 0.22,
+   "pitch": 1.3
+  },
+  {
+   "type": "pop",
+   "at": 91.133,
+   "gain": 0.22,
+   "pitch": 1.4
+  },
+  {
+   "type": "pop",
+   "at": 93.38799999999999,
+   "gain": 0.22,
+   "pitch": 1.5
+  },
+  {
+   "type": "whoosh",
+   "at": 94.30600000000001,
+   "len": 0.5,
+   "gain": 0.2
+  },
+  {
+   "type": "whoosh",
+   "at": 100.114,
+   "len": 0.5,
+   "gain": 0.2
+  },
+  {
+   "type": "bubble",
+   "at": 100.764,
+   "gain": 0.3
+  },
+  {
+   "type": "bubble",
+   "at": 103.557,
+   "gain": 0.3
+  },
+  {
+   "type": "whoosh",
+   "at": 105.606,
+   "len": 0.5,
+   "gain": 0.25
+  },
+  {
+   "type": "softrise",
+   "at": 112.822,
+   "len": 0.6,
+   "gain": 0.3
+  },
+  {
+   "type": "softhit",
+   "at": 113.422,
+   "gain": 0.5
+  }
+ ]
+}
